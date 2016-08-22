@@ -1,0 +1,11 @@
+[user]
+	name = Sean Christopherson
+	email = sean.j.christopherson@intel.com
+[branch]
+	autosetuprebase = always
+[http]
+	cookiefile = /home/sean/.gitcookies
+[core]
+	excludesfile = ~/.gitignore
+[credential]
+	helper = cache --timeout=3600

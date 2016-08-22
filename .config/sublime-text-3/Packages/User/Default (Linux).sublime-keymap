@@ -1,0 +1,49 @@
+[
+    { "keys": ["shift+delete"], "command": "run_macro_file", "args": {"file": "res://Packages/Default/Delete Line.sublime-macro"} },
+    { "keys": ["ctrl+enter"], "command": "run_macro_file", "args": {"file": "res://Packages/Default/Add Line Before.sublime-macro"} },
+    { "keys": ["shift+enter"], "command": "run_macro_file", "args": {"file": "res://Packages/Default/Add Line.sublime-macro"} },
+
+    { "keys": ["ctrl+shift+o"], "command": "prompt_open_file" },
+    { "keys": ["ctrl+o"], "command": "show_overlay", "args": {"overlay": "goto", "show_files": true} },
+
+    { "keys": ["f3"], "command": "find_prev" },
+    { "keys": ["f4"], "command": "find_next" },
+
+    { "keys": ["shift+f3"], "command": "find_under_prev" },
+    { "keys": ["shift+f4"], "command": "find_under" },
+
+    { "keys": ["ctrl+d"], "command": "goto_definition" },
+    { "keys": ["ctrl+j"], "command": "goto_symbol_in_project" },
+    { "keys": ["ctrl+l"], "command": "show_overlay", "args": {"overlay": "goto", "text": "@"} },
+    { "keys": ["ctrl+r"], "command": "show_overlay", "args": {"overlay": "goto", "text": "#"} },
+
+    { "keys": ["ctrl+shift+s"], "command": "save_all" },
+    { "keys": ["ctrl+;"], "command": "close_all" },
+    { "keys": ["ctrl+k", "ctrl+c"], "command": "toggle_comment", "args": { "block": false } },
+    { "keys": ["ctrl+k", "ctrl+f"], "command": "reindent", "args": {"single_line": false} },
+
+    // { "keys": ["ctrl+k", "ctrl+up"], "command": "new_pane" },
+    // { "keys": ["ctrl+k", "ctrl+shift+up"], "command": "new_pane", "args": {"move": false} },
+    // { "keys": ["ctrl+k", "ctrl+down"], "command": "close_pane" },
+    { "keys": ["ctrl+k", "ctrl+space"], "command": "unbound" },
+    { "keys": ["ctrl+k", "ctrl+a"], "command": "unbound" },
+    { "keys": ["ctrl+k", "ctrl+w"], "command": "unbound" },
+    { "keys": ["ctrl+k", "ctrl+x"], "command": "unbound" },
+    { "keys": ["ctrl+k", "ctrl+y"], "command": "unbound" },
+    { "keys": ["ctrl+k", "ctrl+k"], "command": "unbound" },
+    { "keys": ["ctrl+k", "ctrl+backspace"], "command": "unbound" },
+
+    // Find panel key bindings
+    { "keys": ["ctrl+enter"], "command": "find_all", "args": {"close_panel": true},
+         "context": [{"key": "panel", "operand": "find"}, {"key": "panel_has_focus"}]
+    },
+
+
+    // Replace panel key bindings
+    { "keys": ["ctrl+alt+enter"], "command": "find_all", "args": {"close_panel": true},
+        "context": [{"key": "panel", "operand": "replace"}, {"key": "panel_has_focus"}]
+    },
+    { "keys": ["alt+enter"], "command": "replace_all", "args": {"close_panel": true},
+         "context": [{"key": "panel", "operand": "replace"}, {"key": "panel_has_focus"}]
+    }
+]
