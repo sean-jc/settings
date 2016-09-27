@@ -93,7 +93,8 @@ if [ -f ~/.git-completion.bash ]; then
   __git_complete gg _git_checkout
   __git_complete gl _git_log
   __git_complete gm __git_merge
-  __git_complete gp _git_pull
+  __git_complete gp _git_cherry_pick
+  __git_complete gr _git_reset
   __git_complete gs _git_log
 fi
 
@@ -106,10 +107,11 @@ alias gg='git checkout'
 alias gk='git-show'
 alias gl='git log'
 alias gm='git merge'
-alias gp='git pull'
-alias gr='git reset HEAD~'
+alias gp='git cherry-pick'
+alias gr='git reset'
 alias gs='git status'
 alias gu='git-url-patch'
+alias gv='git remote -vv'
 
 
 
@@ -162,6 +164,7 @@ function dpkg-purge {
 }
 
 # systemd
+alias sk='sudo -sE'
 alias sys='sudo systemctl'
 alias services='sys list-unit-files --type=service'
 
