@@ -1,0 +1,76 @@
+{
+	"__metadata": {
+		"galleryApiUrl": "https://marketplace.visualstudio.com/_apis/public/gallery",
+		"id": "15de929b-c739-49db-86bc-b968cc6b7a5b",
+		"publisherId": "de925631-f87c-4d68-a8d8-4dde56bc19d2",
+		"publisherDisplayName": "Adam Caviness",
+		"installCount": 5234,
+		"versions": [
+			{
+				"version": "0.0.5",
+				"date": "2015-12-21T15:38:46.723Z",
+				"downloadHeaders": {
+					"X-Market-Client-Id": "VSCode",
+					"User-Agent": "VSCode",
+					"X-Market-User-Id": "19c9ea36de0277c21f85ed40739f46892a03093955b1b8ab54283be0d915cf44"
+				},
+				"downloadUrl": "https://adamcaviness.gallery.vsassets.io/_apis/public/gallery/publisher/AdamCaviness/extension/theme-monokai-dark-soda/0.0.5/assetbyname/Microsoft.VisualStudio.Services.VSIXPackage?install=true",
+				"manifestUrl": "https://adamcaviness.gallery.vsassets.io/_apis/public/gallery/publisher/AdamCaviness/extension/theme-monokai-dark-soda/0.0.5/assetbyname/Microsoft.VisualStudio.Code.Manifest"
+			},
+			{
+				"version": "0.0.3",
+				"date": "2015-12-21T15:31:42.02Z",
+				"downloadHeaders": {
+					"X-Market-Client-Id": "VSCode",
+					"User-Agent": "VSCode",
+					"X-Market-User-Id": "19c9ea36de0277c21f85ed40739f46892a03093955b1b8ab54283be0d915cf44"
+				},
+				"downloadUrl": "https://adamcaviness.gallery.vsassets.io/_apis/public/gallery/publisher/AdamCaviness/extension/theme-monokai-dark-soda/0.0.3/assetbyname/Microsoft.VisualStudio.Services.VSIXPackage?install=true",
+				"manifestUrl": "https://adamcaviness.gallery.vsassets.io/_apis/public/gallery/publisher/AdamCaviness/extension/theme-monokai-dark-soda/0.0.3/assetbyname/Microsoft.VisualStudio.Code.Manifest"
+			},
+			{
+				"version": "0.0.2",
+				"date": "2015-12-21T15:27:33.303Z",
+				"downloadHeaders": {
+					"X-Market-Client-Id": "VSCode",
+					"User-Agent": "VSCode",
+					"X-Market-User-Id": "19c9ea36de0277c21f85ed40739f46892a03093955b1b8ab54283be0d915cf44"
+				},
+				"downloadUrl": "https://adamcaviness.gallery.vsassets.io/_apis/public/gallery/publisher/AdamCaviness/extension/theme-monokai-dark-soda/0.0.2/assetbyname/Microsoft.VisualStudio.Services.VSIXPackage?install=true",
+				"manifestUrl": "https://adamcaviness.gallery.vsassets.io/_apis/public/gallery/publisher/AdamCaviness/extension/theme-monokai-dark-soda/0.0.2/assetbyname/Microsoft.VisualStudio.Code.Manifest"
+			},
+			{
+				"version": "0.0.1",
+				"date": "2015-12-21T15:13:35.92Z",
+				"downloadHeaders": {
+					"X-Market-Client-Id": "VSCode",
+					"User-Agent": "VSCode",
+					"X-Market-User-Id": "19c9ea36de0277c21f85ed40739f46892a03093955b1b8ab54283be0d915cf44"
+				},
+				"downloadUrl": "https://adamcaviness.gallery.vsassets.io/_apis/public/gallery/publisher/AdamCaviness/extension/theme-monokai-dark-soda/0.0.1/assetbyname/Microsoft.VisualStudio.Services.VSIXPackage?install=true",
+				"manifestUrl": "https://adamcaviness.gallery.vsassets.io/_apis/public/gallery/publisher/AdamCaviness/extension/theme-monokai-dark-soda/0.0.1/assetbyname/Microsoft.VisualStudio.Code.Manifest"
+			}
+		]
+	},
+	"name": "theme-monokai-dark-soda",
+	"displayName": "Monokai Dark Soda",
+	"description": "A dark theme with bright colors",
+	"version": "0.0.5",
+	"publisher": "AdamCaviness",
+	"icon": "theme-monokai-dark-soda.png",
+	"engines": {
+		"vscode": "^0.10.1"
+	},
+	"categories": [
+		"Themes"
+	],
+	"contributes": {
+		"themes": [
+			{
+				"label": "Monokai Dark Soda",
+				"uiTheme": "vs-dark",
+				"path": "./themes/monokai-dark-soda.tmTheme"
+			}
+		]
+	}
+}

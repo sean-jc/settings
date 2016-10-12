@@ -1,0 +1,25 @@
+// Place your key bindings in this file to overwrite the defaults
+[
+    { "key": "ctrl+e",                "command": "workbench.view.explorer" },
+    { "key": "ctrl+j",                "command": "workbench.action.showAllSymbols" },
+    { "key": "ctrl+l",                "command": "workbench.action.gotoSymbol" },
+    { "key": "ctrl+o",                "command": "workbench.action.quickOpen" },
+    { "key": "ctrl+shift+o",          "command": "workbench.action.files.openFile" },
+    { "key": "ctrl+d",                "command": "editor.action.goToDeclaration",
+                                        "when": "editorTextFocus" },
+    { "key": "ctrl+p",                "command": "workbench.files.action.workingFilesPicker" },
+                                      
+    { "key": "shift+delete",          "command": "editor.action.deleteLines",
+                                        "when": "editorTextFocus" },
+                                      
+    { "key": "f3",                    "command": "editor.action.previousMatchFindAction",
+                                        "when": "editorFocus" },
+    { "key": "f4",                    "command": "editor.action.nextMatchFindAction",
+                                        "when": "editorFocus" },
+                                        
+    { "key": "shift+enter",           "command": "editor.action.insertLineAfter",
+                                        "when": "editorTextFocus" },
+    { "key": "ctrl+enter",            "command": "editor.action.insertLineBefore",
+                                        "when": "editorTextFocus" },    
+    { "key": "ctrl+;",                "command": "workbench.action.closeAllEditors" }
+]
