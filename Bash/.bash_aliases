@@ -89,8 +89,10 @@ if [ -f ~/.git-completion.bash ]; then
   __git_complete gb _git_branch
 
   __git_complete gc _git_commit
+  __git_complete ge _git_send_email
   __git_complete gf _git_fetch
   __git_complete gg _git_checkout
+  __git_complete gk _git_format_patch
   __git_complete gl _git_log
   __git_complete gm __git_merge
   __git_complete gp _git_cherry_pick
@@ -99,12 +101,14 @@ if [ -f ~/.git-completion.bash ]; then
 fi
 
 alias g='git'
+alias ga='git am --whitespace=fix ~/Patches/*.patch'
 alias gb='git branch'
 alias gc='git commit'
 alias gd='git-diff'
+alias ge='git send-email'
 alias gf='git fetch'
 alias gg='git checkout'
-alias gk='git-show'
+alias gk='git format-patch -o ~/patches/'
 alias gl='git log'
 alias gm='git merge'
 alias gp='git cherry-pick'
@@ -126,6 +130,12 @@ function git-golint() {
     git diff-tree --no-commit-id --name-only -r $(git rev-parse --verify HEAD) | grep \\\.go | xargs -L 1 --no-run-if-empty golint
 }
 alias gol=git-golint
+
+# -----------------------------------------------------------------------------
+# SGX
+# -----------------------------------------------------------------------------
+alias mx='DRIVER_TEST=1 make_sgxsdk'
+alias dx='DEBUG=1 DRIVER_TEST=1 make_sgxsdk'
 
 # -----------------------------------------------------------------------------
 # App Shortcuts
