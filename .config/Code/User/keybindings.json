@@ -23,6 +23,6 @@
                                         "when": "editorTextFocus" },
     { "key": "ctrl+enter",            "command": "editor.action.insertLineBefore",
                                         "when": "editorTextFocus" },
-    { "key": "ctrl+shift+s",          "command": "workbench.action.files.saveAll" },       
+    { "key": "ctrl+shift+s",          "command": "workbench.action.files.saveAll" },
     { "key": "ctrl+;",                "command": "workbench.action.closeAllEditors" }
 ]

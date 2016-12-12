@@ -1,4 +1,32 @@
 // Place your settings in this file to overwrite the default settings
 {
-    "editor.fontSize": 13
+    "editor.fontSize": 12,
+    "editor.tabSize": 4,
+
+    "files.exclude": {
+        "**/.vscode":true,
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/.DS_Store": true,
+        "**/*.a": true,
+        "**/*.o": true,
+        "**/*.so": true
+    },
+    "files.watcherExclude": {
+        "**/.vscode":true,
+        "**/.git/objects/**": true,
+        "**/node_modules/**": true,
+        "**/*.a": true,
+        "**/*.o": true,
+        "**/*.so": true
+    },
+    "search.exclude": {
+        "**/.vscode":true,
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/*.a": true,
+        "**/*.o": true,
+        "**/*.so": true
+    }
 }
