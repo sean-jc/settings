@@ -154,6 +154,7 @@ alias gol=git-golint
 # -----------------------------------------------------------------------------
 # SGX
 # -----------------------------------------------------------------------------
+alias lsd='lsdt'
 alias mx='make_sgxsdk'
 alias dx='DEBUG=1 make_sgxsdk'
 
@@ -210,6 +211,10 @@ alias c='clear'
 alias cls='c;ls'
 alias cll='c;ll'
 
+# dmesg
+alias dm='dmesg'
+alias dmc='sudo dmesg -c'
+
 # disk usage
 alias dus='df -hT'
 
@@ -231,6 +236,11 @@ alias ps='ps -a --forest -o user,pid,ppid,%cpu,%mem,vsz,rss,cmd'
 alias psm='ps -e | sort -nr -k 5 | head -10 | cut -c-$COLUMNS'
 alias psc='ps -e | sort -nr -k 4 | head -10 | cut -c-$COLUMNS'
 alias psg='ps -e | grep -v grep | grep -v -- --forest | expand | cut -c-$COLUMNS | grep -i -e VSZ -e'
+
+function kill-aesmd {
+    sudo kill -9 $(ps -e | grep -v grep | grep aesmd | tr -s " " | cut -d " " -f 2)
+}
+alias ak=kill-aesmd
 
 # Show which commands are being used the most
 alias bu='cut -f1 -d" " ~/.bash_history | sort | uniq -c | sort -nr | head -n 30'
