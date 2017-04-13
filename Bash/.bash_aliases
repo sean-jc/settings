@@ -95,26 +95,24 @@ function git-url-patch() {
     lynx -dump -nonumbers -hiddenlinks=liston $1 | grep -e "^http.*003[0-9].*\.patch" | xargs -n 1 curl -s | git am
 }
 
-if [ -f ~/.git-completion.bash ]; then
-  . ~/.git-completion.bash
+. ~/go/src/github.com/sean-jc/settings/git/.git-completion.bash
 
-  # Add git completion to aliases
-  __git_complete g __git_main
-  __git_complete gb _git_branch
+# Add git completion to aliases
+__git_complete g __git_main
+__git_complete gb _git_branch
 
-  __git_complete gc _git_commit
-  __git_complete gd _git_diff
-  __git_complete ge _git_send_email
-  __git_complete gf _git_fetch
-  __git_complete gg _git_checkout
-  __git_complete gk _git_format_patch
-  __git_complete gl _git_log
-  __git_complete glo _git_log
-  __git_complete gm __git_merge
-  __git_complete gp _git_cherry_pick
-  __git_complete gr _git_reset
-  __git_complete gs _git_log
-fi
+__git_complete gc _git_commit
+__git_complete gd _git_diff
+__git_complete ge _git_send_email
+__git_complete gf _git_fetch
+__git_complete gg _git_checkout
+__git_complete gk _git_format_patch
+__git_complete gl _git_log
+__git_complete glo _git_log
+__git_complete gm __git_merge
+__git_complete gp _git_cherry_pick
+__git_complete gr _git_reset
+__git_complete gs _git_log
 
 alias g='git'
 alias ga='git-apply'
