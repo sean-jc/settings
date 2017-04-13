@@ -67,6 +67,15 @@ function git-diff() {
     fi
 }
 
+function git-tree() {
+    if [ $# -eq 0 ]
+    then
+        git diff-tree --no-commit-id --name-only -r $(git rev-parse --verify HEAD)
+    else
+        git diff-tree --no-commit-id --name-only -r $1
+    fi
+}
+
 function git-blob() {
     git rev-list --all |
     while read commit; do
@@ -74,6 +83,11 @@ function git-blob() {
             echo $commit
         fi
     done
+}
+
+function git-apply() {
+    git reset --hard $(printf "origin/$(git rev-parse --abbrev-ref HEAD)")
+    git am --whitespace=fix ~/Patches/*.patch
 }
 
 function git-url-patch() {
@@ -89,11 +103,13 @@ if [ -f ~/.git-completion.bash ]; then
   __git_complete gb _git_branch
 
   __git_complete gc _git_commit
+  __git_complete gd _git_diff
   __git_complete ge _git_send_email
   __git_complete gf _git_fetch
   __git_complete gg _git_checkout
   __git_complete gk _git_format_patch
   __git_complete gl _git_log
+  __git_complete glo _git_log
   __git_complete gm __git_merge
   __git_complete gp _git_cherry_pick
   __git_complete gr _git_reset
@@ -101,7 +117,7 @@ if [ -f ~/.git-completion.bash ]; then
 fi
 
 alias g='git'
-alias ga='git am --whitespace=fix ~/Patches/*.patch'
+alias ga='git-apply'
 alias gb='git branch'
 alias gc='git commit'
 alias gd='git-diff'
@@ -110,10 +126,14 @@ alias gf='git fetch'
 alias gg='git checkout'
 alias gk='git format-patch -o ~/patches/'
 alias gl='git log'
+alias glo='git log --pretty=oneline'
 alias gm='git merge'
 alias gp='git cherry-pick'
 alias gr='git reset'
+alias grh='git reset HEAD'
+alias grhh='git reset HEAD --hard'
 alias gs='git status'
+alias gt='git-tree'
 alias gu='git-url-patch'
 alias gv='git remote -vv'
 
@@ -134,8 +154,8 @@ alias gol=git-golint
 # -----------------------------------------------------------------------------
 # SGX
 # -----------------------------------------------------------------------------
-alias mx='DRIVER_TEST=1 make_sgxsdk'
-alias dx='DEBUG=1 DRIVER_TEST=1 make_sgxsdk'
+alias mx='make_sgxsdk'
+alias dx='DEBUG=1 make_sgxsdk'
 
 # -----------------------------------------------------------------------------
 # App Shortcuts
@@ -224,8 +244,11 @@ alias .....="cd ../../../.."
 # Typos
 alias cd..="cd .."
 
+# Direct navigation to go/src
+alias so='cd -P ~/go/src'
+
 # Direct navigation to github directory
-alias gh='cd -P ~/github'
+alias gh='cd -P ~/go/src/github.com'
 
 alias mkdir='mkdir -p'
 function mcd() {

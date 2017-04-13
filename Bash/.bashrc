@@ -6,12 +6,11 @@
 export GOPATH=/home/sean/go
 
 # For development of GO itself
-export GOROOT_BOOTSTRAP=/usr/lib/go-1.6
-#export PATH=$GOPATH/src/github.com/golang/go/bin:$PATH
+export GOROOT_BOOTSTRAP=/usr/local/go
 
 # Include ~/.bin and GO bins to PATH
-# export PATH=$GOPATH/bin:$HOME/.bin:$PATH:/usr/local/go/bin
-export PATH=$GOPATH/bin:$HOME/.bin:$PATH
+export PATH=$HOME/.bin:$GOPATH/bin:/usr/local/go/bin:$PATH
+# export PATH=$HOME/.bin:$GOPATH/bin:/home/sean/go/src/github.com/golang/wgo/bin:/usr/local/go/bin:$PATH
 
 # If not running interactively, don't do anything
 case $- in
@@ -43,7 +42,7 @@ export EDITOR=vim
 
 # If set, the pattern "**" used in a pathname expansion context will
 # match all files and zero or more directories and subdirectories.
-#shopt -s globstar
+shopt -s globstar
 
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"

@@ -3,6 +3,8 @@
     "editor.fontSize": 12,
     "editor.tabSize": 4,
 
+    "files.eol": "\n",
+
     "files.exclude": {
         "**/.vscode":true,
         "**/.git": true,
@@ -29,4 +31,13 @@
         "**/*.o": true,
         "**/*.so": true
     }
+,
+"window.zoomLevel": 0,
+"workbench.colorTheme": "Monokai Dark Soda",
+"[cpp]": {
+        "editor.quickSuggestions": false
+},
+"[c]": {
+        "editor.quickSuggestions": false
+}
 }

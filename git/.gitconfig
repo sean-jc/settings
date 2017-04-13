@@ -6,6 +6,12 @@
 [http]
 	cookiefile = /home/sean/.gitcookies
 [core]
+	autocrlf = input
 	excludesfile = ~/.gitignore
 [credential]
 	helper = cache --timeout=3600
+[sendemail]
+	smtpserver = or-out.intel.com
+	smtpserverport = 25
+	cc = sean.j.christopherson@intel.com
+	bcc = sean.j.christopherson@linux.intel.com
