@@ -1,9 +1,23 @@
 // Place your settings in this file to overwrite the default settings
 {
-    "editor.fontSize": 12,
+    // Controls the font family.
+    "editor.fontFamily": "'Droid Sans Mono', Consolas, 'Courier New', monospace",
+
+    // Controls the font size.
+	"editor.fontSize": 13,
     "editor.tabSize": 4,
 
+    // The default end of line character.
     "files.eol": "\n",
+
+    // Missing semicolon.
+	"javascript.validate.lint.missingSemicolon": "ignore",
+    
+	// Semicolon instead of block.
+	"javascript.validate.lint.semicolonsInsteadOfBlocks": "ignore",
+    
+    // Function inside loop.
+	"javascript.validate.lint.functionsInsideLoops": "ignore",
 
     "files.exclude": {
         "**/.vscode":true,
@@ -21,7 +35,8 @@
         "**/node_modules/**": true,
         "**/*.a": true,
         "**/*.o": true,
-        "**/*.so": true
+        "**/*.so": true,
+        "**/vendor": true
     },
     "search.exclude": {
         "**/.vscode":true,
@@ -29,15 +44,15 @@
         "**/bower_components": true,
         "**/*.a": true,
         "**/*.o": true,
-        "**/*.so": true
+        "**/*.so": true,
+        "**/vendor": true
+    },
+    "window.zoomLevel": 0,
+    "workbench.colorTheme": "Monokai Dark Soda",
+    "[cpp]": {
+            "editor.quickSuggestions": false
+    },
+    "[c]": {
+            "editor.quickSuggestions": false
     }
-,
-"window.zoomLevel": 0,
-"workbench.colorTheme": "Monokai Dark Soda",
-"[cpp]": {
-        "editor.quickSuggestions": false
-},
-"[c]": {
-        "editor.quickSuggestions": false
-}
 }
