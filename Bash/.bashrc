@@ -3,14 +3,14 @@
 # for examples
 
 # Define GOPATH
-export GOPATH=/home/sean/go
+export GOPATH=$HOME/go
 
 # For development of GO itself
 export GOROOT_BOOTSTRAP=/usr/local/go
 
 # Include ~/.bin and GO bins to PATH
 export PATH=$HOME/.bin:$GOPATH/bin:/usr/local/go/bin:$PATH
-# export PATH=$HOME/.bin:$GOPATH/bin:/home/sean/go/src/github.com/golang/wgo/bin:/usr/local/go/bin:$PATH
+# export PATH=$HOME/.bin:$GOPATH/bin:$HOME/go/src/github.com/golang/wgo/bin:/usr/local/go/bin:$PATH
 
 # If not running interactively, don't do anything
 case $- in
