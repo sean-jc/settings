@@ -153,6 +153,7 @@ alias gol=git-golint
 # SGX
 # -----------------------------------------------------------------------------
 alias lsd='lsdt'
+alias epc='~/go/src/epct/epct.sh'
 alias mx='make_sgxsdk'
 alias dx='DEBUG=1 make_sgxsdk'
 
