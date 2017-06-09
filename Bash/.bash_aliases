@@ -154,6 +154,9 @@ alias gol=git-golint
 # -----------------------------------------------------------------------------
 alias lsd='lsdt'
 alias epc='~/go/src/epct/epct.sh'
+alias epd='EPCT_DEBUG=1 epc'
+alias ep2='EPCT_CGROUP_V2=1 epc'
+alias epd2='EPCT_CGROUP_V2=1 epd'
 alias mx='make_sgxsdk'
 alias dx='DEBUG=1 make_sgxsdk'
 
