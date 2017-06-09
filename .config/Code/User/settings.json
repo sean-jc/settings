@@ -1,23 +1,28 @@
 // Place your settings in this file to overwrite the default settings
 {
-    // Controls the font family.
+    "workbench.colorTheme": "Monokai Dark Soda",
     "editor.fontFamily": "'Droid Sans Mono', Consolas, 'Courier New', monospace",
-
-    // Controls the font size.
-	"editor.fontSize": 13,
+    "editor.fontSize": 12,
     "editor.tabSize": 4,
+    "editor.renderIndentGuides": false,
+    "editor.dragAndDrop": false,
+    // "editor.minimap.enabled": false,
 
-    // The default end of line character.
-    "files.eol": "\n",
+    "files.eol": "\n",  // The default end of line character.
+    "diffEditor.ignoreTrimWhitespace": false,
 
-    // Missing semicolon.
-	"javascript.validate.lint.missingSemicolon": "ignore",
-    
-	// Semicolon instead of block.
-	"javascript.validate.lint.semicolonsInsteadOfBlocks": "ignore",
-    
-    // Function inside loop.
-	"javascript.validate.lint.functionsInsideLoops": "ignore",
+    "window.menuBarVisibility": "toggle",
+    "window.newWindowDimensions": "maximized",
+    "window.openFilesInNewWindow": "default",
+    "window.reopenFolders": "all",
+    "window.zoomLevel": 0,
+
+    "workbench.editor.enablePreview": false,
+    "workbench.editor.showIcons": false,
+
+    "javascript.validate.lint.missingSemicolon": "ignore",          // Missing semicolon.
+    "javascript.validate.lint.semicolonsInsteadOfBlocks": "ignore", // Semicolon instead of block.
+    "javascript.validate.lint.functionsInsideLoops": "ignore",      // Function inside loop.
 
     "files.exclude": {
         "**/.vscode":true,
@@ -46,13 +51,5 @@
         "**/*.o": true,
         "**/*.so": true,
         "**/vendor": true
-    },
-    "window.zoomLevel": 0,
-    "workbench.colorTheme": "Monokai Dark Soda",
-    "[cpp]": {
-            "editor.quickSuggestions": false
-    },
-    "[c]": {
-            "editor.quickSuggestions": false
     }
 }
