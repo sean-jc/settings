@@ -1,44 +1,3 @@
-# -----------------------------------------------------------------------------
-# LXD
-# -----------------------------------------------------------------------------
-alias slxd='sudo -E $GOPATH/bin/lxd --group sudo'
-
-alias maked="DEBUG='-gcflags \"-N -l\"' make"
-
-# -----------------------------------------------------------------------------
-# Docker
-# -----------------------------------------------------------------------------
-alias dps='docker ps'
-alias drm='dps -qa | xargs --no-run-if-empty docker rm'
-alias di='docker images'
-alias drmi='di --quiet --filter=dangling=true | xargs --no-run-if-empty docker rmi'
-alias docker-gc='sudo docker-gc'
-
-function docker-bash() {
-    if [ $# -eq 0 ]
-    then
-        docker exec -it $(docker ps -ql) bash
-    else
-        docker exec -it $1 bash
-    fi
-}
-alias dbash='docker-bash'
-
-function docker-build() {
-	docker build --build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy --build-arg no_proxy=$no_proxy -t $1 $2
-}
-alias dbuild='docker-build'
-
-function docker-dev() {
-    docker run --privileged --rm -ti -v `pwd`:/go/src/github.com/docker/docker -e https_proxy=$https_proxy -e http_proxy=$http_proxy -e no_proxy=$no_proxy docker-dev:$(git rev-parse --abbrev-ref HEAD) /bin/bash
-}
-alias ddev='docker-dev'
-
-function docker-make() {
-    BINDDIR=. DOCKER_BUILD_ARGS="--build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy --build-arg no_proxy=$no_proxy" make "$@"
-}
-alias dmake='docker-make'
-
 # Refresh bash terminal
 alias rf='source ~/.bashrc'
 
@@ -303,3 +262,80 @@ function extract() {
         fi
     fi
 }
+
+# MAke HOst kernel
+function make-kernel-package() {
+    if [[ $# -lt 1 ]]; then
+        printf "Must specify the target kernel name\n"
+        return 1
+    fi
+    if [[ $# -gt 2 ]]; then
+        printf "Maximum of 2 arguments supported: kernel (1) and revision (2)\n"
+        return 2
+    fi
+    if [[ $# -eq 1 ]]; then
+        CONCURRENCY_LEVEL=4 fakeroot make-kpkg --initrd --append-to-version=-$1 binary-arch --revision 1
+    else
+        CONCURRENCY_LEVEL=4 fakeroot make-kpkg --initrd --append-to-version=-$1 binary-arch --revision $2
+    fi
+}
+alias maho='make-kernel-package'
+
+# MAke GuEst kernel
+function make-kernel() {
+    if [[ $# -lt 1 ]]; then
+        printf "Must specify the target kernel name\n"
+        return 1
+    fi
+    if [[ $# -gt 2 ]]; then
+        printf "Maximum of 2 arguments supported: kernel (1) and target (2)\n"
+        return 2
+    fi
+    if [[ $# -eq 1 ]]; then
+        make O=~/obj/kernel/$1 -j4
+    else
+        make O=~/obj/kernel/$1 $2
+    fi
+}
+alias mage='make-kernel'
+
+# -----------------------------------------------------------------------------
+# LXD
+# -----------------------------------------------------------------------------
+alias slxd='sudo -E $GOPATH/bin/lxd --group sudo'
+
+alias maked="DEBUG='-gcflags \"-N -l\"' make"
+
+# -----------------------------------------------------------------------------
+# Docker
+# -----------------------------------------------------------------------------
+alias dps='docker ps'
+alias drm='dps -qa | xargs --no-run-if-empty docker rm'
+alias di='docker images'
+alias drmi='di --quiet --filter=dangling=true | xargs --no-run-if-empty docker rmi'
+alias docker-gc='sudo docker-gc'
+
+function docker-bash() {
+    if [ $# -eq 0 ]
+    then
+        docker exec -it $(docker ps -ql) bash
+    else
+        docker exec -it $1 bash
+    fi
+}
+alias dbash='docker-bash'
+
+function docker-build() {
+    docker build --build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy --build-arg no_proxy=$no_proxy -t $1 $2
+}
+alias dbuild='docker-build'
+
+function docker-dev() {
+    docker run --privileged --rm -ti -v `pwd`:/go/src/github.com/docker/docker -e https_proxy=$https_proxy -e http_proxy=$http_proxy -e no_proxy=$no_proxy docker-dev:$(git rev-parse --abbrev-ref HEAD) /bin/bash
+}
+alias ddev='docker-dev'
+
+function docker-make() {
+    BINDDIR=. DOCKER_BUILD_ARGS="--build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy --build-arg no_proxy=$no_proxy" make "$@"
+}
+alias dmake='docker-make'
