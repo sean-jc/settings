@@ -12,6 +12,9 @@ export GOROOT_BOOTSTRAP=/usr/local/go
 export PATH=$HOME/.bin:$GOPATH/bin:/usr/local/go/bin:$PATH
 # export PATH=$HOME/.bin:$GOPATH/bin:$HOME/go/src/github.com/golang/wgo/bin:/usr/local/go/bin:$PATH
 
+# Require a revision when using make-kpkg to build .deb kernels
+export DEBIAN_REVISION_MANDATORY=1
+
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
