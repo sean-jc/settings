@@ -6,7 +6,7 @@
     "editor.tabSize": 4,
     "editor.renderIndentGuides": false,
     "editor.dragAndDrop": false,
-    // "editor.minimap.enabled": false,
+    "editor.minimap.enabled": true,
 
     "files.eol": "\n",  // The default end of line character.
     "diffEditor.ignoreTrimWhitespace": false,
@@ -14,15 +14,11 @@
     "window.menuBarVisibility": "toggle",
     "window.newWindowDimensions": "maximized",
     "window.openFilesInNewWindow": "default",
-    "window.reopenFolders": "all",
+    "window.restoreWindows": "all",
     "window.zoomLevel": 0,
 
     "workbench.editor.enablePreview": false,
     "workbench.editor.showIcons": false,
-
-    "javascript.validate.lint.missingSemicolon": "ignore",          // Missing semicolon.
-    "javascript.validate.lint.semicolonsInsteadOfBlocks": "ignore", // Semicolon instead of block.
-    "javascript.validate.lint.functionsInsideLoops": "ignore",      // Function inside loop.
 
     "files.exclude": {
         "**/.vscode":true,
