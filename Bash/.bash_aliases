@@ -279,6 +279,7 @@ function make-kernel-package() {
     else
         CONCURRENCY_LEVEL=4 fakeroot make-kpkg --initrd --append-to-version=-$1 binary-arch --revision $2
     fi
+    rm ../*dbg*.deb
 }
 alias maho='make-kernel-package'
 
