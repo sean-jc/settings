@@ -68,7 +68,6 @@ __git_complete gg _git_checkout
 __git_complete gk _git_format_patch
 __git_complete gl _git_log
 __git_complete glo _git_log
-__git_complete gm __git_merge
 __git_complete gp _git_cherry_pick
 __git_complete gr _git_reset
 __git_complete gs _git_log
@@ -84,16 +83,17 @@ alias gg='git checkout'
 alias gk='git format-patch -o ~/patches/'
 alias gl='git log'
 alias glo='git log --pretty=oneline'
-alias gm='git merge'
+alias gm="git status | grep modified | tr -d '\t' | tr -d ' ' | cut -f 2 -d :"
 alias gp='git cherry-pick'
 alias gr='git reset'
 alias grh='git reset HEAD'
 alias grhh='git reset HEAD --hard'
+alias grc='git rebase --continue'
+alias gri='git rebase --interactive'
 alias gs='git status'
 alias gt='git-tree'
 alias gu='git-url-patch'
 alias gv='git remote -vv'
-
 
 
 # Run gofmt on all .go files from the HEAD commit
@@ -145,6 +145,7 @@ alias term='gnome-terminal &'
 # apt and dpkg
 alias apt='sudo apt'
 alias apt-get='sudo apt-get'
+alias ard='apt-cache rdepends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances --installed --recurse'
 
 # zpool
 alias zp='sudo zpool'
@@ -292,9 +293,9 @@ function make-kernel() {
         return 2
     fi
     if [[ $# -eq 1 ]]; then
-        make O=~/obj/kernel/$1 -j4
+        make O=~/build/kernel/$1 -j4
     else
-        make O=~/obj/kernel/$1 $2
+        make O=~/build/kernel/$1 $2
     fi
 }
 alias mage='make-kernel'
