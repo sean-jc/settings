@@ -1,8 +1,8 @@
 // Place your settings in this file to overwrite the default settings
 {
     "workbench.colorTheme": "Monokai Dark Soda",
-    "editor.fontFamily": "'Droid Sans Mono', Consolas, 'Courier New', monospace",
-    "editor.fontSize": 12,
+    "editor.fontFamily": "'Noto Mono'",
+    "editor.fontSize": 13,
     "editor.tabSize": 4,
     "editor.renderIndentGuides": false,
     "editor.dragAndDrop": false,
