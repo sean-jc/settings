@@ -44,7 +44,11 @@ xkb_symbols "pc105" {
     modifier_map Mod5   { <LVL3>, <MDSW> };
 
     key <ALT>  {	[ NoSymbol, Alt_L	]	};
-    include "altwin(meta_alt)"
+    key <LALT> { 	[ Super_L		] };
+    key <RALT> { 	type[Group1] = "TWO_LEVEL",	symbols[Group1] = [ Alt_R, Meta_R ] };
+    modifier_map Mod1 { Alt_R, Meta_L, Meta_R };
+
+    #include "altwin(meta_alt)"
 
     key <META> {	[ NoSymbol, Meta_L	]	};
     modifier_map Mod1   { <META> };
