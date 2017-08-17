@@ -123,7 +123,6 @@ alias dx='DEBUG=1 make_sgxsdk'
 # App Shortcuts
 # -----------------------------------------------------------------------------
 alias sub='/opt/sublime_text/sublime_text'
-
 alias pts='~/.bin/pts/phoronix-test-suite'
 
 # -----------------------------------------------------------------------------
@@ -163,6 +162,9 @@ alias services='sys list-unit-files --type=service'
 
 # List all UDP/TCP ports
 alias ports='netstat -tulanp'
+
+# Find my systems in the lab...
+alias christ='sudo nmap -sP 10.54.77.* | grep -e sjchrist -e "for 10"'
 
 # ls
 alias ls='ls -aF --color=always'
