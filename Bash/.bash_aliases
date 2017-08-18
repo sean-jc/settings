@@ -281,10 +281,11 @@ function make-kernel-package() {
         printf "Maximum of 2 arguments supported: kernel (1) and revision (2)\n"
         return 2
     fi
+    THREADS=$(grep -c '^processor' /proc/cpuinfo)
     if [[ $# -eq 1 ]]; then
-        CONCURRENCY_LEVEL=4 fakeroot make-kpkg --initrd --append-to-version=-$1 binary-arch --revision 1
+        CONCURRENCY_LEVEL=$THREADS fakeroot make-kpkg --initrd --append-to-version=-$1 binary-arch --revision 1
     else
-        CONCURRENCY_LEVEL=4 fakeroot make-kpkg --initrd --append-to-version=-$1 binary-arch --revision $2
+        CONCURRENCY_LEVEL=$THREADS fakeroot make-kpkg --initrd --append-to-version=-$1 binary-arch --revision $2
     fi
     rm ../*dbg*.deb
 }
@@ -300,8 +301,9 @@ function make-kernel() {
         printf "Maximum of 2 arguments supported: kernel (1) and target (2)\n"
         return 2
     fi
+    THREADS=$(grep -c '^processor' /proc/cpuinfo)
     if [[ $# -eq 1 ]]; then
-        make O=~/build/kernel/$1 -j4
+        make O=~/build/kernel/$1 -j$THREADS
     else
         make O=~/build/kernel/$1 $2
     fi
