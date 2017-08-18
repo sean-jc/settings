@@ -150,7 +150,12 @@ alias ard='apt-cache rdepends --no-suggests --no-conflicts --no-breaks --no-repl
 alias zp='sudo zpool'
 
 #
-#dpkg-query -Wf '${Installed-Size}\t${Package}\n' | sort -n
+function dpkg-query-size {
+    dpkg-query -Wf '${Installed-Size}\t${Package}\n'
+}
+alias dq='dpkg-query-size'
+alias dqs='dq | sort -n'
+
 function dpkg-purge {
     dpkg --list | grep "^rc" | cut -d " " -f 3 | xargs sudo dpkg --purge
 }
