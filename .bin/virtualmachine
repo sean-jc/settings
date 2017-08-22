@@ -1,0 +1,71 @@
+#!/bin/bash
+if [[ -z $img ]]; then
+    printf "Must specify the image name via: \$img.\n"
+    exit 2
+fi
+
+if [[ -z $qemu ]]; then
+    printf "Must specify the qemu build via: \$qemu.\n"
+    exit 2
+fi
+
+if [[ -s $iso && -s $kernel ]]; then
+    printf "Cannot specify both \$iso and \$kernel.\n"
+    exit 2
+fi
+
+# img=/home/sean/images/qemu/ubuntu-16.04-server-$1.img
+# boot=$2
+# kernel=$3
+
+if [[ $os = "hyper-v" ]]; then
+    mac="00:16:3E:68:00:FF"
+elif [[ $img = "golden" ]]; then
+    mac="00:16:3E:68:00:00"
+elif [[ $img = "vm" ]]; then
+    mac="00:16:3E:68:00:01"
+elif [[ $img = "hvm" ]]; then
+    mac="00:16:3E:68:00:02"
+else
+    mac="00:16:3E:68:00:03"
+fi
+
+if [[ $os = "hyper-v" ]]; then
+    img=/home/sean/images/qemu/hyper-v-2016-$img.img
+else
+    img=/home/sean/images/qemu/ubuntu-16.04-server-$img.img
+fi
+
+qemu=/home/sean/build/qemu/$qemu/x86_64-softmmu/qemu-system-x86_64
+ifup=$(which ifup)
+
+common="-enable-kvm -machine q35,accel=kvm,kernel_irqchip -m 16G -smp 2 -device virtio-net-pci,netdev=net0,mac=$mac -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
+
+if [[ $os = "hyper-v" ]]; then
+    cpu="-cpu host,hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time,+vmx"
+else
+    cpu="-cpu host -bios /usr/share/ovmf/OVMF.fd"
+fi
+
+if [[ $display = "vnc" ]]; then
+    display="-vga std -display vnc=:5900"
+else
+    display="-nographic"
+fi
+
+if [[ $virtio = "false" ]]; then
+    os="-hda $img"
+else
+    os="-drive file=$img,if=virtio"
+fi
+
+if [[ -s $iso ]]; then
+    os="$os -drive file=$iso,index=0,media=cdrom -boot d"
+elif [[ -s $kernel ]]; then
+    os="$os -kernel /home/sean/build/kernel/$kernel/arch/x86_64/boot/bzImage -append quiet console=tty1 console=ttyS0 earlyprintk=ttyS0 $append"
+fi
+if [[ -s $iso1 ]]; then
+    os ="$os -drive file=$iso1,index=1,media=cdrom"
+fi
+
+sudo -E $qemu $common $cpu $display $os $extra

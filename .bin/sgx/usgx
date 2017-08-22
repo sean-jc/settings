@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+cd /opt/intel
+sudo -E sgxsdk/uninstall.sh
+sudo -E sgxpsw/uninstall.sh
+cd -

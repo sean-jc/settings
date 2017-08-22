@@ -109,6 +109,23 @@ function git-golint() {
 alias gol=git-golint
 
 # -----------------------------------------------------------------------------
+# Virtual Machines
+# -----------------------------------------------------------------------------
+alias vm='virt stable vm'
+alias vmm='v2_cgroup=memory vm'
+alias vms='virt sgx vm'
+alias vepc='v2_cgroup=sgx_epc vms'
+alias hyv='virt stable hyv'
+alias vuefi='virt stable uefi'
+# alias vuefi='qemu=stable img=uefi display=vnc iso=~/images/ubuntu/ubuntu-16.04.3-desktop-amd64.iso virtualmachine'
+alias vanilla='virtio=false virt stable'
+
+alias hv='os=hyper-v virt stable machine'
+alias hvd='os=hyper-v display=vnc virt stable machine'
+alias hvi='os=hyper-v display=vnc iso1=~/images/hyper-v/virtio-win-0.1.126.iso virt stable machine'
+alias hvnew='os=hyper-v display=vnc iso=~images/hyper-v/hyper-v-2016.iso iso1=~/images/hyper-v/virtio-win-0.1.126.iso virt stable'
+
+# -----------------------------------------------------------------------------
 # SGX
 # -----------------------------------------------------------------------------
 alias lsd='lsdt'

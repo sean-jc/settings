@@ -1,0 +1,3 @@
+#!/bin/bash
+#nc -v -X 5 -x http://proxy-us.intel.com:1080 %h 9418
+connect -S proxy-socks.jf.intel.com:1080 $@

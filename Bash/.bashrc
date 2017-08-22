@@ -9,9 +9,8 @@ export GOPATH=$HOME/go
 # For development of GO itself
 export GOROOT_BOOTSTRAP=/usr/local/go
 
-# Include ~/.bin and GO bins to PATH
-export PATH=$HOME/.bin:$GOPATH/bin:/usr/local/go/bin:$PATH
-# export PATH=$HOME/.bin:$GOPATH/bin:$HOME/go/src/github.com/golang/wgo/bin:/usr/local/go/bin:$PATH
+# Add (repo)/.bin, ~/.bin and GO bins to PATH
+export PATH=$HOME/go/src/github.com/sean-jc/settings/.bin:$HOME/go/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
 
 # Require a revision when using make-kpkg to build .deb kernels
 export DEBIAN_REVISION_MANDATORY=1

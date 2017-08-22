@@ -1,0 +1,12 @@
+#!/bin/bash
+sudo -E rmmod kvm_intel
+sudo -E rmmod kvm
+sudo -E rmmod sgx 
+set -e
+#Ensure the driver modules were removed
+! ls /dev/kvm
+! ls /dev/sgx
+sudo -E insmod /home/sean/build/kernel/kvm/drivers/platform/x86/intel_sgx/intel_sgx.ko
+sudo -E insmod /home/sean/build/kernel/kvm/arch/x86/kvm/kvm_intel.ko
+ls /dev/sgx
+ls /dev/kvm

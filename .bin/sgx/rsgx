@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+cd /opt/intel
+sudo -E sgxsdk/uninstall.sh
+sudo -E sgxpsw/uninstall.sh
+sudo -E /home/sean/go/src/github.com/01org/linux-sgx/linux/installer/bin/sgx_linux_x64_psw_1.6.100.34922.bin
+sudo -E sh -c 'echo yes | /home/sean/go/src/github.com/01org/linux-sgx/linux/installer/bin/sgx_linux_x64_sdk_1.6.100.34922.bin'
+cd -

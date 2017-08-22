@@ -1,0 +1,18 @@
+#!/bin/bash
+if [[ $# -lt 2 ]]; then
+    printf "Must specify the qemu build and target image\n"
+    exit 1
+fi
+
+if [[ $# -gt 3 ]]; then
+    printf "Maximum of 3 arguments supported: qemu (1), kernel (2) and image (3)\n"
+    exit 2
+fi
+
+if [[ $# -eq 1 ]]; then
+    qemu=$1 img=$2 virtio=$virtio os=$os virtualmachine
+elif [[ -s $v2_cgroup ]]; then
+    qemu=$1 img=$2 virtio=$virtio os=$os kernel=$3 append="cgroup_no_v1=$v2_cgroup" virtualmachine
+else
+    qemu=$1 img=$2 virtio=$virtio os=$os kernel=$3 virtualmachine
+fi
