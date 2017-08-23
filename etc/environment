@@ -1,0 +1,7 @@
+PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
+ftp_proxy="http://proxy-us.intel.com:911"
+http_proxy="http://proxy-us.intel.com:911"
+https_proxy="http://proxy-us.intel.com:912"
+no_proxy="intel.com,*.intel.com,127.0.0.1,localhost"
+socks_proxy="http://proxy-us.intel.com:1080"
+GIT_PROXY_COMMAND=git-proxy
