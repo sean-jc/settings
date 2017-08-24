@@ -1,4 +1,4 @@
 #!/bin/bash
 dir=$(pwd)
 git reset --hard HEAD
-ssh sean@sjchrist-sgx.jf.intel.com "cd $dir ; git diff --no-prefix" | patch -p0
+ssh sean@sjchrist-sky.jf.intel.com "cd $dir ; git diff --no-prefix" | patch -p0
