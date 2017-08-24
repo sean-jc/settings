@@ -245,6 +245,11 @@ alias so='cd -P ~/go/src'
 alias gh='cd -P ~/go/src/github.com'
 alias int='cd -P ~/go/src/intel.com'
 
+# Direct navigation to kernel and image directories
+alias kn='cd -P ~/build/kernel'
+alias iq='cd -P ~/images/qemu'
+alias iv='cd -P ~/images/hyper-v'
+
 alias mkdir='mkdir -p'
 function mcd() {
     mkdir $1
