@@ -240,11 +240,10 @@ alias .....="cd ../../../.."
 # Typos
 alias cd..="cd .."
 
-# Direct navigation to go/src
+# Direct navigation to go directories
 alias so='cd -P ~/go/src'
-
-# Direct navigation to github directory
 alias gh='cd -P ~/go/src/github.com'
+alias int='cd -P ~/go/src/intel.com'
 
 alias mkdir='mkdir -p'
 function mcd() {
