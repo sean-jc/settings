@@ -10,7 +10,10 @@ export GOPATH=$HOME/go
 export GOROOT_BOOTSTRAP=/usr/local/go
 
 # Add (repo)/.bin, ~/.bin and GO bins to PATH
-export PATH=$HOME/go/src/github.com/sean-jc/settings/.bin:$HOME/go/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
+
+if [[ $PATH != *"sean-jc/settings"* ]]; then
+    export PATH=$HOME/go/src/github.com/sean-jc/settings/.bin:$HOME/go/bin:/usr/local/go/bin:$PATH
+fi
 
 # Require a revision when using make-kpkg to build .deb kernels
 export DEBIAN_REVISION_MANDATORY=1
