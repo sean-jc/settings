@@ -304,11 +304,10 @@ function make-kernel-package() {
     fi
     THREADS=$(grep -c '^processor' /proc/cpuinfo)
     if [[ $# -eq 1 ]]; then
-        CONCURRENCY_LEVEL=$THREADS fakeroot make-kpkg --initrd --append-to-version=-$1 binary-arch --revision 1
+        CONCURRENCY_LEVEL=$THREADS fakeroot make-kpkg --initrd --append-to-version=-$1 kernel_headers kernel_image --revision 1
     else
-        CONCURRENCY_LEVEL=$THREADS fakeroot make-kpkg --initrd --append-to-version=-$1 binary-arch --revision $2
+        CONCURRENCY_LEVEL=$THREADS fakeroot make-kpkg --initrd --append-to-version=-$1 kernel_headers kernel_image --revision $2
     fi
-    rm ../*dbg*.deb
 }
 alias maho='make-kernel-package'
 
