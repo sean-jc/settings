@@ -111,9 +111,9 @@ alias gol=git-golint
 # -----------------------------------------------------------------------------
 # Virtual Machines
 # -----------------------------------------------------------------------------
-alias vm='virt stable vm'
+alias vm='virt stable kvm'
 alias vmm='v2_cgroup=memory vm'
-alias vms='virt sgx vm'
+alias vms='virt sgx kvm'
 alias vepc='v2_cgroup=sgx_epc vms'
 alias hyv='virt stable hyv'
 alias vuefi='virt stable uefi'
