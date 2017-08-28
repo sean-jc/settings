@@ -54,7 +54,7 @@ function git-url-patch() {
     lynx -dump -nonumbers -hiddenlinks=liston $1 | grep -e "^http.*003[0-9].*\.patch" | xargs -n 1 curl -s | git am
 }
 
-. ~/go/src/github.com/sean-jc/settings/git/.git-completion.bash
+. $SETTINGS/git/.git-completion.bash
 
 # Add git completion to aliases
 __git_complete g __git_main
@@ -172,6 +172,7 @@ function dpkg-query-size {
 }
 alias dq='dpkg-query-size'
 alias dqs='dq | sort -n'
+alias dg='dq | grep'
 
 function dpkg-purge {
     dpkg --list | grep "^rc" | cut -d " " -f 3 | xargs sudo dpkg --purge
@@ -180,6 +181,7 @@ function dpkg-purge {
 # systemd
 alias sk='sudo -sE'
 alias sys='sudo systemctl'
+alias failed='sys list-units --state=failed'
 alias services='sys list-unit-files --type=service'
 
 # List all UDP/TCP ports
