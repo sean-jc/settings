@@ -5,7 +5,7 @@ if [[ $# -lt 2 ]]; then
 fi
 
 if [[ $# -gt 3 ]]; then
-    printf "Maximum of 3 arguments supported: qemu (1), kernel (2) and image (3)\n"
+    printf "Maximum of 3 arguments supported: qemu (1), image (2) and kernel (3)\n"
     exit 2
 fi
 

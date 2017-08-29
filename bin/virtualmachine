@@ -9,7 +9,7 @@ if [[ -z $qemu ]]; then
     exit 2
 fi
 
-if [[ -s $iso && -s $kernel ]]; then
+if [[ -n $iso && -n $kernel ]]; then
     printf "Cannot specify both \$iso and \$kernel.\n"
     exit 2
 fi
@@ -20,14 +20,20 @@ fi
 
 if [[ $os = "hyper-v" ]]; then
     mac="00:16:3E:68:00:FF"
-elif [[ $img = "golden" ]]; then
+elif [[ $img = "gold" ]]; then
     mac="00:16:3E:68:00:00"
-elif [[ $img = "vm" ]]; then
+elif [[ $img = "kvm" ]]; then
     mac="00:16:3E:68:00:01"
-elif [[ $img = "hvm" ]]; then
+elif [[ $img = "hyv" ]]; then
     mac="00:16:3E:68:00:02"
 else
-    mac="00:16:3E:68:00:03"
+    mac=$(ifconfig | grep br0 | grep 00:16:3e:68:00:)
+    if [[ -n $mac ]]; then
+        mac="0x$(echo $mac | tr -s ' ' | cut -f 5 -d ' ' | cut -f 6 -d :)"
+        mac=$(printf "00:16:3E:68:00:%02x" $((mac += 1)) )
+    else
+        mac="00:16:3E:68:00:03"
+    fi
 fi
 
 if [[ $os = "hyper-v" ]]; then
@@ -39,7 +45,16 @@ fi
 qemu=/home/sean/build/qemu/$qemu/x86_64-softmmu/qemu-system-x86_64
 ifup=$(which ifup)
 
-common="-enable-kvm -machine q35,accel=kvm,kernel_irqchip -m 16G -smp 2 -device virtio-net-pci,netdev=net0,mac=$mac -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
+common="-enable-kvm -machine q35,accel=kvm,kernel_irqchip -smp 2 -device virtio-net-pci,netdev=net0,mac=$mac -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
+
+mem="-m 16G"
+if [[ $(free -g | grep Mem: | tr -s ' ' | cut -f 2 -d ' ') -lt 17 ]]; then
+    if [[ $os = "hyper-v" ]]; then
+        printf "Not enough memory to start Hyper-V\n"
+        exit 2
+    fi
+    mem="-m 8G"
+fi
 
 if [[ $os = "hyper-v" ]]; then
     cpu="-cpu host,hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time,+vmx"
@@ -59,13 +74,13 @@ else
     os="-drive file=$img,if=virtio"
 fi
 
-if [[ -s $iso ]]; then
+if [[ -n $iso ]]; then
     os="$os -drive file=$iso,index=0,media=cdrom -boot d"
-elif [[ -s $kernel ]]; then
+elif [[ -n $kernel ]]; then
     os="$os -kernel /home/sean/build/kernel/$kernel/arch/x86_64/boot/bzImage -append quiet console=tty1 console=ttyS0 earlyprintk=ttyS0 $append"
 fi
-if [[ -s $iso1 ]]; then
+if [[ -n $iso1 ]]; then
     os ="$os -drive file=$iso1,index=1,media=cdrom"
 fi
 
-sudo -E $qemu $common $cpu $display $os $extra
+sudo -E $qemu $common $cpu $mem $display $os $extra
