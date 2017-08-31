@@ -1,0 +1,11 @@
+#!/bin/bash
+if [[ $# -ne 1 ]]; then
+    printf "Must specify the VM name\n"
+    exit 1
+fi
+
+sudo cp /home/sean/go/src/github.com/sean-jc/settings/VMs/$1/etc/hostname /etc/hostname
+sudo cp /home/sean/go/src/github.com/sean-jc/settings/VMs/$1/etc/hosts /etc/hosts
+sudo cp /home/sean/go/src/github.com/sean-jc/settings/VMs/$1/etc/network/interfaces /etc/network/interfaces
+sudo cp /home/sean/go/src/github.com/sean-jc/settings/VMs/$1/etc/default/grub /etc/default/grub
+sudo update-grub
