@@ -1,0 +1,12 @@
+New-VMSwitch ExternalSwitch -NetAdapterName (Get-NetAdapter  | ? Status -eq "Up")[0].Name
+
+// L1
+New-VM -Name hyper -MemoryStartupBytes 8GB -VHDPath C:\Users\sean\Images\ubuntu-16.04-server-hyper.vhdx -Generation 2 -Path C:\Users\sean\VMs\ -SwitchName ExternalSwitch -BootDevice VHD
+
+// L0
+New-VM -Name hyper -MemoryStartupBytes 16GB -VHDPath C:\Users\sean\Images\ubuntu-16.04-server-hyper.vhdx -Generation 2 -Path C:\Users\sean\VMs\ -SwitchName ExternalSwitch -BootDevice VHD
+Set-VMProcessor -VMName hyper -ExposeVirtualizationExtensions $true
+Set-VMNetworkAdapter -VMName hyper -MacAddressSpoofing On
+
+Set-VMFirmware hyper -EnableSecureBoot Off
+Start-VM hyper 

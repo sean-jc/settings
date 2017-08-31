@@ -1,0 +1,2 @@
+net use Z: \\10.54.74.137\images /persistent:yes
+
