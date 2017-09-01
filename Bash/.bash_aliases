@@ -141,6 +141,8 @@ alias dx='DEBUG=1 make_sgxsdk'
 # -----------------------------------------------------------------------------
 alias sub='/opt/sublime_text/sublime_text'
 alias pts='~/.bin/pts/phoronix-test-suite'
+alias time='/usr/bin/time'
+alias ftime='time -f "REAL:\t\t%e\nSYSTEM\t\t%S\nUSER\t\t%U\nCPU:\t\t%P\nMAX_RSS:\t%M\nCTX_INV:\t%c\nCTX_VOL:\t%w\nIO_IN:\t\t%I\nIO_OUT:\t\t%O\nMAJ_PF:\t\t%F\nMIN_PF:\t\t%R\nSWAPS:\t\t%W"'
 
 # -----------------------------------------------------------------------------
 # Utilities
@@ -331,6 +333,18 @@ function make-kernel() {
     fi
 }
 alias mage='make-kernel'
+
+# time kernel
+function time-kernel() {
+    if [[ $# -ne 1 ]]; then
+        printf "Must specify the target kernel name\n"
+        return 1
+    fi
+    make O=~/build/kernel/$1 clean
+    sleep .25
+    ftime -o ~/build/kernel/$1/tk_time.log make O=~/build/kernel/$1 > ~/build/kernel/$1/tk_build.log 2>&1
+}
+alias tk='time-kernel'
 
 # -----------------------------------------------------------------------------
 # LXD
