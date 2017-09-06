@@ -66,6 +66,12 @@ if [[ $display = "vnc" ]]; then
     display="-vga std -display vnc=:5900"
 else
     display="-nographic"
+    if [[ $daemon != "false" ]]; then
+        display="$display -serial null -monitor null -parallel null"
+    fi
+fi
+if [[ $daemon != "false" ]]; then
+    extra="-daemonize"
 fi
 
 if [[ $virtio = "false" ]]; then
