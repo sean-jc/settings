@@ -9,4 +9,5 @@ Set-VMProcessor -VMName hyper -ExposeVirtualizationExtensions $true
 Set-VMNetworkAdapter -VMName hyper -MacAddressSpoofing On
 
 Set-VMFirmware hyper -EnableSecureBoot Off
+Enable-VMResourceMetering -VMName hyper
 Start-VM hyper 
