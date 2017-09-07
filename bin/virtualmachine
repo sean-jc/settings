@@ -9,8 +9,19 @@ if [[ -z $qemu ]]; then
     exit 2
 fi
 
+
+if [[ -z $cpus ]]; then
+    printf "Must specify the number of cpus via: \$cpus.\n"
+    exit 2
+fi
+
 if [[ -n $iso && -n $kernel ]]; then
     printf "Cannot specify both \$iso and \$kernel.\n"
+    exit 2
+fi
+
+if [[ -z $kernel && -n $append ]]; then
+    printf "Cannot specify \$append without \$kernel.\n"
     exit 2
 fi
 
@@ -20,20 +31,15 @@ fi
 
 if [[ $os = "hyper-v" ]]; then
     mac="00:16:3E:68:00:FF"
-elif [[ $img = "gold" ]]; then
-    mac="00:16:3E:68:00:00"
-elif [[ $img = "kvm" ]]; then
-    mac="00:16:3E:68:00:01"
-elif [[ $img = "hyv" ]]; then
-    mac="00:16:3E:68:00:02"
 else
     mac=$(ifconfig | grep br0 | grep 00:16:3e:68:00:)
     if [[ -n $mac ]]; then
         mac="0x$(echo $mac | tr -s ' ' | cut -f 5 -d ' ' | cut -f 6 -d :)"
-        mac=$(printf "00:16:3E:68:00:%02x" $((mac += 1)) )
+        mac=$((mac + 16))
     else
-        mac="00:16:3E:68:00:03"
+        mac="0"
     fi
+    mac=$(printf "00:16:3E:68:00:%02x" $((mac + $(ifconfig | grep -c -e "tap[0-9]"))))
 fi
 
 if [[ $os = "hyper-v" ]]; then
@@ -45,7 +51,7 @@ fi
 qemu=/home/sean/build/qemu/$qemu/x86_64-softmmu/qemu-system-x86_64
 ifup=$(which ifup)
 
-common="-enable-kvm -machine q35,accel=kvm,kernel_irqchip -smp 2 -device virtio-net-pci,netdev=net0,mac=$mac -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
+common="-enable-kvm -machine q35,accel=kvm,kernel_irqchip -smp $cpus -device virtio-net-pci,netdev=net0,mac=$mac -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
 
 mem="-m 16G"
 if [[ $(free -g | grep Mem: | tr -s ' ' | cut -f 2 -d ' ') -lt 17 ]]; then
@@ -76,17 +82,24 @@ fi
 
 if [[ $virtio = "false" ]]; then
     os="-hda $img"
+    append="root=/dev/sda1 rootfstype=ext4 $append"
 else
     os="-drive file=$img,if=virtio"
+    append="root=/dev/vda1 rootfstype=ext4 $append"
 fi
 
 if [[ -n $iso ]]; then
     os="$os -drive file=$iso,index=0,media=cdrom -boot d"
 elif [[ -n $kernel ]]; then
-    os="$os -kernel /home/sean/build/kernel/$kernel/arch/x86_64/boot/bzImage -append quiet console=tty1 console=ttyS0 earlyprintk=ttyS0 net.ifnames=0 $append"
+    append="quiet console=tty1 console=ttyS0 earlyprintk=ttyS0 net.ifnames=0 loglevel=8 $append"
+    os="$os -kernel /home/sean/build/kernel/$kernel/arch/x86_64/boot/bzImage -virtfs local,path=/home/sean/build/kernel/$kernel/lib/modules,security_model=passthrough,mount_tag=kmodules"
 fi
 if [[ -n $iso1 ]]; then
     os ="$os -drive file=$iso1,index=1,media=cdrom"
 fi
 
-sudo -E $qemu $common $cpu $mem $display $os $extra
+if [[ -n $kernel ]]; then
+    sudo -E $qemu $common $cpu $mem $display $os $extra -append "$append"
+else
+    sudo -E $qemu $common $cpu $mem $display $os $extra
+fi

@@ -111,7 +111,9 @@ alias gol=git-golint
 # -----------------------------------------------------------------------------
 # Virtual Machines
 # -----------------------------------------------------------------------------
+alias virtd='daemon=false virt'
 alias vm='virt stable kvm'
+alias vmd='daemon=false virt stable kvm'
 alias vmm='v2_cgroup=memory vm'
 alias vms='virt sgx kvm'
 alias vepc='v2_cgroup=sgx_epc vms'
@@ -147,6 +149,7 @@ alias ftime='time -f "REAL:\t\t%e\nSYSTEM\t\t%S\nUSER\t\t%U\nCPU:\t\t%P\nMAX_RSS
 # -----------------------------------------------------------------------------
 # Utilities
 # -----------------------------------------------------------------------------
+alias sk='sudo -s'
 
 # Open the manual page for the last command you executed.
 function lman {
@@ -181,7 +184,6 @@ function dpkg-purge {
 }
 
 # systemd
-alias sk='sudo -sE'
 alias sys='sudo systemctl'
 alias failed='sys list-units --state=failed'
 alias services='sys list-unit-files --type=service'
@@ -191,6 +193,7 @@ alias ports='netstat -tulanp'
 
 # Find my systems in the lab...
 alias christ='sudo nmap -sP 10.54.77.* | grep -e sjchrist -e "for 10"'
+alias lchrist='sudo nmap -sP 10.54.74.* | grep -e sjchrist -e "for 10"'
 
 # ls
 alias ls='ls -aF --color=always'
@@ -328,6 +331,7 @@ function make-kernel() {
     THREADS=$(grep -c '^processor' /proc/cpuinfo)
     if [[ $# -eq 1 ]]; then
         make O=~/build/kernel/$1 -j$THREADS
+        make O=~/build/kernel/$1 INSTALL_MOD_PATH=~/build/kernel/$1 modules_install
     else
         make O=~/build/kernel/$1 $2
     fi

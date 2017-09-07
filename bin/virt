@@ -6,13 +6,34 @@ fi
 
 if [[ $# -gt 3 ]]; then
     printf "Maximum of 3 arguments supported: qemu (1), image (2) and kernel (3)\n"
-    exit 2
+    exit 1
+fi
+
+if [[ -z $cpus ]]; then
+    cpus=2
+fi
+
+maxcpus=$(grep -c '^processor' /proc/cpuinfo)
+if [[ $maxcpus -eq 1 ]]; then
+    cpus=1
+    pin=false
+fi
+
+if [[ $pin != false ]]; then
+    cgroup=/sys/fs/cgroup/cpuset/vm
+    if [[ ! -d $cgroup ]]; then
+        sudo mkdir $cgroup
+        sudo chown sean:sean $cgroup/*
+    fi
+    echo "$((maxcpus-cpus))-$((maxcpus-1))" > $cgroup/cpuset.cpus
+    echo "0" > $cgroup/cpuset.mems
+    echo $BASHPID > $cgroup/cgroup.procs
 fi
 
 if [[ $# -eq 1 ]]; then
-    qemu=$1 img=$2 virtio=$virtio os=$os virtualmachine
+    qemu=$1 img=$2 virtualmachine
 elif [[ -s $v2_cgroup ]]; then
-    qemu=$1 img=$2 virtio=$virtio os=$os kernel=$3 append="cgroup_no_v1=$v2_cgroup" virtualmachine
+    qemu=$1 img=$2 kernel=$3 cpus=$cpus append="cgroup_no_v1=$v2_cgroup" virtualmachine
 else
-    qemu=$1 img=$2 virtio=$virtio os=$os kernel=$3 virtualmachine
+    qemu=$1 img=$2 kernel=$3 cpus=$cpus virtualmachine
 fi
