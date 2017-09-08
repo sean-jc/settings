@@ -149,7 +149,7 @@ alias ftime='time -f "REAL:\t\t%e\nSYSTEM\t\t%S\nUSER\t\t%U\nCPU:\t\t%P\nMAX_RSS
 # -----------------------------------------------------------------------------
 # Utilities
 # -----------------------------------------------------------------------------
-alias sk='sudo -s'
+alias sk='sudo -sE'
 
 # Open the manual page for the last command you executed.
 function lman {
