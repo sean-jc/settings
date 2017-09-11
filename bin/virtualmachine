@@ -62,6 +62,10 @@ if [[ $(free -g | grep Mem: | tr -s ' ' | cut -f 2 -d ' ') -lt 17 ]]; then
     mem="-m 8G"
 fi
 
+if [[ -n $sgx ]]; then
+    mem="$mem -sgx epc=$sgx"
+fi
+
 if [[ $os = "hyper-v" ]]; then
     cpu="-cpu host,hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time,+vmx"
 else
