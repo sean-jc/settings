@@ -69,7 +69,7 @@ fi
 if [[ $os = "hyper-v" ]]; then
     cpu="-cpu host,hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time,+vmx"
 else
-    cpu="-cpu host -bios /usr/share/ovmf/OVMF.fd"
+    cpu="-cpu host -bios /home/sean/build/ovmf/OVMF.fd"
 fi
 
 if [[ $display = "vnc" ]]; then
