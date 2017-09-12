@@ -95,8 +95,11 @@ fi
 if [[ -n $iso ]]; then
     os="$os -drive file=$iso,index=0,media=cdrom -boot d"
 elif [[ -n $kernel ]]; then
-    append="quiet console=tty1 console=ttyS0 earlyprintk=ttyS0 net.ifnames=0 loglevel=8 $append"
-    os="$os -kernel /home/sean/build/kernel/$kernel/arch/x86_64/boot/bzImage -virtfs local,path=/home/sean/build/kernel/$kernel/lib/modules,security_model=passthrough,mount_tag=kmodules"
+    append="quiet console=tty1 console=ttyS0 earlyprintk=ttyS0 net.ifnames=0 $append"
+    os="$os -kernel /home/sean/build/kernel/$kernel/arch/x86_64/boot/bzImage"
+    if [[ $modules != "false" ]]; then
+        os="$os -virtfs local,path=/home/sean/build/kernel/$kernel/lib/modules,security_model=passthrough,mount_tag=kmodules"
+    fi
 fi
 if [[ -n $iso1 ]]; then
     os ="$os -drive file=$iso1,index=1,media=cdrom"
