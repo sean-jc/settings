@@ -254,6 +254,7 @@ alias int='cd -P ~/go/src/intel.com'
 
 # Direct navigation to kernel and image directories
 alias kn='cd -P ~/build/kernel'
+alias qq='cd -P ~/build/qemu'
 alias iq='cd -P ~/images/qemu'
 alias iv='cd -P ~/images/hyper-v'
 
