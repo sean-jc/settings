@@ -332,7 +332,9 @@ function make-kernel() {
     THREADS=$(grep -c '^processor' /proc/cpuinfo)
     if [[ $# -eq 1 ]]; then
         make O=~/build/kernel/$1 -j$THREADS
-        make O=~/build/kernel/$1 INSTALL_MOD_PATH=~/build/kernel/$1 modules_install
+        if [[ $? -eq 0 ]]; then
+            make O=~/build/kernel/$1 INSTALL_MOD_PATH=~/build/kernel/$1 modules_install
+        fi
     else
         make O=~/build/kernel/$1 $2
     fi
