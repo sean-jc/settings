@@ -329,6 +329,9 @@ function make-kernel() {
         printf "Maximum of 2 arguments supported: kernel (1) and target (2)\n"
         return 2
     fi
+
+    stubify-linux $1
+
     THREADS=$(grep -c '^processor' /proc/cpuinfo)
     if [[ $# -eq 1 ]]; then
         make O=~/build/kernel/$1 -j$THREADS

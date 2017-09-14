@@ -1,0 +1,8 @@
+#!/bin/bash
+. $SETTINGS/bin/stubdirs
+
+for i in "${stubdirs[@]}"
+do
+        mkdir -p ~/build/kernel/$1/$i
+        echo "!<arch>" > ~/build/kernel/$1/$i/built-in.o
+done
