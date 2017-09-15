@@ -1,3 +1,0 @@
-#!/bin/bash
-dir=$(pwd)
-git diff --no-prefix | ssh sean@sjchrist-sky.jf.intel.com "ssh sean@sjchrist-vm \"cd $dir ; git reset --hard HEAD ; patch -p0\""

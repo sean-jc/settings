@@ -1,4 +1,17 @@
 #!/bin/bash
 dir=$(pwd)
+if [[ $# -eq 1 ]]; then
+    target=$1
+elif [[ $HOSTPOST == "coffee" || $HOSTPOST == "ts" ]]; then
+    target="sky"
+elif [[ $HOSTPOST == "MOBL" ]]; then
+    target="co"
+else
+    printf "Must specify the target, no default for $HOSTNAME\n"
+    exit 1
+fi
+if [[ $HOSTPOST == "MOBL" ]]; then
+    dir="${dir/\/c\/Users\/sjchrist/\~}"
+fi
 git reset --hard HEAD
-ssh sean@sjchrist-sky.jf.intel.com "cd $dir ; git diff --no-prefix" | patch -p0
+ssh $target "cd $dir ; git diff --no-prefix" | patch -p0
