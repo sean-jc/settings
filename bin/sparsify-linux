@@ -14,6 +14,7 @@ for i in "${stubdirs[@]}"; do
         echo "!$i" >> .git/info/sparse-checkout
 done
 echo "drivers/firmware" >> .git/info/sparse-checkout
+echo "!Documentation" >> .git/info/sparse-checkout
 
 git read-tree -mu HEAD
 
