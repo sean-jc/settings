@@ -262,6 +262,9 @@ alias qq='cd -P ~/build/qemu'
 alias iq='cd -P ~/images/qemu'
 alias iv='cd -P ~/images/hyper-v'
 
+# Direct navigation to misc directories
+alias dl='cd -P ~/Downloads'
+
 alias mkdir='mkdir -p'
 function mcd() {
     mkdir $1
