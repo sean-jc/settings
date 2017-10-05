@@ -51,7 +51,7 @@ fi
 qemu=/home/sean/build/qemu/$qemu/x86_64-softmmu/qemu-system-x86_64
 ifup=$(which ifup)
 
-common="-enable-kvm -machine q35,accel=kvm,kernel_irqchip -smp $cpus -device virtio-net-pci,netdev=net0,mac=$mac -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
+net="-device virtio-net-pci,netdev=net0,mac=$mac -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
 
 mem="-m 16G"
 if [[ $(free -g | grep Mem: | tr -s ' ' | cut -f 2 -d ' ') -lt 17 ]]; then
@@ -62,8 +62,9 @@ if [[ $(free -g | grep Mem: | tr -s ' ' | cut -f 2 -d ' ') -lt 17 ]]; then
     mem="-m 8G"
 fi
 
-if [[ -n $sgx ]]; then
-    mem="$mem -sgx epc=$sgx"
+machine="-enable-kvm -smp $cpus -machine q35,accel=kvm,kernel_irqchip"
+if [[ -n $epc ]]; then
+    machine="$machine,epc=$epc"
 fi
 
 if [[ $os = "hyper-v" ]]; then
@@ -106,7 +107,7 @@ if [[ -n $iso1 ]]; then
 fi
 
 if [[ -n $kernel ]]; then
-    sudo -E $qemu $common $cpu $mem $display $os $extra -append "$append"
+    sudo -E $qemu $machine $cpu $mem $display $net $os $extra -append "$append"
 else
-    sudo -E $qemu $common $cpu $mem $display $os $extra
+    sudo -E $qemu $machine $cpu $mem $display $net $os $extra
 fi
