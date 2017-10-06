@@ -185,6 +185,7 @@ function dpkg-query-size {
 alias dq='dpkg-query-size'
 alias dqs='dq | sort -n'
 alias dg='dq | grep'
+alias di='sudo dpkg -i'
 
 function dpkg-purge {
     dpkg --list | grep "^rc" | cut -d " " -f 3 | xargs sudo dpkg --purge
@@ -329,6 +330,59 @@ function make-kernel-package() {
 }
 alias maho='make-kernel-package'
 
+function list-kernel-package {
+    grep menuentry /boot/grub/grub.cfg | grep -o -e "'Ubuntu, with Linux.*+'" | cut -f 2 -d "'"
+}
+alias lk='list-kernel-package'
+
+function boot-kernel-package {
+    if [[ $# -ne 1 ]]; then
+        printf "Must specify the target kernel name\n"
+        return 1
+    fi
+    if [[ $(grep menuentry /boot/grub/grub.cfg | grep -c -e "'Ubuntu, with Linux.*$1+'") != "1" ]]; then
+        grep menuentry /boot/grub/grub.cfg | grep -o -e "'Ubuntu, with Linux.*$1+'" | cut -f 2 -d "'"
+        printf "Failed to find single entry for $1\n"
+        return 1
+    fi
+    local entry=$(grep menuentry /boot/grub/grub.cfg | grep -o -e "'Ubuntu, with Linux.*$1+'" | cut -f 2 -d "'")
+    if [[ -z $entry ]]; then
+        printf "Failed to find entry=$entry\n"
+        return 1
+    fi
+    printf "sudo grub-reboot 'Advanced options for Ubuntu>$entry'\n"
+    sudo grub-reboot "Advanced options for Ubuntu>$entry"
+    grep next_entry /boot/grub/grubenv
+}
+alias bk='boot-kernel-package'
+
+#
+function purge-kernel-package {
+    if [[ $# -ne 1 ]]; then
+        printf "Must specify the target kernel name\n"
+        return 1
+    fi
+    if [[ $(dpkg-query-size | grep -c -e "linux-image.*$1+") != "1" ]]; then
+        dpkg-query-size | grep -e "linux-image.*$1+"
+        printf "Failed to find single image for '$1'\n"
+        return 1
+    fi
+    if [[ $(dpkg-query-size | grep -c -e "linux-headers.*$1+") != "1" ]]; then
+        dpkg-query-size | grep -e "linux-headers.*$1+"
+        printf "Failed to find single headers for '$1'\n"
+        return 1
+    fi
+    local img=$(dpkg-query-size | grep -e "linux-image.*$1+"    | cut -f 2)
+    local hdr=$(dpkg-query-size | grep -e "linux-headers.*$1+"  | cut -f 2)
+    if [[ -z $img || -z $hdr ]]; then
+        printf "Failed to find image=$img or headers=$hdr\n"
+        return 1
+    fi
+    printf "sudo dpkg --purge $img $hdr\n"
+    sudo dpkg --purge $img $hdr
+}
+alias pk='purge-kernel-package'
+
 # MAke GuEst kernel
 function make-kernel() {
     if [[ $# -lt 1 ]]; then
@@ -386,8 +440,8 @@ alias maked="DEBUG='-gcflags \"-N -l\"' make"
 # -----------------------------------------------------------------------------
 alias dps='docker ps'
 alias drm='dps -qa | xargs --no-run-if-empty docker rm'
-alias di='docker images'
-alias drmi='di --quiet --filter=dangling=true | xargs --no-run-if-empty docker rmi'
+alias dim='docker images'
+alias drim='di --quiet --filter=dangling=true | xargs --no-run-if-empty docker rmi'
 alias docker-gc='sudo docker-gc'
 
 function docker-bash() {
