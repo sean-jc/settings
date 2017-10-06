@@ -356,6 +356,12 @@ function boot-kernel-package {
 }
 alias bk='boot-kernel-package'
 
+function boot-windows {
+    sudo grub-reboot "Windows Boot Manager (on /dev/sdb2)"
+    grep next_entry /boot/grub/grubenv
+}
+alias bw='boot-windows'
+
 #
 function purge-kernel-package {
     if [[ $# -ne 1 ]]; then
