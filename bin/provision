@@ -12,6 +12,8 @@ if [[ ! -d $HOME/.ssh ]]; then
     ssh-keygen
     cp $SETTINGS/.ssh/* $HOME/.ssh
 fi
+
+echo ". ~/go/src/github.com/sean-jc/settings/Bash/.bashrc" > $HOME/.bashrc
 cp $SETTINGS/git/.gitconfig $HOME/
 cp $SETTINGS/git/.gitignore $HOME/
 sudo cp $SETTINGS/etc/* /etc/
