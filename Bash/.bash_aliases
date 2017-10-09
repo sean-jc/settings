@@ -331,7 +331,7 @@ function make-kernel-package() {
 alias maho='make-kernel-package'
 
 function list-kernel-package {
-    grep menuentry /boot/grub/grub.cfg | grep -o -e "'Ubuntu, with Linux.*+'" | cut -f 2 -d "'"
+    grep menuentry /boot/grub/grub.cfg | grep -o -e "'Ubuntu, with Linux.*$1+'" | cut -f 2 -d "'"
 }
 alias lk='list-kernel-package'
 
