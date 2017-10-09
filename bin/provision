@@ -4,7 +4,18 @@ if [[ $# -ne 1 ]]; then
     exit 1
 fi
 
-sudo cp /home/sean/go/src/github.com/sean-jc/settings/VMs/$1/etc/hostname /etc/hostname
-sudo cp /home/sean/go/src/github.com/sean-jc/settings/VMs/$1/etc/hosts /etc/hosts
-sudo cp /home/sean/go/src/github.com/sean-jc/settings/VMs/$1/etc/default/grub /etc/default/grub
+if [[ -z $SETTINGS ]]; then
+    SETTINGS=$HOME/go/src/github.com/sean-jc/settings
+fi
+
+if [[ ! -d $HOME/.ssh ]]; then
+    ssh-keygen
+    cp $SETTINGS/.ssh/* $HOME/.ssh
+fi
+cp $SETTINGS/git/.gitconfig $HOME/
+cp $SETTINGS/git/.gitignore $HOME/
+sudo cp $SETTINGS/etc/* /etc/
+sudo cp $SETTINGS/VMs/$1/etc/hostname /etc/hostname
+sudo cp $SETTINGS/VMs/$1/etc/hosts /etc/hosts
+sudo cp $SETTINGS/VMs/$1/etc/default/grub /etc/default/grub
 sudo update-grub
