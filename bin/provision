@@ -15,6 +15,7 @@ fi
 cp $SETTINGS/git/.gitconfig $HOME/
 cp $SETTINGS/git/.gitignore $HOME/
 sudo cp $SETTINGS/etc/* /etc/
+sudo cp $SETTINGS/etc/ssh/* /etc/ssh/
 sudo cp $SETTINGS/VMs/$1/etc/hostname /etc/hostname
 sudo cp $SETTINGS/VMs/$1/etc/hosts /etc/hosts
 sudo cp $SETTINGS/VMs/$1/etc/default/grub /etc/default/grub
