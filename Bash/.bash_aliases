@@ -49,6 +49,18 @@ function git-apply() {
     git am --whitespace=fix ~/Patches/*.patch
 }
 
+function git-cherry-pick-ref() {
+    git status | grep "currently cherry-picking commit" | grep -o -E "[0-9a-f]{12}\b"
+}
+
+function git-cherry-pick-log() {
+    git log -1 $(git-cherry-pick-ref)
+}
+
+function git-cherry-pick-show() {
+    git show $(git-cherry-pick-ref)
+}
+
 function git-url-patch() {
     # lynx -dump -nonumbers -hiddenlinks=liston $1 | grep -e "^http.*00(0[1-9]|1[0-7])\.patch" | xargs -n 1 curl -s | git am
     lynx -dump -nonumbers -hiddenlinks=liston $1 | grep -e "^http.*003[0-9].*\.patch" | xargs -n 1 curl -s | git am
@@ -88,6 +100,8 @@ alias glo='git log --pretty=oneline'
 alias gm="git status | grep modified | tr -d '\t' | tr -d ' ' | cut -f 2 -d :"
 alias gp='git cherry-pick'
 alias gpc='git cherry-pick --continue'
+alias gpl='git-cherry-pick-log'
+alias gps='git-cherry-pick-show'
 alias gr='git reset'
 alias grh='git reset HEAD'
 alias grhh='git reset HEAD --hard'
