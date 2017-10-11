@@ -21,7 +21,8 @@ git read-tree -mu HEAD
 for i in "${stubdirs[@]}"; do
         mkdir -p $i
         touch $i/Makefile
-        if [[ $i != "drivers/cdrom" &&
+        if [[ $i != "Documentation" &&
+              $i != "drivers/cdrom" &&
               $i != "drivers/dio" &&
               $i != "drivers/gpu" &&
               $i != "drivers/message" &&

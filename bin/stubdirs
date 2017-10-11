@@ -1,4 +1,5 @@
 stubdirs=(
+        Documentation
         drivers/accessibility
         drivers/amba
         drivers/android
