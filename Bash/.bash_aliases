@@ -46,7 +46,7 @@ function git-blob() {
 
 function git-apply() {
     git reset --hard $(printf "origin/$(git rev-parse --abbrev-ref HEAD)")
-    git am --whitespace=fix ~/Patches/*.patch
+    git am --whitespace=fix ~/mutt/*.patch
 }
 
 function git-cherry-pick-ref() {
