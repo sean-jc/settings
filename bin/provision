@@ -13,7 +13,7 @@ if [[ ! -d $HOME/.ssh ]]; then
     cp $SETTINGS/.ssh/* $HOME/.ssh
 fi
 
-echo ". ~/go/src/github.com/sean-jc/settings/Bash/.bashrc" > $HOME/.bashrc
+echo ". ~/go/src/github.com/sean-jc/settings/bash/.bashrc" > $HOME/.bashrc
 cp $SETTINGS/git/.gitconfig $HOME/
 cp $SETTINGS/git/.gitignore $HOME/
 sudo cp $SETTINGS/etc/* /etc/
