@@ -1,0 +1,23 @@
+#!/bin/bash
+function pushd() {
+    command pushd "$@" > /dev/null
+}
+
+function popd() {
+    command popd "$@" > /dev/null
+}
+
+set -e
+pushd /home/sean/go/src/github.com/torvalds/linux
+patch=$(git diff --no-prefix)
+rev=$(git rev-parse HEAD)
+popd
+pushd /home/sean/go/src/github.com/torvalds/host
+hrev=$(git rev-parse HEAD)
+if [[ $rev != $hrev ]]; then
+    printf "torvalds/linux and torvalds/host must be on the same commit"
+    exit 1
+fi
+git reset --hard HEAD
+echo "$patch" | patch -p0
+popd
