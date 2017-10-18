@@ -6,10 +6,12 @@
 [http]
 	cookiefile = /home/sean/.gitcookies
 [core]
-	autocrlf = input
-	excludesfile = ~/.gitignore
+	excludesfile = ~/go/src/github.com/sean-jc/settings/git/.gitignore
 [credential]
 	helper = cache --timeout=3600
+[diff]
+	renames = true
+	algorithm = patience
 [sendemail]
 	smtpserver = or-out.intel.com
 	smtpserverport = 25
