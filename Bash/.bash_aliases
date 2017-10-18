@@ -359,15 +359,19 @@ function make-kernel-package() {
         printf "Must specify the target kernel name\n"
         return 1
     fi
-    if [[ $# -gt 2 ]]; then
-        printf "Maximum of 2 arguments supported: kernel (1) and revision (2)\n"
+    if [[ $# -gt 3 ]]; then
+        printf "Maximum of 2 arguments supported: kernel (1), revision (2) and no-install (3)\n"
         return 2
     fi
+    rev="1"
+    if [[ $# -ge 2 ]]; then
+        rev=$2
+    fi
+    rm -f ../*$1+_${rev}_*.deb
     THREADS=$(grep -c '^processor' /proc/cpuinfo)
-    if [[ $# -eq 1 ]]; then
-        CONCURRENCY_LEVEL=$THREADS fakeroot make-kpkg --initrd --append-to-version=-$1 kernel_headers kernel_image --revision 1
-    else
-        CONCURRENCY_LEVEL=$THREADS fakeroot make-kpkg --initrd --append-to-version=-$1 kernel_headers kernel_image --revision $2
+    CONCURRENCY_LEVEL=$THREADS fakeroot make-kpkg --initrd --append-to-version=-$1 kernel_headers kernel_image --revision $rev
+    if [[ $? -eq 0 && $# -lt 3 ]]; then
+        sudo dpkg -i ../*$1+_${rev}_*.deb
     fi
 }
 alias maho='make-kernel-package'
