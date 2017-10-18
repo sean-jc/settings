@@ -317,6 +317,14 @@ function mcd() {
     cd $1
 }
 
+function pushd() {
+    command pushd "$@" > /dev/null
+}
+
+function popd() {
+    command popd "$@" > /dev/null
+}
+
 function extract() {
     if [ -z "$1" ]; then
         # display usage if no parameters given
