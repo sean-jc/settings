@@ -105,6 +105,8 @@ elif [[ -n $kernel ]]; then
     if [[ $modules != "false" ]]; then
         os="$os -virtfs local,path=/home/sean/build/kernel/$kernel/lib/modules,security_model=passthrough,mount_tag=kmodules"
     fi
+else
+    os="$os -boot c"
 fi
 if [[ -n $iso1 ]]; then
     os ="$os -drive file=$iso1,index=1,media=cdrom"
