@@ -61,13 +61,17 @@ function git-cherry-pick-show() {
     git show $(git-cherry-pick-ref)
 }
 
-function git-push-origin() {
+function git-push() {
     local opts
     local response=y
+    local remote=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} | cut -f 1 -d /)
+    if [[ $# -eq 1 && $1 != "force" ]]; then
+        remote=$1
+    fi
     local branch=$(git rev-parse --abbrev-ref HEAD)
-    local exists=$(git ls-remote --heads origin $branch | wc -l)
+    local exists=$(git ls-remote --heads $remote $branch | wc -l)
     if [[ $exists == "0" ]]; then
-        printf "\e[1;7;35mCreate and track remote branch origin/$branch? "
+        printf "\e[1;7;35mCreate and track remote branch $remote/$branch? "
         read -r -p "[Y/n] " response
     elif [[ $exists != "1" ]]; then
         printf "Found multiple ($exists) branches: $branch\n"
@@ -75,14 +79,14 @@ function git-push-origin() {
     elif [[ $1 == "force" ]]; then
         opts="-f"
         git status
-        printf "\e[1;7;35mForce push remote branch origin/$branch? "
+        printf "\e[1;7;35mForce push remote branch $remote/$branch? "
         read -r -p "[Y/n] " response
         printf "\e[0m"
     fi
     response=${response,,}    # tolower
     if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
-        git push $opts origin $branch
-        git branch --set-upstream-to=origin/$branch
+        git push $opts $remote $branch
+        git branch --set-upstream-to=$remote/$branch
     fi
 }
 
@@ -124,8 +128,9 @@ alias gk='git format-patch -o ~/patches/'
 alias gl='git log'
 alias glo='git log --pretty=oneline'
 alias gm="git status | grep modified | tr -d '\t' | tr -d ' ' | cut -f 2 -d :"
-alias gpo='git-push-origin'
-alias gfpo='git-push-origin force'
+alias gpu='git-push'
+alias gpo='git-push origin'
+alias gpf='git-push force'
 alias gp='git cherry-pick'
 alias gpc='git cherry-pick --continue'
 alias gpl='git-cherry-pick-log'
