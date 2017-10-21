@@ -146,21 +146,27 @@ alias gsl='git stash list'
 alias gsp='git stash pop'
 alias gss='git stash save'
 alias gt='git-tree'
-alias gu='git-url-patch'
 alias gv='git remote -vv'
 
 
+# -----------------------------------------------------------------------------
+# Go
+# -----------------------------------------------------------------------------
 # Run gofmt on all .go files from the HEAD commit
 function git-gofmt() {
     git diff-tree --no-commit-id --name-only -r $(git rev-parse --verify HEAD) | grep \\\.go | xargs --no-run-if-empty gofmt -s -w
 }
-alias gof=git-gofmt
 
 # Run go lint on all .go files from the HEAD commit
 function git-golint() {
     git diff-tree --no-commit-id --name-only -r $(git rev-parse --verify HEAD) | grep \\\.go | xargs -L 1 --no-run-if-empty golint
 }
-alias gol=git-golint
+
+alias gi='go install -v'
+alias gu='go get -u -v ./...'
+alias gof='git-gofmt'
+# Ignore comment, caps, ID and URL warnings
+alias gol='git-golint | grep -v -e "should have comment" -e ALL_CAPS -e Id -e Url'
 
 # -----------------------------------------------------------------------------
 # Virtual Machines
