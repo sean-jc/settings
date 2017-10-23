@@ -1,6 +1,5 @@
 // Place your settings in this file to overwrite the default settings
 {
-    "workbench.colorTheme": "Monokai Dark Soda",
     "editor.fontFamily": "'Noto Mono'",
     "editor.fontSize": 13,
     "editor.tabSize": 4,
@@ -11,14 +10,16 @@
     "files.eol": "\n",  // The default end of line character.
     "diffEditor.ignoreTrimWhitespace": false,
 
-    "window.menuBarVisibility": "toggle",
+    "window.menuBarVisibility": "default",
     "window.newWindowDimensions": "maximized",
     "window.openFilesInNewWindow": "default",
     "window.restoreWindows": "all",
     "window.zoomLevel": 0,
 
+    "workbench.colorTheme": "Monokai Dark Soda",
     "workbench.editor.enablePreview": false,
     "workbench.editor.showIcons": false,
+    "workbench.startupEditor": "none",
 
     "files.exclude": {
         "**/.vscode":true,
@@ -28,7 +29,8 @@
         "**/.DS_Store": true,
         "**/*.a": true,
         "**/*.o": true,
-        "**/*.so": true
+        "**/*.so": true,
+        "**/debian": true
     },
     "files.watcherExclude": {
         "**/.vscode":true,
@@ -37,7 +39,8 @@
         "**/*.a": true,
         "**/*.o": true,
         "**/*.so": true,
-        "**/vendor": true
+        "**/vendor": true,
+        "**/debian": true
     },
     "search.exclude": {
         "**/.vscode":true,
@@ -46,6 +49,7 @@
         "**/*.a": true,
         "**/*.o": true,
         "**/*.so": true,
-        "**/vendor": true
+        "**/vendor": true,
+        "**/debian": true
     }
 }
