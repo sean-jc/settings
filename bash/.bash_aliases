@@ -208,6 +208,12 @@ alias pts='~/.bin/pts/phoronix-test-suite'
 # Utilities
 # -----------------------------------------------------------------------------
 alias sk='sudo -sE'
+alias sbn='sudo reboot now'
+alias sbf='sudo reboot -f'
+if [[ "$HOSTPOST" != coffee && "$HOSTPOST" != sky ]]; then
+    alias ssn='sudo shutdown now'
+    alias ssf='sudo shutdown -f'
+fi
 alias time='/usr/bin/time'
 alias ftime='time -f "REAL:\t\t%e\nSYSTEM\t\t%S\nUSER\t\t%U\nCPU:\t\t%P\nMAX_RSS:\t%M\nCTX_INV:\t%c\nCTX_VOL:\t%w\nIO_IN:\t\t%I\nIO_OUT:\t\t%O\nMAJ_PF:\t\t%F\nMIN_PF:\t\t%R\nSWAPS:\t\t%W"'
 
