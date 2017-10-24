@@ -114,7 +114,7 @@ __git_complete gr _git_reset
 __git_complete gs _git_log
 
 alias g='git'
-alias ga='git-apply'
+alias ga='git add'
 alias gb='git branch'
 alias gc='git commit'
 alias gd='git-diff'
