@@ -25,10 +25,6 @@ if [[ -z $kernel && -n $append ]]; then
     exit 2
 fi
 
-# img=/home/sean/images/qemu/ubuntu-16.04-server-$1.img
-# boot=$2
-# kernel=$3
-
 if [[ $os = "hyper-v" ]]; then
     mac="00:16:3E:68:00:FF"
 else
@@ -44,9 +40,12 @@ fi
 
 if [[ $os = "hyper-v" ]]; then
     img=/home/sean/images/qemu/hyper-v-2016-$img.img
+elif [[ $uefi == "false" ]]; then
+    img=/home/sean/images/qemu/bios/ubuntu-16.04-server-$img.img
 else
     img=/home/sean/images/qemu/ubuntu-16.04-server-$img.img
 fi
+
 
 qemu=/home/sean/build/qemu/$qemu/x86_64-softmmu/qemu-system-x86_64
 ifup=$(which ifup)
@@ -70,10 +69,13 @@ fi
 if [[ $os = "hyper-v" ]]; then
     cpu="-cpu host,hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time,+vmx"
 else
-    if [[ -z $debug_ovmf ]]; then
-        cpu="-cpu host -bios /home/sean/build/ovmf/OVMF.fd"
-    else
-        cpu="-cpu host -bios /home/sean/go/src/github.com/tianocore/edk2/Build/OvmfX64/DEBUG_GCC5/FV/OVMF.fd -debugcon file:debug.log -global isa-debugcon.iobase=0x402"
+    cpu="-cpu host"
+    if [[ $uefi != "false" ]]; then
+        if [[ -z $debug_ovmf ]]; then
+            cpu="$cpu -bios /home/sean/build/ovmf/OVMF.fd"
+        else
+            cpu="$cpu -bios /home/sean/go/src/github.com/tianocore/edk2/Build/OvmfX64/DEBUG_GCC5/FV/OVMF.fd -debugcon file:debug.log -global isa-debugcon.iobase=0x402"
+        fi
     fi
 fi
 
@@ -83,6 +85,8 @@ else
     display="-nographic"
     if [[ $daemon != "false" ]]; then
         display="$display -serial null -monitor null -parallel null"
+    elif [[ $uefi != "false" || -n $kernel ]]; then
+        display="$display -chardev stdio,id=mux,mux=on -device virtio-serial -device virtconsole,chardev=mux -serial null -monitor chardev:mux"
     fi
 fi
 if [[ $daemon != "false" ]]; then
@@ -100,7 +104,7 @@ fi
 if [[ -n $iso ]]; then
     os="$os -drive file=$iso,index=0,media=cdrom -boot d"
 elif [[ -n $kernel ]]; then
-    append="quiet console=tty1 console=ttyS0 earlyprintk=ttyS0 net.ifnames=0 $append"
+    append="console=hvc0 earlyprintk=hvc0 net.ifnames=0 $append"
     os="$os -kernel /home/sean/build/kernel/$kernel/arch/x86_64/boot/bzImage"
     if [[ $modules != "false" ]]; then
         os="$os -virtfs local,path=/home/sean/build/kernel/$kernel/lib/modules,security_model=passthrough,mount_tag=kmodules"
