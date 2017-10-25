@@ -171,13 +171,14 @@ alias gol='git-golint | grep -v -e "should have comment" -e ALL_CAPS -e Id -e Ur
 # -----------------------------------------------------------------------------
 # Virtual Machines
 # -----------------------------------------------------------------------------
-alias virtd='daemon=false virt'
+alias virtd='daemon=true virt'
 alias vm='virt stable kvm'
-alias vmd='daemon=false virt stable kvm'
+alias vmd='daemon=true virt stable kvm'
 alias vmm='v2_cgroup=memory vm'
 alias vb='uefi=false virt bios kvm'
-alias vbd='daemon=false uefi=false virt bios kvm'
+alias vbd='daemon=true uefi=false virt bios kvm'
 alias vms='epc=92M virt sgx kvm'
+alias vmsd='daemon=true epc=92M virt sgx kvm'
 alias vepc='v2_cgroup=sgx_epc vms'
 alias hyv='virt stable hyv'
 alias vuefi='virt stable uefi'

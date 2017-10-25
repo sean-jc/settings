@@ -83,13 +83,13 @@ if [[ $display = "vnc" ]]; then
     display="-vga std -display vnc=:5900"
 else
     display="-nographic"
-    if [[ $daemon != "false" ]]; then
+    if [[ $daemon == "true" ]]; then
         display="$display -serial null -monitor null -parallel null"
     elif [[ $uefi != "false" || -n $kernel ]]; then
         display="$display -chardev stdio,id=mux,mux=on -device virtio-serial -device virtconsole,chardev=mux -serial null -monitor chardev:mux"
     fi
 fi
-if [[ $daemon != "false" ]]; then
+if [[ $daemon == "true" ]]; then
     extra="-daemonize"
 fi
 
