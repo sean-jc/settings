@@ -1,13 +1,51 @@
-New-VMSwitch ExternalSwitch -NetAdapterName (Get-NetAdapter  | ? Status -eq "Up")[0].Name
+// Hyper-V
+New-VMSwitch ExternalSwitch -NetAdapterName (Get-NetAdapter | ? Status -eq "Up")[0].Name
+Uninstall-WindowsFeature -Name Windows-Defender
+
+secedit.exe /export /cfg C:\Users\sean\secconfig.txt
+notepad C:\Users\sean\secconfig.txt
+// MaximumPasswordAge = -1, delete MinimumPasswordAge
+secedit.exe /configure /db C:\Windows\security\PasswordAge.sdb /cfg C:\Users\sean\secconfig.txt /areas SECURITYPOLICY
+rm C:\Users\sean\secconfig.txt
 
 // L1
 New-VM -Name hyper -MemoryStartupBytes 8GB -VHDPath C:\Users\sean\Images\ubuntu-16.04-server-hyper.vhdx -Generation 2 -Path C:\Users\sean\VMs\ -SwitchName ExternalSwitch -BootDevice VHD
+Set-VMProcessor -VMName hyper -Count 2 -HwThreadCountPerCore 2
+Set-VMNetworkAdapter -VMName hyper -MacAddressSpoofing On
+Set-VMFirmware hyper -EnableSecureBoot Off
+Enable-VMResourceMetering -VMName hyper
+
+// L1 iso
+New-VHD -Path C:\Users\sean\Images\ubuntu-16.04-server-h2.vhdx -BlockSizeBytes 16MB -LogicalSectorSize 512 -PhysicalSectorSize 512 -SizeBytes 32GB
+New-VM -Name h2 -MemoryStartupBytes 8GB -VHDPath C:\Users\sean\Images\ubuntu-16.04-server-h2.vhdx -Generation 2 -Path C:\Users\sean\VMs\ -SwitchName ExternalSwitch -BootDevice VHD
+Add-VMScsiController -vmname h2
+Add-VMDvdDrive -VMName h2 -Path C:\Users\sean\Downloads\ubuntu-16.04.3-server-amd64.iso -ControllerNumber 1
+Set-VMProcessor -VMName h2 -Count 2 -HwThreadCountPerCore 2
+Set-VMFirmware h2 -EnableSecureBoot Off
+Enable-VMResourceMetering -VMName h2
+
 
 // L0
 New-VM -Name hyper -MemoryStartupBytes 16GB -VHDPath C:\Users\sean\Images\ubuntu-16.04-server-hyper.vhdx -Generation 2 -Path C:\Users\sean\VMs\ -SwitchName ExternalSwitch -BootDevice VHD
-Set-VMProcessor -VMName hyper -ExposeVirtualizationExtensions $true
+Set-VMProcessor -VMName hyper -Count 4 -HwThreadCountPerCore 2 -ExposeVirtualizationExtensions $true
 Set-VMNetworkAdapter -VMName hyper -MacAddressSpoofing On
 
 Set-VMFirmware hyper -EnableSecureBoot Off
 Enable-VMResourceMetering -VMName hyper
 Start-VM hyper 
+
+// L0 nested
+New-VHD -Path C:\Users\sean\Images\hyper-v-2016.vhdx -BlockSizeBytes 16MB -LogicalSectorSize 512 -SizeBytes 32GB
+New-VM -Name nested -MemoryStartupBytes 16GB -VHDPath C:\Users\sean\Images\hyper-v-2016.vhdx -Generation 2 -Path C:\Users\sean\VMs\ -SwitchName ExternalSwitch -BootDevice VHD
+Add-VMScsiController -vmname nested 
+Add-VMDvdDrive -VMName nested -Path C:\Users\sean\Downloads\hyper-v-2016.iso -ControllerNumber 1
+Set-VMProcessor -VMName nested -Count 4 -HwThreadCountPerCore 2 -ExposeVirtualizationExtensions $true
+Set-VMNetworkAdapter -VMName nested -MacAddressSpoofing On
+Enable-VMResourceMetering -VMName nested
+Start-VM nested
+
+
+
+Set-VMMemory hyper -StartupBytes 8GB
+
+Get-VM | Select-Object -ExpandProperty NetworkAdapters | Select-Object VMName,IPAddresses
