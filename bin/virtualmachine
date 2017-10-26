@@ -85,7 +85,7 @@ else
     display="-nographic"
     if [[ $daemon == "true" ]]; then
         display="$display -serial null -monitor null -parallel null"
-    elif [[ $uefi != "false" || -n $kernel ]]; then
+    elif [[ $hvc == "true" ]]; then
         display="$display -chardev stdio,id=mux,mux=on -device virtio-serial -device virtconsole,chardev=mux -serial null -monitor chardev:mux"
     fi
 fi
@@ -104,7 +104,11 @@ fi
 if [[ -n $iso ]]; then
     os="$os -drive file=$iso,index=0,media=cdrom -boot d"
 elif [[ -n $kernel ]]; then
-    append="console=hvc0 earlyprintk=hvc0 net.ifnames=0 $append"
+    if [[ $hvc == "true" ]]; then
+        append="quiet console=hvc0 earlyprintk=hvc0 net.ifnames=0 $append"
+    else
+        append="quiet console=tty1 console=ttyS0 earlyprintk=ttyS0 net.ifnames=0 $append"
+    fi
     os="$os -kernel /home/sean/build/kernel/$kernel/arch/x86_64/boot/bzImage"
     if [[ $modules != "false" ]]; then
         os="$os -virtfs local,path=/home/sean/build/kernel/$kernel/lib/modules,security_model=passthrough,mount_tag=kmodules"
