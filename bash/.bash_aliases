@@ -201,6 +201,12 @@ alias epd2='EPCT_CGROUP_V2=1 epd'
 alias mx='make_sgxsdk'
 alias dx='DEBUG=1 make_sgxsdk'
 
+function mod-probe-intel-sgx() {
+    sudo modprobe intel_sgx
+    sudo chmod 666 /dev/sgx
+}
+alias mpi='mod-probe-intel-sgx'
+
 # -----------------------------------------------------------------------------
 # App Shortcuts
 # -----------------------------------------------------------------------------
