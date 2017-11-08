@@ -536,6 +536,12 @@ function system-info() {
 }
 alias si='system-info'
 
+function make-qemu() {
+    THREADS=$(grep -c '^processor' /proc/cpuinfo)
+    make -j$THREADS
+}
+alias mq='make-qemu'
+
 # -----------------------------------------------------------------------------
 # LXD
 # -----------------------------------------------------------------------------
