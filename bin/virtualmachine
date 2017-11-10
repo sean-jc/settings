@@ -59,6 +59,9 @@ if [[ $(free -g | grep Mem: | tr -s ' ' | cut -f 2 -d ' ') -lt 17 ]]; then
         exit 2
     fi
     mem="-m 8G"
+    if [[ $(free -g | grep Mem: | tr -s ' ' | cut -f 2 -d ' ') -lt 9 ]]; then
+        mem="-m 4G"
+    fi
 fi
 
 machine="-enable-kvm -smp $cpus -machine q35,accel=kvm,kernel_irqchip"
