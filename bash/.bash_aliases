@@ -218,6 +218,7 @@ alias pts='~/.bin/pts/phoronix-test-suite'
 # -----------------------------------------------------------------------------
 # Utilities
 # -----------------------------------------------------------------------------
+alias ipa="ifconfig | grep 10.54 | tr -s ' ' | cut -f 3 -d ' ' | cut -f 2 -d :"
 alias sk='sudo -sE'
 alias sbn='sudo reboot now'
 alias sbf='sudo reboot -f'
