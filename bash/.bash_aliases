@@ -490,10 +490,10 @@ function make-kernel() {
 
     if [[ $sgx == "true" ]]; then
         if git diff --quiet && git diff --staged --quiet ; then
-            git cherry-pick d899fa1715c9d79f4c5aab4f28532648c76bf8fa || return 1
+            git cherry-pick sgx/zzz-token || return 1
         else
             git stash save
-            git cherry-pick d899fa1715c9d79f4c5aab4f28532648c76bf8fa || return 1
+            git cherry-pick sgx/zzz-token || return 1
             git stash pop
         fi
     fi
