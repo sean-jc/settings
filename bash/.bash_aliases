@@ -162,8 +162,8 @@ function git-golint() {
     git diff-tree --no-commit-id --name-only -r $(git rev-parse --verify HEAD) | grep \\\.go | xargs -L 1 --no-run-if-empty golint
 }
 
-alias gi='go install -v'
-alias gu='go get -u -v ./...'
+alias goi='go install -v'
+alias gou='go get -u -v ./...'
 alias gof='git-gofmt'
 # Ignore comment, caps, ID and URL warnings
 alias gol='git-golint | grep -v -e "should have comment" -e ALL_CAPS -e Id -e Url'
