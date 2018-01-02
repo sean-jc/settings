@@ -2,8 +2,8 @@
 dir=$(pwd)
 if [[ $# -eq 1 ]]; then
     target=$1
-elif [[ $HOSTPOST == "coffee" || $HOSTPOST == "ts" ]]; then
-    target="sky"
+elif [[ $HOSTPOST == "coffee" ]]; then
+    target="meh"
 elif [[ $HOSTPOST == "MOBL" ]]; then
     target="co"
 else
