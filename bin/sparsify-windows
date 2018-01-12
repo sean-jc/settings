@@ -8,6 +8,7 @@ echo "drivers/block/virtio_blk.c" >> .git/info/sparse-checkout
 echo "drivers/net/virtio_net.c" >> .git/info/sparse-checkout
 echo "drivers/virtio/*" >> .git/info/sparse-checkout
 echo "include/*" >> .git/info/sparse-checkout
+echo "init/*" >> .git/info/sparse-checkout
 echo "lib/*" >> .git/info/sparse-checkout
 echo "kernel/*" >> .git/info/sparse-checkout
 echo "mm/*" >> .git/info/sparse-checkout
