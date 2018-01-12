@@ -112,6 +112,9 @@ elif [[ -n $kernel ]]; then
     else
         append="quiet console=tty1 console=ttyS0 earlyprintk=ttyS0 net.ifnames=0 $append"
     fi
+    if [[ -n $verbose ]]; then
+        append="$append ignore_loglevel"
+    fi
     os="$os -kernel /home/sean/build/kernel/$kernel/arch/x86_64/boot/bzImage"
     if [[ $modules != "false" ]]; then
         os="$os -virtfs local,path=/home/sean/build/kernel/$kernel/lib/modules,security_model=passthrough,mount_tag=kmodules"
