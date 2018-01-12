@@ -335,6 +335,8 @@ alias gh='cd -P ~/go/src/github.com'
 alias int='cd -P ~/go/src/intel.com'
 
 # Direct navigation to kernel and image directories
+alias li='cd -P ~/go/src/github.com/torvalds/linux'
+alias se='cd -P ~/go/src/github.com/sean-jc/settings'
 alias kn='cd -P ~/build/kernel'
 alias qq='cd -P ~/build/qemu'
 alias iq='cd -P ~/images/qemu'
