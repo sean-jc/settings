@@ -6,6 +6,7 @@ echo "drivers/acpi/*" >> .git/info/sparse-checkout
 echo "drivers/platform/x86/intel_sgx/*" >> .git/info/sparse-checkout
 echo "drivers/block/virtio_blk.c" >> .git/info/sparse-checkout
 echo "drivers/net/virtio_net.c" >> .git/info/sparse-checkout
+echo "drivers/ptp/ptp_kvm.c" >> .git/info/sparse-checkout
 echo "drivers/virtio/*" >> .git/info/sparse-checkout
 echo "include/*" >> .git/info/sparse-checkout
 echo "init/*" >> .git/info/sparse-checkout
