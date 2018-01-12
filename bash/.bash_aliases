@@ -106,7 +106,7 @@ __git_complete gd _git_diff
 __git_complete ge _git_send_email
 __git_complete gf _git_fetch
 __git_complete gg _git_checkout
-__git_complete gk _git_format_patch
+__git_complete gfp _git_format_patch
 __git_complete gl _git_log
 __git_complete glo _git_log
 __git_complete gp _git_cherry_pick
@@ -124,7 +124,7 @@ alias ge='git send-email'
 alias gf='git fetch'
 alias gg='git checkout'
 alias ggd='gs | grep deleted: | cut -f 2 | tr -s " " | cut -f 2 -d " " | xargs git checkout'
-alias gk='git format-patch -o ~/patches/'
+alias gfp='git format-patch -o ~/patches/'
 alias gl='git log'
 alias glo='git log --pretty=oneline'
 alias gm="git status | grep modified | tr -d '\t' | tr -d ' ' | cut -f 2 -d :"
@@ -344,6 +344,14 @@ alias iv='cd -P ~/images/hyper-v'
 
 # Direct navigation to misc directories
 alias dl='cd -P ~/Downloads'
+
+# Kernel grep and gdb commands
+alias gk='readelf -s vmlinux | grep'
+
+function gdb-kernel {
+    gdb -batch -ex 'file vmlinux' -ex "disassemble $1"
+}
+alias dk='gdb-kernel'
 
 alias mkdir='mkdir -p'
 function mcd() {
