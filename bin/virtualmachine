@@ -130,7 +130,11 @@ if [[ -n $migrate ]]; then
     migrate="-incoming tcp:0:$migrate"
 fi
 
-sudo modprobe kvm_intel
+if [[ -n $kvm ]]; then
+    sudo modprobe $kvm
+else
+    sudo modprobe kvm_intel
+fi
 sudo modprobe vhost_net
 if [[ -n $kernel ]]; then
     sudo -E $qemu $machine $cpu $mem $display $net $os $extra -append "$append" $migrate
