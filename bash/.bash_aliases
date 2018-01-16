@@ -274,8 +274,9 @@ alias services='sys list-unit-files --type=service'
 alias ports='netstat -tulanp'
 
 # Find my systems in the lab...
-alias christ='sudo nmap -sP 10.54.77.* | grep -e sjchrist -e "for 10"'
+alias christ='sudo nmap -sP 10.54.74.* | grep -e sjchrist -e "for 10"'
 alias lchrist='sudo nmap -sP 10.54.75.* | grep -e sjchrist -e "for 10"'
+alias mchrist='sudo nmap -sP 10.54.77.* | grep -e sjchrist -e "for 10"'
 
 # ls
 alias ls='ls -aF --color=always'
