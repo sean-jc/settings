@@ -280,7 +280,7 @@ alias mchrist='sudo nmap -sP 10.54.77.* | grep -e sjchrist -e "for 10"'
 
 # ls
 alias ls='ls -aF --color=always'
-alias ll='ls -l'
+alias ll='ls -lh'
 
 # clear
 alias c='clear'
