@@ -64,29 +64,43 @@ function git-cherry-pick-show() {
 function git-push() {
     local opts
     local response=y
-    local remote=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} | cut -f 1 -d /)
+    local branch=$(git rev-parse --abbrev-ref HEAD)
+    local remote
+    local upstream
     if [[ $# -eq 1 && $1 != "force" ]]; then
         remote=$1
+        upstream=$branch
+    else
+        remote=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} | cut -f 1 -d /)
+        if [[ $? -eq 0 ]]; then
+            upstream=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} | cut -f 2,3 -d /)
+            if [[ $? -ne 0 ]]; then
+                upstream=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} | cut -f 2 -d /)
+            fi
+        else
+            printf "No remote configured or specified\n"
+            return 1
+        fi
     fi
-    local branch=$(git rev-parse --abbrev-ref HEAD)
-    local exists=$(git ls-remote --heads $remote $branch | wc -l)
+
+    local exists=$(git ls-remote --heads $remote $upstream | wc -l)
     if [[ $exists == "0" ]]; then
-        printf "\e[1;7;35mCreate and track remote branch $remote/$branch? "
+        printf "\e[1;7;35mCreate and track remote branch $remote/$upstream? "
         read -r -p "[Y/n] " response
     elif [[ $exists != "1" ]]; then
-        printf "Found multiple ($exists) branches: $branch\n"
+        printf "Found multiple ($exists) branches: $upstream\n"
         return 1
     elif [[ $1 == "force" ]]; then
         opts="-f"
         git status
-        printf "\e[1;7;35mForce push remote branch $remote/$branch? "
+        printf "\e[1;7;35mForce push $branch to $remote/$upstream? "
         read -r -p "[Y/n] " response
         printf "\e[0m"
     fi
     response=${response,,}    # tolower
     if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
-        git push $opts $remote $branch
-        git branch --set-upstream-to=$remote/$branch
+        git push $opts $remote $branch:$upstream
+        git branch --set-upstream-to=$remote/$upstream
     fi
 }
 
