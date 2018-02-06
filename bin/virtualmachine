@@ -47,7 +47,7 @@ else
 fi
 
 
-qemu=/home/sean/build/qemu/$qemu/x86_64-softmmu/qemu-system-x86_64
+qemu="/home/sean/build/qemu/$qemu/x86_64-softmmu/qemu-system-x86_64 -no-reboot"
 ifup=$(which ifup)
 
 net="-device virtio-net-pci,netdev=net0,mac=$mac -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
