@@ -74,9 +74,9 @@ if [[ -n $epc ]]; then
 fi
 
 if [[ $os = "hyper-v" ]]; then
-    cpu="-cpu host,hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time,+vmx"
+    cpu="-cpu host,host-phys-bits,hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time,+vmx"
 else
-    cpu="-cpu host"
+    cpu="-cpu host,host-phys-bits"
     if [[ $uefi != "false" ]]; then
         if [[ -z $debug_ovmf ]]; then
             cpu="$cpu -bios /home/sean/build/ovmf/OVMF.fd"
