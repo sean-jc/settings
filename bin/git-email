@@ -1,0 +1,104 @@
+#!/bin/bash
+branch=$(git rev-parse --abbrev-ref HEAD)
+dir=$(pwd | rev | cut -d'/' -f1 | rev)
+
+if [[ $# -lt 1 ]]; then
+    printf "Must specify the mailing list\n"
+    exit 1
+fi
+ml=$1
+
+if [[ $# -lt 2 || $2 -lt 1 ]]; then
+    printf "Must specify the (non-zero) number of patches\n"
+    exit 1
+fi
+nr=$2
+
+if [[ $# -lt 3 || $3 -lt 1 ]]; then
+    printf "Must specify the (non-zero) series version\n"
+    exit 1
+fi
+ver=$3
+
+dir="$HOME/outbox/$dir"
+if [[ ! -d $dir ]]; then
+    printf "$dir is not a known repository for patches\n"
+    exit 1
+fi
+
+dir="$dir/$ml"
+if [[ ! -d $dir ]]; then
+    printf "$dir is not a known mailing list for patches\n"
+    exit 1
+fi
+
+branch=${branch//\//.}
+dir="$dir/$branch/v$ver"
+if [[ -d $dir ]]; then
+    if [[ -n $ovr ]]; then
+        rm -f $dir/*.patch
+    else
+        printf "$dir already exists, looks like you created this version already\n"
+        exit 1
+    fi
+else
+    mkdir -p $dir
+fi
+
+
+opt=""
+if [[ $nr -gt 1 ]]; then
+    opt="--cover-letter"
+fi
+if [[ $ver -gt 1 ]]; then
+    opt="$opt -v $ver"
+fi
+if [[ -n $rfc ]]; then
+    opt="$opt --rfc"
+fi
+if [[ -n $resend ]]; then
+    opt="$opt --subject-prefix=\"PATCH RESEND\""
+fi
+
+sh -c "git format-patch $opt -M --minimal --patience -o $dir -$nr"
+
+if [[ -n $nosend ]]; then
+    exit 0
+fi
+
+to="--to=sean.j.christopherson@intel.com"
+while true; do
+    if [[ -n $cc ]]; then
+        printf "Send email: \e[1;7;35m$to $cc\e[0m "
+    else
+        printf "Send email: \e[1;7;35m$to\e[0m "
+    fi
+    read -r -p "[Y/n] " response
+
+    response=${response,,}    # tolower
+    if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
+        if [[ $nr -gt 1 ]]; then
+            grep -q -e "BLURB HERE" -e "SUBJECT HERE" $dir/*0000-cover-letter.patch
+            if [ $? -eq 0 ]; then
+                printf "Edit the cover letter before sending!\n"
+                continue
+            fi
+        fi
+
+        git send-email $to $cc $dir
+        if [[ $to != "--to=sean.j.christopherson@intel.com" || -n $dry ]]; then
+            break
+        fi
+
+        if [[ $ml == "kvm" ]]; then
+            to="--to=kvm@vger.kernel.org --to=pbonzini@redhat.com --to=rkrcmar@redhat.com"
+        else
+            printf "$ml is not a known mailing list for sending email\n"
+            exit 1
+        fi 
+    else
+        break
+    fi
+done
+
+

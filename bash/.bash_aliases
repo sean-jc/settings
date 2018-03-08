@@ -134,11 +134,12 @@ alias gc='git commit'
 alias gd='git-diff'
 alias gdd='git diff'
 alias gds='git diff --staged'
-alias ge='git send-email'
+alias ge='git-email'
+alias gek='git-email kvm'
 alias gf='git fetch'
+alias gfp='nosend=1 git-email'
 alias gg='git checkout'
 alias ggd='gs | grep deleted: | cut -f 2 | tr -s " " | cut -f 2 -d " " | xargs git checkout'
-alias gfp='git format-patch -o ~/patches/'
 alias gl='git log'
 alias glo='git log --pretty=oneline'
 alias gm="git status | grep modified | tr -d '\t' | tr -d ' ' | cut -f 2 -d :"
@@ -356,6 +357,13 @@ alias kn='cd -P ~/build/kernel'
 alias qq='cd -P ~/build/qemu'
 alias iq='cd -P ~/images/qemu'
 alias iv='cd -P ~/images/hyper-v'
+
+# Direct navigation to outbox directories
+alias out='cd -P ~/outbox'
+alias ol='cd -P ~/outbox/linux'
+alias ol='cd -P ~/outbox/linux/kvm'
+alias om='cd -P ~/outbox/linux/mm'
+alias os='cd -P ~/outbox/linux/sgx'
 
 # Direct navigation to misc directories
 alias dl='cd -P ~/Downloads'
