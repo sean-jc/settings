@@ -7,6 +7,7 @@ echo "drivers/platform/x86/intel_sgx/*" >> .git/info/sparse-checkout
 echo "drivers/block/virtio_blk.c" >> .git/info/sparse-checkout
 echo "drivers/net/virtio_net.c" >> .git/info/sparse-checkout
 echo "drivers/ptp/ptp_kvm.c" >> .git/info/sparse-checkout
+echo "drivers/vhost/*" >> .git/info/sparse-checkout
 echo "drivers/virtio/*" >> .git/info/sparse-checkout
 echo "include/*" >> .git/info/sparse-checkout
 echo "init/*" >> .git/info/sparse-checkout
@@ -16,5 +17,6 @@ echo "mm/*" >> .git/info/sparse-checkout
 echo "virt/*" >> .git/info/sparse-checkout
 echo "!include/uapi/linux/netfilter*" >> .git/info/sparse-checkout
 echo "!include/soc/arc/aux.h" >> .git/info/sparse-checkout
+echo "README.md" >> .git/info/sparse-checkout
 
 git read-tree -mu HEAD
