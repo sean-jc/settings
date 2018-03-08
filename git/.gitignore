@@ -1,2 +1,3 @@
 .vscode/
+arch/x86/kvm/*emulation/
 REPORTING-BUGS
