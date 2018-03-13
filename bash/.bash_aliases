@@ -566,12 +566,19 @@ function time-kernel() {
 alias tk='time-kernel'
 
 function system-info() {
-    printf "Kernel:\t\t       $(uname -spr)\n"
+    printf "IP Address:\t       $(ipa)\n"
+    printf "Kernel:\t\t       $(uname -r)\n"
+}
+alias si='system-info'
+
+function system-info-verbose() {
+    printf "IP Address:\t       $(ipa)\n"
+    printf "Kernel:\t\t       $(uname -r)\n"
     printf "Date:\t\t       $(date)\n"
     printf "Uptime:\t\t      $(uptime)\n"
     lscpu | grep -v Architecture | grep -v "Byte Order" | grep -v op-mode | grep -v BogoMIPS | grep -v Virtualization | grep -v Flags | grep -v On-line
 }
-alias si='system-info'
+alias siv='system-info-verbose'
 
 function make-qemu() {
     THREADS=$(grep -c '^processor' /proc/cpuinfo)
