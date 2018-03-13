@@ -352,6 +352,7 @@ alias int='cd -P ~/go/src/intel.com'
 
 # Direct navigation to kernel and image directories
 alias li='cd -P ~/go/src/github.com/torvalds/linux'
+alias ho='cd ~/go/src/github.com/torvalds/host'
 alias se='cd -P ~/go/src/github.com/sean-jc/settings'
 alias qq='cd -P ~/go/src/github.com/qemu/qemu'
 alias kn='cd -P ~/build/kernel'
