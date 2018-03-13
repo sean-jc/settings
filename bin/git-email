@@ -34,36 +34,43 @@ fi
 
 branch=${branch//\//.}
 dir="$dir/$branch/v$ver"
-if [[ -d $dir ]]; then
-    if [[ -n $ovr ]]; then
-        rm -f $dir/*.patch
-    else
-        printf "$dir already exists, looks like you created this version already\n"
+if [[ -n $redo ]]; then
+    if [[ ! -d $dir ]]; then
+        printf "$dir doesn't exists, no existing patch(es) to send\n"
         exit 1
     fi
 else
-    mkdir -p $dir
-fi
+    if [[ -d $dir ]]; then
+        if [[ -n $ovr ]]; then
+            rm -f $dir/*.patch
+        else
+            printf "$dir already exists, looks like you created this version already\n"
+            exit 1
+        fi
+    else
+        mkdir -p $dir
+    fi
 
 
-opt=""
-if [[ $nr -gt 1 ]]; then
-    opt="--cover-letter"
-fi
-if [[ $ver -gt 1 ]]; then
-    opt="$opt -v $ver"
-fi
-if [[ -n $rfc ]]; then
-    opt="$opt --rfc"
-fi
-if [[ -n $resend ]]; then
-    opt="$opt --subject-prefix=\"PATCH RESEND\""
-fi
+    opt=""
+    if [[ $nr -gt 1 ]]; then
+        opt="--cover-letter"
+    fi
+    if [[ $ver -gt 1 ]]; then
+        opt="$opt -v $ver"
+    fi
+    if [[ -n $rfc ]]; then
+        opt="$opt --rfc"
+    fi
+    if [[ -n $resend ]]; then
+        opt="$opt --subject-prefix=\"PATCH RESEND\""
+    fi
 
-sh -c "git format-patch $opt -M --minimal --patience -o $dir -$nr"
+    sh -c "git format-patch $opt -M --minimal --patience -o $dir -$nr"
 
-if [[ -n $nosend ]]; then
-    exit 0
+    if [[ -n $nosend ]]; then
+        exit 0
+    fi
 fi
 
 to="--to=sean.j.christopherson@intel.com"
