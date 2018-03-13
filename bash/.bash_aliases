@@ -452,7 +452,7 @@ function make-kernel-package() {
 alias maho='make-kernel-package'
 
 function list-kernel-package {
-    grep menuentry /boot/grub/grub.cfg | grep -o -e "'Ubuntu, with Linux.*$1+'" | cut -f 2 -d "'"
+    grep menuentry /boot/grub/grub.cfg | grep -o -e "'Ubuntu, with Linux.*$1+'" | cut -f 2 -d "'" | cut -f 4 -d " "
 }
 alias lk='list-kernel-package'
 
@@ -461,12 +461,13 @@ function boot-kernel-package {
         printf "Must specify the target kernel name\n"
         return 1
     fi
-    if [[ $(grep menuentry /boot/grub/grub.cfg | grep -c -e "'Ubuntu, with Linux.*$1+'") != "1" ]]; then
-        grep menuentry /boot/grub/grub.cfg | grep -o -e "'Ubuntu, with Linux.*$1+'" | cut -f 2 -d "'"
+    local k=${1%%+}
+    if [[ $(grep menuentry /boot/grub/grub.cfg | grep -c -e "'Ubuntu, with Linux.*$k+'") != "1" ]]; then
+        grep menuentry /boot/grub/grub.cfg | grep -o -e "'Ubuntu, with Linux.*$k+'" | cut -f 2 -d "'"
         printf "Failed to find single entry for $1\n"
         return 1
     fi
-    local entry=$(grep menuentry /boot/grub/grub.cfg | grep -o -e "'Ubuntu, with Linux.*$1+'" | cut -f 2 -d "'")
+    local entry=$(grep menuentry /boot/grub/grub.cfg | grep -o -e "'Ubuntu, with Linux.*$k+'" | cut -f 2 -d "'")
     if [[ -z $entry ]]; then
         printf "Failed to find entry=$entry\n"
         return 1
@@ -489,18 +490,19 @@ function purge-kernel-package {
         printf "Must specify the target kernel name\n"
         return 1
     fi
-    if [[ $(dpkg-query-size | grep -c -e "linux-image.*$1+") != "1" ]]; then
-        dpkg-query-size | grep -e "linux-image.*$1+"
+    local k=${1%%+}
+    if [[ $(dpkg-query-size | grep -c -e "linux-image.*$k+") != "1" ]]; then
+        dpkg-query-size | grep -e "linux-image.*$k+"
         printf "Failed to find single image for '$1'\n"
         return 1
     fi
-    if [[ $(dpkg-query-size | grep -c -e "linux-headers.*$1+") != "1" ]]; then
-        dpkg-query-size | grep -e "linux-headers.*$1+"
+    if [[ $(dpkg-query-size | grep -c -e "linux-headers.*$k+") != "1" ]]; then
+        dpkg-query-size | grep -e "linux-headers.*$k+"
         printf "Failed to find single headers for '$1'\n"
         return 1
     fi
-    local img=$(dpkg-query-size | grep -e "linux-image.*$1+"    | cut -f 2)
-    local hdr=$(dpkg-query-size | grep -e "linux-headers.*$1+"  | cut -f 2)
+    local img=$(dpkg-query-size | grep -e "linux-image.*$k+"    | cut -f 2)
+    local hdr=$(dpkg-query-size | grep -e "linux-headers.*$k+"  | cut -f 2)
     if [[ -z $img || -z $hdr ]]; then
         printf "Failed to find image=$img or headers=$hdr\n"
         return 1
