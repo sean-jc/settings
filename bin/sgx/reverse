@@ -1,4 +1,0 @@
-#!/bin/bash
-cp /home/sean/go/src/github.com/sean-jc/intel_sgx/sgx*.* /home/sean/go/src/github.com/torvalds/linux/drivers/platform/x86/intel_sgx
-cp /home/sean/go/src/github.com/sean-jc/intel_sgx/arch/x86/include/asm/sgx.h /home/sean/go/src/github.com/torvalds/linux/arch/x86/include/asm/sgx.h
-cp /home/sean/go/src/github.com/sean-jc/intel_sgx/arch/x86/include/uapi/asm/sgx.h /home/sean/go/src/github.com/torvalds/linux/arch/x86/include/uapi/asm/sgx.h

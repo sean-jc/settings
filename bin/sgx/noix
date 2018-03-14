@@ -1,9 +1,0 @@
-#!/bin/bash
-cd /home/sean/go/src/github.com/01org/linux-sgx-driver
-sudo -E systemctl stop aesmd
-sudo -E rmmod isgx 
-set -e
-sudo -E make clean
-sudo -E make
-sudo -E insmod isgx.ko
-cd - > /dev/null
