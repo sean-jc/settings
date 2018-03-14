@@ -349,6 +349,7 @@ alias cd..="cd .."
 alias so='cd -P ~/go/src'
 alias gh='cd -P ~/go/src/github.com'
 alias int='cd -P ~/go/src/intel.com'
+alias ko='cd -P ~/go/src/kernel.org'
 
 # Direct navigation to kernel and image directories
 alias li='cd -P ~/go/src/github.com/torvalds/linux'
