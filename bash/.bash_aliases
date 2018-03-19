@@ -352,6 +352,7 @@ alias int='cd -P ~/go/src/intel.com'
 alias ko='cd -P ~/go/src/kernel.org'
 
 # Direct navigation to kernel and image directories
+alias ku='cd -P ~/go/src/kernel.org/kvm-unit-tests'
 alias li='cd -P ~/go/src/kernel.org/linux'
 alias ho='cd ~/go/src/kernel.org/host'
 alias se='cd -P ~/go/src/github.com/sean-jc/settings'
