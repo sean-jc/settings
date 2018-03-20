@@ -75,7 +75,7 @@ fi
 
 to="--to=sean.j.christopherson@intel.com"
 while true; do
-    if [[ -n $cc ]]; then
+    if [[ $to != "--to=sean.j.christopherson@intel.com" && -n $cc ]]; then
         printf "Send email: \e[1;7;35m$to $cc\e[0m "
     else
         printf "Send email: \e[1;7;35m$to\e[0m "
@@ -92,8 +92,13 @@ while true; do
             fi
         fi
 
-        git send-email $to $cc $dir
-        if [[ $to != "--to=sean.j.christopherson@intel.com" || -n $dry ]]; then
+        if [[ $to == "--to=sean.j.christopherson@intel.com" ]]; then
+            git send-email --suppress-cc=all --confirm=always $to $dir
+        else
+            git send-email --confirm=always $to $cc $dir
+            break
+        fi
+        if [[ -n $dry ]]; then
             break
         fi
 
