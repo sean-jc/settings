@@ -8,8 +8,10 @@ stubdirs=(
         drivers/bcma
         drivers/bluetooth
         drivers/bus
+        drivers/dca
         drivers/devfreq
         drivers/dio
+        drivers/dma
         drivers/dma-buf
         drivers/edac
         drivers/eisa
@@ -55,9 +57,12 @@ stubdirs=(
         drivers/nfc
         drivers/ntb
         drivers/nubus
+        drivers/nvdimm
         drivers/nvme
         drivers/nvmem
         drivers/of
+        drivers/opp
+        drivers/oprofile
         drivers/parisc
         drivers/parport
         drivers/pcmcia
@@ -84,8 +89,11 @@ stubdirs=(
         drivers/sbus
         drivers/sfi
         drivers/sh
+        drivers/siox
+        drivers/slimbus
         drivers/sn
         drivers/soc
+        drivers/soundwire
         drivers/spi
         drivers/spmi
         drivers/ssb
@@ -97,7 +105,11 @@ stubdirs=(
         drivers/uio
         drivers/usb
         drivers/uwb
+        drivers/video/backlight
+        drivers/video/fbdev
+        drivers/video/logo
         drivers/virt
+        drivers/visorbus
         drivers/vlynq
         drivers/vme
         drivers/w1
