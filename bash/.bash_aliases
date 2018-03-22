@@ -104,6 +104,17 @@ function git-push() {
     fi
 }
 
+function git-get-branch() {
+    if [[ $# -eq 1 ]]; then
+        git checkout -b $1 origin/$1
+    elif [[ $# -eq 2 ]]; then
+        git checkout -b $1 $2
+    else
+        printf "git-get-branch <branch> [remote]\n"
+        return 1
+    fi
+}
+
 function git-url-patch() {
     # lynx -dump -nonumbers -hiddenlinks=liston $1 | grep -e "^http.*00(0[1-9]|1[0-7])\.patch" | xargs -n 1 curl -s | git am
     lynx -dump -nonumbers -hiddenlinks=liston $1 | grep -e "^http.*003[0-9].*\.patch" | xargs -n 1 curl -s | git am
@@ -114,6 +125,7 @@ function git-url-patch() {
 # Add git completion to aliases
 __git_complete g __git_main
 __git_complete gb _git_branch
+__git_complete ggb _git_branch
 
 __git_complete gc _git_commit
 __git_complete gd _git_diff
@@ -143,6 +155,7 @@ alias gf='git fetch'
 alias gfo='git fetch origin'
 alias gfp='nosend=1 git-email'
 alias gg='git checkout'
+alias ggb='git-get-branch'
 alias ggd='gs | grep deleted: | cut -f 2 | tr -s " " | cut -f 2 -d " " | xargs git checkout'
 alias gl='git log'
 alias glo='git log --pretty=oneline'
