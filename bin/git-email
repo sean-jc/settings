@@ -104,6 +104,8 @@ while true; do
 
         if [[ $ml == "kvm" ]]; then
             to="--to=kvm@vger.kernel.org --to=pbonzini@redhat.com --to=rkrcmar@redhat.com"
+        elif [[ $ml == "sgx" ]]; then
+            to="--to=jarkko.sakkinen@linux.intel.com"
         else
             printf "$ml is not a known mailing list for sending email\n"
             exit 1
