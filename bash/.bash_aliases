@@ -130,6 +130,8 @@ __git_complete gs _git_log
 alias g='git'
 alias ga='git add'
 alias gb='git branch'
+alias gbg='git branch -r | grep'
+alias gbgo='git branch -r | grep origin'
 alias gc='git commit'
 alias gd='git-diff'
 alias gdd='git diff'
