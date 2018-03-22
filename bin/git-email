@@ -73,6 +73,10 @@ else
     fi
 fi
 
+if [ -f ./scripts/checkpatch.pl ]; then
+    ./scripts/checkpatch.pl -g HEAD-$nr
+fi
+
 to="--to=sean.j.christopherson@intel.com"
 while true; do
     if [[ $to != "--to=sean.j.christopherson@intel.com" && -n $cc ]]; then
