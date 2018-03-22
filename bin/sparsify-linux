@@ -19,6 +19,10 @@ echo "!Documentation" >> .git/info/sparse-checkout
 git read-tree -mu HEAD
 
 for i in "${stubdirs[@]}"; do
+        if [[ $i == "drivers/oprofile" ||
+              $i == "drivers/lguest" ]]; then
+                continue
+        fi
         mkdir -p $i
         touch $i/Makefile
         if [[ $i != "Documentation" &&
