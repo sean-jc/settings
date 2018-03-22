@@ -378,8 +378,13 @@ alias dl='cd -P ~/Downloads'
 # Kernel grep and gdb commands
 alias gk='readelf -s vmlinux | grep'
 
+function gdb-disassemble() {
+    gdb -batch -ex "file $1" -ex "disassemble $2"
+}
+alias dis='gdb-disassemble'
+
 function gdb-kernel {
-    gdb -batch -ex 'file vmlinux' -ex "disassemble $1"
+    gdb-disassemble vmlinux $1
 }
 alias dk='gdb-kernel'
 
