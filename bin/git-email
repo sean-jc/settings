@@ -67,14 +67,14 @@ else
     fi
 
     sh -c "git format-patch $opt -M --minimal --patience -o $dir -$nr"
-
-    if [[ -n $nosend ]]; then
-        exit 0
-    fi
 fi
 
 if [ -f ./scripts/checkpatch.pl ]; then
     ./scripts/checkpatch.pl -g HEAD-$nr
+fi
+
+if [[ -n $nosend ]]; then
+    exit 0
 fi
 
 to="--to=sean.j.christopherson@intel.com"
