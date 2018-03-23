@@ -45,8 +45,11 @@ function git-blob() {
 }
 
 function git-apply() {
-    git reset --hard $(printf "origin/$(git rev-parse --abbrev-ref HEAD)")
-    git am --whitespace=fix ~/mutt/*.patch
+    if [ $# -eq 0 ]; then
+        git am -3 ~/mutt/*.patch
+    else
+        git am -3 $1/*.patch
+    fi
 }
 
 function git-cherry-pick-ref() {
@@ -160,6 +163,7 @@ alias ggd='gs | grep deleted: | cut -f 2 | tr -s " " | cut -f 2 -d " " | xargs g
 alias gl='git log'
 alias glo='git log --pretty=oneline'
 alias gm="git status | grep modified | tr -d '\t' | tr -d ' ' | cut -f 2 -d :"
+alias gpa='git-apply'
 alias gpu='git-push'
 alias gpo='git-push origin'
 alias gpf='git-push force'
