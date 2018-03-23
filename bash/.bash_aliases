@@ -389,7 +389,7 @@ alias iv='cd -P ~/images/hyper-v'
 # Direct navigation to outbox directories
 alias out='cd -P ~/outbox'
 alias ol='cd -P ~/outbox/linux'
-alias ol='cd -P ~/outbox/linux/kvm'
+alias ok='cd -P ~/outbox/linux/kvm'
 alias om='cd -P ~/outbox/linux/mm'
 alias os='cd -P ~/outbox/linux/sgx'
 
