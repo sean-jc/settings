@@ -554,7 +554,9 @@ function make-kernel() {
         return 2
     fi
 
-    stubify-linux $1
+    if [[ $syz != "true" ]]; then
+        stubify-linux $1
+    fi
 
     if [[ $sgx == "true" ]]; then
         if git diff --quiet && git diff --staged --quiet ; then
@@ -586,6 +588,7 @@ function make-kernel() {
 }
 alias mage='make-kernel'
 alias mags='sgx=true make-kernel'
+alias magz='syz=true make-kernel'
 
 # time kernel
 function time-kernel() {
