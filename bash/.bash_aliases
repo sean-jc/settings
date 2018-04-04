@@ -461,7 +461,6 @@ function extract() {
     fi
 }
 
-# MAke HOst kernel
 function make-kernel-package() {
     if [[ $# -lt 1 ]]; then
         printf "Must specify the target kernel name\n"
@@ -471,6 +470,11 @@ function make-kernel-package() {
         printf "Maximum of 2 arguments supported: kernel (1), revision (2) and no-install (3)\n"
         return 2
     fi
+
+    if [[ $guest == "true" ]]; then
+        stubify-guest
+    fi
+
     rev="1"
     if [[ $# -ge 2 ]]; then
         rev=$2
@@ -478,11 +482,16 @@ function make-kernel-package() {
     rm -f ../*$1+_${rev}_*.deb
     THREADS=$(grep -c '^processor' /proc/cpuinfo)
     CONCURRENCY_LEVEL=$THREADS fakeroot make-kpkg --initrd --append-to-version=-$1 kernel_headers kernel_image --revision $rev
-    if [[ $? -eq 0 && $# -lt 3 ]]; then
+    if [[ $? -eq 0 && $# -lt 3 && $guest != "true" ]]; then
         sudo dpkg -i ../*$1+_${rev}_*.deb
     fi
 }
-alias maho='make-kernel-package'
+
+# Make Host kernel
+alias mh='make-kernel-package'
+
+# Make Guest kernel
+alias mg='guest=true make-kernel-package'
 
 function list-kernel-package {
     grep menuentry /boot/grub/grub.cfg | grep -o -e "'Ubuntu, with Linux.*$1+'" | cut -f 2 -d "'" | cut -f 4 -d " "
@@ -545,7 +554,7 @@ function purge-kernel-package {
 }
 alias pk='purge-kernel-package'
 
-# MAke GuEst kernel
+# Make Custom kernel
 function make-kernel() {
     if [[ $# -lt 1 ]]; then
         printf "Must specify the target kernel name\n"
@@ -588,9 +597,9 @@ function make-kernel() {
         fi
     fi
 }
-alias mage='make-kernel'
-alias mags='sgx=true make-kernel'
-alias magz='syz=true make-kernel'
+alias mc='make-kernel'
+alias mcs='sgx=true make-kernel'
+alias mcz='syz=true make-kernel'
 
 # time kernel
 function time-kernel() {
