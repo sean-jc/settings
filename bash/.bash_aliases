@@ -564,6 +564,13 @@ function make-kernel() {
         printf "Maximum of 2 arguments supported: kernel (1) and target (2)\n"
         return 2
     fi
+    if [[ $# -eq 2 ]]; then
+        if [[ -n $TARGET ]]; then
+            printf "Maximum of 1 argument when \$target is defined\n"
+            return 2
+        fi
+        TARGET=$2
+    fi
 
     if [[ $syz != "true" ]]; then
         stubify-linux $1
@@ -579,13 +586,13 @@ function make-kernel() {
         fi
     fi
     THREADS=$(grep -c '^processor' /proc/cpuinfo)
-    if [[ $# -eq 1 ]]; then
+    if [[ -z $TARGET ]]; then
         make O=~/build/kernel/$1 -j$THREADS
         if [[ $? -eq 0 ]]; then
             make O=~/build/kernel/$1 INSTALL_MOD_PATH=~/build/kernel/$1 modules_install
         fi
     else
-        make O=~/build/kernel/$1 $2
+        make O=~/build/kernel/$1 $TARGET
     fi
     if [[ $sgx == "true" ]]; then
         if git diff --quiet && git diff --staged --quiet ; then
@@ -598,8 +605,14 @@ function make-kernel() {
     fi
 }
 alias mc='make-kernel'
+alias mcc='TARGET=menuconfig make-kernel'
+alias mco='TARGET=oldconfig make-kernel'
 alias mcs='sgx=true make-kernel'
 alias mcz='syz=true make-kernel'
+
+# generic aliases for make menuconfig and make oldconfig
+alias mmc='make menuconfig'
+alias mmo='make oldconfig'
 
 # time kernel
 function time-kernel() {
