@@ -1,5 +1,5 @@
 #!/bin/bash
-if [[ -z $img ]]; then
+if [[ -z $img && -z $unittest ]]; then
     printf "Must specify the image name via: \$img.\n"
     exit 2
 fi
@@ -100,7 +100,9 @@ if [[ $daemon == "true" ]]; then
     extra="-daemonize"
 fi
 
-if [[ $virtio = "false" ]]; then
+if [[ -n $unittest ]]; then
+    os="-kernel /home/sean/go/src/kernel.org/kvm-unit-tests/x86/$unittest.flat -device pc-testdev -device isa-debug-exit,iobase=0xf4,iosize=0x4 -device pci-testdev"
+elif [[ $virtio == "false" ]]; then
     os="-hda $img"
     append="root=/dev/sda1 rootfstype=ext4 $append"
 else
@@ -123,7 +125,7 @@ elif [[ -n $kernel ]]; then
     if [[ $modules != "false" ]]; then
         os="$os -virtfs local,path=/home/sean/build/kernel/$kernel/lib/modules,security_model=passthrough,mount_tag=kmodules"
     fi
-else
+elif [[ -z $unittest ]]; then
     os="$os -boot c"
 fi
 if [[ -n $iso1 ]]; then

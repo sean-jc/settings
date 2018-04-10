@@ -226,6 +226,7 @@ alias hyv='virt stable hyv'
 alias vuefi='virt stable uefi'
 # alias vuefi='qemu=stable img=uefi display=vnc iso=~/images/ubuntu/ubuntu-16.04.3-desktop-amd64.iso virtualmachine'
 alias vanilla='virtio=false virt stable'
+alias vu='uvirt stable'
 
 alias hv='os=hyper-v virt stable machine'
 alias hvd='os=hyper-v display=vnc virt stable machine'
