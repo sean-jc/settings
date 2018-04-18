@@ -118,6 +118,10 @@ function git-get-branch() {
     fi
 }
 
+function git-get-prefixed-branch() {
+    git checkout $1/$2
+}
+
 function git-url-patch() {
     # lynx -dump -nonumbers -hiddenlinks=liston $1 | grep -e "^http.*00(0[1-9]|1[0-7])\.patch" | xargs -n 1 curl -s | git am
     lynx -dump -nonumbers -hiddenlinks=liston $1 | grep -e "^http.*003[0-9].*\.patch" | xargs -n 1 curl -s | git am
@@ -158,6 +162,8 @@ alias gf='git fetch'
 alias gfo='git fetch origin'
 alias gfp='nosend=1 git-email'
 alias gg='git checkout'
+alias ggs='git-get-prefixed-branch sgx'
+alias ggv='git-get-prefixed-branch vmx'
 alias ggb='git-get-branch'
 alias ggd='gs | grep deleted: | cut -f 2 | tr -s " " | cut -f 2 -d " " | xargs git checkout'
 alias gl='git log --decorate'
