@@ -27,6 +27,8 @@ for i in "${stubdirs[@]}"; do
         touch $i/Makefile
         if [[ $i != "Documentation" &&
               $i != "drivers/cdrom" &&
+              $i != "drivers/char/mwave" &&
+              $i != "drivers/char/xilinx_hwicap" &&
               $i != "drivers/dio" &&
               $i != "drivers/gpu" &&
               $i != "drivers/message" &&

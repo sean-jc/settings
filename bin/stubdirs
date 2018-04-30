@@ -8,6 +8,14 @@ stubdirs=(
         drivers/bcma
         drivers/bluetooth
         drivers/bus
+        drivers/char/agp
+        drivers/char/hw_random
+        drivers/char/ipmi
+        drivers/char/mwave
+        drivers/char/pcmcia
+        drivers/char/tpm
+        drivers/char/xilinx_hwicap
+        drivers/char/xillybus
         drivers/dca
         drivers/devfreq
         drivers/dio
