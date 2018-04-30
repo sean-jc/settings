@@ -125,6 +125,8 @@ stubdirs=(
         drivers/w1
         drivers/xen
         drivers/zorro
+        net/ipv4/netfilter
+        net/ipv6/netfilter
         firmware
         samples
         sound
