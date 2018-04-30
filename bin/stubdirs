@@ -107,6 +107,8 @@ stubdirs=(
         drivers/uwb
         drivers/video/backlight
         drivers/video/fbdev
+        drivers/video/fbdev/i810
+        drivers/video/fbdev/intelfb
         drivers/video/logo
         drivers/virt
         drivers/visorbus
