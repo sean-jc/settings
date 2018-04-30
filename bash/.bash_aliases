@@ -307,6 +307,7 @@ alias dq='dpkg-query-size'
 alias dqs='dq | sort -n'
 alias dg='dq | grep'
 alias di='sudo dpkg -i'
+alias ds='dpkg -S'
 
 function dpkg-purge {
     dpkg --list | grep "^rc" | cut -d " " -f 3 | xargs sudo dpkg --purge
