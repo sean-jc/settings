@@ -580,7 +580,7 @@ function make-kernel() {
         TARGET=$2
     fi
 
-    if [[ $syz != "true" ]]; then
+    if [[ $syz != "true" && -z $TARGET ]]; then
         stubify-linux $1
     fi
 
