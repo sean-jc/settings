@@ -579,8 +579,12 @@ function make-kernel() {
         fi
         TARGET=$2
     fi
+    if [[ ! -d .git/info || ! -d kernel ]]; then
+        printf "Must run from a top-level Linux repository\n"
+        return 4
+    fi
 
-    if [[ $syz != "true" && -z $TARGET ]]; then
+    if [[ -f .git/info/sparse-checkout && -z $TARGET ]]; then
         stubify-linux $1
     fi
 
@@ -616,7 +620,6 @@ alias mc='make-kernel'
 alias mcc='TARGET=menuconfig make-kernel'
 alias mco='TARGET=oldconfig make-kernel'
 alias mcs='sgx=true make-kernel'
-alias mcz='syz=true make-kernel'
 
 # generic aliases for make menuconfig and make oldconfig
 alias mmc='make menuconfig'
