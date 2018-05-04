@@ -583,6 +583,14 @@ function make-kernel() {
         printf "Must run from a top-level Linux repository\n"
         return 4
     fi
+    if [[ -d ~/build/kernel/$1/source ]]; then
+        local prev=$(readlink -f ~/build/kernel/$1/source)
+        local curr=$(readlink -f $PWD)
+        if [[ $prev != $curr ]]; then
+            printf "Mismatch in build's previous source dir\n"
+            return 5
+        fi
+    fi
 
     if [[ -f .git/info/sparse-checkout && -z $TARGET ]]; then
         stubify-linux $1
