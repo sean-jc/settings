@@ -626,6 +626,7 @@ function make-kernel() {
     fi
 }
 alias mc='make-kernel'
+alias mcb='TARGET=bzImage make-kernel'
 alias mcc='TARGET=menuconfig make-kernel'
 alias mco='TARGET=oldconfig make-kernel'
 alias mcs='sgx=true make-kernel'
