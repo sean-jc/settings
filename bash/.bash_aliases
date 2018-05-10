@@ -294,8 +294,10 @@ alias term='gnome-terminal &'
 
 # apt and dpkg
 alias apt='sudo apt'
-alias apt-get='sudo apt-get'
 alias ard='apt-cache rdepends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances --installed --recurse'
+alias ad='sudo apt update'
+alias ap='sudo apt purge'
+alias au='sudo apt upgrade'
 
 # zpool
 alias zp='sudo zpool'
