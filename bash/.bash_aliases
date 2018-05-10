@@ -76,10 +76,7 @@ function git-push() {
     else
         remote=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} | cut -f 1 -d /)
         if [[ $? -eq 0 ]]; then
-            upstream=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} | cut -f 2,3 -d /)
-            if [[ $? -ne 0 ]]; then
-                upstream=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} | cut -f 2 -d /)
-            fi
+             upstream=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} | cut -f 2- -d /)
         else
             printf "No remote configured or specified\n"
             return 1
