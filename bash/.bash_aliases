@@ -295,6 +295,7 @@ alias term='gnome-terminal &'
 # apt and dpkg
 alias apt='sudo apt'
 alias ard='apt-cache rdepends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances --installed --recurse'
+alias ai='sudo apt install'
 alias ad='sudo apt update'
 alias ap='sudo apt purge'
 alias au='sudo apt upgrade'
