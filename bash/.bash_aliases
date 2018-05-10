@@ -585,16 +585,20 @@ function make-kernel() {
         fi
         TARGET=$2
     fi
+    if [[ ! -d ~/build/kernel/$1 ]]; then
+        printf "Target build directory '~/build/kernel/$1' does not exist\n"
+        return 4
+    fi
     if [[ ! -d .git/info || ! -d kernel ]]; then
         printf "Must run from a top-level Linux repository\n"
-        return 4
+        return 5
     fi
     if [[ -d ~/build/kernel/$1/source ]]; then
         local prev=$(readlink -f ~/build/kernel/$1/source)
         local curr=$(readlink -f $PWD)
         if [[ $prev != $curr ]]; then
             printf "Mismatch in build's previous source dir\n"
-            return 5
+            return 6
         fi
     fi
 
