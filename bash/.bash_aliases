@@ -170,6 +170,8 @@ alias ggd='gs | grep deleted: | cut -f 2 | tr -s " " | cut -f 2 -d " " | xargs g
 alias gl='git log --decorate'
 alias glo='git log --pretty=oneline --decorate'
 alias gm="git status | grep modified | tr -d '\t' | tr -d ' ' | cut -f 2 -d :"
+alias gw="git show -s --pretty='tformat:%h (%s, %ad)' --date=short"
+alias gwp="git show -s --pretty='tformat:%h, %s, %ad' --date=short"
 alias gpa='git-apply'
 alias gpu='git-push'
 alias gpo='git-push origin'
