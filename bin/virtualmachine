@@ -136,6 +136,10 @@ if [[ -n $migrate ]]; then
     migrate="-incoming tcp:0:$migrate"
 fi
 
+if [[ -n $trace ]]; then
+    trace="strace"
+fi
+
 if [[ -n $kvm ]]; then
     sudo modprobe $kvm
 else
@@ -143,7 +147,7 @@ else
 fi
 sudo modprobe vhost_net
 if [[ -n $kernel ]]; then
-    sudo -E $qemu $machine $cpu $mem $display $net $os $extra -append "$append" $migrate
+    sudo -E $trace $qemu $machine $cpu $mem $display $net $os $extra -append "$append" $migrate
 else
-    sudo -E $qemu $machine $cpu $mem $display $net $os $extra $migrate
+    sudo -E $trace $qemu $machine $cpu $mem $display $net $os $extra $migrate
 fi

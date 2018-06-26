@@ -222,6 +222,7 @@ alias gol='git-golint | grep -v -e "should have comment" -e ALL_CAPS -e Id -e Ur
 # -----------------------------------------------------------------------------
 alias virtd='daemon=true virt'
 alias vm='virt stable kvm'
+alias tvm='trace=1 virt stable kvm'
 alias vmd='daemon=true virt stable kvm'
 alias vmm='v2_cgroup=memory vm'
 alias vb='uefi=false virt bios kvm'
