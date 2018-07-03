@@ -52,6 +52,33 @@ function git-apply() {
     fi
 }
 
+function git-cherry-pick-branch() {
+    local commits
+    local arbitrary=1000
+
+    if [ $# -ne 2 ]; then
+        printf "Usage for cherry picking a branch: 'gpb <last commit> <first commit>'\n"
+        return 1
+    fi
+
+    glo $1 | head -$arbitrary | grep -q $2
+    if [[ $? -ne 0 ]]; then
+        printf "Did not find $2 in log from $1\n"
+        return 1
+    fi
+    glo $1 | head -$arbitrary | grep -B $arbitrary $2
+    printf "\e[1;7;35mCherry pick these commits?"
+    read -r -p "[Y/n] " response
+    printf "\e[0m"
+    response=${response,,}    # tolower
+    if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
+        commits=$(glo $1 | head -$arbitrary | grep -B $arbitrary $2 | tac | cut -f 1 -d ' ' | xargs)
+        git cherry-pick $commits
+        return $?
+    fi
+    return 1
+}
+
 function git-cherry-pick-ref() {
     git status | grep "currently cherry-picking commit" | grep -o -E "[0-9a-f]{12}\b"
 }
@@ -87,6 +114,7 @@ function git-push() {
     if [[ $exists == "0" ]]; then
         printf "\e[1;7;35mCreate and track remote branch $remote/$upstream? "
         read -r -p "[Y/n] " response
+        printf "\e[0m"
     elif [[ $exists != "1" ]]; then
         printf "Found multiple ($exists) branches: $upstream\n"
         return 1
@@ -140,6 +168,7 @@ __git_complete gfp _git_format_patch
 __git_complete gl _git_log
 __git_complete glo _git_log
 __git_complete gp _git_cherry_pick
+__git_complete gpb _git_log
 __git_complete gr _git_reset
 __git_complete gs _git_log
 
@@ -170,13 +199,14 @@ alias ggd='gs | grep deleted: | cut -f 2 | tr -s " " | cut -f 2 -d " " | xargs g
 alias gl='git log --decorate'
 alias glo='git log --pretty=oneline --decorate'
 alias gm="git status | grep modified | tr -d '\t' | tr -d ' ' | cut -f 2 -d :"
-alias gw="git show -s --pretty='tformat:%h (%s, %ad)' --date=short"
-alias gwp="git show -s --pretty='tformat:%h, %s, %ad' --date=short"
+alias gw="git show -s --pretty='tformat:%h (%s)'"
+alias gwp="git show -s --pretty='tformat:%h, %s'"
 alias gpa='git-apply'
 alias gpu='git-push'
 alias gpo='git-push origin'
 alias gpf='git-push force'
 alias gp='git cherry-pick'
+alias gpb='git-cherry-pick-branch'
 alias gpc='git cherry-pick --continue'
 alias gpl='git-cherry-pick-log'
 alias gps='git-cherry-pick-show'
