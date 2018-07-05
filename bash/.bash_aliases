@@ -667,15 +667,40 @@ function make-kernel() {
         fi
     fi
 }
+alias mk='make-kernel'
 alias mc='make-kernel'
-alias mcb='TARGET=bzImage make-kernel'
-alias mcc='TARGET=menuconfig make-kernel'
-alias mco='TARGET=oldconfig make-kernel'
-alias mcs='sgx=true make-kernel'
+alias mks='sgx=true make-kernel'
+alias mkb='TARGET=bzImage make-kernel'
 
-# generic aliases for make menuconfig and make oldconfig
-alias mmc='make menuconfig'
-alias mmo='make oldconfig'
+function make-config() {
+    if [[ $# -ne 1 && $# -ne 2 ]]; then
+        printf "usage: mm <menuconfig|oldconfig> [dir]\n"
+        return 1
+    elif [[ $1 != "oldconfig" && $1 != "menuconfig" ]]; then
+        printf "usage: mm <menuconfig|oldconfig> [dir]\n"
+        return 1
+    elif [[ $# -eq 2 ]]; then
+        if [[ ! -f .git/info/sparse-checkout ]]; then
+            printf "mm <dir> without sparse directory\n"
+            return 1
+        elif [[ -f .config ]]; then
+            printf "mm <dir> with local config\n"
+            return 1
+        fi
+        TARGET=$1 make-kernel $2
+    else
+        if [[ -f .git/info/sparse-checkout ]]; then
+            printf "mm with sparse directory\n"
+            return 1
+        elif [[ ! -f .config ]]; then
+            printf "mm without local config\n"
+            return 1
+        fi
+        make $1
+    fi
+}
+alias mm='make-config menuconfig'
+alias mo='make-config oldconfig'
 
 # time kernel
 function time-kernel() {
