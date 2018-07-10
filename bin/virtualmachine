@@ -140,12 +140,16 @@ if [[ -n $trace ]]; then
     trace="strace"
 fi
 
-if [[ -n $kvm ]]; then
-    sudo modprobe $kvm
-else
-    sudo modprobe kvm_intel
+if [[ -z $kvm ]]; then
+    kvm=kvm_intel
 fi
+lmod=$(lsmod | cut -f 1 -d ' ' | grep kvm_)
+if [[ $? -eq 0 && $lmod != $kvm ]]; then
+    sudo rmmod $lmod
+fi
+sudo modprobe $kvm
 sudo modprobe vhost_net
+
 if [[ -n $kernel ]]; then
     sudo -E $trace $qemu $machine $cpu $mem $display $net $os $extra -append "$append" $migrate
 else
