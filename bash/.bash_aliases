@@ -737,6 +737,9 @@ function make-qemu() {
 }
 alias mq='make-qemu'
 
+alias rku='sudo QEMU=/home/sean/build/qemu/stable/x86_64-softmmu/qemu-system-x86_64 ./run_tests.sh -v'
+alias rkt='sudo QEMU=/home/sean/build/qemu/stable/x86_64-softmmu/qemu-system-x86_64'
+
 # -----------------------------------------------------------------------------
 # LXD
 # -----------------------------------------------------------------------------
