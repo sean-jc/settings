@@ -61,12 +61,12 @@ function git-cherry-pick-branch() {
         return 1
     fi
 
-    glo $1 | head -$arbitrary | grep -q $2
+    git log --pretty=oneline --decorate $1 | head -$arbitrary | grep -q $2
     if [[ $? -ne 0 ]]; then
         printf "Did not find $2 in log from $1\n"
         return 1
     fi
-    glo $1 | head -$arbitrary | grep -B $arbitrary $2
+    git log --pretty=oneline --decorate $1 | head -$arbitrary | grep -B $arbitrary $2
     printf "\e[1;7;35mCherry pick these commits?"
     read -r -p "[Y/n] " response
     printf "\e[0m"
