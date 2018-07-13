@@ -11,7 +11,7 @@ else
     exit 1
 fi
 if [[ $HOSTPOST == "MOBL" ]]; then
-    dir="${dir/\/c\/Users\/sjchrist\/oracle/\~}"
+    dir="${dir/\/c\/Users\/sjchrist/\~}"
 fi
 git reset --hard HEAD
 ssh $target "cd $dir ; git diff --no-prefix" | patch -p0
