@@ -200,8 +200,8 @@ alias gl='git log --decorate'
 alias glo='git log --pretty=oneline --decorate'
 alias gm="git status | grep modified | tr -d '\t' | tr -d ' ' | cut -f 2 -d :"
 alias gw="git show"
-alias gwo="git show -s --pretty='tformat:%h (%s)'"
-alias gwp="git show -s --pretty='tformat:%h, %s'"
+alias gwo="git show -s --pretty='tformat:%h (\"%s\")'"
+alias gwp="git show -s --pretty='tformat:%h, \"%s\"'"
 alias gpa='git-apply'
 alias gpu='git-push'
 alias gpo='git-push origin'
@@ -449,16 +449,16 @@ alias dl='cd -P ~/Downloads'
 
 # Kernel grep and gdb commands
 alias gk='readelf -s vmlinux | grep'
+alias gkv='readelf -s arch/x86/kvm/kvm-intel.ko | grep'
+alias gkk='readelf -s arch/x86/kvm/kvm.ko | grep'
 
 function gdb-disassemble() {
     gdb -batch -ex "file $1" -ex "disassemble $2"
 }
 alias dis='gdb-disassemble'
-
-function gdb-kernel {
-    gdb-disassemble vmlinux $1
-}
-alias dk='gdb-kernel'
+alias dk='gdb-disassemble vmlinux'
+alias dkv='gdb-disassemble arch/x86/kvm/kvm-intel.ko'
+alias dkk='gdb-disassemble arch/x86/kvm/kvm.ko'
 
 alias mkdir='mkdir -p'
 function mcd() {
