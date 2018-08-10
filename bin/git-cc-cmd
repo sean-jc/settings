@@ -1,0 +1,15 @@
+#!/bin/bash
+shopt -s extglob
+
+opts="--nogit --nogit-fallback --norolestats --nom"
+if [[ $2 == "kvm" ]]; then
+    opts="$opts --pattern-depth=1"
+fi
+
+if [[ $(basename $1) =~ ^0000- ]] ; then
+    maint=$(./scripts/get_maintainer.pl $opts $(dirname $1)/!(0000-cover-letter.patch) | tr '\n' ',')
+else
+    maint=$(./scripts/get_maintainer.pl $opts $1 | tr '\n' ',')
+fi
+maint=${maint%,};
+echo $maint

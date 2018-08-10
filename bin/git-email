@@ -51,7 +51,6 @@ else
         mkdir -p $dir
     fi
 
-
     opt=""
     if [[ $nr -gt 1 ]]; then
         opt="--cover-letter"
@@ -77,14 +76,9 @@ if [[ -n $nosend ]]; then
     exit 0
 fi
 
-to="--to=sean.j.christopherson@intel.com"
 while true; do
-    if [[ $to != "--to=sean.j.christopherson@intel.com" && -n $cc ]]; then
-        printf "Send email: \e[1;7;35m$to $cc\e[0m "
-    else
-        printf "Send email: \e[1;7;35m$to\e[0m "
-    fi
-    read -r -p "[Y/n] " response
+    printf "\n\n\e[1;7;35m--to=sean.j.christopherson@intel.com\n\e[0m"
+    read -r -p "Send email: [Y/n]" response
 
     response=${response,,}    # tolower
     if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
@@ -95,28 +89,40 @@ while true; do
                 continue
             fi
         fi
-
-        if [[ $to == "--to=sean.j.christopherson@intel.com" ]]; then
-            git send-email --suppress-cc=all --confirm=always $to $dir
-        else
-            git send-email --confirm=always $to $cc $dir
-            break
-        fi
-        if [[ -n $dry ]]; then
-            break
-        fi
-
-        if [[ $ml == "kvm" ]]; then
-            to="--to=kvm@vger.kernel.org --to=pbonzini@redhat.com --to=rkrcmar@redhat.com"
-        elif [[ $ml == "sgx" ]]; then
-            to="--to=jarkko.sakkinen@linux.intel.com"
-        else
-            printf "$ml is not a known mailing list for sending email\n"
-            exit 1
-        fi 
-    else
+        git send-email --suppress-cc=all --confirm=always --to=sean.j.christopherson@intel.com $dir
         break
+    else
+        exit 0
     fi
 done
 
+if [[ $ml == "sgx" && -z $to ]]; then
+    to="--to=jarkko.sakkinen@linux.intel.com"
+fi
 
+if [[ -z $to ]]; then
+    if [[ $nr -gt 1 ]]; then
+        primary=$(ls -1 $dir/0000*)
+    else
+        primary=$(ls -1 $dir/0001*)
+    fi
+    to=$(~/go/src/github.com/sean-jc/settings/bin/git-to-cmd $primary $ml)
+    to="${to//\"/\\\"}"
+    to="--to=\"${to//,/\" \-\-to=\"}\""
+fi
+if [[ -z $cc ]]; then
+    cc=$(~/go/src/github.com/sean-jc/settings/bin/git-cc-cmd $primary $ml)
+    cc="${cc//\"/\\\"}"
+    cc="--cc=\"${cc//,/\" \-\-cc=\"}\""
+fi
+printf "\n\n\e[1;7;35m%s\n%s\n\e[0m" "$to" "$cc"
+read -r -p "Send email: [Y/n]" response
+
+response=${response,,}    # tolower
+if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
+    if [[ -z $cc ]]; then
+        git send-email --confirm=always --suppress-cc=all $to $dir
+    else
+        eval $(printf "%s\n" "git send-email --confirm=always $to $cc $dir")
+    fi
+fi
