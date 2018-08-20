@@ -311,6 +311,7 @@ if [[ "$HOSTPOST" == kvm || "$HOSTPOST" == k2 ]]; then
     alias ssn='sudo shutdown now'
     alias ssf='sudo shutdown -f'
 fi
+alias cph='./scripts/checkpatch.pl -g HEAD'
 alias lg='lsmod | grep'
 alias mp='sudo modprobe'
 alias rdmsr='sudo rdmsr'
