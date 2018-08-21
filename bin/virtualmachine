@@ -121,7 +121,7 @@ elif [[ -n $kernel ]]; then
     if [[ -n $verbose ]]; then
         append="$append ignore_loglevel"
     fi
-    append="$append kvm-intel.nested=1"
+    append="$append kvm-intel.nested=1 l1tf=off"
     os="$os -kernel /home/sean/build/kernel/$kernel/arch/x86_64/boot/bzImage"
     if [[ $modules != "false" ]]; then
         os="$os -virtfs local,path=/home/sean/build/kernel/$kernel/lib/modules,security_model=passthrough,mount_tag=kmodules"
