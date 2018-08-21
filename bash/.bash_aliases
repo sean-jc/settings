@@ -281,6 +281,8 @@ alias hvnew='os=hyper-v display=vnc iso=~images/hyper-v/hyper-v-2016.iso iso1=~/
 # SGX
 # -----------------------------------------------------------------------------
 alias lsd='lsdt'
+alias lsp='lsdt-perf'
+alias lst='lsdt-perf --no-output'
 alias epc='~/go/src/intel.com/epct/epct.sh'
 alias epd='EPCT_DEBUG=1 epc'
 alias ep2='EPCT_CGROUP_V2=1 epc'

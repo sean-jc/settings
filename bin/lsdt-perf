@@ -1,0 +1,17 @@
+#!/bin/bash
+if [[ $# -ne 1 ]]; then
+    printf "Must specify the output directory\n"
+    exit 1
+fi
+
+lsdt run -t basic.*.stream -d 5000 --timeout 10000 -v --heap 8  -c 16 -k nil -r $1
+if [[ $? -ne 0 ]]; then
+    exit 1
+fi
+
+lsdt run -t basic.*.stream -d 5000 --timeout 10000 -v --heap 16 -c 8  -k nil -r $1
+if [[ $? -eq 0 ]]; then
+    exit 1
+fi
+
+lsdt run -t basic.*.stream -d 5000 --timeout 10000 -v --heap 32 -c 4  -k nil -r $1
