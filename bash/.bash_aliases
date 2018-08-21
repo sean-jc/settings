@@ -671,6 +671,8 @@ function make-kernel() {
             git stash pop
         fi
     fi
+    unset TARGET
+    unset THREADS
 }
 alias mk='make-kernel'
 alias mc='make-kernel'
