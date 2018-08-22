@@ -287,8 +287,6 @@ alias epc='~/go/src/intel.com/epct/epct.sh'
 alias epd='EPCT_DEBUG=1 epc'
 alias ep2='EPCT_CGROUP_V2=1 epc'
 alias epd2='EPCT_CGROUP_V2=1 epd'
-alias mx='make_sgxsdk'
-alias dx='DEBUG=1 make_sgxsdk'
 
 function mod-probe-intel-sgx() {
     sudo modprobe intel_sgx
@@ -456,6 +454,7 @@ alias dl='cd -P ~/Downloads'
 alias gk='readelf -s vmlinux | grep'
 alias gkv='readelf -s arch/x86/kvm/kvm-intel.ko | grep'
 alias gkk='readelf -s arch/x86/kvm/kvm.ko | grep'
+alias gx='readelf -s drivers/platform/x86/intel_sgx/intel_sgx.ko | grep'
 
 function gdb-disassemble() {
     gdb -batch -ex "file $1" -ex "disassemble $2"
@@ -464,6 +463,7 @@ alias dis='gdb-disassemble'
 alias dk='gdb-disassemble vmlinux'
 alias dkv='gdb-disassemble arch/x86/kvm/kvm-intel.ko'
 alias dkk='gdb-disassemble arch/x86/kvm/kvm.ko'
+alias dx='gdb-disassemble drivers/platform/x86/intel_sgx/intel_sgx.ko'
 
 alias mkdir='mkdir -p'
 function mcd() {
