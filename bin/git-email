@@ -100,18 +100,24 @@ if [[ $ml == "sgx" && -z $to ]]; then
     to="--to=jarkko.sakkinen@linux.intel.com"
 fi
 
+if [[ $ver -gt 1 ]]; then
+    pre="v$ver-"
+else
+    pre=""
+fi
+
 if [[ -z $to ]]; then
     if [[ $nr -gt 1 ]]; then
-        primary=$(ls -1 $dir/0000*)
+        primary=$(ls -1 $dir/*0000*)
     else
-        primary=$(ls -1 $dir/0001*)
+        primary=$(ls -1 $dir/*0001*)
     fi
-    to=$(~/go/src/github.com/sean-jc/settings/bin/git-to-cmd $primary $ml)
+    to=$(~/go/src/github.com/sean-jc/settings/bin/git-to-cmd $primary $ml $pre)
     to="${to//\"/\\\"}"
     to="--to=\"${to//,/\" \-\-to=\"}\""
 fi
 if [[ -z $cc ]]; then
-    cc=$(~/go/src/github.com/sean-jc/settings/bin/git-cc-cmd $primary $ml)
+    cc=$(~/go/src/github.com/sean-jc/settings/bin/git-cc-cmd $primary $ml $pre)
     cc="${cc//\"/\\\"}"
     cc="--cc=\"${cc//,/\" \-\-cc=\"}\""
 fi
