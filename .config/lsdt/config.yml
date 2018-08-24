@@ -1,0 +1,46 @@
+bin: $HOME/.lsdt/bin
+output: $HOME/.lsdt/output
+
+tests:
+  - name:           basic
+    testcases:
+    - name:         main
+      heap:         [8, 16, 24, 32]
+      subtests:
+      - name:       stream
+        enclave:    stream.double
+        iterations: 5
+      - name:       reads
+        enclave:    random.uint64_t
+        iterations: 2000000
+        options:    1
+      - name:       writes
+        enclave:    random.uint64_t
+        iterations: 200000
+        options:    2
+      - name:       stride
+        enclave:    stride.uint64_t
+        options:    40
+        iterations: 10
+
+  - name:           smoke
+    testcases:
+    - name:         threadless
+      threads:      0
+      heap:         [16]
+      subtests:
+      - name:       memcpy
+        enclave:    memcpy.double
+        iterations: 20000000
+  - name:           rand
+    testcases:
+    - name:         1mb32p2g2t
+      heap:         [1]
+      processes:    32
+      goroutines:   2
+      threads:      2
+      subtests:
+      - name:       rand
+        enclave:    random.uint64_t
+        iterations: 2000
+        options:    0x3f

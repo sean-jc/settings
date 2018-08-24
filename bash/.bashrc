@@ -3,6 +3,7 @@
 # for examples
 export HOSTPOST=${HOSTNAME#sjchrist-}
 export SETTINGS=$HOME/go/src/github.com/sean-jc/settings
+export LSDT_CONFIG=$SETTINGS/.config/lsdt/config.yml
 
 # Define GOPATH
 export GOPATH=$HOME/go
