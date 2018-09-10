@@ -192,7 +192,8 @@ alias gft='git fetch --tags'
 alias gg='git checkout'
 alias ggc='git-get-cc'
 alias ggs='git-get-prefixed-branch sgx'
-alias gsc='git-get-prefixed-branch sgx/core'
+alias gsb='git-get-prefixed-branch sgx/base'
+alias gsc='git-get-prefixed-branch sgx/cgroup'
 alias gsu='git-get-prefixed-branch sgx/up'
 alias gsk='git-get-prefixed-branch sgx/kvm'
 alias ggk='git-get-prefixed-branch vmx'
@@ -521,7 +522,7 @@ function make-kernel-package() {
         return 1
     fi
     if [[ $# -gt 3 ]]; then
-        printf "Maximum of 2 arguments supported: kernel (1), revision (2) and no-install (3)\n"
+        printf "Maximum of 2 arguments supported: kernel (1), and no-install (2)\n"
         return 2
     fi
 
@@ -530,14 +531,13 @@ function make-kernel-package() {
     fi
 
     rev="1"
-    if [[ $# -ge 2 ]]; then
-        rev=$2
-    fi
     rm -f ../*$1+_${rev}_*.deb
+    name="$(git show -s --pretty='tformat:%h')-$1"
+
     THREADS=$(grep -c '^processor' /proc/cpuinfo)
-    CONCURRENCY_LEVEL=$THREADS fakeroot make-kpkg --initrd --append-to-version=-$1 kernel_headers kernel_image --revision $rev
-    if [[ $? -eq 0 && $# -lt 3 && $guest != "true" ]]; then
-        sudo dpkg -i ../*$1+_${rev}_*.deb
+    CONCURRENCY_LEVEL=$THREADS fakeroot make-kpkg --initrd --append-to-version=-$name kernel_headers kernel_image --revision $rev
+    if [[ $? -eq 0 && $# -lt 2 && $guest != "true" ]]; then
+        sudo dpkg -i ../*$name+_${rev}_*.deb
     fi
 }
 
