@@ -65,7 +65,7 @@ else
         opt="$opt --subject-prefix=\"PATCH RESEND\""
     fi
 
-    sh -c "git format-patch $opt -M --minimal --patience -o $dir -$nr"
+    sh -c "git format-patch -M --minimal --patience $opt -o $dir -$nr"
 fi
 
 if [ -f ./scripts/checkpatch.pl ]; then
@@ -115,11 +115,12 @@ if [[ -z $to ]]; then
     to=$(~/go/src/github.com/sean-jc/settings/bin/git-to-cmd $primary $ml $pre)
     to="${to//\"/\\\"}"
     to="--to=\"${to//,/\" \-\-to=\"}\""
-fi
-if [[ -z $cc ]]; then
-    cc=$(~/go/src/github.com/sean-jc/settings/bin/git-cc-cmd $primary $ml $pre)
-    cc="${cc//\"/\\\"}"
-    cc="--cc=\"${cc//,/\" \-\-cc=\"}\""
+
+    if [[ -z $cc ]]; then
+      cc=$(~/go/src/github.com/sean-jc/settings/bin/git-cc-cmd $primary $ml $pre)
+      cc="${cc//\"/\\\"}"
+      cc="--cc=\"${cc//,/\" \-\-cc=\"}\""
+    fi
 fi
 printf "\n\n\e[1;7;35m%s\n%s\n\e[0m" "$to" "$cc"
 read -r -p "Send email: [Y/n]" response
@@ -129,6 +130,6 @@ if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
     if [[ -z $cc ]]; then
         git send-email --confirm=always --suppress-cc=all $to $dir
     else
-        eval $(printf "%s\n" "git send-email --confirm=always $to $cc $dir")
+        eval $(printf "%s\n" "git send-email --confirm=always --suppress-cc=all $to $cc $dir")
     fi
 fi

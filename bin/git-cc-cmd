@@ -11,6 +11,6 @@ if [[ $(basename $1) =~ ^$30000- ]] ; then
 else
     maint=$(./scripts/get_maintainer.pl $opts $1 | tr '\n' ',')
 fi
-maint="$maint$(ls -1 $(dirname $1)/!($30000-cover-letter.patch) | xargs cat | grep -e Cc: -e Suggested-by | cut -d ' ' -f 2- | tr '\n' ',')"
+maint="$maint$(ls -1 $(dirname $1)/!($30000-cover-letter.patch) | xargs cat | grep -v stable@vger.kernel.org | grep -e Cc: -e Suggested-by -e Reported-by | cut -d ' ' -f 2- | tr '\n' ',')"
 maint=${maint%,};
 echo $maint
