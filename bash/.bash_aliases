@@ -717,9 +717,10 @@ function time-kernel() {
         printf "Must specify the target kernel name\n"
         return 1
     fi
+    THREADS=$(grep -c '^processor' /proc/cpuinfo)
     make O=~/build/kernel/$1 clean
     sleep .25
-    ftime -o ~/build/kernel/$1/tk_time.log make O=~/build/kernel/$1 > ~/build/kernel/$1/tk_build.log 2>&1
+    ftime -o ~/build/kernel/$1/tk_time.log make -j$THREADS O=~/build/kernel/$1 > ~/build/kernel/$1/tk_build.log 2>&1
 }
 alias tk='time-kernel'
 
