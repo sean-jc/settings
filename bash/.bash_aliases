@@ -458,7 +458,21 @@ alias gkk='readelf -s arch/x86/kvm/kvm.ko | grep'
 alias gx='readelf -s drivers/platform/x86/intel_sgx/intel_sgx.ko | grep'
 
 function gdb-disassemble() {
+    if [[ $# -lt 2 ]]; then
+        printf "Must specify the target file (1) and function (2)\n"
+        return 1
+    fi
+    if [[ $# -gt 3 ]]; then
+        printf "Maximum of 3 arguments supported: file (1), function (2) and offset (3)\n"
+        return 2
+    fi
+
     gdb -batch -ex "file $1" -ex "disassemble $2"
+    gdb -batch -ex "file $1" -ex "disassemble /m $2"
+    if [[ $# -eq 3 ]]; then
+        gdb -batch -ex "file vmlinux" -ex "list *$2+$3"
+        printf "Offset $3 in $2 in decimal: %d\n" $3
+    fi
 }
 alias dis='gdb-disassemble'
 alias dk='gdb-disassemble vmlinux'
