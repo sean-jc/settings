@@ -9,6 +9,9 @@ echo "drivers/net/virtio_net.c" >> .git/info/sparse-checkout
 echo "drivers/ptp/ptp_kvm.c" >> .git/info/sparse-checkout
 echo "drivers/vhost/*" >> .git/info/sparse-checkout
 echo "drivers/virtio/*" >> .git/info/sparse-checkout
+echo "Documentation/admin-guide/cgroup-v2.rst" >> .git/info/sparse-checkout
+echo "Documentation/virtual/*" >> .git/info/sparse-checkout
+echo "Documentation/x86/*" >> .git/info/sparse-checkout
 echo "include/*" >> .git/info/sparse-checkout
 echo "fs/*.c" >> .git/info/sparse-checkout
 echo "fs/*.h" >> .git/info/sparse-checkout
@@ -16,6 +19,8 @@ echo "init/*" >> .git/info/sparse-checkout
 echo "lib/*" >> .git/info/sparse-checkout
 echo "kernel/*" >> .git/info/sparse-checkout
 echo "mm/*" >> .git/info/sparse-checkout
+echo "tools/arch/x86" >> .git/info/sparse-checkout
+echo "tools/include/uapi/linux/kvm.h" >> .git/info/sparse-checkout
 echo "virt/*" >> .git/info/sparse-checkout
 echo "!include/uapi/linux/netfilter*" >> .git/info/sparse-checkout
 echo "!include/soc/arc/aux.h" >> .git/info/sparse-checkout
