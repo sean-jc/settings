@@ -551,7 +551,7 @@ function make-kernel-package() {
     THREADS=$(grep -c '^processor' /proc/cpuinfo)
     CONCURRENCY_LEVEL=$THREADS fakeroot make-kpkg --initrd --append-to-version=-$name kernel_headers kernel_image --revision $rev
     if [[ $? -eq 0 && $# -lt 2 && $guest != "true" ]]; then
-        sudo dpkg -i ../*$name+_${rev}_*.deb
+        sudo dpkg -i ../*$name_${rev}_*.deb
     fi
 }
 
@@ -561,8 +561,13 @@ alias mh='make-kernel-package'
 # Make Guest kernel
 alias mg='guest=true make-kernel-package'
 
+function get-kernel-packages {
+    grep menuentry /boot/grub/grub.cfg | grep -v -e \( -e generic | grep "'Ubuntu, with Linux." | cut -f 2 -d "'"
+}
+alias gkp=get-kernel-packages
+
 function list-kernel-package {
-    grep menuentry /boot/grub/grub.cfg | grep -o -e "'Ubuntu, with Linux.*$1+'" | cut -f 2 -d "'" | cut -f 4 -d " "
+     gkp | grep -o -e "Ubuntu, with Linux.*$1+\?" | cut -f 4 -d " "
 }
 alias lk='list-kernel-package'
 
@@ -572,12 +577,12 @@ function boot-kernel-package {
         return 1
     fi
     local k=${1%%+}
-    if [[ $(grep menuentry /boot/grub/grub.cfg | grep -c -e "'Ubuntu, with Linux.*$k+'") != "1" ]]; then
-        grep menuentry /boot/grub/grub.cfg | grep -o -e "'Ubuntu, with Linux.*$k+'" | cut -f 2 -d "'"
+    if [[ $(gkp | grep -c -e "Ubuntu, with Linux.*$k+\?") != "1" ]]; then
+        gkp | grep -o -e "Ubuntu, with Linux.*$k+\?" | cut -f 2 -d "'"
         printf "Failed to find single entry for $1\n"
         return 1
     fi
-    local entry=$(grep menuentry /boot/grub/grub.cfg | grep -o -e "'Ubuntu, with Linux.*$k+'" | cut -f 2 -d "'")
+    local entry=$(gkp | grep -o -e "Ubuntu, with Linux.*$k+\?" | cut -f 2 -d "'")
     if [[ -z $entry ]]; then
         printf "Failed to find entry=$entry\n"
         return 1
@@ -601,18 +606,18 @@ function purge-kernel-package {
         return 1
     fi
     local k=${1%%+}
-    if [[ $(dpkg-query-size | grep -c -e "linux-image.*$k+") != "1" ]]; then
+    if [[ $(dpkg-query-size | grep -c -e "linux-image.*$k+\?") != "1" ]]; then
         dpkg-query-size | grep -e "linux-image.*$k+"
         printf "Failed to find single image for '$1'\n"
         return 1
     fi
-    if [[ $(dpkg-query-size | grep -c -e "linux-headers.*$k+") != "1" ]]; then
+    if [[ $(dpkg-query-size | grep -c -e "linux-headers.*$k+\?") != "1" ]]; then
         dpkg-query-size | grep -e "linux-headers.*$k+"
         printf "Failed to find single headers for '$1'\n"
         return 1
     fi
-    local img=$(dpkg-query-size | grep -e "linux-image.*$k+"    | cut -f 2)
-    local hdr=$(dpkg-query-size | grep -e "linux-headers.*$k+"  | cut -f 2)
+    local img=$(dpkg-query-size | grep -e "linux-image.*$k+\?"    | cut -f 2)
+    local hdr=$(dpkg-query-size | grep -e "linux-headers.*$k+\?"  | cut -f 2)
     if [[ -z $img || -z $hdr ]]; then
         printf "Failed to find image=$img or headers=$hdr\n"
         return 1
