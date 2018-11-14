@@ -468,6 +468,7 @@ function gdb-disassemble() {
     fi
 
     gdb -batch -ex "file $1" -ex "disassemble $2"
+    gdb -batch -ex "file $1" -ex "disassemble /r $2"
     gdb -batch -ex "file $1" -ex "disassemble /m $2"
     if [[ $# -eq 3 ]]; then
         gdb -batch -ex "file vmlinux" -ex "list *$2+$3"
