@@ -16,4 +16,3 @@
 	smtpserver = or-out.intel.com
 	smtpserverport = 25
 	cc = sean.j.christopherson@intel.com
-	bcc = sean.j.christopherson@linux.intel.com
