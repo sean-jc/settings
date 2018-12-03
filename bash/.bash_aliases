@@ -769,6 +769,7 @@ alias mq='make-qemu'
 
 alias rku='sudo QEMU=/home/sean/build/qemu/stable/x86_64-softmmu/qemu-system-x86_64 ./run_tests.sh -v'
 alias rkt='sudo QEMU=/home/sean/build/qemu/stable/x86_64-softmmu/qemu-system-x86_64'
+alias rkv='rkt TESTNAME=vmx TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cpu host,+vmx -m 2560 -append -exit_monitor_from_l2_test'
 
 # -----------------------------------------------------------------------------
 # LXD
