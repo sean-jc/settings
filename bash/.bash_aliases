@@ -473,7 +473,7 @@ function gdb-disassemble() {
     gdb -batch -ex "file $1" -ex "disassemble /r $2"
     gdb -batch -ex "file $1" -ex "disassemble /m $2"
     if [[ $# -eq 3 ]]; then
-        gdb -batch -ex "file vmlinux" -ex "list *$2+$3"
+        gdb -batch -ex "file $1" -ex "list *$2+$3"
         printf "Offset $3 in $2 in decimal: %d\n" $3
     fi
 }
