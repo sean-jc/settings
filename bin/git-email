@@ -76,6 +76,11 @@ if [[ -n $nosend ]]; then
     exit 0
 fi
 
+opt=""
+if [[ -n $reply ]]; then
+    opt="--in-reply-to=$reply"
+fi
+
 while true; do
     printf "\n\n\e[1;7;35m--to=sean.j.christopherson@intel.com\n\e[0m"
     read -r -p "Send email: [Y/n]" response
@@ -89,7 +94,7 @@ while true; do
                 continue
             fi
         fi
-        git send-email --suppress-cc=all --confirm=always --to=sean.j.christopherson@intel.com $dir
+        git send-email --suppress-cc=all --confirm=always --to=sean.j.christopherson@intel.com $opt $dir
         break
     else
         exit 0
@@ -130,6 +135,6 @@ if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
     if [[ -z $cc ]]; then
         git send-email --confirm=always --suppress-cc=all $to $dir
     else
-        eval $(printf "%s\n" "git send-email --confirm=always --suppress-cc=all $to $cc $dir")
+        eval $(printf "%s\n" "git send-email --confirm=always --suppress-cc=all $to $cc $opt $dir")
     fi
 fi
