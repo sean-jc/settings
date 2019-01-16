@@ -30,6 +30,13 @@ if [[ $pin != false ]]; then
     echo $BASHPID > $cgroup/cgroup.procs
 fi
 
+cgroup=/sys/fs/cgroup/memory/vm
+if [[ ! -d $cgroup ]]; then
+    sudo mkdir $cgroup
+    sudo chown sean:sean $cgroup/*
+fi
+echo $BASHPID > $cgroup/cgroup.procs
+
 if [[ $# -eq 1 ]]; then
     qemu=$1 img=$2 virtualmachine
 elif [[ -s $v2_cgroup ]]; then
