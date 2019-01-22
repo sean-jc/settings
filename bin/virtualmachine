@@ -49,7 +49,7 @@ else
 fi
 
 
-qemu="/home/sean/build/qemu/$qemu/x86_64-softmmu/qemu-system-x86_64 -no-reboot"
+qemu="/home/sean/build/qemu/$qemu -no-reboot"
 if [[ -n $gdb ]]; then
     qemu="$qemu -s -S"
 fi
