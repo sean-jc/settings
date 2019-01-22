@@ -257,6 +257,7 @@ alias gol='git-golint | grep -v -e "should have comment" -e ALL_CAPS -e Id -e Ur
 # -----------------------------------------------------------------------------
 alias virtd='daemon=true virt'
 alias vm='virt stable kvm'
+alias ivm='i386=true virt stable i386'
 alias tvm='trace=1 virt stable kvm'
 alias vmd='daemon=true virt stable kvm'
 alias vmm='v2_cgroup=memory vm'
@@ -309,7 +310,7 @@ alias ipa="ifconfig | grep 10.54 | tr -s ' ' | cut -f 3 -d ' ' | cut -f 2 -d :"
 alias sk='sudo -sE'
 alias sbn='sudo reboot now'
 alias sbf='sudo reboot -f'
-if [[ "$HOSTPOST" == kvm || "$HOSTPOST" == k2 ]]; then
+if [[ "$HOSTPOST" == kvm || "$HOSTPOST" == k2 || "$HOSTPOST" == i386 ]]; then
     alias ssn='sudo shutdown now'
     alias ssf='sudo shutdown -f'
 fi
