@@ -8,7 +8,7 @@ fi
 
 if [[ $(basename $1) =~ ^$30000- ]] ; then
     maint=$(./scripts/get_maintainer.pl $opts $(dirname $1)/!($30000-cover-letter.patch) | tr '\n' ',')
-    maint="$maint$(ls -1 $(dirname $1)/!($30000-cover-letter.patch) | xargs cat | grep -v stable@vger.kernel.org | grep -e Cc: -e Suggested-by -e Reported-by | cut -d ' ' -f 2- | tr '\n' ',')"
+    maint="$maint$(ls -1 $(dirname $1)/!($30000-cover-letter.patch) | xargs cat | grep -v stable@vger.kernel.org | grep -v lkp@intel.com | grep -e Cc: -e Suggested-by -e Reported-by -e Tested-by -e Reported-and-tested-by | cut -d ' ' -f 2- | tr '\n' ',')"
 else
     maint=$(./scripts/get_maintainer.pl $opts $1 | tr '\n' ',')
     maint="$maint$(cat $1 | grep -v stable@vger.kernel.org | grep -v lkp@intel.com | grep -e Cc: -e Suggested-by -e Reported-by -e Tested-by -e Reported-and-tested-by | cut -d ' ' -f 2- | tr '\n' ',')"
