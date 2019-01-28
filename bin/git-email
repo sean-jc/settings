@@ -72,11 +72,22 @@ else
     if [[ -n $rfc ]]; then
         opt="$opt --rfc"
     fi
-    if [[ -n $resend ]]; then
-        opt="$opt --subject-prefix=\"PATCH RESEND\""
-    fi
 
-    sh -c "git format-patch -M --minimal --patience $opt -o $dir -$nr"
+    pre=""
+    if [[ -n $ku ]]; then
+        pre="kvm-unit-tests "
+    fi
+    if [[ -n $resend ]]; then
+        pre="$pre""RESEND "
+    fi
+    if [[ -n $rfc ]]; then
+        pre="$pre""RFC "
+    fi
+    pre="$pre""PATCH"
+
+    pre="--subject-prefix=\"$pre\""
+
+    sh -c "git format-patch -M --minimal --patience $opt $pre -o $dir -$nr"
 
     if [ -f ./scripts/checkpatch.pl ]; then
         ./scripts/checkpatch.pl -g HEAD-$nr
@@ -118,7 +129,10 @@ while true; do
     fi
 done
 
-if [[ $ml == "sgx" && -z $to ]]; then
+if [[ -n $ku ]]; then
+    to="--to=\"Paolo Bonzini <pbonzini@redhat.com>\" --to=\"Radim Krčmář <rkrcmar@redhat.com>\""
+    cc="--cc=\"kvm@vger.kernel.org\""
+elif [[ $ml == "sgx" && -z $to ]]; then
     to="--to=jarkko.sakkinen@linux.intel.com"
 fi
 
