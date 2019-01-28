@@ -310,7 +310,7 @@ alias ipa="ifconfig | grep 10.54 | tr -s ' ' | cut -f 3 -d ' ' | cut -f 2 -d :"
 alias sk='sudo -sE'
 alias sbn='sudo reboot now'
 alias sbf='sudo reboot -f'
-if [[ "$HOSTPOST" == kvm || "$HOSTPOST" == k2 || "$HOSTPOST" == i386 ]]; then
+if [[ "$HOSTPOST" == kvm || "$HOSTPOST" == k2 || "$HOSTPOST" == i386 || "$HOSTPOST" == i2 ]]; then
     alias ssn='sudo shutdown now'
     alias ssf='sudo shutdown -f'
 fi
