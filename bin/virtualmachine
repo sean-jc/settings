@@ -28,10 +28,12 @@ fi
 if [[ $os = "hyper-v" ]]; then
     mac="00:16:3E:68:00:FF"
 else
-    mac=$(ifconfig | grep br0 | grep 00:16:3e:68:00:)
+    mac=$(ifconfig | grep -A 4 br0 | grep -o 00:16:3e:68:00:..)
     if [[ -n $mac ]]; then
-        mac="0x$(echo $mac | tr -s ' ' | cut -f 5 -d ' ' | cut -f 6 -d :)"
+        mac="0x$(echo $mac | cut -f 6 -d :)"
         mac=$((mac + 16))
+    elif [[ $i386 == "true" ]]; then
+        mac="0x80"
     else
         mac="0"
     fi
@@ -48,8 +50,9 @@ else
     img=/home/sean/images/qemu/ubuntu-16.04-server-$img.img
 fi
 
-
-qemu="/home/sean/build/qemu/$qemu -no-reboot"
+qemu="/home/sean/build/qemu/$qemu"
+qemu_i386=$(readlink -f $qemu | grep i386)
+qemu="$qemu -no-reboot"
 if [[ -n $gdb ]]; then
     qemu="$qemu -s -S"
 fi
@@ -58,15 +61,18 @@ ifup=$(which ifup)
 
 net="-device virtio-net-pci,netdev=net0,mac=$mac -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
 
-mem="-m 16G"
-if [[ $(free -g | grep Mem: | tr -s ' ' | cut -f 2 -d ' ') -lt 17 ]]; then
-    if [[ $os = "hyper-v" ]]; then
-        printf "Not enough memory to start Hyper-V\n"
-        exit 2
-    fi
-    mem="-m 8G"
-    if [[ $(free -g | grep Mem: | tr -s ' ' | cut -f 2 -d ' ') -lt 9 ]]; then
-        mem="-m 4G"
+if [[ -n $qemu_i386 ]]; then
+    mem="-m 1G"
+else
+    if [[ $(free -g | grep Mem: | tr -s ' ' | cut -f 2 -d ' ') -lt 17 ]]; then
+        if [[ $os = "hyper-v" ]]; then
+            printf "Not enough memory to start Hyper-V\n"
+            exit 2
+        fi
+        mem="-m 8G"
+        if [[ $(free -g | grep Mem: | tr -s ' ' | cut -f 2 -d ' ') -lt 9 ]]; then
+            mem="-m 4G"
+        fi
     fi
 fi
 
@@ -79,7 +85,9 @@ if [[ $os = "hyper-v" ]]; then
     cpu="-cpu host,host-phys-bits,hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time,+vmx"
 else
     cpu="-cpu host,host-phys-bits"
-    if [[ $uefi != "false" && $i386 != "true" ]]; then
+    if [[ -n $qemu_i386 ]]; then
+        cpu="$cpu -bios /home/sean/go/src/seabios.org/seabios/out/bios.bin"
+    elif [[ $uefi != "false" || $i386 != "true" ]]; then
         if [[ -z $debug_ovmf ]]; then
             cpu="$cpu -bios /home/sean/build/ovmf/OVMF.fd"
         else
