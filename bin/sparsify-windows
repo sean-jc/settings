@@ -3,6 +3,11 @@ git config core.sparseCheckout true
 
 echo "arch/x86/*" > .git/info/sparse-checkout
 echo "drivers/acpi/*" >> .git/info/sparse-checkout
+echo "drivers/base/*" >> .git/info/sparse-checkout
+echo "!drivers/base/firmware_loader" >> .git/info/sparse-checkout
+echo "!drivers/base/power" >> .git/info/sparse-checkout
+echo "!drivers/base/regmap" >> .git/info/sparse-checkout
+echo "!drivers/base/test" >> .git/info/sparse-checkout
 echo "drivers/platform/x86/intel_sgx/*" >> .git/info/sparse-checkout
 echo "drivers/block/virtio_blk.c" >> .git/info/sparse-checkout
 echo "drivers/net/virtio_net.c" >> .git/info/sparse-checkout
