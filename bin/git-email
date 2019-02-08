@@ -133,7 +133,8 @@ if [[ -n $ku ]]; then
     to="--to=\"Paolo Bonzini <pbonzini@redhat.com>\" --to=\"Radim Krčmář <rkrcmar@redhat.com>\""
     cc="--cc=\"kvm@vger.kernel.org\""
 elif [[ $ml == "sgx" && -z $to ]]; then
-    to="--to=jarkko.sakkinen@linux.intel.com"
+    to="--to=\"Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>\""
+    cc="--cc=\"sgx@eclists.intel.com\""
 fi
 
 if [[ $ver -gt 1 ]]; then
