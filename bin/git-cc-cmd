@@ -7,10 +7,18 @@ if [[ $2 == "kvm" ]]; then
 fi
 
 if [[ $(basename $1) =~ ^$30000- ]] ; then
-    maint=$(./scripts/get_maintainer.pl $opts $(dirname $1)/!($30000-cover-letter.patch) | tr '\n' ',')
+    if [[ $2 == "ku" ]]; then
+        maint="kvm@vger.kernel.org,"
+    else
+        maint=$(./scripts/get_maintainer.pl $opts $(dirname $1)/!($30000-cover-letter.patch) | tr '\n' ',')
+    fi
     maint="$maint$(ls -1 $(dirname $1)/!($30000-cover-letter.patch) | xargs cat | grep -v stable@vger.kernel.org | grep -v lkp@intel.com | grep -e Cc: -e Suggested-by -e Reported-by -e Tested-by -e Reported-and-tested-by -e Reviewed-by | cut -d ' ' -f 2- | tr '\n' ',')"
 else
-    maint=$(./scripts/get_maintainer.pl $opts $1 | tr '\n' ',')
+    if [[ $2 == "ku" ]]; then
+        maint="kvm@vger.kernel.org,"
+    else
+        maint=$(./scripts/get_maintainer.pl $opts $1 | tr '\n' ',')
+    fi
     maint="$maint$(cat $1 | grep -v stable@vger.kernel.org | grep -v lkp@intel.com | grep -e Cc: -e Suggested-by -e Reported-by -e Tested-by -e Reported-and-tested-by -e Reviewed-by | cut -d ' ' -f 2- | tr '\n' ',')"
 fi
 maint=${maint%,};

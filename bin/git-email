@@ -74,7 +74,7 @@ else
     fi
 
     pre=""
-    if [[ -n $ku ]]; then
+    if [[ $ml == "ku" ]]; then
         pre="kvm-unit-tests "
     fi
     if [[ -n $resend ]]; then
@@ -129,9 +129,8 @@ while true; do
     fi
 done
 
-if [[ -n $ku ]]; then
+if [[ $ml == "ku" ]]; then
     to="--to=\"Paolo Bonzini <pbonzini@redhat.com>\" --to=\"Radim Krčmář <rkrcmar@redhat.com>\""
-    cc="--cc=\"kvm@vger.kernel.org\""
 elif [[ $ml == "sgx" && -z $to ]]; then
     to="--to=\"Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>\""
     cc="--cc=\"sgx@eclists.intel.com\""
@@ -143,15 +142,15 @@ else
     pre=""
 fi
 
-if [[ -z $to ]]; then
-    if [[ -n $indy ]]; then
-        primary=$(ls -1 $idir/*000$indy*)
-    elif [[ $nr -gt 1 ]]; then
-        primary=$(ls -1 $dir/*0000*)
-    else
-        primary=$(ls -1 $dir/*0001*)
-    fi
+if [[ -n $indy ]]; then
+    primary=$(ls -1 $idir/*000$indy*)
+elif [[ $nr -gt 1 ]]; then
+    primary=$(ls -1 $dir/*0000*)
+else
+    primary=$(ls -1 $dir/*0001*)
+fi
 
+if [[ -z $to ]]; then
     to=$(~/go/src/github.com/sean-jc/settings/bin/git-to-cmd $primary $ml $pre)
     if [[ -z $to ]]; then
         printf "No --to found for %s\n" "git-to-cmd $primary $ml $pre"
@@ -159,17 +158,17 @@ if [[ -z $to ]]; then
     fi
     to="${to//\"/\\\"}"
     to="--to=\"${to//,/\" \-\-to=\"}\""
-
-    if [[ -z $cc ]]; then
-        cc=$(~/go/src/github.com/sean-jc/settings/bin/git-cc-cmd $primary $ml $pre)
-        if [[ -z $cc ]]; then
-            printf "No --cc found for %s\n" "git-cc-cmd $primary $ml $pre"
-            exit 1
-        fi
-        cc="${cc//\"/\\\"}"
-        cc="--cc=\"${cc//,/\" \-\-cc=\"}\""
-    fi
 fi
+if [[ -z $cc ]]; then
+    cc=$(~/go/src/github.com/sean-jc/settings/bin/git-cc-cmd $primary $ml $pre)
+    if [[ -z $cc ]]; then
+        printf "No --cc found for %s\n" "git-cc-cmd $primary $ml $pre"
+        exit 1
+    fi
+    cc="${cc//\"/\\\"}"
+    cc="--cc=\"${cc//,/\" \-\-cc=\"}\""
+fi
+
 printf "\n\n\e[1;7;35m%s\n%s\n\e[0m" "$to" "$cc"
 read -r -p "Send email: [Y/n]" response
 

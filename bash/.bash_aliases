@@ -183,6 +183,7 @@ alias gdd='git diff'
 alias gds='git diff --staged'
 alias ge='git-email'
 alias gek='git-email kvm'
+alias geu='git-email ku'
 alias gem='git-email mm'
 alias ges='git-email sgx'
 alias gex='git-email x86'
@@ -454,9 +455,9 @@ alias iq='cd -P ~/images/qemu'
 alias iv='cd -P ~/images/hyper-v'
 
 # Direct navigation to outbox directories
-alias out='cd -P ~/outbox'
 alias ol='cd -P ~/outbox/linux'
 alias ok='cd -P ~/outbox/linux/kvm'
+alias ou='cd -P ~/outbox/kvm-unit-tests/ku'
 alias om='cd -P ~/outbox/linux/mm'
 alias os='cd -P ~/outbox/linux/sgx'
 alias ox='cd -P ~/outbox/linux/x86'
@@ -780,7 +781,7 @@ alias mq='make-qemu'
 
 alias rku='sudo QEMU=/home/sean/build/qemu/stable ./run_tests.sh -v'
 alias rkt='sudo QEMU=/home/sean/build/qemu/stable'
-alias rkv='rkt TESTNAME=vmx TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cpu host,+vmx -m 2560 -append -exit_monitor_from_l2_test'
+alias rkv='rkt TESTNAME=vmx TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cpu host,+vmx -append'
 alias rkc='rkt TESTNAME=vmx_controls TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cpu host,+vmx -m 2560 -append vmx_controls_test'
 
 # -----------------------------------------------------------------------------
