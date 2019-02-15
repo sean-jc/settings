@@ -1,0 +1,20 @@
+#!/bin/bash
+if [[ ! -c /dev/sgx ]]; then
+    sudo modprobe intel_sgx
+fi
+if [[ $(stat -c %a /dev/sgx) != "666" ]]; then
+    sudo chmod 666 /dev/sgx
+fi
+if [[ $(stat -c %a /dev/sgx) != "666" ]]; then
+    printf "Cannot stat /dev/sgx\n"
+    exit 1
+fi
+
+cgroup=/sys/fs/cgroup/memory/lsd
+if [[ ! -d $cgroup ]]; then
+    sudo mkdir $cgroup
+    sudo chown sean:sean $cgroup/*
+fi
+echo $BASHPID > $cgroup/cgroup.procs
+
+lsdt run -t basic.*.stream -d 5000 --timeout 10000 -v "$@"

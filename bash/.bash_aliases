@@ -284,25 +284,14 @@ alias hvnew='os=hyper-v display=vnc iso=~images/hyper-v/hyper-v-2016.iso iso1=~/
 # -----------------------------------------------------------------------------
 # SGX
 # -----------------------------------------------------------------------------
-function probe-dev-sgx() {
-    if [[ ! -c /dev/sgx ]]; then
-        sudo modprobe intel_sgx
-    fi
-    if [[ $(stat -c %a /dev/sgx) != "666" ]]; then
-        sudo chmod 666 /dev/sgx
-    fi
-}
-alias mps='probe-dev-sgx'
-
 alias lsd='lsdt'
-alias lsdr='probe-dev-sgx && lsdt run -t basic.*.stream -d 5000 --timeout 10000 -v'
 alias lsb='lsdr --heap 8 -c 16 -k nil --no-output'
 alias lst='lsdr --heap 8 --min-heap 1.5 -c 16 -k nil --no-output'
 alias ls1='lsdr --heap 1 --processes 1 --goroutines 1 --threads 1 -c 16 -k nil --no-output'
 alias lsr='lsdr --heap 8 --min-heap 1.5 -c 16 -k rand --no-output'
 alias lsk='lsdr --heap 8 --min-heap 1.5 -c 16 -k kill --no-output'
 alias lss='lsdr --heap 8 --min-heap 1.5 -c 16 -k kill --no-output --min-kill-delay 2000 --max-kill-delay 4000'
-alias lsp='probe-dev-sgx && lsdt-perf'
+alias lsp='lsdr --heap 8 -c 16 -k nil -r'
 alias epc='~/go/src/intel.com/epct/epct.sh'
 alias epd='EPCT_DEBUG=1 epc'
 alias ep2='EPCT_CGROUP_V2=1 epc'
