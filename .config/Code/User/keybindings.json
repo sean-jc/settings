@@ -20,5 +20,7 @@
     { "key": "shift+enter",           "command": "editor.action.insertLineAfter", "when": "editorTextFocus" },
     { "key": "ctrl+enter",            "command": "editor.action.insertLineBefore", "when": "editorTextFocus" },
     { "key": "ctrl+shift+s",          "command": "workbench.action.files.saveAll" },       
-    { "key": "ctrl+;",                "command": "workbench.action.closeAllEditors" }
+    { "key": "ctrl+;",                "command": "workbench.action.closeAllEditors" },
+
+    { "key": "ctrl+.",                "command": "cursorColumnSelectPageUp", "when": "editorTextFocus" }
 ]

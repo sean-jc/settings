@@ -1,7 +1,7 @@
 // Place your settings in this file to overwrite the default settings
 {
     "editor.fontFamily": "'Noto Mono'",
-    "editor.fontSize": 13,
+    "editor.fontSize": 12.5,
     "editor.tabSize": 4,
     "editor.renderIndentGuides": false,
     "editor.dragAndDrop": false,
@@ -21,6 +21,11 @@
     "workbench.editor.showIcons": false,
     "workbench.startupEditor": "none",
 
+    "files.associations": {
+        "*.arc": "c",
+    },
+    "C_Cpp.intelliSenseEngine": "Tag Parser",
+
     "files.exclude": {
         "**/.vscode":true,
         "**/.git": true,
@@ -30,7 +35,8 @@
         "**/*.a": true,
         "**/*.o": true,
         "**/*.so": true,
-        "**/debian": true
+        "**/debian": true,
+        "**/build": true
     },
     "files.watcherExclude": {
         "**/.vscode":true,
@@ -40,7 +46,8 @@
         "**/*.o": true,
         "**/*.so": true,
         "**/vendor": true,
-        "**/debian": true
+        "**/debian": true,
+        "**/build": true
     },
     "search.exclude": {
         "**/.vscode":true,
@@ -50,6 +57,8 @@
         "**/*.o": true,
         "**/*.so": true,
         "**/vendor": true,
-        "**/debian": true
-    }
+        "**/debian": true,
+        "**/build": true
+    },
+    "typescript.check.npmIsInstalled": false
 }
