@@ -1,7 +1,8 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-export HOSTPOST=${HOSTNAME#sjchrist-}
+HOSTPOST=${HOSTNAME#sjchrist-}
+export HOSTPOST=${HOSTPOST#purgatory-}
 export SETTINGS=$HOME/go/src/github.com/sean-jc/settings
 export LSDT_CONFIG=$SETTINGS/.config/lsdt/config.yml
 
@@ -111,13 +112,13 @@ build_ps1() {
     # Unicode cheracters ✔ 'HEAVY CHECK MARK' (U+2714) and ✘ 'HEAVY BALLOT X' (U+2718)
     # [[ $SSH_TTY ]] && host="@$HOSTNAME"
     if [ "$UID" = 0 ]; then
-        if [ "$HOSTPOST" = coffee ]; then
+        if [ "$HOSTPOST" = coffee ] || [ "$HOSTPOST" = purgatory ]; then
             echo '\[\e[1;30m\]\t`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;31m\]\w \[\e[0;31m\]# \[\e[0m\]'
         else
             echo '\[\e[1;30m\]\t@$HOSTPOST`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;31m\]\w \[\e[0;31m\]# \[\e[0m\]'
         fi
     else
-        if [ "$HOSTPOST" = coffee ]; then
+        if [ "$HOSTPOST" = coffee ] || [ "$HOSTPOST" = purgatory ]; then
             echo '\[\e[1;30m\]\t`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;36m\]\w \[\e[0;36m\]\$ \[\e[0m\]'
         else
             echo '\[\e[1;30m\]\t@$HOSTPOST`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;36m\]\w \[\e[0;36m\]\$ \[\e[0m\]'
