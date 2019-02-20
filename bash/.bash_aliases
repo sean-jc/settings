@@ -46,7 +46,7 @@ function git-blob() {
 
 function git-apply() {
     if [ $# -eq 0 ]; then
-        git am -3 ~/mutt/*.patch
+        git am -3 ~/app/*.patch
     else
         git am -3 $1/*.patch
     fi
