@@ -91,14 +91,17 @@ if [[ $os = "hyper-v" ]]; then
 else
     cpu="-cpu host,host-phys-bits"
     if [[ -n $qemu_i386 ]]; then
-        cpu="$cpu -bios /home/sean/go/src/seabios.org/seabios/out/bios.bin"
+        bios="-bios /home/sean/go/src/seabios.org/seabios/out/bios.bin"
     elif [[ $uefi != "false" || $i386 != "true" ]]; then
         if [[ -z $debug_ovmf ]]; then
-            cpu="$cpu -bios /home/sean/build/ovmf/OVMF.fd"
+            bios="-bios /home/sean/build/ovmf/OVMF.fd"
         else
-            cpu="$cpu -bios /home/sean/go/src/github.com/tianocore/edk2/Build/OvmfX64/DEBUG_GCC5/FV/OVMF.fd -debugcon file:debug.log -global isa-debugcon.iobase=0x402"
+            bios="-bios /home/sean/go/src/github.com/tianocore/edk2/Build/OvmfX64/DEBUG_GCC5/FV/OVMF.fd -debugcon file:debug.log -global isa-debugcon.iobase=0x402"
         fi
     fi
+fi
+if [[ -n $cpuid ]]; then
+    cpu="$cpu,$cpuid"
 fi
 
 if [[ $display = "vnc" ]]; then
@@ -167,7 +170,7 @@ sudo modprobe $kvm
 sudo modprobe vhost_net
 
 if [[ -n $kernel ]]; then
-    sudo -E $trace $qemu $machine $cpu $mem $display $net $os $extra -append "$append" $migrate
+    sudo -E $trace $qemu $machine $cpu $bios $mem $display $net $os $extra -append "$append" $migrate
 else
-    sudo -E $trace $qemu $machine $cpu $mem $display $net $os $extra $migrate
+    sudo -E $trace $qemu $machine $cpu $bios $mem $display $net $os $extra $migrate
 fi
