@@ -9,14 +9,14 @@ if [[ $# -gt 3 ]]; then
     exit 1
 fi
 
-if [[ -z $cpus ]]; then
-    cpus=2
-fi
-
 maxcpus=$(grep -c '^processor' /proc/cpuinfo)
 if [[ $maxcpus -eq 1 ]]; then
-    cpus=1
     pin=false
+    if [[ -z $cpus ]]; then
+        cpus=1
+    fi
+elif [[ -z $cpus ]]; then
+    cpus=$((maxcpus-1))
 fi
 
 if [[ $pin != false ]]; then
