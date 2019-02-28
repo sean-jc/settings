@@ -132,6 +132,14 @@ function git-push() {
     fi
 }
 
+function git-archive-branch() {
+    if [[ $# -eq 1 ]]; then
+        git push archive $1 && git branch -D $1
+    else
+        printf "git-archive-branch <branch>\n"
+        return 1
+    fi
+}
 function git-get-branch() {
     if [[ $# -eq 1 ]]; then
         git checkout -b $1 origin/$1
@@ -156,6 +164,7 @@ function git-url-patch() {
 
 # Add git completion to aliases
 __git_complete g __git_main
+__git_complete gab _git_branch
 __git_complete gb _git_branch
 __git_complete ggb _git_branch
 
@@ -174,8 +183,10 @@ __git_complete gs _git_log
 
 alias g='git'
 alias ga='git add'
+alias gab='git-archive-branch'
 alias gb='git branch'
 alias gbg='git branch -r | grep'
+alias gbga='git branch -r | grep archive'
 alias gbgo='git branch -r | grep origin'
 alias gc='git commit'
 alias gd='git-diff'
