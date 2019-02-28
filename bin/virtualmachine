@@ -76,11 +76,15 @@ else
         fi
     fi
 fi
+if [[ -n $epc ]]; then
+    id=1
+    for section in $epc; do
+        mem="$mem -object memory-backend-epc,id=mem$id,size=$section -sgx-epc id=epc$id,memdev=mem$id"
+        id=$((id+1))
+    done
+fi
 
 machine="-enable-kvm -smp $cpus -machine q35,accel=kvm,kernel_irqchip"
-if [[ -n $epc ]]; then
-    machine="$machine,epc=$epc"
-fi
 
 if [[ $os = "hyper-v" ]]; then
     cpu="-cpu host,host-phys-bits,hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time,+vmx"
