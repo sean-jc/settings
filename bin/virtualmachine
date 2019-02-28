@@ -64,6 +64,7 @@ net="-device virtio-net-pci,netdev=net0,mac=$mac -netdev tap,id=net0,script=$ifu
 if [[ -n $qemu_i386 ]]; then
     mem="-m 1G"
 else
+    mem="-m 16G"
     if [[ $(free -g | grep Mem: | tr -s ' ' | cut -f 2 -d ' ') -lt 17 ]]; then
         if [[ $os = "hyper-v" ]]; then
             printf "Not enough memory to start Hyper-V\n"
