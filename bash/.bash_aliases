@@ -566,7 +566,7 @@ function make-kernel-package() {
     THREADS=$(grep -c '^processor' /proc/cpuinfo)
     CONCURRENCY_LEVEL=$THREADS fakeroot make-kpkg --initrd --append-to-version=-$name kernel_headers kernel_image --revision $rev
     if [[ $? -eq 0 && $# -lt 2 && $guest != "true" ]]; then
-        sudo dpkg -i ../*$name_${rev}_*.deb
+        sudo dpkg -i ../*${name}+_${rev}_*.deb
     fi
 }
 
