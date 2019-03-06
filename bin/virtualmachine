@@ -79,7 +79,11 @@ fi
 if [[ -n $epc ]]; then
     id=1
     for section in $epc; do
-        mem="$mem -object memory-backend-epc,id=mem$id,size=$section -sgx-epc id=epc$id,memdev=mem$id"
+        if [[ $id == "1" ]]; then
+            mem="$mem -object memory-backend-epc,id=mem$id,size=$section,prealloc -sgx-epc id=epc$id,memdev=mem$id"
+        else
+            mem="$mem -object memory-backend-epc,id=mem$id,size=$section -sgx-epc id=epc$id,memdev=mem$id"
+        fi
         id=$((id+1))
     done
 fi
