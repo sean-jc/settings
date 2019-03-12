@@ -1,28 +1,83 @@
 #!/bin/bash
+trap "exit 1" TERM
+export VM_PID=$$
+
+function die() {
+    printf "%s\n" "$1"
+    kill -s TERM $VM_PID
+}
+
 if [[ -z $img && -z $unittest ]]; then
-    printf "Must specify the image name via: \$img.\n"
-    exit 2
+    die "Must specify the image name via: \$img"
 fi
 
 if [[ -z $qemu ]]; then
-    printf "Must specify the qemu build via: \$qemu.\n"
-    exit 2
+    die "Must specify the qemu build via: \$qemu"
 fi
 
-
 if [[ -z $cpus ]]; then
-    printf "Must specify the number of cpus via: \$cpus.\n"
-    exit 2
+    die "Must specify the number of cpus via: \$cpus\n"
 fi
 
 if [[ -n $iso && -n $kernel ]]; then
-    printf "Cannot specify both \$iso and \$kernel.\n"
-    exit 2
+    die "Cannot specify both \$iso and \$kernel\n"
 fi
 
 if [[ -z $kernel && -n $append ]]; then
-    printf "Cannot specify \$append without \$kernel.\n"
-    exit 2
+    die "Cannot specify \$append without \$kernel\n"
+fi
+
+function psudo() {
+    printf "sudo %s\n" "$*"
+    sudo $@
+}
+
+function config-priv-file() {
+    local perm=660
+    if [[ $# -eq 2 ]]; then
+        perm=$2
+    fi
+
+    if [[ ! $(stat $1) ]]; then
+        die "Cannot stat $1"
+    fi
+    if [[ $(grep $(stat -c "%g" $1) /etc/group | cut -f 1 -d :) != "kvm" ]]; then
+        psudo chown root:kvm $1
+    fi
+    if [[ $(stat -c "%a" $1) != "$perm" ]]; then
+        psudo chmod $perm $1
+    fi
+}
+
+if [[ -z $kvm ]]; then
+    kvm=kvm_intel
+fi
+lmod=$(lsmod | cut -f 1 -d ' ' | grep kvm_)
+if [[ $? -eq 0 && $lmod != $kvm ]]; then
+    psudo rmmod $lmod
+fi
+if [[ ! $(lsmod | cut -f 1 -d ' ' | grep kvm_) ]]; then
+    psudo modprobe $kvm nested=1
+fi
+if [[ ! $(lsmod | cut -f 1 -d ' ' | grep vhost_net) ]]; then
+    psudo modprobe vhost_net
+fi
+
+config-priv-file /bin/ip 750
+config-priv-file /dev/kvm
+config-priv-file /dev/vhost-net
+if [[ -n $epc ]]; then
+    config-priv-file /dev/sgx_virt
+fi
+
+qemu="/home/sean/build/qemu/$qemu"
+qemu_bin=$(readlink -f $qemu)
+
+if [[ -z $(getcap $qemu_bin | grep cap_net_admin) ]]; then
+    psudo setcap cap_net_admin=+ep $qemu_bin
+fi
+if [[ -z $(getcap /bin/ip | grep cap_net_admin) ]]; then
+    psudo setcap cap_net_admin=+ep /bin/ip
 fi
 
 if [[ $os = "hyper-v" ]]; then
@@ -50,8 +105,6 @@ else
     img=/home/sean/images/qemu/ubuntu-16.04-server-$img.img
 fi
 
-qemu="/home/sean/build/qemu/$qemu"
-qemu_i386=$(readlink -f $qemu | grep i386)
 qemu="$qemu -no-reboot"
 if [[ -n $gdb ]]; then
     qemu="$qemu -s -S"
@@ -61,7 +114,7 @@ ifup=$(which ifup)
 
 net="-device virtio-net-pci,netdev=net0,mac=$mac -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
 
-if [[ -n $qemu_i386 ]]; then
+if [[ "$qemu_bin" =~ "i386" ]]; then
     mem="-m 1G"
 else
     mem="-m 16G"
@@ -161,20 +214,12 @@ fi
 
 if [[ -n $trace ]]; then
     trace="strace"
+else
+    trace="exec"
 fi
-
-if [[ -z $kvm ]]; then
-    kvm=kvm_intel
-fi
-lmod=$(lsmod | cut -f 1 -d ' ' | grep kvm_)
-if [[ $? -eq 0 && $lmod != $kvm ]]; then
-    sudo rmmod $lmod
-fi
-sudo modprobe $kvm
-sudo modprobe vhost_net
 
 if [[ -n $kernel ]]; then
-    sudo -E $trace $qemu $machine $cpu $bios $mem $display $net $os $extra -append "$append" $migrate
+    $trace $qemu $machine $cpu $bios $mem $display $net $os $extra -append "$append" $migrate
 else
-    sudo -E $trace $qemu $machine $cpu $bios $mem $display $net $os $extra $migrate
+    $trace $qemu $machine $cpu $bios $mem $display $net $os $extra $migrate
 fi

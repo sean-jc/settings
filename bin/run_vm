@@ -38,9 +38,9 @@ fi
 echo $BASHPID > $cgroup/cgroup.procs
 
 if [[ $# -eq 1 ]]; then
-    qemu=$1 img=$2 virtualmachine
+    qemu=$1 img=$2 exec virtualmachine
 elif [[ -s $v2_cgroup ]]; then
-    qemu=$1 img=$2 kernel=$3 cpus=$cpus append="cgroup_no_v1=$v2_cgroup" virtualmachine
+    qemu=$1 img=$2 kernel=$3 cpus=$cpus append="cgroup_no_v1=$v2_cgroup" exec virtualmachine
 else
-    qemu=$1 img=$2 kernel=$3 cpus=$cpus virtualmachine
+    qemu=$1 img=$2 kernel=$3 cpus=$cpus exec virtualmachine
 fi
