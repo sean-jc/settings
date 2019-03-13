@@ -2,6 +2,32 @@
 alias rf='source ~/.bashrc'
 
 # -----------------------------------------------------------------------------
+# Floating Castle
+# -----------------------------------------------------------------------------
+alias ff='floating-castle'
+alias fu='ff cache -u'
+alias fm='ff moon -i'
+
+function floating-castle-gulp() {
+    pushd ~/go/src/github.com/zombull/floating-castle/server > /dev/null
+    gulp
+    popd
+}
+alias fsg='floating-castle-gulp'
+
+function floating-castle-restart() {
+    pushd ~/go/src/github.com/zombull/floating-castle > /dev/null
+    set -o xtrace
+    go install -v && \
+    sudo cp /home/sean/go/src/github.com/zombull/floating-castle/server/nginx/nginx.conf /etc/nginx/nginx.conf && \
+    cd server && gulp && \
+    systemctl restart fc
+    set +o xtrace
+    popd
+}
+alias fsr='floating-castle-restart'
+
+# -----------------------------------------------------------------------------
 # Git
 # -----------------------------------------------------------------------------
 function git-show() {
@@ -435,20 +461,18 @@ alias .....="cd ../../../.."
 # Typos
 alias cd..="cd .."
 
-# Direct navigation to go directories
+# Direct navigation to directories
 alias so='cd -P ~/go/src'
 alias gh='cd -P ~/go/src/github.com'
-alias int='cd -P ~/go/src/intel.com'
-alias ko='cd -P ~/go/src/kernel.org'
-
-# Direct navigation to kernel and image directories
-alias ku='cd -P ~/go/src/kernel.org/kvm-unit-tests'
-alias li='cd -P ~/go/src/kernel.org/linux'
-alias fu='cd ~/go/src/kernel.org/full'
-alias sy='cd -P ~/go/src/kernel.org/syzkaller'
-alias ho='cd ~/go/src/kernel.org/host'
 alias se='cd -P ~/go/src/github.com/sean-jc/settings'
 alias qq='cd -P ~/go/src/github.com/qemu/qemu'
+alias zz='cd -P ~/go/src/github.com/zombull'
+alias int='cd -P ~/go/src/intel.com'
+alias ko='cd -P ~/go/src/kernel.org'
+alias ho='cd -P ~/go/src/kernel.org/host'
+alias ku='cd -P ~/go/src/kernel.org/kvm-unit-tests'
+alias li='cd -P ~/go/src/kernel.org/linux'
+alias sy='cd -P ~/go/src/kernel.org/syzkaller'
 alias kn='cd -P ~/build/kernel'
 alias qe='cd -P ~/build/qemu'
 alias iq='cd -P ~/images/qemu'
