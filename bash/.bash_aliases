@@ -590,7 +590,7 @@ function make-kernel-package() {
     THREADS=$(grep -c '^processor' /proc/cpuinfo)
     CONCURRENCY_LEVEL=$THREADS fakeroot make-kpkg --initrd --append-to-version=-$name kernel_headers kernel_image --revision $rev
     if [[ $? -eq 0 && $# -lt 2 && $guest != "true" ]]; then
-        sudo dpkg -i ../*${name}+_${rev}_*.deb
+        sudo dpkg -i ../*${name}*_${rev}_*.deb
     fi
 }
 
@@ -741,10 +741,10 @@ alias mkb='TARGET=bzImage make-kernel'
 
 function make-config() {
     if [[ $# -ne 1 && $# -ne 2 ]]; then
-        printf "usage: mm <menuconfig|oldconfig> [dir]\n"
+        printf "usage: mm <menuconfig|oldconfig|localmodconfig> [dir]\n"
         return 1
-    elif [[ $1 != "oldconfig" && $1 != "menuconfig" ]]; then
-        printf "usage: mm <menuconfig|oldconfig> [dir]\n"
+    elif [[ $1 != "oldconfig" && $1 != "menuconfig" && $1 != "localmodconfig" ]]; then
+        printf "usage: mm <menuconfig|oldconfig|localmodconfig> [dir]\n"
         return 1
     elif [[ $# -eq 2 ]]; then
         if [[ ! -f .git/info/sparse-checkout ]]; then
@@ -766,6 +766,7 @@ function make-config() {
         make $1
     fi
 }
+alias ml='make-config localmodconfig'
 alias mm='make-config menuconfig'
 alias mo='make-config oldconfig'
 
