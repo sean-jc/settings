@@ -438,11 +438,40 @@ alias fgrep='fgrep --color=auto'
 # find
 alias rfind='sudo find / -name 2> /dev/null'
 
+function ps-grep-kill() {
+    local response=y
+    local kps
+    local kp
+    kps=$(/bin/ps -e -o pid,user,cmd | grep -v grep | grep -v -- --forest | expand | cut -c-$COLUMNS | grep $1)
+
+    while read -r -u 3 kp; do
+        printf "Kill\n\t$kp?\n"
+        read -r -p "[Y/n] " response
+        response=${response,,}    # tolower
+        if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
+            kcmd="kill"
+            if [[ $kill == "true" ]]; then
+                kcmd="$kcmd -KILL"
+            fi
+            kcmd="$kcmd $(echo $kp | cut -f 1 -d ' ')"
+            if [[ $(echo $kp | cut -f 2 -d ' ') != "sean" ]]; then
+                kcmd="sudo $kcmd"
+            fi
+            $kcmd
+            if [[ $? -eq 0 ]]; then
+                printf "Killed $(echo $kp | cut -f 1 -d ' ')\n"
+            fi
+        fi
+    done 3<<< "$kps"
+}
+
 # ps
 alias ps='ps -a --forest -o user,pid,ppid,%cpu,%mem,vsz,rss,cmd'
 alias psm='ps -e | sort -nr -k 5 | head -10 | cut -c-$COLUMNS'
 alias psc='ps -e | sort -nr -k 4 | head -10 | cut -c-$COLUMNS'
 alias psg='ps -e | grep -v grep | grep -v -- --forest | expand | cut -c-$COLUMNS | grep -i -e VSZ -e'
+alias psk='ps-grep-kill'
+alias pskk='kill=true ps-grep-kill'
 
 function kill-aesmd {
     sudo kill -9 $(ps -e | grep -v grep | grep aesmd | tr -s " " | cut -d " " -f 2)
