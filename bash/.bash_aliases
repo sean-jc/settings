@@ -769,36 +769,37 @@ alias mc='make-kernel'
 alias mks='sgx=true make-kernel'
 alias mkb='TARGET=bzImage make-kernel'
 
-function make-config() {
+function make-kernel-opt() {
     if [[ $# -ne 1 && $# -ne 2 ]]; then
-        printf "usage: mm <menuconfig|oldconfig|localmodconfig> [dir]\n"
+        printf "usage: m{d,l,m,o} [dir]\n"
         return 1
-    elif [[ $1 != "oldconfig" && $1 != "menuconfig" && $1 != "localmodconfig" ]]; then
-        printf "usage: mm <menuconfig|oldconfig|localmodconfig> [dir]\n"
+    elif [[ $1 != "htmldocs" && $1 != "oldconfig" && $1 != "menuconfig" && $1 != "localmodconfig" ]]; then
+        printf "usage: m{d,l,m,o} [dir]\n"
         return 1
     elif [[ $# -eq 2 ]]; then
         if [[ ! -f .git/info/sparse-checkout ]]; then
-            printf "mm <dir> without sparse directory\n"
+            printf "m{d,l,m,o} <dir> without sparse directory\n"
             return 1
         elif [[ -f .config ]]; then
-            printf "mm <dir> with local config\n"
+            printf "m{d,l,m,o} <dir> with local config\n"
             return 1
         fi
         TARGET=$1 make-kernel $2
     else
         if [[ -f .git/info/sparse-checkout ]]; then
-            printf "mm with sparse directory\n"
+            printf "m{d,l,m,o} with sparse directory\n"
             return 1
         elif [[ ! -f .config ]]; then
-            printf "mm without local config\n"
+            printf "m{d,l,m,o} without local config\n"
             return 1
         fi
         make $1
     fi
 }
-alias ml='make-config localmodconfig'
-alias mm='make-config menuconfig'
-alias mo='make-config oldconfig'
+alias md='make-kernel-opt htmldocs'
+alias ml='make-kernel-opt localmodconfig'
+alias mm='make-kernel-opt menuconfig'
+alias mo='make-kernel-opt oldconfig'
 
 # time kernel
 function time-kernel() {
