@@ -517,6 +517,7 @@ alias ox='cd -P ~/outbox/linux/x86'
 
 # Direct navigation to misc directories
 alias dl='cd -P ~/Downloads'
+alias cpa='cd -P ~/patches'
 
 # Kernel grep and gdb commands
 alias gk='readelf -s vmlinux | grep'
