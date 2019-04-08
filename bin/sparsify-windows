@@ -28,6 +28,7 @@ echo "mm/*" >> .git/info/sparse-checkout
 echo "tools/arch/x86" >> .git/info/sparse-checkout
 echo "tools/include/uapi/linux/kvm.h" >> .git/info/sparse-checkout
 echo "tools/objtool" >> .git/info/sparse-checkout
+echo "tools/testing/selftests/kvm" >> .git/info/sparse-checkout
 echo "virt/*" >> .git/info/sparse-checkout
 echo "!include/uapi/linux/netfilter*" >> .git/info/sparse-checkout
 echo "!include/soc/arc/aux.h" >> .git/info/sparse-checkout
