@@ -46,8 +46,7 @@ for i in "${stubdirs[@]}"; do
               $i != "drivers/sbus" &&
               $i != "drivers/tc" &&
               $i != "drivers/video/fbdev/i810" &&
-              $i != "drivers/video/fbdev/intelfb" &&
-              $i != "firmware" ]]; then
+              $i != "drivers/video/fbdev/intelfb" ]]; then
                 touch $i/Kconfig
         fi
 done

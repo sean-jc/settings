@@ -127,7 +127,6 @@ stubdirs=(
         drivers/zorro
         net/ipv4/netfilter
         net/ipv6/netfilter
-        firmware
         samples
         sound
 )
