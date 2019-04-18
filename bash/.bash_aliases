@@ -295,6 +295,7 @@ alias gol='git-golint | grep -v -e "should have comment" -e ALL_CAPS -e Id -e Ur
 # -----------------------------------------------------------------------------
 alias virtd='daemon=true run_vm'
 alias vm='run_vm stable kvm'
+alias vm32='ovmf=32 vm'
 alias ivm='i386=true run_vm stable i386'
 alias tvm='trace=1 run_vm stable kvm'
 alias vmd='daemon=true run_vm stable kvm'
@@ -312,6 +313,8 @@ alias vuefi='run_vm stable uefi'
 # alias vuefi='qemu=stable img=uefi display=vnc iso=~/images/ubuntu/ubuntu-16.04.3-desktop-amd64.iso virtualmachine'
 alias vanilla='virtio=false run_vm stable'
 alias vu='run_kvm_unittest stable'
+
+alias dvm='gdb -x $SETTINGS/bin/debug_vm'
 
 alias hv='os=hyper-v run_vm stable machine'
 alias hvd='os=hyper-v display=vnc run_vm stable machine'

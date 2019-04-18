@@ -151,7 +151,7 @@ else
         bios="-bios /home/sean/go/src/seabios.org/seabios/out/bios.bin"
     elif [[ $uefi != "false" || $i386 != "true" ]]; then
         if [[ -z $debug_ovmf ]]; then
-            bios="-bios /home/sean/build/ovmf/OVMF.fd"
+            bios="-bios /home/sean/build/ovmf/OVMF$ovmf.fd"
         else
             bios="-bios /home/sean/go/src/github.com/tianocore/edk2/Build/OvmfX64/DEBUG_GCC5/FV/OVMF.fd -debugcon file:debug.log -global isa-debugcon.iobase=0x402"
         fi
