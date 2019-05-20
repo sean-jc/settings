@@ -168,6 +168,7 @@ if [[ -z $cc ]]; then
     cc="${cc//\"/\\\"}"
     cc="--cc=\"${cc//,/\" \-\-cc=\"}\""
 fi
+bcc="--bcc=\"Sean Christopherson <sean.j.christopherson@intel.com>\""
 
 printf "\n\n\e[1;7;35m%s\n%s\n\e[0m" "$to" "$cc"
 read -r -p "Send email: [Y/n]" response
@@ -175,10 +176,10 @@ read -r -p "Send email: [Y/n]" response
 response=${response,,}    # tolower
 if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
     if [[ -z $indy ]]; then
-        eval $(printf "%s\n" "git send-email --confirm=always --suppress-cc=all $to $cc $opt $dir")
+        eval $(printf "%s\n" "git send-email --confirm=always --suppress-cc=all $to $bcc $cc $opt $dir")
     else
         for filename in $idir/*.patch; do
-            eval $(printf "%s\n" "git send-email --confirm=always --suppress-cc=cccmd $to $cc $opt $filename")
+            eval $(printf "%s\n" "git send-email --confirm=always --suppress-cc=cccmd $to $bcc $cc $opt $filename")
         done
     fi
 fi
