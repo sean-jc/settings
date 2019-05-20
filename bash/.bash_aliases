@@ -504,7 +504,7 @@ alias ko='cd -P ~/go/src/kernel.org'
 alias ho='cd -P ~/go/src/kernel.org/host'
 alias ku='cd -P ~/go/src/kernel.org/kvm-unit-tests'
 alias li='cd -P ~/go/src/kernel.org/linux'
-alias sy='cd -P ~/go/src/kernel.org/syzkaller'
+alias si='cd -P ~/go/src/kernel.org/sinux'
 alias kn='cd -P ~/build/kernel'
 alias qe='cd -P ~/build/qemu'
 alias iq='cd -P ~/images/qemu'
@@ -821,7 +821,7 @@ function system-info() {
     printf "IP Address:\t       $(ipa)\n"
     printf "Kernel:\t\t       $(uname -r)\n"
 }
-alias si='system-info'
+alias ii='system-info'
 
 function system-info-verbose() {
     printf "IP Address:\t       $(ipa)\n"
