@@ -186,6 +186,14 @@ function git-url-patch() {
     lynx -dump -nonumbers -hiddenlinks=liston $1 | grep -e "^http.*003[0-9].*\.patch" | xargs -n 1 curl -s | git am
 }
 
+function git-stash() {
+    if [[ $# -eq 2 ]]; then
+        git stash $1 stash@{$2}
+    else
+        git stash $1
+    fi
+}
+
 . $SETTINGS/git/.git-completion.bash
 
 # Add git completion to aliases
@@ -264,13 +272,13 @@ alias grc='git rebase --continue'
 alias gri='git rebase --interactive'
 alias gu='git pull'
 alias gs='git status'
-alias gsa='git stash apply'
-alias gsdd='git stash drop'
-alias gsl='git stash list'
-alias gso='git stash show'
-alias gsop='git stash show -p'
-alias gsp='git stash pop'
-alias gss='git stash save'
+alias gsa='git-stash apply'
+alias gsdd='git-stash drop'
+alias gsl='git-stash list'
+alias gso='git-stash show'
+alias gsop='git-stash "show -p"'
+alias gsp='git-stash pop'
+alias gss='git-stash save'
 alias gt='git-tree'
 alias gv='git remote -vv'
 
