@@ -32,8 +32,7 @@ for i in "${stubdirs[@]}"; do
         fi
         mkdir -p $i
         touch $i/Makefile
-        if [[ $i != "Documentation" &&
-              $i != "drivers/cdrom" &&
+        if [[ $i != "drivers/cdrom" &&
               $i != "drivers/char/mwave" &&
               $i != "drivers/char/xilinx_hwicap" &&
               $i != "drivers/dio" &&

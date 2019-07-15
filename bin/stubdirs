@@ -25,7 +25,6 @@ stubdirs=(
         drivers/eisa
         drivers/extcon
         drivers/firewire
-        drivers/fmc
         drivers/fpga
         drivers/fsi
         drivers/gpu
