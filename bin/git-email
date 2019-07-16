@@ -26,7 +26,11 @@ if [[ ! -d $dir ]]; then
     exit 1
 fi
 
-dir="$dir/$ml"
+if [[ $ml == "lsm" && -z $to ]]; then
+    dir="$dir/sgx"
+else
+    dir="$dir/$ml"
+fi
 if [[ ! -d $dir ]]; then
     printf "$dir is not a known mailing list for patches\n"
     exit 1
@@ -133,7 +137,12 @@ if [[ $ml == "ku" ]]; then
     to="--to=\"Paolo Bonzini <pbonzini@redhat.com>\" --to=\"Radim Krčmář <rkrcmar@redhat.com>\""
 elif [[ $ml == "sgx" && -z $to ]]; then
     to="--to=\"Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>\""
-    cc="--cc=\"sgx@eclists.intel.com\""
+    cc="--cc=\"linux-sgx@vger.kernel.org\""
+elif [[ $ml == "lsm" && -z $to ]]; then
+    ml="sgx"
+    to="--to=\"Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>\""
+    cc="--cc=\"sgx@eclists.intel.com\" --cc=\"Bill Roberts <william.c.roberts@intel.com>\" --cc=\"Casey Schaufler <casey.schaufler@intel.com>\" --cc=\"Dave Hansen <dave.hansen@intel.com>\" --cc=\"Cedric Xing <cedric.xing@intel.com>\""
+    # cc="--cc=\"linux-sgx@vger.kernel.org\" --cc=\"linux-security-module@vger.kernel.org\" --cc=\"selinux@vger.kernel.org\" --cc=\"Bill Roberts <william.c.roberts@intel.com>\" --cc=\"Casey Schaufler <casey.schaufler@intel.com>\" --cc=\"James Morris <jmorris@namei.org>\" --cc=\"Dave Hansen <dave.hansen@intel.com>\" --cc=\"Cedric Xing <cedric.xing@intel.com>\" --cc=\"Andy Lutomirski <luto@kernel.org>\" --cc=\"Jethro Beekman <jethro@fortanix.com>\" --cc=\"Dr. Greg Wettstein <greg@enjellic.com>\" --cc=\"Stephen Smalley <sds@tycho.nsa.gov>\""
 fi
 
 if [[ $ver -gt 1 ]]; then
