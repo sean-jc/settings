@@ -83,7 +83,7 @@ else
     if [[ -n $rfc ]]; then
         pre="$pre""RFC "
     fi
-    pre="$pre""PATCH"
+    pre="$pre""PATCH""$post"
 
     pre="--subject-prefix=\"$pre\""
 
