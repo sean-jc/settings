@@ -1,12 +1,21 @@
 #!/bin/bash
-if [[ ! -c /dev/sgx ]]; then
+if [[ ! -d /dev/sgx ]]; then
     sudo modprobe intel_sgx
 fi
-if [[ $(stat -c %a /dev/sgx) != "666" ]]; then
-    sudo chmod 666 /dev/sgx
+if [[ $(stat -c %a /dev/sgx) != "777" ]]; then
+    sudo chmod 777 /dev/sgx
 fi
-if [[ $(stat -c %a /dev/sgx) != "666" ]]; then
+if [[ $(stat -c %a /dev/sgx) != "777" ]]; then
     printf "Cannot stat /dev/sgx\n"
+    exit 1
+fi
+
+
+if [[ $(stat -c %a /dev/sgx/enclave) != "666" ]]; then
+    sudo chmod 666 /dev/sgx/enclave
+fi
+if [[ $(stat -c %a /dev/sgx/enclave) != "666" ]]; then
+    printf "Cannot stat /dev/sgx/enclave\n"
     exit 1
 fi
 
