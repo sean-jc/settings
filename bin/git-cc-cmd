@@ -13,6 +13,9 @@ elif [[ $(basename $1) =~ ^$30000- ]] ; then
 else
     maint=$(./scripts/get_maintainer.pl $opts $1 | tr '\n' ',')
 fi
+if [[ $2 != "ku" ]]; then
+    maint="$maint""linux-kernel@vger.kernel.org,"
+fi
 if [[ $(basename $1) =~ ^$30000- ]] ; then
     pfiles=$(ls -1 $(dirname $1)/!($30000-cover-letter.patch))
 else
