@@ -67,7 +67,8 @@ config-priv-file /bin/ip 750
 config-priv-file /dev/kvm
 config-priv-file /dev/vhost-net
 if [[ -n $epc ]]; then
-    config-priv-file /dev/sgx_virt
+    config-priv-file /dev/sgx/virt_epc
+    config-priv-file /dev/sgx/provision
 fi
 
 qemu="/home/sean/build/qemu/$qemu"
