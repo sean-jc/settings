@@ -39,7 +39,6 @@ for i in "${stubdirs[@]}"; do
               $i != "drivers/gpu" &&
               $i != "drivers/message" &&
               $i != "drivers/nubus" &&
-              $i != "drivers/platform/olpc" &&
               $i != "drivers/ps3" &&
               $i != "drivers/s390" &&
               $i != "drivers/sbus" &&
