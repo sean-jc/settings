@@ -1,14 +1,17 @@
 // Place your settings in this file to overwrite the default settings
 {
+    "breadcrumbs.enabled": false,
+    "diffEditor.ignoreTrimWhitespace": false,
+
     "editor.fontFamily": "'Noto Mono'",
     "editor.fontSize": 12.5,
-    "editor.tabSize": 4,
+    "editor.tabSize": 8,
     "editor.renderIndentGuides": false,
     "editor.dragAndDrop": false,
     "editor.minimap.enabled": true,
 
     "files.eol": "\n",  // The default end of line character.
-    "diffEditor.ignoreTrimWhitespace": false,
+    "git.enabled": false,
 
     "window.menuBarVisibility": "default",
     "window.newWindowDimensions": "maximized",
@@ -20,6 +23,7 @@
     "workbench.editor.enablePreview": false,
     "workbench.editor.showIcons": false,
     "workbench.startupEditor": "none",
+    "workbench.tree.renderIndentGuides": "none",
 
     "files.associations": {
         "*.arc": "c",
