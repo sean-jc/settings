@@ -194,6 +194,11 @@ function git-stash() {
     fi
 }
 
+function git-update-subs() {
+    git submodule update --recursive --remote
+    git submodule update --recursive
+}
+
 . $SETTINGS/git/.git-completion.bash
 
 # Add git completion to aliases
@@ -280,6 +285,7 @@ alias gsop='git-stash "show -p"'
 alias gsp='git-stash pop'
 alias gss='git-stash save'
 alias gt='git-tree'
+alias gus='git-update-subs'
 alias gv='git remote -vv'
 
 
