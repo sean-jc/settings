@@ -28,7 +28,7 @@ fi
 
 if [[ $ml == "lsm" && -z $to ]]; then
     dir="$dir/sgx"
-else
+elif [[ $ml != "qemu" ]]; then
     dir="$dir/$ml"
 fi
 if [[ ! -d $dir ]]; then
@@ -93,7 +93,9 @@ else
 
     sh -c "git format-patch -M --minimal --patience $opt $pre -o $dir -$nr"
 
-    if [ -f ./scripts/checkpatch.pl ]; then
+    if [[ $ml == "qemu" ]]; then
+        ./scripts/checkpatch.pl --branch HEAD~$nr..HEAD
+    elif [ -f ./scripts/checkpatch.pl ]; then
         ./scripts/checkpatch.pl -g HEAD-$nr
     fi
 fi

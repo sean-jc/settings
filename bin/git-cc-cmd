@@ -13,7 +13,7 @@ elif [[ $(basename $1) =~ ^$30000- ]] ; then
 else
     maint=$(./scripts/get_maintainer.pl $opts $1 | tr '\n' ',')
 fi
-if [[ $2 != "ku" ]]; then
+if [[ $2 != "ku" && $2 != "qemu" ]]; then
     maint="$maint""linux-kernel@vger.kernel.org,"
 fi
 if [[ $(basename $1) =~ ^$30000- ]] ; then
