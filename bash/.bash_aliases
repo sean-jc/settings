@@ -218,6 +218,7 @@ __git_complete glo _git_log
 __git_complete gp _git_cherry_pick
 __git_complete gpb _git_log
 __git_complete gr _git_reset
+__git_complete gri _git_branch
 __git_complete gs _git_log
 
 alias g='git'
