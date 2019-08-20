@@ -5,6 +5,7 @@ git config core.sparseCheckout true
 
 echo "!arch/*" > .git/info/sparse-checkout
 echo "!tools/arch/*" >> .git/info/sparse-checkout
+echo "!virt/kvm/arm/*" >> .git/info/sparse-checkout
 echo "/*" >> .git/info/sparse-checkout
 echo "arch/.gitignore" >> .git/info/sparse-checkout
 echo "arch/Kconfig" >> .git/info/sparse-checkout

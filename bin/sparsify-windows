@@ -32,6 +32,7 @@ echo "tools/objtool" >> .git/info/sparse-checkout
 echo "tools/testing/selftests/kvm" >> .git/info/sparse-checkout
 echo "tools/testing/selftests/x86/sgx" >> .git/info/sparse-checkout
 echo "virt/*" >> .git/info/sparse-checkout
+echo "!virt/kvm/arm/*" >> .git/info/sparse-checkout
 echo "!include/uapi/linux/netfilter*" >> .git/info/sparse-checkout
 echo "!include/soc/arc/aux.h" >> .git/info/sparse-checkout
 echo "README.md" >> .git/info/sparse-checkout
