@@ -341,6 +341,9 @@ alias hvd='os=hyper-v display=vnc run_vm stable machine'
 alias hvi='os=hyper-v display=vnc iso1=~/images/hyper-v/virtio-win-0.1.126.iso run_vm stable machine'
 alias hvnew='os=hyper-v display=vnc iso=~images/hyper-v/hyper-v-2016.iso iso1=~/images/hyper-v/virtio-win-0.1.126.iso run_vm stable'
 
+alias mvm='modules=false run_vm stable kvm'
+alias mivm='modules=false i386=true run_vm stable i386'
+
 # -----------------------------------------------------------------------------
 # SGX
 # -----------------------------------------------------------------------------
