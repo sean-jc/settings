@@ -151,10 +151,12 @@ else
     if [[ "$qemu_bin" =~ "i386" ]]; then
         bios="-bios /home/sean/go/src/seabios.org/seabios/out/bios.bin"
     elif [[ $uefi != "false" || $i386 != "true" ]]; then
-        if [[ -z $debug_ovmf ]]; then
-            bios="-bios /home/sean/build/ovmf/OVMF$ovmf.fd"
-        else
+        if [[ -n $debug_ovmf ]]; then
             bios="-bios /home/sean/go/src/github.com/tianocore/edk2/Build/OvmfX64/DEBUG_GCC5/FV/OVMF.fd -debugcon file:debug.log -global isa-debugcon.iobase=0x402"
+        elif [[ $pflash == "true" ]]; then
+            bios="-drive if=pflash,format=raw,unit=0,file=/home/sean/build/ovmf/OVMF$ovmf.fd"
+        else
+            bios="-bios /home/sean/build/ovmf/OVMF$ovmf.fd"
         fi
     fi
 fi
