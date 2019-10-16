@@ -145,6 +145,9 @@ elif [[ $ml == "lsm" && -z $to ]]; then
     to="--to=\"Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>\""
     cc="--cc=\"sgx@eclists.intel.com\" --cc=\"Bill Roberts <william.c.roberts@intel.com>\" --cc=\"Casey Schaufler <casey.schaufler@intel.com>\" --cc=\"Dave Hansen <dave.hansen@intel.com>\" --cc=\"Cedric Xing <cedric.xing@intel.com>\""
     # cc="--cc=\"linux-sgx@vger.kernel.org\" --cc=\"linux-security-module@vger.kernel.org\" --cc=\"selinux@vger.kernel.org\" --cc=\"Bill Roberts <william.c.roberts@intel.com>\" --cc=\"Casey Schaufler <casey.schaufler@intel.com>\" --cc=\"James Morris <jmorris@namei.org>\" --cc=\"Dave Hansen <dave.hansen@intel.com>\" --cc=\"Cedric Xing <cedric.xing@intel.com>\" --cc=\"Andy Lutomirski <luto@kernel.org>\" --cc=\"Jethro Beekman <jethro@fortanix.com>\" --cc=\"Dr. Greg Wettstein <greg@enjellic.com>\" --cc=\"Stephen Smalley <sds@tycho.nsa.gov>\""
+elif [[ $ml == "intel" && -z $to ]]; then
+    to="--to=\"x86-patch-review@intel.com\""
+    cc="--cc=\"Sean Christopherson <sean.j.christopherson@intel.com>\""
 fi
 
 if [[ $ver -gt 1 ]]; then
