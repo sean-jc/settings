@@ -119,7 +119,7 @@ while true; do
             if [[ $nr -gt 1 ]]; then
                 grep -q -e "BLURB HERE" -e "SUBJECT HERE" $dir/*0000-cover-letter.patch
                 if [ $? -eq 0 ]; then
-                    printf "Edit the cover letter before sending!\n"
+                    printf "Edit the cover letter (%s) before sending!\n" "$dir/*0000-cover-letter.patch"
                     continue
                 fi
             fi
