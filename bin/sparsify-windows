@@ -29,6 +29,8 @@ echo "security/*" >> .git/info/sparse-checkout
 echo "tools/arch/x86" >> .git/info/sparse-checkout
 echo "tools/include/uapi/linux/kvm.h" >> .git/info/sparse-checkout
 echo "tools/objtool" >> .git/info/sparse-checkout
+echo "tools/testing/selftests/kselftest.h" >> .git/info/sparse-checkout
+echo "tools/testing/selftests/kselftest_operators.h" >> .git/info/sparse-checkout
 echo "tools/testing/selftests/kvm" >> .git/info/sparse-checkout
 echo "tools/testing/selftests/x86/sgx" >> .git/info/sparse-checkout
 echo "virt/*" >> .git/info/sparse-checkout
@@ -36,5 +38,6 @@ echo "!virt/kvm/arm/*" >> .git/info/sparse-checkout
 echo "!include/uapi/linux/netfilter*" >> .git/info/sparse-checkout
 echo "!include/soc/arc/aux.h" >> .git/info/sparse-checkout
 echo "README.md" >> .git/info/sparse-checkout
+echo "MAINTAINERS" >> .git/info/sparse-checkout
 
 git read-tree -mu HEAD
