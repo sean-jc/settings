@@ -160,7 +160,7 @@ else
 fi
 
 if [[ -n $indy ]]; then
-    primary=$(ls -1 $idir/*000$indy*)
+    primary=$(ls -1 $idir/*00$indy*)
 elif [[ $nr -gt 1 ]]; then
     primary=$(ls -1 $dir/*0000*)
 else
