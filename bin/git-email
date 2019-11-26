@@ -174,7 +174,9 @@ if [[ -z $to ]]; then
         exit 1
     fi
     to="${to//\"/\\\"}"
+    to="${to//VMware,/VMwarecomma}"
     to="--to=\"${to//,/\" \-\-to=\"}\""
+    to="${to//VMwarecomma/VMware,}"
 fi
 if [[ -z $cc ]]; then
     cc=$(~/go/src/github.com/sean-jc/settings/bin/git-cc-cmd $primary $ml $pre)
@@ -183,7 +185,9 @@ if [[ -z $cc ]]; then
         exit 1
     fi
     cc="${cc//\"/\\\"}"
+    cc="${cc//VMware,/VMwarecomma}"
     cc="--cc=\"${cc//,/\" \-\-cc=\"}\""
+    cc="${cc//VMwarecomma/VMware,}"
 fi
 bcc="--bcc=\"Sean Christopherson <sean.j.christopherson@intel.com>\""
 
