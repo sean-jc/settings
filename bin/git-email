@@ -40,6 +40,10 @@ branch=${branch//\//.}
 dir="$dir/$branch/v$ver"
 if [[ -n $redo ]]; then
     if [[ -n $indy ]]; then
+        if [[ -n $primary ]]; then
+            printf "indy doesn't work with a predefined primary patch\n"
+            exit 1
+        fi
         idir="$dir""_indy"
         if [[ ! -d $idir ]]; then
             printf "$idir doesn't exists, no existing patch(es) to send\n"
@@ -160,17 +164,21 @@ else
 fi
 
 if [[ -n $indy ]]; then
-    primary=$(ls -1 $idir/*00$indy*)
+    cc_primary=$(ls -1 $idir/*00$indy*)
 elif [[ $nr -gt 1 ]]; then
-    primary=$(ls -1 $dir/*0000*)
+    cc_primary=$(ls -1 $dir/*0000*)
 else
-    primary=$(ls -1 $dir/*0001*)
+    cc_primary=$(ls -1 $dir/*0001*)
 fi
-
+if [[ -n $primary ]]; then
+    to_primary=$(ls -1 $dir/*00$primary*)
+else
+    to_primary="$cc_primary"
+fi
 if [[ -z $to ]]; then
-    to=$(~/go/src/github.com/sean-jc/settings/bin/git-to-cmd $primary $ml $pre)
+    to=$(~/go/src/github.com/sean-jc/settings/bin/git-to-cmd $to_primary $ml $pre)
     if [[ -z $to ]]; then
-        printf "No --to found for %s\n" "git-to-cmd $primary $ml $pre"
+        printf "No --to found for %s\n" "git-to-cmd $to_primary $ml $pre"
         exit 1
     fi
     to="${to//\"/\\\"}"
@@ -179,9 +187,9 @@ if [[ -z $to ]]; then
     to="${to//VMwarecomma/VMware,}"
 fi
 if [[ -z $cc ]]; then
-    cc=$(~/go/src/github.com/sean-jc/settings/bin/git-cc-cmd $primary $ml $pre)
+    cc=$(~/go/src/github.com/sean-jc/settings/bin/git-cc-cmd $cc_primary $ml $to_primary $pre)
     if [[ -z $cc ]]; then
-        printf "No --cc found for %s\n" "git-cc-cmd $primary $ml $pre"
+        printf "No --cc found for %s\n" "git-cc-cmd $cc_primary $ml $to_primary $pre"
         exit 1
     fi
     cc="${cc//\"/\\\"}"
