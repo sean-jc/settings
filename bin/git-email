@@ -150,7 +150,7 @@ elif [[ $ml == "intel" && -z $to ]]; then
     cc="--cc=\"Sean Christopherson <sean.j.christopherson@intel.com>\""
 elif [[ $ml == "stable" && -z $to ]]; then
     to="--to=\"stable@vger.kernel.org\" --to=\"Greg Kroah-Hartman <gregkh@linuxfoundation.org>\""
-    cc="--cc=\"Paolo Bonzini <pbonzini@redhat.com>\" --cc=\"Junaid Shahid <junaids@google.com>\" --cc=\"linux-kernel@vger.kernel.org\""
+    cc="--cc=\"Paolo Bonzini <pbonzini@redhat.com>\" -cc=\"linux-kernel@vger.kernel.org\""
 fi
 
 if [[ $ver -gt 1 ]]; then
