@@ -118,20 +118,30 @@ net="-device virtio-net-pci,netdev=net0,mac=$mac -netdev tap,id=net0,script=$ifu
 if [[ "$qemu_bin" =~ "i386" ]]; then
     mem="-m 1G"
 else
-    mem="-m 16G"
-    if [[ $(free -g | grep Mem: | tr -s ' ' | cut -f 2 -d ' ') -lt 17 ]]; then
-        if [[ $os = "hyper-v" ]]; then
-            printf "Not enough memory to start Hyper-V\n"
-            exit 2
-        fi
-        mem="-m 8G"
-        if [[ $(free -g | grep Mem: | tr -s ' ' | cut -f 2 -d ' ') -lt 9 ]]; then
-            mem="-m 4G"
-        fi
+    total_mem=$(free -g | grep Mem: | tr -s ' ' | cut -f 2 -d ' ')
+    if [[ $total_mem -lt 5 ]]; then
+        printf "Not enough memory to start a VM\n"
+        exit 2
     fi
+    if [[ $total_mem -lt 17 && $os = "hyper-v" ]]; then
+        printf "Not enough memory to start Hyper-V\n"
+        exit 2
+    fi
+
+    if [[ $total_mem -gt 16 ]]; then
+        mem="4G"
+        memfd="12G"
+    elif [[ $total_mem -gt 8 ]]; then
+        mem="4G"
+        memfd="4G"
+    else
+        mem="2G"
+        memfd="2G"
+    fi
+    mem="-m $mem,slots=1,maxmem=16G -object memory-backend-memfd,hugetlb=y,hugetlbsize=2M,id=mem1,size=$memfd -device pc-dimm,id=dimm1,memdev=mem1 "
 fi
 if [[ -n $epc ]]; then
-    id=1
+    id=2
     for section in $epc; do
         if [[ $id == "1" ]]; then
             mem="$mem -object memory-backend-epc,id=mem$id,size=$section,prealloc -sgx-epc id=epc$id,memdev=mem$id"

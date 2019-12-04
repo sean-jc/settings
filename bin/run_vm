@@ -9,6 +9,11 @@ if [[ $# -gt 3 ]]; then
     exit 1
 fi
 
+# Allow up to 16gb worth of on-demand huge pages.
+if [[ $(cat /proc/sys/vm/nr_overcommit_hugepages) != "8000" ]]; then
+    echo 8000 | sudo tee /proc/sys/vm/nr_overcommit_hugepages
+fi
+
 maxcpus=$(grep -c '^processor' /proc/cpuinfo)
 if [[ $maxcpus -eq 1 ]]; then
     pin=false
