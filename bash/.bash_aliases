@@ -1,6 +1,11 @@
 # Refresh bash terminal
 alias rf='source ~/.bashrc'
 
+function psudo() {
+    printf "sudo %s\n" "$*"
+    sudo $@
+}
+
 # -----------------------------------------------------------------------------
 # Floating Castle
 # -----------------------------------------------------------------------------
@@ -334,6 +339,44 @@ alias vuefi='run_vm stable uefi'
 # alias vuefi='qemu=stable img=uefi display=vnc iso=~/images/ubuntu/ubuntu-16.04.3-desktop-amd64.iso virtualmachine'
 alias vanilla='virtio=false run_vm stable'
 alias vu='run_kvm_unittest stable'
+
+# Get the PID of the VM.  Obviously expects a single VM to be running...
+alias vp='psg /home/sean/build/qemu | grep sean | tr -s " " | cut -f 2 -d " "'
+
+function vm-stats() {
+    local pid=$(vp)
+    local cmd=$(cat /proc/$pid/cmdline | tr '\000' ' ')
+    local vm_lines=$(cat /proc/$pid/status | grep --color=never -e Vm)
+    local lines=$(cat /proc/$pid/status | grep --color=never -e Huge -e Rss)
+    local line
+    local field
+    local mb
+
+    if [ $# -gt 0 ]; then
+        printf "$cmd\n\n"
+    fi
+
+    while read -r line; do
+        field=$(echo $line | cut -f 1 -d " ")
+        mb=$(echo $line | awk '{megs=$2/1024} END {print megs}')
+        printf "%s\t\t%8.1f MB\n" $field $mb
+    done <<< "$vm_lines"
+
+    while read -r line; do
+        field=$(echo $line | cut -f 1 -d " ")
+        mb=$(echo $line | awk '{megs=$2/1024} END {print megs}')
+        printf "%s\t%8.1f MB\n" $field $mb
+    done <<< "$lines"
+
+    if [[ -z $(getcap $HOME/bin/get_smaps | grep cap_sys_ptrace) ]]; then
+        psudo setcap cap_sys_ptrace+ep $HOME/bin/get_smaps
+    fi
+
+    mb=$($HOME/bin/get_smaps $pid | grep -e AnonHugePages | awk '{ if($2>4) print $0} ' | awk -F ":" '{print $2}' | awk '{Total+=$1/1024} END {print Total}')
+    printf "AnonHugePages:\t%8.1f MB\n" $mb
+}
+alias vs='vm-stats'
+alias vss='vm-stats true'
 
 alias dvm='gdb -x $SETTINGS/bin/debug_vm'
 
