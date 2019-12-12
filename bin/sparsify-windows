@@ -17,6 +17,7 @@ echo "drivers/virtio/*" >> .git/info/sparse-checkout
 echo "Documentation/admin-guide/cgroup-v2.rst" >> .git/info/sparse-checkout
 echo "Documentation/process/*" >> .git/info/sparse-checkout
 echo "Documentation/virtual/*" >> .git/info/sparse-checkout
+echo "Documentation/virt/*" >> .git/info/sparse-checkout
 echo "Documentation/x86/*" >> .git/info/sparse-checkout
 echo "include/*" >> .git/info/sparse-checkout
 echo "fs/*.c" >> .git/info/sparse-checkout
