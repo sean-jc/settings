@@ -115,6 +115,11 @@ ifup=$(which ifup)
 
 net="-device virtio-net-pci,netdev=net0,mac=$mac -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
 
+maxmem=16G
+if [[ -n $epc ]]; then
+    maxmem=32G
+fi
+
 if [[ "$qemu_bin" =~ "i386" ]]; then
     mem="-m 1G"
 else
@@ -138,7 +143,7 @@ else
         mem="2G"
         memfd="2G"
     fi
-    mem="-m $mem,slots=1,maxmem=16G -object memory-backend-memfd,hugetlb=y,hugetlbsize=2M,id=mem1,size=$memfd -device pc-dimm,id=dimm1,memdev=mem1 "
+    mem="-m $mem,slots=1,maxmem=$maxmem -object memory-backend-memfd,hugetlb=y,hugetlbsize=2M,id=mem1,size=$memfd -device pc-dimm,id=dimm1,memdev=mem1 "
 fi
 if [[ -n $epc ]]; then
     id=2
