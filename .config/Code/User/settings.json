@@ -64,5 +64,6 @@
         "**/debian": true,
         "**/build": true
     },
+    "search.searchOnType": false,
     "typescript.check.npmIsInstalled": false
 }
