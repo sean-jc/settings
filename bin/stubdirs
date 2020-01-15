@@ -98,7 +98,6 @@ stubdirs=(
         drivers/sh
         drivers/siox
         drivers/slimbus
-        drivers/sn
         drivers/soc
         drivers/soundwire
         drivers/spi
@@ -111,7 +110,6 @@ stubdirs=(
         drivers/thunderbolt
         drivers/uio
         drivers/usb
-        drivers/uwb
         drivers/video/backlight
         drivers/video/fbdev
         drivers/video/fbdev/i810
