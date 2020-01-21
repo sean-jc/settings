@@ -1,7 +1,7 @@
 #!/bin/bash
 shopt -s extglob
 
-opts="--nogit --nogit-fallback --norolestats --nor --nol"
+opts="--nogit --nogit-fallback --norolestats --nor --nol --nofixes"
 if [[ $2 == "kvm" ]]; then
     opts="$opts --pattern-depth=1"
 fi
