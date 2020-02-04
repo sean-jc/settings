@@ -166,7 +166,7 @@ fi
 if [[ -n $indy ]]; then
     cc_primary=$(ls -1 $idir/*00$indy*)
 elif [[ $nr -gt 1 ]]; then
-    cc_primary=$(ls -1 $dir/*0000*)
+    cc_primary=$(ls -1 $dir/*0000-cover-letter.patch)
 else
     cc_primary=$(ls -1 $dir/*0001*)
 fi
