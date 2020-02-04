@@ -140,7 +140,7 @@ while true; do
 done
 
 if [[ $ml == "ku" ]]; then
-    to="--to=\"Paolo Bonzini <pbonzini@redhat.com>\" --to=\"Radim Krčmář <rkrcmar@redhat.com>\""
+    to="--to=\"Paolo Bonzini <pbonzini@redhat.com>\""
 elif [[ $ml == "sgx" && -z $to ]]; then
     to="--to=\"Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>\""
     cc="--cc=\"linux-sgx@vger.kernel.org\""
