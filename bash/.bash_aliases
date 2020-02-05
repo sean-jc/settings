@@ -422,7 +422,8 @@ alias ipa="ifconfig | grep -e 10.54 -e 192.168.1 | tr -s ' ' | cut -f 3 -d ' ' |
 alias sk='sudo -sE'
 alias sbn='sudo reboot now'
 alias sbf='sudo reboot -f'
-if [[ "$HOSTPOST" == kvm || "$HOSTPOST" == k2 || "$HOSTPOST" == i386 || "$HOSTPOST" == i2 || "$HOSTPOST" == ii ]]; then
+
+if [[ "$HOSTPOST" =~ ^[a-z]+-(vm|v2|i386|i2|ii) ]]; then
     alias ssn='sudo shutdown now'
     alias ssf='sudo shutdown -f'
 fi
