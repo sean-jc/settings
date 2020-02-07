@@ -746,7 +746,6 @@ function boot-windows {
     sudo grub-reboot "Windows Boot Manager (on /dev/sdb2)"
     grep next_entry /boot/grub/grubenv
 }
-alias bw='boot-windows'
 
 #
 function purge-kernel-package {
