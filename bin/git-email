@@ -96,6 +96,7 @@ else
     pre="--subject-prefix=\"$pre\""
 
     sh -c "git format-patch -M --minimal --patience $opt $pre -o $dir -$nr"
+    #--base=auto
 
     if [[ $ml == "qemu" ]]; then
         ./scripts/checkpatch.pl --branch HEAD~$nr..HEAD
