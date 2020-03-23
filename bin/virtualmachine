@@ -154,6 +154,9 @@ if [[ -n $epc ]]; then
 fi
 
 machine="-enable-kvm -smp $cpus -machine q35,accel=kvm,kernel_irqchip"
+if [[ -n $mach ]]; then
+    machine="$machine,$mach"
+fi
 
 if [[ $os = "hyper-v" ]]; then
     cpu="-cpu host,host-phys-bits,hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time,+vmx"
