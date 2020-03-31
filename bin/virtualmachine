@@ -106,7 +106,7 @@ else
     img=/home/sean/images/qemu/ubuntu-16.04-server-$img.img
 fi
 
-qemu="$qemu -no-reboot"
+qemu="$qemu -no-reboot -name debug-threads=on"
 if [[ -n $gdb ]]; then
     qemu="$qemu -s -S"
 fi
