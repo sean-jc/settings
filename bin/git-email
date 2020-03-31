@@ -140,22 +140,25 @@ while true; do
     fi
 done
 
-if [[ $ml == "ku" ]]; then
-    to="--to=\"Paolo Bonzini <pbonzini@redhat.com>\""
-elif [[ $ml == "sgx" && -z $to ]]; then
-    to="--to=\"Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>\""
-    cc="--cc=\"linux-sgx@vger.kernel.org\""
-elif [[ $ml == "lsm" && -z $to ]]; then
-    ml="sgx"
-    to="--to=\"Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>\""
-    cc="--cc=\"sgx@eclists.intel.com\" --cc=\"Bill Roberts <william.c.roberts@intel.com>\" --cc=\"Casey Schaufler <casey.schaufler@intel.com>\" --cc=\"Dave Hansen <dave.hansen@intel.com>\" --cc=\"Cedric Xing <cedric.xing@intel.com>\""
-    # cc="--cc=\"linux-sgx@vger.kernel.org\" --cc=\"linux-security-module@vger.kernel.org\" --cc=\"selinux@vger.kernel.org\" --cc=\"Bill Roberts <william.c.roberts@intel.com>\" --cc=\"Casey Schaufler <casey.schaufler@intel.com>\" --cc=\"James Morris <jmorris@namei.org>\" --cc=\"Dave Hansen <dave.hansen@intel.com>\" --cc=\"Cedric Xing <cedric.xing@intel.com>\" --cc=\"Andy Lutomirski <luto@kernel.org>\" --cc=\"Jethro Beekman <jethro@fortanix.com>\" --cc=\"Dr. Greg Wettstein <greg@enjellic.com>\" --cc=\"Stephen Smalley <sds@tycho.nsa.gov>\""
-elif [[ $ml == "intel" && -z $to ]]; then
-    to="--to=\"x86-patch-review@intel.com\""
-    cc="--cc=\"Sean Christopherson <sean.j.christopherson@intel.com>\""
-elif [[ $ml == "stable" && -z $to ]]; then
-    to="--to=\"stable@vger.kernel.org\" --to=\"Greg Kroah-Hartman <gregkh@linuxfoundation.org>\""
-    cc="--cc=\"Paolo Bonzini <pbonzini@redhat.com>\" -cc=\"linux-kernel@vger.kernel.org\""
+if [[ -z $to ]]; then
+    if [[ $ml == "ku" ]]; then
+        to="--to=\"Paolo Bonzini <pbonzini@redhat.com>\""
+    elif [[ $ml == "sgx" ]]; then
+        to="--to=\"Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>\""
+        cc="--cc=\"Nathaniel McCallum <npmccallum@redhat.com>\" --cc=\"Cedric Xing <cedric.xing@intel.com>\" --cc=\"Jethro Beekman <jethro@fortanix.com>\" --cc=\"Andy Lutomirski <luto@amacapital.net>\" --cc=\"linux-sgx@vger.kernel.org\""
+        #cc="--cc=\"linux-sgx@vger.kernel.org\""
+    elif [[ $ml == "lsm" ]]; then
+        ml="sgx"
+        to="--to=\"Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>\""
+        cc="--cc=\"sgx@eclists.intel.com\" --cc=\"Bill Roberts <william.c.roberts@intel.com>\" --cc=\"Casey Schaufler <casey.schaufler@intel.com>\" --cc=\"Dave Hansen <dave.hansen@intel.com>\" --cc=\"Cedric Xing <cedric.xing@intel.com>\""
+        # cc="--cc=\"linux-sgx@vger.kernel.org\" --cc=\"linux-security-module@vger.kernel.org\" --cc=\"selinux@vger.kernel.org\" --cc=\"Bill Roberts <william.c.roberts@intel.com>\" --cc=\"Casey Schaufler <casey.schaufler@intel.com>\" --cc=\"James Morris <jmorris@namei.org>\" --cc=\"Dave Hansen <dave.hansen@intel.com>\" --cc=\"Cedric Xing <cedric.xing@intel.com>\" --cc=\"Andy Lutomirski <luto@kernel.org>\" --cc=\"Jethro Beekman <jethro@fortanix.com>\" --cc=\"Dr. Greg Wettstein <greg@enjellic.com>\" --cc=\"Stephen Smalley <sds@tycho.nsa.gov>\""
+    elif [[ $ml == "intel" ]]; then
+        to="--to=\"x86-patch-review@intel.com\""
+        cc="--cc=\"Sean Christopherson <sean.j.christopherson@intel.com>\""
+    elif [[ $ml == "stable" ]]; then
+        to="--to=\"stable@vger.kernel.org\" --to=\"Greg Kroah-Hartman <gregkh@linuxfoundation.org>\""
+        cc="--cc=\"Paolo Bonzini <pbonzini@redhat.com>\" -cc=\"linux-kernel@vger.kernel.org\""
+    fi
 fi
 
 if [[ $ver -gt 1 ]]; then
