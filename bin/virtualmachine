@@ -155,7 +155,7 @@ if [[ -n $epc ]]; then
     done
 fi
 
-machine="-enable-kvm -smp $cpus -machine q35,accel=kvm,kernel_irqchip"
+machine="-enable-kvm -smp $cpus,sockets=1 -machine q35,accel=kvm,kernel_irqchip"
 if [[ -n $mach ]]; then
     machine="$machine,$mach"
 fi
