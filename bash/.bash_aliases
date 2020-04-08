@@ -323,6 +323,7 @@ alias gol='git-golint | grep -v -e "should have comment" -e ALL_CAPS -e Id -e Ur
 # -----------------------------------------------------------------------------
 alias virtd='daemon=true run_vm'
 alias vm='run_vm stable kvm'
+alias vme='run_vm emulator kvm'
 alias vm32='ovmf=32 vm'
 alias ivm='i386=true run_vm stable i386'
 alias tvm='trace=1 run_vm stable kvm'
