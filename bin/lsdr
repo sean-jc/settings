@@ -26,4 +26,4 @@ if [[ ! -d $cgroup ]]; then
 fi
 echo $BASHPID > $cgroup/cgroup.procs
 
-lsdt run -t basic.*.stream -d 10000 --timeout 15000 -v "$@"
+lsdt run -t *.*.stream -d 10000 --timeout 15000 -v "$@"
