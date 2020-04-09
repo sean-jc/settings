@@ -25,7 +25,7 @@ else
     pfiles=$1
 fi
 
-maint="$maint$(echo $pfiles | xargs cat | grep -v stable@vger.kernel.org | grep -v lkp@intel.com | grep -e Cc: -e Suggested-by -e Reported-by -e Tested-by -e Reported-and-tested-by -e Reviewed-by | cut -d ' ' -f 2- | tr '\n' ',')"
+maint="$maint$(echo $pfiles | xargs cat | grep -v stable@vger.kernel.org | grep -v lkp@intel.com | grep -e Cc: -e Suggested-by -e Reported-by -e Tested-by -e Reported-and-tested-by -e Reviewed-by -e Signed-off-by | cut -d ' ' -f 2- | tr '\n' ',')"
 maint=${maint%,};
 maint=${maint/namit@vmware.com/nadav.amit@gmail.com}
 echo $maint
