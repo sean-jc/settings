@@ -98,12 +98,10 @@ fi
 
 if [[ $os = "hyper-v" ]]; then
     img=/home/sean/images/qemu/hyper-v-2016-$img.img
-elif [[ $i386 == "true" ]]; then
-    img=/home/sean/images/qemu/ubuntu-18.04-server-$img.img
 elif [[ $uefi == "false" ]]; then
     img=/home/sean/images/qemu/bios/ubuntu-16.04-server-$img.img
 else
-    img=/home/sean/images/qemu/ubuntu-16.04-server-$img.img
+    img=/home/sean/images/qemu/ubuntu-18.04-server-$img.img
 fi
 
 qemu="$qemu -no-reboot -name debug-threads=on"
