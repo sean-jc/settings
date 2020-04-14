@@ -33,6 +33,7 @@ echo "tools/objtool" >> .git/info/sparse-checkout
 echo "tools/testing/selftests/kselftest.h" >> .git/info/sparse-checkout
 echo "tools/testing/selftests/kselftest_operators.h" >> .git/info/sparse-checkout
 echo "tools/testing/selftests/kvm" >> .git/info/sparse-checkout
+echo "tools/testing/selftests/sgx" >> .git/info/sparse-checkout
 echo "tools/testing/selftests/x86/sgx" >> .git/info/sparse-checkout
 echo "virt/*" >> .git/info/sparse-checkout
 echo "!virt/kvm/arm/*" >> .git/info/sparse-checkout
