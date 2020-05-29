@@ -145,8 +145,9 @@ if [[ -z $to ]]; then
         to="--to=\"Paolo Bonzini <pbonzini@redhat.com>\""
     elif [[ $ml == "sgx" ]]; then
         to="--to=\"Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>\""
-        cc="--cc=\"Nathaniel McCallum <npmccallum@redhat.com>\" --cc=\"Cedric Xing <cedric.xing@intel.com>\" --cc=\"Jethro Beekman <jethro@fortanix.com>\" --cc=\"Andy Lutomirski <luto@amacapital.net>\" --cc=\"linux-sgx@vger.kernel.org\""
-        #cc="--cc=\"linux-sgx@vger.kernel.org\""
+        cc="--cc=\"linux-sgx@vger.kernel.org\""
+        #cc="--cc=\"Nathaniel McCallum <npmccallum@redhat.com>\" --cc=\"Cedric Xing <cedric.xing@intel.com>\" --cc=\"Jethro Beekman <jethro@fortanix.com>\" --cc=\"Andy Lutomirski <luto@amacapital.net>\" --cc=\"linux-sgx@vger.kernel.org\""
+        #cc="--cc=\"Sean Christopherson <sean.j.christopherson@intel.com>\""
     elif [[ $ml == "lsm" ]]; then
         ml="sgx"
         to="--to=\"Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>\""
@@ -157,7 +158,7 @@ if [[ -z $to ]]; then
         cc="--cc=\"Sean Christopherson <sean.j.christopherson@intel.com>\""
     elif [[ $ml == "stable" ]]; then
         to="--to=\"stable@vger.kernel.org\" --to=\"Greg Kroah-Hartman <gregkh@linuxfoundation.org>\""
-        cc="--cc=\"Paolo Bonzini <pbonzini@redhat.com>\" -cc=\"linux-kernel@vger.kernel.org\""
+        cc="--cc=\"Paolo Bonzini <pbonzini@redhat.com>\" --cc=\"linux-kernel@vger.kernel.org\""
     fi
 fi
 
