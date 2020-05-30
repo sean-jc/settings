@@ -162,9 +162,10 @@ if [[ $os = "hyper-v" ]]; then
     cpu="-cpu host,host-phys-bits,hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time,+vmx"
 else
     cpu="-cpu host,host-phys-bits,+invtsc"
-    if [[ "$qemu_bin" =~ "i386" ]]; then
+    if [[ $i386 == "true" ]]; then
+        cpu="$cpu,-lm"
         bios="-bios /home/sean/go/src/seabios.org/seabios/out/bios.bin"
-    elif [[ $uefi != "false" || $i386 != "true" ]]; then
+    elif [[ $uefi != "false" ]]; then
         if [[ -n $debug_ovmf ]]; then
             bios="-bios /home/sean/go/src/github.com/tianocore/edk2/Build/OvmfX64/DEBUG_GCC5/FV/OVMF.fd -debugcon file:debug.log -global isa-debugcon.iobase=0x402"
         elif [[ $pflash == "true" ]]; then
