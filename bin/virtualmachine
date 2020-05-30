@@ -219,6 +219,9 @@ elif [[ -n $kernel ]]; then
     if [[ $modules != "false" ]]; then
         os="$os -virtfs local,path=/home/sean/build/kernel/$kernel/lib/modules,security_model=passthrough,mount_tag=kmodules"
     fi
+    if [[ -n $init ]]; then
+        os="$os -initrd /home/sean/build/initramfs/$init.cpio"
+    fi
 elif [[ -z $unittest ]]; then
     os="$os -boot c"
 fi

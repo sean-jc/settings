@@ -429,6 +429,15 @@ if [[ "$HOSTPOST" =~ ^[a-z]+-(vm|l2|i386|i2|ii) ]]; then
     alias ssf='sudo shutdown -f'
 fi
 alias cph='./scripts/checkpatch.pl -g HEAD'
+
+function cpio-initramfs() {
+    if [[ $# -ne 2 ]]; then
+        printf "usage: cpr <input> <output>\n"
+        return 1
+    fi
+    echo lib/firmware/$1 | cpio -H newc -o > ~/build/initramfs/$2.cpio
+}
+alias cpr='cpio-initramfs'
 alias lg='lsmod | grep'
 alias mp='sudo modprobe'
 alias rdmsr='sudo rdmsr'
