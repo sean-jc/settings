@@ -62,7 +62,7 @@ fi
 
 ifup=$(which ifup)
 
-net="-device virtio-net-pci,netdev=net0,mac=$mac -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
+net="-device virtio-net-pci,netdev=net0,mac=$mac,romfile="" -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
 
 maxmem=16G
 if [[ -n $epc ]]; then
@@ -133,11 +133,11 @@ fi
 if [[ $display = "vnc" ]]; then
     display="-vga std -display vnc=:5900"
 else
-    display="-nographic"
+    display="-nographic -vga none"
     if [[ $daemon == "true" ]]; then
         display="$display -serial null -monitor null -parallel null"
     elif [[ $hvc == "true" ]]; then
-        display="$display -chardev stdio,id=mux,mux=on -device virtio-serial -device virtconsole,chardev=mux -serial null -monitor chardev:mux"
+        display="$display -chardev stdio,id=mux,mux=on -device virtio-serial,romfile="" -device virtconsole,chardev=mux,romfile="" -serial null -monitor chardev:mux"
     fi
 fi
 if [[ $daemon == "true" ]]; then
