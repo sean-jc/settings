@@ -1,0 +1,56 @@
+#!/bin/bash
+
+function psudo() {
+    printf "sudo %s\n" "$*"
+    sudo $@
+}
+
+function config-priv-file() {
+    local perm=660
+    if [[ $# -eq 2 ]]; then
+        perm=$2
+    fi
+
+    if [[ ! $(stat $1) ]]; then
+        die "Cannot stat $1"
+    fi
+    if [[ $(grep $(stat -c "%g" $1) /etc/group | cut -f 1 -d :) != "kvm" ]]; then
+        psudo chown root:kvm $1
+    fi
+    if [[ $(stat -c "%a" $1) != "$perm" ]]; then
+        psudo chmod $perm $1
+    fi
+}
+
+if [[ -z $kvm ]]; then
+    kvm=kvm_intel
+fi
+lmod=$(lsmod | cut -f 1 -d ' ' | grep kvm_)
+if [[ $? -eq 0 && $lmod != $kvm ]]; then
+    psudo rmmod $lmod
+fi
+if [[ ! $(lsmod | cut -f 1 -d ' ' | grep kvm_) ]]; then
+    psudo modprobe $kvm nested=1
+fi
+if [[ ! $(lsmod | cut -f 1 -d ' ' | grep vhost_net) ]]; then
+    psudo modprobe vhost_net
+fi
+
+config-priv-file /bin/ip 750
+config-priv-file /dev/kvm
+config-priv-file /dev/vhost-net
+if [[ -n $epc ]]; then
+    config-priv-file /dev/sgx/virt_epc
+    config-priv-file /dev/sgx/provision
+fi
+
+qemu_bin=$(readlink -f /home/sean/build/qemu/$qemu)
+
+if [[ -z $(getcap $qemu_bin | grep cap_net_admin) ]]; then
+    psudo setcap cap_net_admin=+ep $qemu_bin
+fi
+if [[ -z $(getcap /bin/ip | grep cap_net_admin) ]]; then
+    psudo setcap cap_net_admin=+ep /bin/ip
+fi
+
+

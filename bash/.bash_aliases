@@ -343,7 +343,6 @@ alias hyv='run_vm stable hyv'
 alias vuefi='run_vm stable uefi'
 # alias vuefi='qemu=stable img=uefi display=vnc iso=~/images/ubuntu/ubuntu-16.04.3-desktop-amd64.iso virtualmachine'
 alias vanilla='virtio=false run_vm stable'
-alias vu='run_kvm_unittest stable'
 
 # Get the PID of the VM.  Obviously expects a single VM to be running...
 alias vp='psg /home/sean/build/qemu | grep sean | tr -s " " | cut -f 2 -d " "'
@@ -924,8 +923,14 @@ function make-qemu() {
 }
 alias mq='make-qemu'
 
-alias rku='sudo QEMU=/home/sean/build/qemu/stable ./run_tests.sh -v'
-alias rkt='sudo QEMU=/home/sean/build/qemu/stable'
+function run-kvm-unittest() {
+    qemu=stable probe_modules
+    cd -P ~/go/src/kernel.org/kvm-unit-tests
+    QEMU=/home/sean/build/qemu/stable $@
+}
+
+alias rku='run-kvm-unittest ./run_tests.sh -v'
+alias rkt='run-kvm-unittest'
 alias rkv='rkt TESTNAME=vmx TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cpu host,+vmx -append'
 alias rkc='rkt TESTNAME=vmx_controls TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cpu host,+vmx -m 2560 -append vmx_controls_test'
 
