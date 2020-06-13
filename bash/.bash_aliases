@@ -471,9 +471,9 @@ alias zp='sudo zpool'
 function dpkg-query-size {
     dpkg-query -Wf '${Installed-Size}\t${Package}\n'
 }
-alias dq='dpkg-query-size'
-alias dqs='dq | sort -n'
-alias dg='dq | grep'
+alias dpq='dpkg-query-size'
+alias dpqs='dpq | sort -n'
+alias dg='dpq | grep'
 alias di='sudo dpkg -i'
 alias ds='dpkg -S'
 
@@ -609,10 +609,11 @@ alias dl='cd -P ~/Downloads'
 alias cpa='cd -P ~/patches'
 
 # Kernel grep and gdb commands
-alias gk='readelf -s vmlinux | grep'
-alias gkv='readelf -s arch/x86/kvm/kvm-intel.ko | grep'
-alias gkk='readelf -s arch/x86/kvm/kvm.ko | grep'
-alias gx='readelf -s drivers/platform/x86/intel_sgx/intel_sgx.ko | grep'
+alias gk='readelf -sW vmlinux | grep'
+alias gkv='readelf -sW arch/x86/kvm/kvm-intel.ko | grep'
+alias gkk='readelf -sW arch/x86/kvm/kvm.ko | grep'
+alias gx='readelf -sW drivers/platform/x86/intel_sgx/intel_sgx.ko | grep'
+alias gq='readelf -sW /home/sean/build/qemu/stable | grep'
 
 function gdb-disassemble() {
     if [[ $# -lt 2 ]]; then
@@ -637,6 +638,7 @@ alias dk='gdb-disassemble vmlinux'
 alias dkv='gdb-disassemble arch/x86/kvm/kvm-intel.ko'
 alias dkk='gdb-disassemble arch/x86/kvm/kvm.ko'
 alias dx='gdb-disassemble drivers/platform/x86/intel_sgx/intel_sgx.ko'
+alias dq='gdb-disassemble /home/sean/build/qemu/stable'
 
 alias mkdir='mkdir -p'
 function mcd() {
