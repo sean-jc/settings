@@ -427,7 +427,17 @@ if [[ "$HOSTPOST" =~ ^[a-z]+-(vm|l2|i386|i2|ii) ]]; then
     alias ssn='sudo shutdown now'
     alias ssf='sudo shutdown -f'
 fi
-alias cph='./scripts/checkpatch.pl -g HEAD'
+
+function check_patch_head() {
+    local dir=$(pwd | rev | cut -d'/' -f1 | rev)
+
+    if [[ $dir == "qemu" ]]; then
+        ./scripts/checkpatch.pl --branch HEAD~1..HEAD
+    else
+        ./scripts/checkpatch.pl -g HEAD
+    fi
+}
+alias cph='check_patch_head'
 
 function cpio-initramfs() {
     if [[ $# -ne 2 ]]; then
