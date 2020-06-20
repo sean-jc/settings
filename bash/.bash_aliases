@@ -597,6 +597,7 @@ alias ko='cd -P ~/go/src/kernel.org'
 alias ho='cd -P ~/go/src/kernel.org/host'
 alias ku='cd -P ~/go/src/kernel.org/kvm-unit-tests'
 alias li='cd -P ~/go/src/kernel.org/linux'
+alias no='cd -P ~/go/src/kernel.org/nox'
 alias si='cd -P ~/go/src/kernel.org/sinux'
 alias sy='cd -P ~/go/src/kernel.org/syz'
 alias kn='cd -P ~/build/kernel'
@@ -900,6 +901,22 @@ alias md='make-kernel-opt htmldocs'
 alias ml='make-kernel-opt localmodconfig'
 alias mm='make-kernel-opt menuconfig'
 alias mo='make-kernel-opt oldconfig'
+
+alias amc='ARCH=arm64 CROSS_COMPILE=/opt/cross/aarch64-linux/bin/aarch64-linux- make-kernel cc_arm'
+alias amm='ARCH=arm64 CROSS_COMPILE=/opt/cross/aarch64-linux/bin/aarch64-linux- make-kernel-opt menuconfig cc_arm'
+alias amo='ARCH=arm64 CROSS_COMPILE=/opt/cross/aarch64-linux/bin/aarch64-linux- make-kernel-opt oldconfig cc_arm'
+
+alias mmc='ARCH=mips CROSS_COMPILE=/opt/cross/mips64-linux/bin/mips64-linux- make-kernel cc_mips64'
+alias mmm='ARCH=mips CROSS_COMPILE=/opt/cross/mips64-linux/bin/mips64-linux- make-kernel-opt menuconfig cc_mips64'
+alias mmo='ARCH=mips CROSS_COMPILE=/opt/cross/mips64-linux/bin/mips64-linux- make-kernel-opt oldconfig cc_mips64'
+
+alias pmc='ARCH=powerpc CROSS_COMPILE=/opt/cross/powerpc64-linux/bin/powerpc64-linux- make-kernel cc_ppc64'
+alias pmm='ARCH=powerpc CROSS_COMPILE=/opt/cross/powerpc64-linux/bin/powerpc64-linux- make-kernel-opt menuconfig cc_ppc64'
+alias pmo='ARCH=powerpc CROSS_COMPILE=/opt/cross/powerpc64-linux/bin/powerpc64-linux- make-kernel-opt oldconfig cc_ppc64'
+
+alias smc='ARCH=s390 CROSS_COMPILE=/opt/cross/s390-linux/bin/s390-linux- make-kernel cc_s390'
+alias smm='ARCH=s390 CROSS_COMPILE=/opt/cross/s390-linux/bin/s390-linux- make-kernel-opt menuconfig cc_s390'
+alias smo='ARCH=s390 CROSS_COMPILE=/opt/cross/s390-linux/bin/s390-linux- make-kernel-opt oldconfig cc_s390'
 
 # time kernel
 function time-kernel() {
