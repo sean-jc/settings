@@ -1,0 +1,52 @@
+qemuhw=(
+        hw/adc
+        hw/alpha
+        hw/arm
+        hw/cris
+        hw/lm32
+        hw/m68k
+        hw/microblaze
+        hw/mips
+        hw/moxie
+        hw/nios2
+        hw/openrisc
+        hw/pcmcia
+        hw/ppc
+        hw/riscv
+        hw/s390x
+        hw/sd
+        hw/semihosting
+        hw/sh4
+        hw/sparc
+        hw/sparc64
+        hw/ssi
+        hw/tricore
+        hw/unicore32
+        hw/xen
+        hw/xenpv
+        hw/xtensa
+)
+
+qemutargets=(
+        target/alpha
+        target/arm
+        target/cris
+        target/hppa
+        target/lm32
+        target/m68k
+        target/microblaze
+        target/mips
+        target/moxie
+        target/nios2
+        target/openrisc
+        target/ppc
+        target/riscv
+        target/rx
+        target/s390x
+        target/sh4
+        target/sparc
+        target/tilegx
+        target/tricore
+        target/unicore32
+        target/xtensa
+)
