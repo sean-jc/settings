@@ -104,7 +104,11 @@ if [[ -n $epc ]]; then
     done
 fi
 
-machine="-enable-kvm -smp $cpus,sockets=1 -machine q35,accel=kvm,kernel_irqchip"
+if [[ -n $kvmtype ]]; then
+    machine="-enable-kvm -smp $cpus,sockets=1 -object $kvmtype-guest,id=$kvmtype -machine q35,accel=kvm,kvm-type=$kvmtype,kernel_irqchip=split,guest-memory-protection=$kvmtype"
+else
+    machine="-enable-kvm -smp $cpus,sockets=1 -machine q35,accel=kvm,kernel_irqchip"
+fi
 if [[ -n $mach ]]; then
     machine="$machine,$mach"
 fi
@@ -121,6 +125,8 @@ else
             bios="-bios /home/sean/go/src/github.com/tianocore/edk2/Build/OvmfX64/DEBUG_GCC5/FV/OVMF.fd -debugcon file:debug.log -global isa-debugcon.iobase=0x402"
         elif [[ $pflash == "true" ]]; then
             bios="-drive if=pflash,format=raw,unit=0,file=/home/sean/build/ovmf/OVMF$ovmf.fd"
+        elif [[ -n $kvmtype ]]; then
+	    bios="-device loader,file=/home/sean/build/ovmf/OVMF$ovmf.fd,id=fd0"
         else
             bios="-bios /home/sean/build/ovmf/OVMF$ovmf.fd"
         fi
