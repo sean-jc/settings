@@ -952,14 +952,14 @@ function make-qemu() {
 }
 alias mq='make-qemu'
 
-function run-kvm-unittest() {
+function prep-kvm-unittest() {
     qemu=stable probe_modules
     cd -P ~/go/src/kernel.org/kvm-unit-tests
-    QEMU=/home/sean/build/qemu/stable $@
+    return 0
 }
 
-alias rku='run-kvm-unittest ./run_tests.sh -v'
-alias rkt='run-kvm-unittest'
+alias rkt='prep-kvm-unittest && QEMU=/home/sean/build/qemu/stable'
+alias rku='rkt ./run_tests.sh -v'
 alias rkv='rkt TESTNAME=vmx TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cpu host,+vmx -append'
 alias rkc='rkt TESTNAME=vmx_controls TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cpu host,+vmx -m 2560 -append vmx_controls_test'
 
