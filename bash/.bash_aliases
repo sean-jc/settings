@@ -423,7 +423,7 @@ alias sk='sudo -sE'
 alias sbn='sudo reboot now'
 alias sbf='sudo reboot -f'
 
-if [[ "$HOSTPOST" =~ ^[a-z]+-(vm|l2|i386|i2|ii) ]]; then
+if [[ "$HOSTPOST" =~ ^[a-z]+-(vm|l2|l3|i386|i2|ii) ]]; then
     alias ssn='sudo shutdown now'
     alias ssf='sudo shutdown -f'
 fi
