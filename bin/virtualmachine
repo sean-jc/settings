@@ -145,7 +145,7 @@ else
     if [[ $daemon == "true" ]]; then
         display="$display -serial null -monitor null -parallel null"
     elif [[ $hvc == "true" ]]; then
-        display="$display -chardev stdio,id=mux,mux=on -device virtio-serial,romfile="" -device virtconsole,chardev=mux -serial null -monitor chardev:mux"
+        display="$display -chardev stdio,id=mux,mux=on -device virtio-serial,romfile="" -device virtconsole,chardev=mux -serial chardev:mux -monitor chardev:mux"
     fi
 fi
 if [[ $daemon == "true" ]]; then
