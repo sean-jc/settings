@@ -157,7 +157,7 @@ fi
 
 if [[ -n $unittest ]]; then
     os="-kernel /home/sean/go/src/kernel.org/kvm-unit-tests/x86/$unittest.flat -device pc-testdev -device isa-debug-exit,iobase=0xf4,iosize=0x4 -device pci-testdev"
-elif [[ $virtio == "false" ]]; then
+elif [[ $virtio == "false" || $virtio == "n" ]]; then
     os="-hda $img"
     append="root=/dev/sda1 rootfstype=ext4 $append"
 else
@@ -178,7 +178,7 @@ elif [[ -n $kernel ]]; then
     fi
     append="$append kvm-intel.nested=1 l1tf=off noapic"
     os="$os -kernel /home/sean/build/kernel/$kernel/arch/x86/boot/bzImage"
-    if [[ $modules != "false" ]]; then
+    if [[ $modules != "false" && $modules != "n" ]]; then
         os="$os -virtfs local,path=/home/sean/build/kernel/$kernel/lib/modules,security_model=passthrough,mount_tag=kmodules"
     fi
     if [[ -n $init ]]; then
