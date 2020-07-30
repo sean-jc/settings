@@ -324,11 +324,12 @@ alias gol='git-golint | grep -v -e "should have comment" -e ALL_CAPS -e Id -e Ur
 alias virtd='daemon=y run_vm'
 alias vm='run_vm stable kvm'
 alias vme='run_vm emulator kvm'
+alias vmm='modules=n vm'
 alias vm32='ovmf=32 vm'
 alias ivm='i386=y run_vm stable i386'
 alias tvm='trace=1 run_vm stable kvm'
 alias vmd='daemon=y run_vm stable kvm'
-alias vmm='v2_cgroup=memory vm'
+alias vm2='v2_cgroup=memory vm'
 alias vb='mbr=y run_vm bios kvm'
 
 # SGX, i.e. expose EPC
