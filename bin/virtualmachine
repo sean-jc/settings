@@ -107,7 +107,7 @@ if [[ -n $epc ]]; then
 fi
 
 if [[ -n $kvmtype ]]; then
-    machine="-enable-kvm -smp $cpus,sockets=1 -object $kvmtype-guest,id=$kvmtype -machine q35,accel=kvm,kvm-type=$kvmtype,kernel_irqchip=split,guest-memory-protection=$kvmtype"
+    machine="-enable-kvm -smp $cpus,sockets=1 -object $kvmtype-guest,id=$kvmtype,debug -machine q35,accel=kvm,kvm-type=$kvmtype,kernel_irqchip=split,guest-memory-protection=$kvmtype"
 else
     machine="-enable-kvm -smp $cpus,sockets=1 -machine q35,accel=kvm,kernel_irqchip"
 fi
