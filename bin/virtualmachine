@@ -2,6 +2,8 @@
 trap "exit 1" TERM
 export VM_PID=$$
 
+set -m
+
 function die() {
     printf "%s\n" "$1"
     kill -s TERM $VM_PID
@@ -202,7 +204,13 @@ else
 fi
 
 if [[ -n $kernel ]]; then
-    $trace $qemu $machine $cpu $bios $mem $display $net $os $extra -append "$append" $migrate
+    $trace $qemu $machine $cpu $bios $mem $display $net $os $extra -append "$append" $migrate &
 else
-    $trace $qemu $machine $cpu $bios $mem $display $net $os $extra $migrate
+    $trace $qemu $machine $cpu $bios $mem $display $net $os $extra $migrate &
 fi
+
+qemu_pid=$!
+
+(sleep 2; pin_vcpus $qemu_pid) &
+
+fg 1

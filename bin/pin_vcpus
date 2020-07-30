@@ -1,0 +1,30 @@
+#!/bin/bash
+
+if [[ $# -ne 1 ]]; then
+   printf "Must provide QEMU pid\n"
+fi
+
+qemu_pid=$1
+nr_cpus=$(grep -c '^processor' /proc/cpuinfo)
+
+if [[ $nr_cpus -eq 1 ]]; then
+    exit 0
+fi
+
+for dir in /proc/$qemu_pid/task/*; do
+    if [[ -d $dir ]]; then
+        grep -q KVM $dir/comm
+        if [[ $? -eq 0 ]]; then
+            qemu_vcpu=$(($(cat $dir/comm | cut -f 2 -d ' ' | cut -f 1 -d '/') + 1))
+            if [[ $qemu_vcpu -ge $nr_cpus ]]; then
+                qemu_vcpu=$(($nr_cpus-1))
+            fi
+            qemu_pcpu=$(($nr_cpus-$qemu_vcpu))
+            qemu_task=$(echo $dir | cut -f 2 -d ' ' | cut -f 5 -d '/')
+            qemu_mask=$(printf "%x\n" $((1<<$qemu_pcpu)))
+            printf "pinning vCPU $(($qemu_vcpu-1)) to $qemu_mask\n"
+            taskset -p $qemu_mask $qemu_task
+        fi
+    fi
+done
+

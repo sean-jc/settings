@@ -52,5 +52,6 @@ fi
 if [[ -z $(getcap /bin/ip | grep cap_net_admin) ]]; then
     psudo setcap cap_net_admin=+ep /bin/ip
 fi
-
-
+if [[ -z $(getcap /usr/bin/taskset | grep cap_sys_nice) ]]; then
+    psudo setcap cap_sys_nice=+ep /usr/bin/taskset
+fi
