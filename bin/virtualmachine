@@ -39,7 +39,7 @@ else
     if [[ -n $mac ]]; then
         mac="0x$(echo $mac | cut -f 6 -d :)"
         mac=$((mac + 16))
-    elif [[ $i386 == "true" ]]; then
+    elif [[ -n $i386 ]]; then
         mac="0x80"
     else
         mac="0"
@@ -121,14 +121,14 @@ if [[ $os = "hyper-v" ]]; then
     cpu="-cpu host,host-phys-bits,hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time,+vmx"
 else
     cpu="-cpu host,host-phys-bits,+invtsc"
-    if [[ $i386 == "true" ]]; then
+    if [[ -n $i386 ]]; then
         cpu="$cpu,-lm"
         bios="-bios /home/sean/go/src/seabios.org/seabios/out/bios.bin"
     elif [[ -z $mbr ]]; then
-        if [[ $pflash == "true" ]]; then
+        if [[ -n $pflash ]]; then
             bios="-drive if=pflash,format=raw,unit=0,file=/home/sean/build/ovmf/OVMF$ovmf.fd"
         elif [[ -n $kvmtype ]]; then
-	    bios="-device loader,file=/home/sean/build/ovmf/OVMF$ovmf.fd,id=fd0"
+            bios="-device loader,file=/home/sean/build/ovmf/OVMF$ovmf.fd,id=fd0"
         else
             bios="-bios /home/sean/build/ovmf/OVMF$ovmf.fd"
         fi
@@ -145,13 +145,13 @@ if [[ -n $vnc ]]; then
     display="-vga std -display vnc=:$vnc"
 else
     display="-nographic -vga none"
-    if [[ $daemon == "true" ]]; then
+    if [[ -n $daemon ]]; then
         display="$display -serial null -monitor null -parallel null"
-    elif [[ $hvc == "true" ]]; then
+    elif [[ -n $hvc ]]; then
         display="$display -chardev stdio,id=mux,mux=on -device virtio-serial,romfile="" -device virtconsole,chardev=mux -serial chardev:mux -monitor chardev:mux"
     fi
 fi
-if [[ $daemon == "true" ]]; then
+if [[ -n $daemon ]]; then
     extra="-daemonize"
 fi
 
@@ -168,7 +168,7 @@ fi
 if [[ -n $iso ]]; then
     os="$os -drive file=$iso,index=0,media=cdrom -boot d"
 elif [[ -n $kernel ]]; then
-    if [[ $hvc == "true" ]]; then
+    if [[ -n $hvc ]]; then
         append="quiet console=hvc0 earlyprintk=hvc0 net.ifnames=0 $append"
     else
         append="quiet console=tty1 console=ttyS0 earlyprintk=ttyS0 net.ifnames=0 $append"

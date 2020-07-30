@@ -321,22 +321,22 @@ alias gol='git-golint | grep -v -e "should have comment" -e ALL_CAPS -e Id -e Ur
 # -----------------------------------------------------------------------------
 # Virtual Machines
 # -----------------------------------------------------------------------------
-alias virtd='daemon=true run_vm'
+alias virtd='daemon=y run_vm'
 alias vm='run_vm stable kvm'
 alias vme='run_vm emulator kvm'
 alias vm32='ovmf=32 vm'
-alias ivm='i386=true run_vm stable i386'
+alias ivm='i386=y run_vm stable i386'
 alias tvm='trace=1 run_vm stable kvm'
-alias vmd='daemon=true run_vm stable kvm'
+alias vmd='daemon=y run_vm stable kvm'
 alias vmm='v2_cgroup=memory vm'
 alias vb='mbr=y run_vm bios kvm'
 
 # SGX, i.e. expose EPC
-alias vbd='daemon=true mbr=y run_vm bios kvm'
+alias vbd='daemon=y mbr=y run_vm bios kvm'
 alias vmi='epc=64M,prealloc run_vm sgx kvm'
 alias vmo='epc=128M,prealloc,reclaim run_vm sgx kvm'
 alias vms='epc="16M,prealloc 16M,prealloc 16M 16M 16M 12M" run_vm sgx kvm'
-alias vmsd='daemon=true vms'
+alias vmsd='daemon=y vms'
 alias vepc='v2_cgroup=sgx_epc vms'
 
 alias hyv='run_vm stable hyv'
@@ -390,7 +390,7 @@ alias hvi='os=hyper-v display=vnc iso1=~/images/hyper-v/virtio-win-0.1.126.iso r
 alias hvnew='os=hyper-v display=vnc iso=~images/hyper-v/hyper-v-2016.iso iso1=~/images/hyper-v/virtio-win-0.1.126.iso run_vm stable'
 
 alias mvm='modules=false run_vm stable kvm'
-alias mivm='modules=false i386=true run_vm stable i386'
+alias mivm='modules=false i386=y run_vm stable i386'
 
 # -----------------------------------------------------------------------------
 # SGX
