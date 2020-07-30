@@ -71,10 +71,12 @@ if [[ -n $epc ]]; then
     maxmem=32G
 fi
 
-if [[ "$qemu_bin" =~ "i386" ]]; then
+if [[ -n $mb ]]; then
+    mem="-m $mb""M"
+elif [[ -n $gb ]]; then
+    mem="-m $gb""G"
+elif [[ "$qemu_bin" =~ "i386" ]]; then
     mem="-m 1G"
-elif [[ -n $mem ]]; then
-    mem="-m $mem""G"
 else
     total_mem=$(free -g | grep Mem: | tr -s ' ' | cut -f 2 -d ' ')
     if [[ $total_mem -lt 5 ]]; then
