@@ -711,7 +711,10 @@ function make-kernel-package() {
         printf "Maximum of 2 arguments supported: kernel (1), and no-install (2)\n"
         return 2
     fi
-
+    if [[ ! -f REPORTING-BUGS ]]; then
+        printf "REPORTING-BUGS file not detected\n"
+        return 2
+    fi
     if [[ $guest == "true" ]]; then
         stubify-guest
     fi
@@ -882,14 +885,17 @@ function make-kernel-opt() {
         if [[ ! -f .git/info/sparse-checkout ]]; then
             printf "m{d,l,m,o} <dir> without sparse directory\n"
             return 1
+        elif [[ -f REPORTING-BUGS ]]; then
+            printf "m{d,l,m,o} <dir> with probable host directory\n"
+            return 1
         elif [[ -f .config ]]; then
             printf "m{d,l,m,o} <dir> with local config\n"
             return 1
         fi
         TARGET=$1 make-kernel $2
     else
-        if [[ -f .git/info/sparse-checkout ]]; then
-            printf "m{d,l,m,o} with sparse directory\n"
+        if [[ ! -f REPORTING-BUGS ]]; then
+            printf "m{d,l,m,o} without REPORTING-BUGS\n"
             return 1
         elif [[ ! -f .config ]]; then
             printf "m{d,l,m,o} without local config\n"
