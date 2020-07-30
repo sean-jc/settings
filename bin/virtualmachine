@@ -141,8 +141,8 @@ if [[ -n $cpuid ]]; then
     cpu="$cpu,$cpuid"
 fi
 
-if [[ $display = "vnc" ]]; then
-    display="-vga std -display vnc=:5900"
+if [[ -n $vnc ]]; then
+    display="-vga std -display vnc=:$vnc"
 else
     display="-nographic -vga none"
     if [[ $daemon == "true" ]]; then
