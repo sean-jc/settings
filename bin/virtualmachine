@@ -49,7 +49,7 @@ fi
 
 if [[ $os = "hyper-v" ]]; then
     img=/home/sean/images/qemu/hyper-v-2016-$img.img
-elif [[ $uefi == "false" ]]; then
+elif [[ -n $mbr ]]; then
     img=/home/sean/images/qemu/bios/ubuntu-16.04-server-$img.img
 elif [[ -n $hdd ]]; then
     img=/hdd/images/qemu/ubuntu-18.04-server-$img.img
@@ -124,7 +124,7 @@ else
     if [[ $i386 == "true" ]]; then
         cpu="$cpu,-lm"
         bios="-bios /home/sean/go/src/seabios.org/seabios/out/bios.bin"
-    elif [[ $uefi != "false" ]]; then
+    elif [[ -z $mbr ]]; then
         if [[ $pflash == "true" ]]; then
             bios="-drive if=pflash,format=raw,unit=0,file=/home/sean/build/ovmf/OVMF$ovmf.fd"
         elif [[ -n $kvmtype ]]; then

@@ -329,10 +329,10 @@ alias ivm='i386=true run_vm stable i386'
 alias tvm='trace=1 run_vm stable kvm'
 alias vmd='daemon=true run_vm stable kvm'
 alias vmm='v2_cgroup=memory vm'
-alias vb='uefi=false run_vm bios kvm'
+alias vb='mbr=y run_vm bios kvm'
 
 # SGX, i.e. expose EPC
-alias vbd='daemon=true uefi=false run_vm bios kvm'
+alias vbd='daemon=true mbr=y run_vm bios kvm'
 alias vmi='epc=64M,prealloc run_vm sgx kvm'
 alias vmo='epc=128M,prealloc,reclaim run_vm sgx kvm'
 alias vms='epc="16M,prealloc 16M,prealloc 16M 16M 16M 12M" run_vm sgx kvm'
