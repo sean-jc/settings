@@ -125,14 +125,15 @@ else
         cpu="$cpu,-lm"
         bios="-bios /home/sean/go/src/seabios.org/seabios/out/bios.bin"
     elif [[ $uefi != "false" ]]; then
-        if [[ -n $debug_ovmf ]]; then
-            bios="-bios /home/sean/go/src/github.com/tianocore/edk2/Build/OvmfX64/DEBUG_GCC5/FV/OVMF.fd -debugcon file:debug.log -global isa-debugcon.iobase=0x402"
-        elif [[ $pflash == "true" ]]; then
+        if [[ $pflash == "true" ]]; then
             bios="-drive if=pflash,format=raw,unit=0,file=/home/sean/build/ovmf/OVMF$ovmf.fd"
         elif [[ -n $kvmtype ]]; then
 	    bios="-device loader,file=/home/sean/build/ovmf/OVMF$ovmf.fd,id=fd0"
         else
             bios="-bios /home/sean/build/ovmf/OVMF$ovmf.fd"
+        fi
+        if [[ -n $debug_con ]]; then
+            bios="$bios -debugcon file:debug.log -global isa-debugcon.iobase=0x402"
         fi
     fi
 fi
