@@ -713,7 +713,11 @@ function make-kernel-package() {
     fi
     if [[ ! -f REPORTING-BUGS ]]; then
         printf "REPORTING-BUGS file not detected\n"
-        return 2
+        return 3
+    fi
+    if [[ $(id -u) -ne 0 ]]; then
+        printf "Must be run as root\n"
+        return 4
     fi
     if [[ $guest == "true" ]]; then
         stubify-guest
@@ -724,9 +728,9 @@ function make-kernel-package() {
     name="$(git show -s --pretty='tformat:%h')-$1"
 
     THREADS=$(grep -c '^processor' /proc/cpuinfo)
-    CONCURRENCY_LEVEL=$THREADS fakeroot make-kpkg --initrd --append-to-version=-$name kernel_headers kernel_image --revision $rev
+    CONCURRENCY_LEVEL=$THREADS make-kpkg --initrd --append-to-version=-$name kernel_headers kernel_image --revision $rev
     if [[ $? -eq 0 && $# -lt 2 && $guest != "true" ]]; then
-        sudo dpkg -i ../*${name}*_${rev}_*.deb
+        dpkg -i ../*${name}*_${rev}_*.deb
     fi
 }
 
