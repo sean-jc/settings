@@ -118,6 +118,7 @@ fi
 if [[ -n $mach ]]; then
     machine="$machine,$mach"
 fi
+machine="$machine -no-hpet"
 
 if [[ $os = "hyper-v" ]]; then
     cpu="-cpu host,host-phys-bits,hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time,+vmx"
@@ -178,7 +179,7 @@ elif [[ -n $kernel ]]; then
     if [[ -n $verbose ]]; then
         append="$append ignore_loglevel"
     fi
-    append="$append kvm-intel.nested=1 l1tf=off noapic"
+    append="$append kvm-intel.nested=1 l1tf=off noapic nohpet"
     os="$os -kernel /home/sean/build/kernel/$kernel/arch/x86/boot/bzImage"
     if [[ $modules != "false" && $modules != "n" ]]; then
         os="$os -virtfs local,path=/home/sean/build/kernel/$kernel/lib/modules,security_model=passthrough,mount_tag=kmodules"
