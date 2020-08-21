@@ -112,7 +112,7 @@ fi
 
 machine="-enable-kvm -smp $cpus,sockets=1 -machine q35,accel=kvm"
 if [[ -n $td ]]; then
-    machine="$machine,kvm-type=tdx,kernel_irqchip=split,guest-memory-protection=tdx -object tdx-guest,id=tdx,debug"
+    machine="$machine,kvm-type=tdx,kernel_irqchip=split,guest-memory-protection=tdx -object tdx-guest,id=tdx,debug -no-isa-devices"
 else
     machine="$machine,kernel_irqchip"
 fi
