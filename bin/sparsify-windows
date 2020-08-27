@@ -10,6 +10,7 @@ echo "!drivers/base/regmap" >> .git/info/sparse-checkout
 echo "!drivers/base/test" >> .git/info/sparse-checkout
 echo "drivers/platform/x86/intel_sgx/*" >> .git/info/sparse-checkout
 echo "drivers/block/virtio_blk.c" >> .git/info/sparse-checkout
+echo "drivers/char/virtio_console.c" >> .git/info/sparse-checkout
 echo "drivers/net/virtio_net.c" >> .git/info/sparse-checkout
 echo "drivers/ptp/ptp_kvm.c" >> .git/info/sparse-checkout
 echo "drivers/vhost/*" >> .git/info/sparse-checkout
@@ -39,6 +40,8 @@ echo "virt/*" >> .git/info/sparse-checkout
 echo "!virt/kvm/arm/*" >> .git/info/sparse-checkout
 echo "!include/uapi/linux/netfilter*" >> .git/info/sparse-checkout
 echo "!include/soc/arc/aux.h" >> .git/info/sparse-checkout
+echo "!drivers/gpu/drm/nouveau/nvkm/subdev/i2c/aux.*" >> .git/info/sparse-checkout
+echo "!include/soc/bcm2835/raspberrypi-firmware.h" >> .git/info/sparse-checkout
 echo "README.md" >> .git/info/sparse-checkout
 echo "MAINTAINERS" >> .git/info/sparse-checkout
 
