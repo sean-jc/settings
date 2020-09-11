@@ -1,0 +1,18 @@
+# interfaces(5) file used by ifup(8) and ifdown(8)
+auto lo
+iface lo inet loopback
+
+#auto enp24s0f0 
+#iface enp24s0f0 inet dhcp
+
+# The primary network interface
+auto br0
+iface br0 inet dhcp
+    bridge-ifaces enp1s00 
+    bridge-ports enp1s0
+    bridge_stp off
+    bridge_fd 0
+    bridge_maxwait 0
+    up ifconfig enp1s0 up
+
+iface enp1s0 inet manual
