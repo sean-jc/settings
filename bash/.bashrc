@@ -2,6 +2,9 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 HOSTPOST=${HOSTNAME#sjchrist-}
+if [[ "$HOSTPOST" != coffee ]] && [[ "$HOSTPOST" != purgatory ]]; then
+    export HOSTDISPLAY="@$HOSTPOST"
+fi
 export HOSTPOST=${HOSTPOST#purgatory-}
 export SETTINGS=$HOME/go/src/github.com/sean-jc/settings
 export LSDT_CONFIG=$SETTINGS/.config/lsdt/config.yml
@@ -99,6 +102,8 @@ esac
 
 
 build_ps1() {
+    # black ='\e[0;30m'
+    # brown ='\e[0;33m'
     # green='\e[0;32m'
     # GREEN='\e[0;32m'
     # red='\e[0;31m'
@@ -107,24 +112,24 @@ build_ps1() {
     # BLUE='\e[1;34m'
     # cyan='\e[0;36m'
     # CYAN='\e[1;36m'
+    # white='\e[1;37m'
     # none='\e[0m'
 
     # Unicode cheracters ✔ 'HEAVY CHECK MARK' (U+2714) and ✘ 'HEAVY BALLOT X' (U+2718)
     # [[ $SSH_TTY ]] && host="@$HOSTNAME"
-    if [ "$UID" = 0 ]; then
-        if [ "$HOSTPOST" = coffee ] || [ "$HOSTPOST" = purgatory ]; then
-            echo '\[\e[1;30m\]\t`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;31m\]\w \[\e[0;31m\]# \[\e[0m\]'
+    if [[ $HOSTPOST == purg* ]]; then
+        if [ "$UID" = 0 ]; then
+            echo '\[\e[0;33m\]\t$HOSTDISPLAY`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;31m\]\w \[\e[0;31m\]# \[\e[0m\]'
         else
-            echo '\[\e[1;30m\]\t@$HOSTPOST`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;31m\]\w \[\e[0;31m\]# \[\e[0m\]'
+            echo '\[\e[0;33m\]\t$HOSTDISPLAY`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;36m\]\w \[\e[0;36m\]\$ \[\e[0m\]'
         fi
     else
-        if [ "$HOSTPOST" = coffee ] || [ "$HOSTPOST" = purgatory ]; then
-            echo '\[\e[1;30m\]\t`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;36m\]\w \[\e[0;36m\]\$ \[\e[0m\]'
+        if [ "$UID" = 0 ]; then
+            echo '\[\e[1;30m\]\t$HOSTDISPLAY`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;31m\]\w \[\e[0;31m\]# \[\e[0m\]'
         else
-            echo '\[\e[1;30m\]\t@$HOSTPOST`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;36m\]\w \[\e[0;36m\]\$ \[\e[0m\]'
+            echo '\[\e[1;30m\]\t$HOSTDISPLAY`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;36m\]\w \[\e[0;36m\]\$ \[\e[0m\]'
         fi
     fi
-
 }
 PS1=$(build_ps1)
 
