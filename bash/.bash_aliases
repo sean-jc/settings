@@ -742,76 +742,136 @@ function make-kernel-package() {
     fi
 }
 
-# Make Host kernel
-alias mh='make-kernel-package'
+function make-host {
+    if [[ $# -lt 1 ]]; then
+        printf "Must specify the target kernel name\n"
+        return 1
+    fi
 
-# Make Guest kernel
+    if [[ ! -f /usr/bin/bootctl ]]; then
+        return make-kernel-package $@
+    fi
+
+    local name="-$(git show -s --pretty='tformat:%h')-$1"
+    local threads=$(grep -c '^processor' /proc/cpuinfo)
+    make LOCALVERSION=$name -j $threads && sudo make modules_install && sudo make install
+    if [[ $? -eq 0 ]]; then
+        local version=$(ls -1 /boot | grep -E "vmlinuz-[.0-9]+$name" | sed -e "s/vmlinuz-//")
+        if [[ -z $version ]]; then
+            printf "Failed to locate new kernel $name\n"
+            return 1
+        fi
+        sudo kernel-install add $version /boot/vmlinuz-$version /boot/initrd.img-$version
+    fi
+}
+alias mh='make-host'
 alias mg='guest=true make-kernel-package'
 
-function get-kernel-packages {
-    grep menuentry /boot/grub/grub.cfg | grep -v -e \( -e generic | grep "'Ubuntu, with Linux." | cut -f 2 -d "'"
+function get-kernel {
+    if [[ ! -f /usr/bin/bootctl ]]; then
+        grep menuentry /boot/grub/grub.cfg | grep -v -e \( -e generic | grep "'Ubuntu, with Linux." | cut -f 2 -d "'"
+    else
+        sudo bootctl list | grep -E "\s+id:" | tr -s " " | cut -f 3 -d " " | grep -v firmware | grep -v Pop_OS
+    fi
 }
-alias gkp=get-kernel-packages
+alias gkp=get-kernel
 
-function list-kernel-package {
-     gkp | grep -o -e "Ubuntu, with Linux.*$1+\?" | cut -f 4 -d " "
+function list-kernel {
+    if [[ ! -f /usr/bin/bootctl ]]; then
+        gkp | grep -o -e "Ubuntu, with Linux.*$1+\?" | cut -f 4 -d " "
+    else
+        gkp | cut -f 2- -d "-" | sed -e "s/\.conf//"
+    fi
 }
-alias lk='list-kernel-package'
+alias lk='list-kernel'
 
-function boot-kernel-package {
+function boot-kernel {
     if [[ $# -ne 1 ]]; then
         printf "Must specify the target kernel name\n"
         return 1
     fi
-    local k=${1%%+}
-    if [[ $(gkp | grep -c -e "Ubuntu, with Linux.*$k+\?") != "1" ]]; then
-        gkp | grep -o -e "Ubuntu, with Linux.*$k+\?" | cut -f 2 -d "'"
-        printf "Failed to find single entry for $1\n"
-        return 1
+    if [[ ! -f /usr/bin/bootctl ]]; then
+        local k=${1%%+}
+        if [[ $(gkp | grep -c -e "Ubuntu, with Linux.*$k+\?") != "1" ]]; then
+            gkp | grep -o -e "Ubuntu, with Linux.*$k+\?" | cut -f 2 -d "'"
+            printf "Failed to find single entry for $1\n"
+            return 1
+        fi
+        local entry=$(gkp | grep -o -e "Ubuntu, with Linux.*$k+\?" | cut -f 2 -d "'")
+        if [[ -z $entry ]]; then
+            printf "Failed to find entry=$entry\n"
+            return 1
+        fi
+        printf "sudo grub-reboot 'Advanced options for Ubuntu>$entry'\n"
+        sudo grub-reboot "Advanced options for Ubuntu>$entry"
+        grep next_entry /boot/grub/grubenv
+    else
+        local version=$(lk | grep $1)
+        if [[ -z $version ]]; then
+            printf "Failed to find for '$1'\n"
+            return 1
+        elif [[ $(echo $version | wc -l) -gt 1 ]]; then
+            printf "$version\nFound multiple entries for '$1'\n"
+            return 1
+        fi
+        local entry=$(gkp | grep $version)
+        if [[ -z $entry ]]; then
+            printf "Failed to find for '$1'\n"
+            return 1
+        elif [[ $(echo $entry | wc -l) -gt 1 ]]; then
+            printf "$entry\nFound multiple entries for '$1'\n"
+            return 1
+        fi
+        sudo bootctl set-oneshot $entry
+        sudo bootctl list | grep "(default)" -A 1 | grep -o $entry
     fi
-    local entry=$(gkp | grep -o -e "Ubuntu, with Linux.*$k+\?" | cut -f 2 -d "'")
-    if [[ -z $entry ]]; then
-        printf "Failed to find entry=$entry\n"
-        return 1
-    fi
-    printf "sudo grub-reboot 'Advanced options for Ubuntu>$entry'\n"
-    sudo grub-reboot "Advanced options for Ubuntu>$entry"
-    grep next_entry /boot/grub/grubenv
 }
-alias bk='boot-kernel-package'
+alias bk='boot-kernel'
 
 function boot-windows {
     sudo grub-reboot "Windows Boot Manager (on /dev/sdb2)"
     grep next_entry /boot/grub/grubenv
 }
 
-#
-function purge-kernel-package {
+function purge-kernel {
     if [[ $# -ne 1 ]]; then
         printf "Must specify the target kernel name\n"
         return 1
     fi
-    local k=${1%%+}
-    if [[ $(dpkg-query-size | grep -c -e "linux-image.*$k+\?") != "1" ]]; then
-        dpkg-query-size | grep -e "linux-image.*$k+"
-        printf "Failed to find single image for '$1'\n"
-        return 1
+    if [[ ! -f /usr/bin/bootctl ]]; then
+        local k=${1%%+}
+        if [[ $(dpkg-query-size | grep -c -e "linux-image.*$k+\?") != "1" ]]; then
+            dpkg-query-size | grep -e "linux-image.*$k+"
+            printf "Failed to find single image for '$1'\n"
+            return 1
+        fi
+        if [[ $(dpkg-query-size | grep -c -e "linux-headers.*$k+\?") != "1" ]]; then
+            dpkg-query-size | grep -e "linux-headers.*$k+"
+            printf "Failed to find single headers for '$1'\n"
+            return 1
+        fi
+        local img=$(dpkg-query-size | grep -e "linux-image.*$k+\?"    | cut -f 2)
+        local hdr=$(dpkg-query-size | grep -e "linux-headers.*$k+\?"  | cut -f 2)
+        if [[ -z $img || -z $hdr ]]; then
+            printf "Failed to find image=$img or headers=$hdr\n"
+            return 1
+        fi
+        printf "sudo dpkg --purge $img $hdr\n"
+        sudo dpkg --purge $img $hdr
+    else
+        local version=$(lk | grep $1)
+        if [[ -z $version ]]; then
+            printf "Failed to find entry for '$1'\n"
+            return 1
+        elif [[ $(echo $version | wc -l) -gt 1 ]]; then
+            printf "$version\nFound multiple entries for '$1'\n"
+            return 1
+        fi
+        sudo kernel-install remove $version
+        sudo rm -f /boot/config-$version /boot/vmlinuz-$version /boot/initrd.img-$version /boot/System.map-$version
     fi
-    if [[ $(dpkg-query-size | grep -c -e "linux-headers.*$k+\?") != "1" ]]; then
-        dpkg-query-size | grep -e "linux-headers.*$k+"
-        printf "Failed to find single headers for '$1'\n"
-        return 1
-    fi
-    local img=$(dpkg-query-size | grep -e "linux-image.*$k+\?"    | cut -f 2)
-    local hdr=$(dpkg-query-size | grep -e "linux-headers.*$k+\?"  | cut -f 2)
-    if [[ -z $img || -z $hdr ]]; then
-        printf "Failed to find image=$img or headers=$hdr\n"
-        return 1
-    fi
-    printf "sudo dpkg --purge $img $hdr\n"
-    sudo dpkg --purge $img $hdr
 }
-alias pk='purge-kernel-package'
+alias pk='purge-kernel'
 
 # Make Custom kernel
 function make-kernel() {
