@@ -8,10 +8,14 @@
 [core]
 	excludesfile = ~/go/src/github.com/sean-jc/settings/git/.gitignore
 [credential]
-	helper = cache --timeout=3600
+	helper = cache --timeout=86400
 [diff]
 	renames = true
+	renamelimit = 0
 	algorithm = patience
+[merge]
+	renames = true
+	renamelimit = 0
 [sendemail]
 	smtpserver = or-out.intel.com
 	smtpserverport = 25
