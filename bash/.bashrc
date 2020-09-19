@@ -170,4 +170,8 @@ export SSH_AUTH_SOCK=~/.ssh/ssh-agent.super.sock
 ssh-add -l 2>/dev/null >/dev/null
 if [ $? -ge 2 ]; then
   ssh-agent -a "$SSH_AUTH_SOCK" >/dev/null
+  if [[ $? -eq 1 ]]; then
+    rm ~/.ssh/ssh-agent.super.sock
+    ssh-agent -a "$SSH_AUTH_SOCK" >/dev/null
+  fi
 fi
