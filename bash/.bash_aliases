@@ -169,7 +169,7 @@ function git-push() {
 
 function git-archive-branch() {
     if [[ $# -eq 1 ]]; then
-        git push archive $1 && git branch -D $1
+        git push archive $1 && git branch -D $1 && git push --delete origin $1
     else
         printf "git-archive-branch <branch>\n"
         return 1
