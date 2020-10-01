@@ -757,7 +757,7 @@ function make-host {
     local threads=$(grep -c '^processor' /proc/cpuinfo)
     make LOCALVERSION=$name -j $threads && sudo make modules_install && sudo make install
     if [[ $? -eq 0 ]]; then
-        local version=$(ls -1 /boot | grep -E "vmlinuz-[.0-9]+$name" | sed -e "s/vmlinuz-//")
+        local version=$(ls -1 /boot | egrep "vmlinuz-[.0-9]+(-rc[0-9])?$name" | sed -e "s/vmlinuz-//")
         if [[ -z $version ]]; then
             printf "Failed to locate new kernel $name\n"
             return 1
