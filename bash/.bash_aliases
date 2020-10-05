@@ -738,6 +738,7 @@ function make-kernel-package() {
 
     THREADS=$(grep -c '^processor' /proc/cpuinfo)
     CONCURRENCY_LEVEL=$THREADS make-kpkg --initrd --append-to-version=-$name kernel_headers kernel_image --revision $rev
+
     if [[ $? -eq 0 && $# -lt 2 && $guest != "true" ]]; then
         dpkg -i ../*${name}*_${rev}_*.deb
     fi
@@ -749,8 +750,9 @@ function make-host {
         return 1
     fi
 
-    if [[ ! -f /usr/bin/bootctl ]]; then
-        return make-kernel-package $@
+    if [[ ! -f /boot/efi/loader/loader.conf ]]; then
+        make-kernel-package $@
+	return 0
     fi
 
     local name="-$(git show -s --pretty='tformat:%h')-$1"
@@ -769,7 +771,7 @@ alias mh='make-host'
 alias mg='guest=true make-kernel-package'
 
 function get-kernel {
-    if [[ ! -f /usr/bin/bootctl ]]; then
+    if [[ ! -f /boot/efi/loader/loader.conf ]]; then
         grep menuentry /boot/grub/grub.cfg | grep -v -e \( -e generic | grep "'Ubuntu, with Linux." | cut -f 2 -d "'"
     else
         sudo bootctl list | grep -E "\s+id:" | tr -s " " | cut -f 3 -d " " | grep -v firmware | grep -v Pop_OS
@@ -778,7 +780,7 @@ function get-kernel {
 alias gkp=get-kernel
 
 function list-kernel {
-    if [[ ! -f /usr/bin/bootctl ]]; then
+    if [[ ! -f /boot/efi/loader/loader.conf ]]; then
         gkp | grep -o -e "Ubuntu, with Linux.*$1+\?" | cut -f 4 -d " "
     else
         gkp | cut -f 2- -d "-" | sed -e "s/\.conf//"
@@ -791,7 +793,7 @@ function boot-kernel {
         printf "Must specify the target kernel name\n"
         return 1
     fi
-    if [[ ! -f /usr/bin/bootctl ]]; then
+    if [[ ! -f /boot/efi/loader/loader.conf ]]; then
         local k=${1%%+}
         if [[ $(gkp | grep -c -e "Ubuntu, with Linux.*$k+\?") != "1" ]]; then
             gkp | grep -o -e "Ubuntu, with Linux.*$k+\?" | cut -f 2 -d "'"
@@ -839,7 +841,7 @@ function purge-kernel {
         printf "Must specify the target kernel name\n"
         return 1
     fi
-    if [[ ! -f /usr/bin/bootctl ]]; then
+    if [[ ! -f /boot/efi/loader/loader.conf ]]; then
         local k=${1%%+}
         if [[ $(dpkg-query-size | grep -c -e "linux-image.*$k+\?") != "1" ]]; then
             dpkg-query-size | grep -e "linux-image.*$k+"
