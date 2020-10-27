@@ -61,6 +61,10 @@ function git-diff-upstream() {
     git diff $(git rev-parse --abbrev-ref HEAD) $(git rev-parse --abbrev-ref --symbolic-full-name @{upstream})
 }
 
+function git-diff-local() {
+    git diff $(git rev-parse --abbrev-ref --symbolic-full-name @{upstream}) $(git rev-parse --abbrev-ref HEAD)
+}
+
 function git-tree() {
     if [ $# -eq 0 ]
     then
@@ -247,6 +251,7 @@ alias gd='git-diff'
 alias gdd='git diff'
 alias gds='git diff --staged'
 alias gdu='git-diff-upstream'
+alias gdl='git-diff-local'
 alias ge='git-email'
 alias gei='git-email intel'
 alias gek='git-email kvm'
