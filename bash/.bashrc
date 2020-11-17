@@ -1,9 +1,11 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-HOSTPOST=${HOSTNAME#sjchrist-}
-if [[ "$HOSTPOST" != coffee ]] && [[ "$HOSTPOST" != purgatory ]]; then
+HOSTPOST=${HOSTNAME#seanjc-}
+if [[ $HOSTPOST != glaptop ]] && [[ $HOSTPOST != purgatory ]]; then
     export HOSTDISPLAY="@$HOSTPOST"
+else
+    export HOSTDISPLAY=""
 fi
 export HOSTPOST=${HOSTPOST#purgatory-}
 export SETTINGS=$HOME/go/src/github.com/sean-jc/settings
@@ -117,7 +119,7 @@ build_ps1() {
 
     # Unicode cheracters ✔ 'HEAVY CHECK MARK' (U+2714) and ✘ 'HEAVY BALLOT X' (U+2718)
     # [[ $SSH_TTY ]] && host="@$HOSTNAME"
-    if [[ $HOSTPOST == purg* ]]; then
+    if [[ $HOSTPOST == purg* || $HOSTPOST == glaptop ]]; then
         if [ "$UID" = 0 ]; then
             echo '\[\e[0;33m\]\t$HOSTDISPLAY`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;31m\]\w \[\e[0;31m\]# \[\e[0m\]'
         else
