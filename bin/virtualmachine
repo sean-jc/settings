@@ -125,7 +125,7 @@ if [[ $os = "hyper-v" ]]; then
     cpu="-cpu host,host-phys-bits,hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time,+vmx"
 else
     cpu="-cpu host,host-phys-bits,+invtsc"
-    if [[ -n $i386 ]]; then
+    if [[ "$qemu_bin" =~ "i386" ]]; then
         cpu="$cpu,-lm"
         bios="-bios /home/sean/go/src/seabios.org/seabios/out/bios.bin"
     elif [[ -z $mbr ]]; then
