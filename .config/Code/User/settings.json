@@ -3,8 +3,8 @@
     "breadcrumbs.enabled": false,
     "diffEditor.ignoreTrimWhitespace": false,
 
-    "editor.fontFamily": "'Noto Mono'",
-    "editor.fontSize": 12.5,
+    "editor.fontFamily": "'Noto Mono', 'Fira Mono'",
+    "editor.fontSize": 15.5,
     "editor.tabSize": 8,
     "editor.renderIndentGuides": false,
     "editor.dragAndDrop": false,
@@ -13,13 +13,17 @@
     "files.eol": "\n",  // The default end of line character.
     "git.enabled": false,
 
-    "window.menuBarVisibility": "default",
+    "window.menuBarVisibility": "toggle",
     "window.newWindowDimensions": "maximized",
     "window.openFilesInNewWindow": "default",
     "window.restoreWindows": "all",
     "window.zoomLevel": 0,
 
     "workbench.colorTheme": "Monokai Dark Soda",
+    "workbench.colorCustomizations": {
+        "statusBar.background" : "#242424",
+        "statusBar.noFolderBackground" : "#242424",
+    },
     "workbench.editor.enablePreview": false,
     "workbench.editor.showIcons": false,
     "workbench.startupEditor": "none",
@@ -65,5 +69,7 @@
         "**/build": true
     },
     "search.searchOnType": false,
-    "typescript.check.npmIsInstalled": false
+    "typescript.check.npmIsInstalled": false,
+    "workbench.activityBar.visible": false,
+    "workbench.statusBar.visible": true
 }
