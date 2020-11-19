@@ -97,7 +97,7 @@ else
 
     pre="--subject-prefix=\"$pre\""
 
-    sh -c "git format-patch -M --minimal --patience $opt $pre -o $dir -$nr"
+    sh -c "git format-patch -M --minimal --patience --from=\"Sean Christopherson <seanjc@google.com>\" $opt $pre -o $dir -$nr"
     #--base=auto
 
     if [[ $dir =~ "qemu" ]]; then
@@ -130,10 +130,10 @@ while true; do
                     continue
                 fi
             fi
-            git send-email --suppress-cc=all --confirm=always --to=seanjc@google.com $opt $dir
+            git send-email --suppress-cc=all --confirm=always --to=seanjc@google.com --reply-to="Sean Christopherson <seanjc@google.com>" $opt $dir
         else
             for filename in $idir/*.patch; do
-                git send-email --suppress-cc=all --confirm=always --to=seanjc@google.com $opt $filename
+                git send-email --suppress-cc=all --confirm=always --to=seanjc@google.com --reply-to="Sean Christopherson <seanjc@google.com>" $opt $filename
             done
         fi
         break
@@ -208,10 +208,10 @@ read -r -p "Send email: [Y/n]" response
 response=${response,,}    # tolower
 if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
     if [[ -z $indy ]]; then
-        eval $(printf "%s\n" "git send-email --confirm=always --suppress-cc=all $to $bcc $cc $opt $dir")
+        eval $(printf "%s\n" "git send-email --confirm=always --suppress-cc=all --reply-to=\"Sean Christopherson <seanjc@google.com>\" $to $bcc $cc $opt $dir")
     else
         for filename in $idir/*.patch; do
-            eval $(printf "%s\n" "git send-email --confirm=always --suppress-cc=cccmd $to $bcc $cc $opt $filename")
+            eval $(printf "%s\n" "git send-email --confirm=always --suppress-cc=cccmd --reply-to=\"Sean Christopherson <seanjc@google.com>\" $to $bcc $cc $opt $filename")
         done
     fi
 fi
