@@ -117,7 +117,7 @@ if [[ -n $reply ]]; then
 fi
 
 while true; do
-    printf "\n\n\e[1;7;35m--to=sean.j.christopherson@intel.com\n\e[0m"
+    printf "\n\n\e[1;7;35m--to=seanjc@google.com\n\e[0m"
     read -r -p "Send email: [Y/n]" response
 
     response=${response,,}    # tolower
@@ -130,10 +130,10 @@ while true; do
                     continue
                 fi
             fi
-            git send-email --suppress-cc=all --confirm=always --to=sean.j.christopherson@intel.com $opt $dir
+            git send-email --suppress-cc=all --confirm=always --to=seanjc@google.com $opt $dir
         else
             for filename in $idir/*.patch; do
-                git send-email --suppress-cc=all --confirm=always --to=sean.j.christopherson@intel.com $opt $filename
+                git send-email --suppress-cc=all --confirm=always --to=seanjc@google.com $opt $filename
             done
         fi
         break
@@ -149,24 +149,14 @@ if [[ -z $to ]]; then
         to="--to=\"Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>\""
         cc="--cc=\"linux-sgx@vger.kernel.org\""
         #cc="--cc=\"Nathaniel McCallum <npmccallum@redhat.com>\" --cc=\"Cedric Xing <cedric.xing@intel.com>\" --cc=\"Jethro Beekman <jethro@fortanix.com>\" --cc=\"Andy Lutomirski <luto@amacapital.net>\" --cc=\"linux-sgx@vger.kernel.org\""
-        #cc="--cc=\"Sean Christopherson <sean.j.christopherson@intel.com>\""
+        #cc="--cc=\"Sean Christopherson <seanjc@google.com>\""
     elif [[ $ml == "lsm" ]]; then
         ml="sgx"
         to="--to=\"Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>\""
-        cc="--cc=\"sgx@eclists.intel.com\" --cc=\"Bill Roberts <william.c.roberts@intel.com>\" --cc=\"Casey Schaufler <casey.schaufler@intel.com>\" --cc=\"Dave Hansen <dave.hansen@intel.com>\" --cc=\"Cedric Xing <cedric.xing@intel.com>\""
-        # cc="--cc=\"linux-sgx@vger.kernel.org\" --cc=\"linux-security-module@vger.kernel.org\" --cc=\"selinux@vger.kernel.org\" --cc=\"Bill Roberts <william.c.roberts@intel.com>\" --cc=\"Casey Schaufler <casey.schaufler@intel.com>\" --cc=\"James Morris <jmorris@namei.org>\" --cc=\"Dave Hansen <dave.hansen@intel.com>\" --cc=\"Cedric Xing <cedric.xing@intel.com>\" --cc=\"Andy Lutomirski <luto@kernel.org>\" --cc=\"Jethro Beekman <jethro@fortanix.com>\" --cc=\"Dr. Greg Wettstein <greg@enjellic.com>\" --cc=\"Stephen Smalley <sds@tycho.nsa.gov>\""
-    elif [[ $ml == "intel" ]]; then
-        to="--to=\"x86-patch-review@intel.com\""
-        cc="--cc=\"Sean Christopherson <sean.j.christopherson@intel.com>\""
+        cc="--cc=\"linux-sgx@vger.kernel.org\" --cc=\"linux-security-module@vger.kernel.org\" --cc=\"selinux@vger.kernel.org\" --cc=\"Bill Roberts <william.c.roberts@intel.com>\" --cc=\"Casey Schaufler <casey.schaufler@intel.com>\" --cc=\"James Morris <jmorris@namei.org>\" --cc=\"Dave Hansen <dave.hansen@intel.com>\" --cc=\"Cedric Xing <cedric.xing@intel.com>\" --cc=\"Andy Lutomirski <luto@kernel.org>\" --cc=\"Jethro Beekman <jethro@fortanix.com>\" --cc=\"Dr. Greg Wettstein <greg@enjellic.com>\" --cc=\"Stephen Smalley <sds@tycho.nsa.gov>\""
     elif [[ $ml == "stable" ]]; then
         to="--to=\"stable@vger.kernel.org\" --to=\"Greg Kroah-Hartman <gregkh@linuxfoundation.org>\""
         cc="--cc=\"Paolo Bonzini <pbonzini@redhat.com>\" --cc=\"linux-kernel@vger.kernel.org\""
-    elif [[ $ml == "tdx" ]]; then
-        to="--to=\"kvm-tdx@eclists.intel.com\""
-        cc="--cc=\"Sean Christopherson <sean.j.christopherson@intel.com>\""
-    elif [[ $ml == "gdx" ]]; then
-        to="--to=\"linux-tdx-guest@eclists.intel.com\""
-        cc="--cc=\"Sean Christopherson <sean.j.christopherson@intel.com>\" --cc=\"kvm-tdx@eclists.intel.com\""
     fi
 fi
 
@@ -210,7 +200,7 @@ if [[ -z $cc ]]; then
     cc="--cc=\"${cc//,/\" \-\-cc=\"}\""
     cc="${cc//VMwarecomma/VMware,}"
 fi
-bcc="--bcc=\"Sean Christopherson <sean.j.christopherson@intel.com>\""
+bcc="--bcc=\"Sean Christopherson <seanjc@google.com>\""
 
 printf "\n\n\e[1;7;35m%s\n%s\n\e[0m" "$to" "$cc"
 read -r -p "Send email: [Y/n]" response
