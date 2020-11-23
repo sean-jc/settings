@@ -359,7 +359,7 @@ alias vuefi='run_vm stable uefi'
 alias vanilla='virtio=false run_vm stable'
 
 # Get the PID of the VM.  Obviously expects a single VM to be running...
-alias vp='psg /home/sean/build/qemu | grep sean | tr -s " " | cut -f 2 -d " "'
+alias vp='psg /sean/build/qemu | grep sean | tr -s " " | cut -f 2 -d " "'
 
 function vm-stats() {
     local pid=$(vp)
@@ -639,7 +639,7 @@ alias gk='readelf -sW vmlinux | grep'
 alias gkv='readelf -sW arch/x86/kvm/kvm-intel.ko | grep'
 alias gkk='readelf -sW arch/x86/kvm/kvm.ko | grep'
 alias gx='readelf -sW drivers/platform/x86/intel_sgx/intel_sgx.ko | grep'
-alias gq='readelf -sW /home/sean/build/qemu/stable | grep'
+alias gq='readelf -sW ~/build/qemu/stable | grep'
 
 function gdb-disassemble() {
     if [[ $# -lt 2 ]]; then
@@ -664,7 +664,7 @@ alias dk='gdb-disassemble vmlinux'
 alias dkv='gdb-disassemble arch/x86/kvm/kvm-intel.ko'
 alias dkk='gdb-disassemble arch/x86/kvm/kvm.ko'
 alias dx='gdb-disassemble drivers/platform/x86/intel_sgx/intel_sgx.ko'
-alias dq='gdb-disassemble /home/sean/build/qemu/stable'
+alias dq='gdb-disassemble ~/build/qemu/stable'
 
 alias mkdir='mkdir -p'
 function mcd() {
@@ -1045,7 +1045,7 @@ function prep-kvm-unittest() {
     return 0
 }
 
-alias rkt='prep-kvm-unittest && QEMU=/home/sean/build/qemu/stable'
+alias rkt='prep-kvm-unittest && QEMU=~/build/qemu/stable'
 alias rku='rkt ./run_tests.sh -v'
 alias rkv='rkt TESTNAME=vmx TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cpu host,+vmx -append'
 alias rkc='rkt TESTNAME=vmx_controls TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cpu host,+vmx -m 2560 -append vmx_controls_test'

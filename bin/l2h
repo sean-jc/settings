@@ -8,14 +8,14 @@ function popd() {
 }
 
 set -e
-pushd /home/sean/go/src/github.com/torvalds/linux
+pushd ~/go/src/kernel.org/linux
 patch=$(git diff --no-prefix)
 rev=$(git rev-parse HEAD)
 popd
-pushd /home/sean/go/src/github.com/torvalds/host
+pushd ~/go/src/kernel.org/host
 hrev=$(git rev-parse HEAD)
 if [[ $rev != $hrev ]]; then
-    printf "torvalds/linux and torvalds/host must be on the same commit"
+    printf "linux and host must be on the same commit"
     exit 1
 fi
 git reset --hard HEAD

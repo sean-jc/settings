@@ -4,7 +4,7 @@
 [branch]
 	autosetuprebase = always
 [http]
-	cookiefile = /home/sean/.gitcookies
+	cookiefile = ~/.gitcookies
 [core]
 	excludesfile = ~/go/src/github.com/sean-jc/settings/git/.gitignore
 [credential]
