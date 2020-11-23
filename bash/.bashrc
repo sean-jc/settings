@@ -3,7 +3,11 @@
 # for examples
 HOSTPOST=${HOSTNAME#seanjc-}
 if [[ $HOSTPOST != glaptop ]] && [[ $HOSTPOST != purgatory ]]; then
-    export HOSTDISPLAY="@$HOSTPOST"
+    if [[ $HOSTPOST =~ seanjc.*.com ]]; then
+        export HOSTDISPLAY="@cloud"
+    else
+        export HOSTDISPLAY="@$HOSTPOST"
+    fi
 else
     export HOSTDISPLAY=""
 fi
@@ -119,7 +123,7 @@ build_ps1() {
 
     # Unicode cheracters ✔ 'HEAVY CHECK MARK' (U+2714) and ✘ 'HEAVY BALLOT X' (U+2718)
     # [[ $SSH_TTY ]] && host="@$HOSTNAME"
-    if [[ $HOSTPOST == purg* || $HOSTPOST == glaptop ]]; then
+    if [[ $HOSTPOST == purg* || $HOSTPOST == glaptop || $HOSTPOST =~ seanjc ]]; then
         if [ "$UID" = 0 ]; then
             echo '\[\e[0;33m\]\t$HOSTDISPLAY`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;31m\]\w \[\e[0;31m\]# \[\e[0m\]'
         else
