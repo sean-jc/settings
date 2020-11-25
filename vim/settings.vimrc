@@ -8,7 +8,7 @@ set nocompatible
 "
 set nowrap
 set textwidth=0
-set colorcolumn=75,80
+set colorcolumn=80
 highlight ColorColumn ctermbg=0
 
 " Allow backspacing over everything in insert mode.
