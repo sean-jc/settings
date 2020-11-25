@@ -1,0 +1,17 @@
+# vim: filetype=muttrc
+set copy=no
+set move=no
+unset record
+
+# Scroll by line, not page
+set menu_scroll
+
+# Treat only '>' as a quote
+set quote_regexp  = "^([ \t]*>)+"
+
+set date_format   = "!%a, %b %d, %Y"
+set attribution   = "On %d, %n wrote:"
+
+set pipe_split    = yes
+
+my_hdr Bcc: seanjc@google.com

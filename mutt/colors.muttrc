@@ -1,0 +1,153 @@
+# vim: filetype=muttrc
+
+# basic colors ---------------------------------------------------------
+color error         color160        color235
+color tilde         color235        color235
+color message       color37         color235
+color markers       color160        color254
+color attachment    color232        color235
+color search        color61         color235
+
+color normal        color250        color235
+color status        color250        color235
+color bold          color235        color235
+color underline     color235        color235
+color signature     color240        color235
+color tree          color136        color235                                    # arrow in threads
+color indicator     color235        color136
+
+# basic monocolor screen
+mono  bold          bold
+mono  underline     underline
+mono  indicator     reverse
+mono  error         bold
+
+# index ----------------------------------------------------------------
+
+#color index         color240        color235        "~A!~N!~T!~p!~Q!~F!~D!~P"  # the rest
+#color index         J_base          color235        "~A~N!~T!~p!~Q!~F!~D"      # the rest, new
+#color index         color160        color235        "~A"                        # all messages
+#color index         color166        color235        "~E"                        # expired messages
+#color index         color33         color235        "~N"                        # new messages
+#color index         color33         color235        "~O"                        # old messages
+#color index         color61         color235        "~Q"                        # messages that have been replied to
+color index         color240        color235        "~R"                        # read messages
+color index         color247        color235        "~P"                        # messages from me
+
+color index         color45         color235        "~U"                        # unread messages
+color index         color45         color235        "~U~$"                      # unread, unreferenced messages
+color index         color45         color235        "~U~p!~F"                   # unread messages to me
+
+#color index         color37         color235        "~p!~F"                     # messages to me
+#color index         color37         color235        "~N~p!~F"                   # new messages to me
+#color index         color240        color235        "~R~p!~F"                   # messages to me
+color index         color227        color235        "~T"                        # tagged messages
+
+color index         color208        color235        "~F"                        # flagged messages
+#color index         color208        color235        "~F~p"                      # flagged messages to me
+#color index         color208        color235        "~N~F"                      # new flagged messages
+#color index         color208        color235        "~N~F~p"                    # new flagged messages to me
+#color index         color208        color235        "~U~F~p"                    # new flagged messages to me
+
+color index         color245        color235        "~v~(!~N)"                  # collapsed thread with no unread
+color index         color136        color235        "~v~(~N)"                   # collapsed thread with some unread
+color index         color64         color235        "~N~v~(~N)"                 # collapsed thread with unread parent
+# statusbg used to indicated flagged when foreground color shows other status
+# for collapsed thread
+color index         color243        color235        "~v"                        # messages part of a collapsed thread
+color index         color160        color235        "~v~(~F)!~N"                # collapsed thread with flagged, no unread
+color index         color136        color235        "~v~(~F~N)"                 # collapsed thread with some unread & flagged
+color index         color64         color235        "~N~v~(~F~N)"               # collapsed thread with unread parent & flagged
+color index         color64         color235        "~N~v~(~F)"                 # collapsed thread with unread parent, no unread inside, but some flagged
+color index         color37         color235        "~v~(~p)"                   # collapsed thread with unread parent, no unread inside, some to me directly
+color index         color136        color160        "~v~(~D)"                   # thread with deleted (doesn't differentiate between all or partial)
+#color index         color136        color235        "~(~N)"                    # messages in threads with some unread
+#color index         color64         color235        "~S"                       # superseded messages
+#color index         color166        color235        ~=                         # duplicate messages
+#color index         color160        color235        "~D(!~p|~p)"               # deleted
+#color index         color235        color160        "~D"                       # deleted messages
+
+# message headers ------------------------------------------------------
+
+#color header        color240        color235        "^"
+color hdrdefault    color240        color235
+#color header        color247        color235        "^(From)"
+color header        color136        color235        "^(From)"
+color header        color136         color235        "^(Subject)"
+
+# body -----------------------------------------------------------------
+
+#color quoted        color33         color235        # Dodger Blue1
+#color quoted1       color37         color235        # Light Sea Green
+#color quoted2       color136        color235        # Dark Goldenrod
+#color quoted2       color160        color235        # Dark Goldenrod
+#color quoted2       color179        color235        # Light Goldenrod3
+#color quoted3       color160        color235        # Red3
+#color quoted4       color166        color235        # Dark Orange 3
+color quoted        color45         color235        # Turqoise2
+color quoted1       color179        color235        # Light Goldenrod3
+color quoted2       color39         color235        # Deep Sky Blue1
+color quoted3       color101        color235        # Wheat4
+color quoted4       color33         color235        # Dodger Blue1
+
+# patch diff ----------------------------------------------------------
+#color body    brightwhite     color235        "^[[:space:]].*"
+#color body    brightwhite     color235        "^(diff).*"                   
+#color body    white           color235        "^[\-\-\-].*"                   
+#color body    white           color235        "^[\+\+\+].*"
+#color body    green           color235        "^[\+].* "                       
+#color body    red             color235        "^[\-].*"                        
+#color body    brightblue      color235        "[@@].*"                       
+#color body    brightwhite     color235        "^(\s).*"
+color body          color33         default "^diff \-.*"
+color body          color33         default "^index [a-f0-9].*"
+color body          color33         default "^\-\-\- .*"
+color body          color33         default "^[\+]{3} .*"
+color body          color34         default "^[\+][^\+]+.*"
+color body          color160        default "^\-[^\-]+.*"
+color body          color136        default "^@@ .*"
+color body          color101        default "^(Cc).*"
+color body          color131        default "^(Fixes:).*"
+color body          color101        default "^([A-Za-z]+-by).*"
+color body          color101        default "^(Reviewed-.*by).*"
+color body          color136        default "^(Signed-off-by).*"
+
+
+## pgp
+
+color body          color160        color235        "(BAD signature)"
+color body          color37         color235        "(Good signature)"
+color body          color235        color234        "^gpg: Good signature .*"
+color body          color241        color235        "^gpg: "
+color body          color241        color160        "^gpg: BAD signature from.*"
+mono  body          bold                            "^gpg: Good signature"
+mono  body          bold                            "^gpg: BAD signature from.*"
+
+# Insane URL regex
+color body          color33         color235        "([a-z][a-z0-9+-]*://(((([a-z0-9_.!~*'();:&=+$,-]|%[0-9a-f][0-9a-f])*@)?((([a-z0-9]([a-z0-9-]*[a-z0-9])?)\\.)*([a-z]([a-z0-9-]*[a-z0-9])?)\\.?|[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)(:[0-9]+)?)|([a-z0-9_.!~*'()$,;:@&=+-]|%[0-9a-f][0-9a-f])+)(/([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*(;([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*)*(/([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*(;([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*)*)*)?(\\?([a-z0-9_.!~*'();/?:@&=+$,-]|%[0-9a-f][0-9a-f])*)?(#([a-z0-9_.!~*'();/?:@&=+$,-]|%[0-9a-f][0-9a-f])*)?|(www|ftp)\\.(([a-z0-9]([a-z0-9-]*[a-z0-9])?)\\.)*([a-z]([a-z0-9-]*[a-z0-9])?)\\.?(:[0-9]+)?(/([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*(;([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*)*(/([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*(;([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*)*)*)?(\\?([-a-z0-9_.!~*'();/?:@&=+$,]|%[0-9a-f][0-9a-f])*)?(#([-a-z0-9_.!~*'();/?:@&=+$,]|%[0-9a-f][0-9a-f])*)?)[^].,:;!)? \t\r\n<>\"]"
+
+
+#color body          color252        color235        "[;:][-o][)/(|]"    # emoticons
+#color body          color252        color235        "[;:][)(|]"         # emoticons
+#color body          color252        color235        "[*]?((N)?ACK|CU|LOL|SCNR|BRB|BTW|CWYL|\
+#                                                     |FWIW|vbg|GD&R|HTH|HTHBE|IMHO|IMNSHO|\
+#                                                     |IRL|RTFM|ROTFL|ROFL|YMMV)[*]?"
+#color body          color252        color235        "[ ][*][^*]*[*][ ]?" # more emoticon?
+#color body          color252        color235        "[ ]?[*][^*]*[*][ ]" # more emoticon?
+
+# Various smilies and the like
+#color body          color230        color235        "<[Gg]>"                            # <g>
+#color body          color230        color235        "<[Bb][Gg]>"                        # <bg>
+#color body          color136        color235        " [;:]-*[})>{(<|]"                  # :-) etc...
+# *bold*
+#color body          color33         color235        "(^|[[:space:][:punct:]])\\*[^*]+\\*([[:space:][:punct:]]|$)"
+#mono  body          bold                            "(^|[[:space:][:punct:]])\\*[^*]+\\*([[:space:][:punct:]]|$)"
+# _underline_
+#color body          color33         color235        "(^|[[:space:][:punct:]])_[^_]+_([[:space:][:punct:]]|$)"
+#mono  body          underline                       "(^|[[:space:][:punct:]])_[^_]+_([[:space:][:punct:]]|$)"
+# /italic/  (Sometimes gets directory names)
+#color body         color33         color235        "(^|[[:space:][:punct:]])/[^/]+/([[:space:][:punct:]]|$)"
+#mono body          underline                       "(^|[[:space:][:punct:]])/[^/]+/([[:space:][:punct:]]|$)"
+
+# Border lines.
+#color body          color33         color235        "( *[-+=#*~_]){6,}"

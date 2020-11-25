@@ -1,0 +1,18 @@
+# vim: filetype=muttrc
+bind pager <up>    previous-line
+bind pager <down>  next-line
+
+# Save tagged patches to ~/patches, uses $SETTINGS/bin/mutt-patches
+macro index \Ch "<enter-command>unset wait_key<enter><enter-command>set pipe_decode<enter><tag-prefix><pipe-entry>mutt-patches<enter><enter-command>unset pipe_decode<enter><enter-command>set wait_key<enter>" "save git patches to ~/patches"
+
+# Jump to prev/next unread
+bind index \Ct     next-unread
+bind index \Ce     previous-unread
+
+# Switch to folders
+macro index \Ci "<change-folder> =INBOX<enter>"  "go to INBOX"
+macro index \Cl "<change-folder> =Lists/linus<enter>"  "go to lists/linus"
+macro index \Cu "<change-folder> =Lists/luto<enter>"  "go to lists/lut"
+macro index \Ck "<change-folder> =Lists/kvm<enter>"  "go to lists/kvm"
+macro index \Cg "<change-folder> =Lists/sgx<enter>"  "go to lists/sgx"
+macro index \C8 "<change-folder> =Lists/x86<enter>"  "go to lists/x86"
