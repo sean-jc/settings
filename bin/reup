@@ -2,15 +2,15 @@
 dir=$(pwd)
 if [[ $# -eq 1 ]]; then
     target=$1
-elif [[ $HOSTPOST == "coffee" ]]; then
-    target="meh"
-elif [[ $HOSTPOST == "MOBL" ]]; then
-    target="co"
+elif [[ $HOSTPOST == "glaptop" || $HOSTDISPLAY == "cloud" ]]; then
+    target="w"
+elif [[ $HOSTDISPLAY == "work" ]]; then
+    target="c"
 else
     printf "Must specify the target, no default for $HOSTNAME\n"
     exit 1
 fi
-if [[ $HOSTPOST == "MOBL" ]]; then
-    dir="${dir/\/c\/Users\/sjchrist/\~}"
+if [[ $HOSTPOST == "glaptop" ]]; then
+    dir="${dir/\/home\/seanjc/\~}"
 fi
 git diff --no-prefix | ssh $target "cd $dir ; git reset --hard HEAD ; patch -p0"
