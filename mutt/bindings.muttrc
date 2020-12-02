@@ -12,7 +12,7 @@ bind index \Ce     previous-unread
 # Switch to folders
 macro index \Ci "<change-folder> =INBOX<enter>"  "go to INBOX"
 macro index \Cl "<change-folder> =Lists/linus<enter>"  "go to lists/linus"
-macro index \Cu "<change-folder> =Lists/luto<enter>"  "go to lists/lut"
+macro index \Cu "<change-folder> =Lists/luto<enter>"  "go to lists/luto"
 macro index \Ck "<change-folder> =Lists/kvm<enter>"  "go to lists/kvm"
 macro index \Cg "<change-folder> =Lists/sgx<enter>"  "go to lists/sgx"
-macro index \C8 "<change-folder> =Lists/x86<enter>"  "go to lists/x86"
+macro index \Co "<change-folder> =Lists/x86<enter>"  "go to lists/x86"
