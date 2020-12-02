@@ -3,7 +3,9 @@
 # for examples
 HOSTPOST=${HOSTNAME#seanjc-}
 if [[ $HOSTPOST != glaptop ]] && [[ $HOSTPOST != purgatory ]]; then
-    if [[ $HOSTPOST =~ seanjc.*.com ]]; then
+    if [[ $HOSTPOST =~ seanjc7.*.com ]]; then
+        export HOSTDISPLAY="@work"
+    elif [[ $HOSTPOST =~ seanjc.*.com ]]; then
         export HOSTDISPLAY="@cloud"
     else
         export HOSTDISPLAY="@$HOSTPOST"
