@@ -591,40 +591,40 @@ alias .....="cd ../../../.."
 alias cd..="cd .."
 
 # Direct navigation to directories
-alias so='cd -P ~/go/src'
-alias gh='cd -P ~/go/src/github.com'
-alias se='cd -P ~/go/src/github.com/sean-jc/settings'
-alias qq='cd -P ~/go/src/github.com/qemu/qemu'
-alias zz='cd -P ~/go/src/github.com/zombull'
-alias int='cd -P ~/go/src/intel.com'
-alias ko='cd -P ~/go/src/kernel.org'
+alias so='cd ~/go/src'
+alias gh='cd ~/go/src/github.com'
+alias se='cd ~/go/src/github.com/sean-jc/settings'
+alias qq='cd ~/go/src/github.com/qemu/qemu'
+alias zz='cd ~/go/src/github.com/zombull'
+alias int='cd ~/go/src/intel.com'
+alias ko='cd ~/go/src/kernel.org'
 alias ho='cd ~/go/src/kernel.org/host'
 alias ku='cd ~/go/src/kernel.org/kvm-unit-tests'
 alias li='cd ~/go/src/kernel.org/linux'
 alias no='cd ~/go/src/kernel.org/nox'
 alias si='cd ~/go/src/kernel.org/sinux'
 alias sy='cd ~/go/src/kernel.org/syz'
-alias bi='cd -P ~/build'
-alias kn='cd -P ~/build/kernel'
-alias qe='cd -P ~/build/qemu'
-alias ig='cd -P ~/images/guest'
-alias iq='cd -P ~/images/qemu'
-alias iv='cd -P ~/images/hyper-v'
-alias dr='cd -P ~/images/devrez'
+alias bi='cd ~/build'
+alias kn='cd ~/build/kernel'
+alias qe='cd ~/build/qemu'
+alias ig='cd ~/images/guest'
+alias iq='cd ~/images/qemu'
+alias iv='cd ~/images/hyper-v'
+alias dr='cd ~/images/devrez'
 
 # Direct navigation to outbox directories
-alias ol='cd -P ~/outbox/linux'
-alias oi='cd -P ~/outbox/linux/intel'
-alias ok='cd -P ~/outbox/linux/kvm'
-alias ou='cd -P ~/outbox/kvm-unit-tests/ku'
-alias om='cd -P ~/outbox/linux/mm'
-alias oq='cd -P ~/outbox/qemu'
-alias os='cd -P ~/outbox/linux/sgx'
-alias ox='cd -P ~/outbox/linux/x86'
+alias ol='cd ~/outbox/linux'
+alias oi='cd ~/outbox/linux/intel'
+alias ok='cd ~/outbox/linux/kvm'
+alias ou='cd ~/outbox/kvm-unit-tests/ku'
+alias om='cd ~/outbox/linux/mm'
+alias oq='cd ~/outbox/qemu'
+alias os='cd ~/outbox/linux/sgx'
+alias ox='cd ~/outbox/linux/x86'
 
 # Direct navigation to misc directories
-alias dl='cd -P ~/Downloads'
-alias cpa='cd -P ~/patches'
+alias dl='cd ~/Downloads'
+alias cpa='cd ~/patches'
 
 # Kernel grep and gdb commands
 alias gk='readelf -sW vmlinux | grep'
@@ -1033,7 +1033,7 @@ alias mq='make-qemu'
 
 function prep-kvm-unittest() {
     qemu=stable probe_modules
-    cd -P ~/go/src/kernel.org/kvm-unit-tests
+    cd ~/go/src/kernel.org/kvm-unit-tests
     return 0
 }
 
