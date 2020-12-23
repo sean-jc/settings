@@ -1,0 +1,11 @@
+#!/bin/bash
+ssh d "mkdir -p /data/local/seanjc/build/qemu/static-5.2; mkdir -p /data/local/seanjc/go/src/github.com/sean-jc; mkdir -p /data/local/seanjc/go/src/kernel.org"
+rsync --checksum ~/.bashrc d:/data/local/seanjc
+rsync --checksum ~/.inputrc d:/data/local/seanjc
+rsync --checksum ~/.vimrc d:/data/local/seanjc
+rsync --checksum ~/build/qemu/static-5.2/qemu-system-x86_64 d:/data/local/seanjc/build/qemu/static-5.2
+rsync --checksum --recursive --links ~/build/pc-bios d:/data/local/seanjc/build/qemu/static-5.2
+rsync --checksum --recursive --links ~/build/ovmf d:/data/local/seanjc/build
+rsync --checksum --recursive --exclude='.git*' ~/go/src/github.com/sean-jc/settings d:/data/local/seanjc/go/src/github.com/sean-jc
+rsync --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kvm-unit-tests d:/data/local/seanjc/go/src/kernel.org
+ssh d "ln -s /data/local/seanjc/build/qemu/static-5.2/qemu-system-x86_64 /data/local/seanjc/build/qemu/stable"

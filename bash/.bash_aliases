@@ -490,7 +490,6 @@ alias dpq='dpkg-query-size'
 alias dpqs='dpq | sort -n'
 alias dg='dpq | grep'
 alias di='sudo dpkg -i'
-alias ds='dpkg -S'
 
 function dpkg-purge {
     dpkg --list | grep "^rc" | cut -d " " -f 3 | xargs sudo dpkg --purge
@@ -504,6 +503,7 @@ alias services='sys list-unit-files --type=service'
 # misc system
 alias bm='blueman-manager &'
 alias gcm='gcert -s -m kernel-development'
+alias ds='dsync'
 
 # List all UDP/TCP ports
 alias ports='netstat -tulanp'
