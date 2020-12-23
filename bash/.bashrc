@@ -14,6 +14,7 @@ else
     elif [[ $HOSTPOST =~ seanjc.*.com ]]; then
         export HOSTDISPLAY="@cloud"
     else
+        HOSTPOST=${HOSTPOST%.prod.google.com}
         export HOSTDISPLAY="@$HOSTPOST"
     fi
 fi
