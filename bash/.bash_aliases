@@ -424,12 +424,6 @@ alias ep2='EPCT_CGROUP_V2=1 epc'
 alias epd2='EPCT_CGROUP_V2=1 epd'
 
 # -----------------------------------------------------------------------------
-# App Shortcuts
-# -----------------------------------------------------------------------------
-alias sub='/opt/sublime_text/sublime_text'
-alias pts='~/.bin/pts/phoronix-test-suite'
-
-# -----------------------------------------------------------------------------
 # Utilities
 # -----------------------------------------------------------------------------
 alias ipa="ifconfig | grep -e 10.54 -e 192.168.1 | tr -s ' ' | cut -f 3 -d ' ' | cut -f 2 -d :"
@@ -488,9 +482,6 @@ alias ad='sudo apt update'
 alias ap='sudo apt purge'
 alias au='sudo apt upgrade'
 
-# zpool
-alias zp='sudo zpool'
-
 #
 function dpkg-query-size {
     dpkg-query -Wf '${Installed-Size}\t${Package}\n'
@@ -534,11 +525,6 @@ alias dmc='sudo dmesg -c'
 
 # disk usage
 alias dus='df -hT'
-
-# ZFS
-alias zfs='sudo zfs'
-alias zpool='sudo zpool'
-alias zp='zpool'
 
 # grep
 alias grep='grep --color=auto'
