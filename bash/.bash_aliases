@@ -503,6 +503,7 @@ alias services='sys list-unit-files --type=service'
 
 # misc system
 alias bm='blueman-manager &'
+alias gcm='gcert -s -m kernel-development'
 
 # List all UDP/TCP ports
 alias ports='netstat -tulanp'
