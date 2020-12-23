@@ -1,4 +1,68 @@
-libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev libaio-dev libbrlapi-dev libbz2-dev libcap-dev libcap-ng-dev libcurl4-gnutls-dev libncurses5-dev libsnappy-dev libssh2-1-dev liblzo2-dev libsasl2-dev libjpeg8-dev libcurl3 libvdeplug-dev
+libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev libaio-dev libbrlapi-dev libbz2-dev libcap-dev libcap-ng-dev libcurl4-gnutls-dev libncurses5-dev libsnappy-dev libssh2-1-dev liblzo2-dev libsasl2-dev libvdeplug-dev
+
+# Old
+libcurl3 libjpeg8-dev
+
+# New
+libcurl4 libjpeg9-dev
 
 # Unnecessary
 # libvde-dev libvdeplug-dev libvte-2.90-dev libxen-dev librbd-dev  libseccomp-dev valgrind xfslibs-dev libgtk-3-dev librdmacm-dev libsdl1.2-dev libibverbs-dev libbluetooth-dev libnuma-dev
+
+
+/usr/local/google/home/seanjc/go/src/github.com/qemu/qemu/configure --target-list=x86_64-softmmu --static \
+        --enable-virtfs \
+        --disable-guest-agent \
+        --disable-guest-agent-msi \
+        --disable-modules \
+        --disable-tcg \
+        --disable-sparse \
+        --disable-gnutls \
+        --disable-nettle \
+        --disable-gcrypt \
+        --disable-gtk \
+        --disable-vte \
+        --disable-curses \
+        --disable-vnc \
+        --disable-xen \
+        --disable-xen-pci-passthrough \
+        --disable-brlapi \
+        --disable-curl \
+        --disable-fdt \
+        --disable-hax \
+        --disable-rdma \
+        --disable-vde \
+        --disable-netmap \
+        --disable-spice \
+        --disable-rbd \
+        --disable-libnfs \
+        --disable-libxml2 \
+        --disable-smartcard \
+        --disable-libusb \
+        --disable-usb-redir \
+        --disable-glusterfs \
+        --disable-tpm \
+        --disable-libssh \
+        --disable-numa \
+        --disable-replication \
+        --disable-opengl \
+        --disable-virglrenderer \
+        --disable-xfsctl \
+        --disable-qom-cast-debug \
+        --disable-tools \
+        --disable-hvf \
+        --disable-whpx \
+        --disable-bochs \
+        --disable-cloop \
+        --disable-dmg \
+        --disable-qcow1 \
+        --disable-vdi \
+        --disable-vvfat \
+        --disable-qed \
+        --disable-parallels \
+        --disable-sheepdog \
+        --disable-crypto-afalg \
+        --disable-capstone \
+        --disable-debug-mutex \
+        --disable-blobs \
+        --audio-drv-list=
