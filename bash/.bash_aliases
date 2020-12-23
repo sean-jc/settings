@@ -501,6 +501,9 @@ alias sys='sudo systemctl'
 alias failed='sys list-units --state=failed'
 alias services='sys list-unit-files --type=service'
 
+# misc system
+alias bm='blueman-manager &'
+
 # List all UDP/TCP ports
 alias ports='netstat -tulanp'
 
