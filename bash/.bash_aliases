@@ -607,8 +607,10 @@ alias sy='cd ~/go/src/kernel.org/syz'
 alias bi='cd -P ~/build'
 alias kn='cd -P ~/build/kernel'
 alias qe='cd -P ~/build/qemu'
+alias ig='cd -P ~/images/guest'
 alias iq='cd -P ~/images/qemu'
 alias iv='cd -P ~/images/hyper-v'
+alias dr='cd -P ~/images/devrez'
 
 # Direct navigation to outbox directories
 alias ol='cd -P ~/outbox/linux'
