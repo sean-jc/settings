@@ -2,16 +2,20 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 HOSTPOST=${HOSTNAME#seanjc-}
-if [[ $HOSTPOST != glaptop ]] && [[ $HOSTPOST != purgatory ]]; then
-    if [[ $HOSTPOST =~ seanjc7.*.com ]]; then
+if [[ -z $SSH_CONNECTION ]]; then
+    export HOSTDISPLAY=""
+else
+    if [[ $HOSTPOST == purgatory ]]; then
+        export HOSTDISPLAY="@purg"
+    elif [[ $HOSTPOST == glaptop ]]; then
+        export HOSTDISPLAY="@lap"
+    elif [[ $HOSTPOST =~ seanjc7.*.com ]]; then
         export HOSTDISPLAY="@work"
     elif [[ $HOSTPOST =~ seanjc.*.com ]]; then
         export HOSTDISPLAY="@cloud"
     else
         export HOSTDISPLAY="@$HOSTPOST"
     fi
-else
-    export HOSTDISPLAY=""
 fi
 export HOSTPOST=${HOSTPOST#purgatory-}
 export SETTINGS=$HOME/go/src/github.com/sean-jc/settings
