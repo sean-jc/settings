@@ -427,7 +427,7 @@ alias epd2='EPCT_CGROUP_V2=1 epd'
 # Utilities
 # -----------------------------------------------------------------------------
 alias ipa="ifconfig | grep -e 10.54 -e 192.168.1 | tr -s ' ' | cut -f 3 -d ' ' | cut -f 2 -d :"
-alias sk='sudo -sE'
+alias sk='SEAN_HOME=$HOME sudo -sE'
 alias sbn='sudo reboot now'
 alias sbf='sudo reboot -f'
 
