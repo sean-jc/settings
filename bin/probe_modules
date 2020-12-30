@@ -23,7 +23,12 @@ function config-priv-file() {
 }
 
 if [[ -z $kvm ]]; then
-    kvm=kvm_intel
+    grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
+    if [[ $? -eq 0 ]]; then
+        kvm=kvm_amd
+    else
+        kvm=kvm_intel
+    fi
 fi
 lmod=$(lsmod | cut -f 1 -d ' ' | grep kvm_)
 if [[ $? -eq 0 && $lmod != $kvm ]]; then
@@ -36,26 +41,28 @@ if [[ ! $(lsmod | cut -f 1 -d ' ' | grep vhost_net) ]]; then
     psudo modprobe vhost_net
 fi
 
-config-priv-file /bin/ip 750
-config-priv-file /dev/kvm
-config-priv-file /dev/vhost-net
-if [[ -n $epc ]]; then
-    config-priv-file /dev/sgx/virt_epc
-    config-priv-file /dev/sgx/provision
-fi
+if [[ $EUID != 0 ]]; then
+    config-priv-file /bin/ip 750
+    config-priv-file /dev/kvm
+    config-priv-file /dev/vhost-net
+    if [[ -n $epc ]]; then
+        config-priv-file /dev/sgx/virt_epc
+        config-priv-file /dev/sgx/provision
+    fi
 
-qemu_bin=$(readlink -f /home/sean/build/qemu/$qemu)
-ip_bin=/bin/ip
-if [[ -f /home/sean/bin/ip ]]; then
-    ip_bin=/home/sean/bin/ip
-fi
+    qemu_bin=$(readlink -f /home/sean/build/qemu/$qemu)
+    ip_bin=/bin/ip
+    if [[ -f /home/sean/bin/ip ]]; then
+        ip_bin=/home/sean/bin/ip
+    fi
 
-if [[ -z $(getcap $qemu_bin | grep cap_net_admin) ]]; then
-    psudo setcap cap_net_admin=+ep $qemu_bin
-fi
-if [[ -z $(getcap $ip_bin | grep cap_net_admin) ]]; then
-    psudo setcap cap_net_admin=+ep $ip_bin
-fi
-if [[ -z $(getcap /usr/bin/taskset | grep cap_sys_nice) ]]; then
-    psudo setcap cap_sys_nice=+ep /usr/bin/taskset
+    if [[ -z $(getcap $qemu_bin | grep cap_net_admin) ]]; then
+        psudo setcap cap_net_admin=+ep $qemu_bin
+    fi
+    if [[ -z $(getcap $ip_bin | grep cap_net_admin) ]]; then
+        psudo setcap cap_net_admin=+ep $ip_bin
+    fi
+    if [[ -z $(getcap /usr/bin/taskset | grep cap_sys_nice) ]]; then
+        psudo setcap cap_sys_nice=+ep /usr/bin/taskset
+    fi
 fi
