@@ -653,6 +653,7 @@ function gdb-disassemble() {
 }
 alias dis='gdb-disassemble'
 alias dk='gdb-disassemble vmlinux'
+alias dks='gdb-disassemble arch/x86/kvm/kvm-amd.ko'
 alias dkv='gdb-disassemble arch/x86/kvm/kvm-intel.ko'
 alias dkk='gdb-disassemble arch/x86/kvm/kvm.ko'
 alias dx='gdb-disassemble drivers/platform/x86/intel_sgx/intel_sgx.ko'
