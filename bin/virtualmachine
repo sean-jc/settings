@@ -31,7 +31,7 @@ fi
 
 probe_modules
 
-qemu="~/build/qemu/$qemu"
+qemu="$HOME/build/qemu/$qemu"
 qemu_bin=$(readlink -f $qemu)
 
 if [[ $os = "hyper-v" ]]; then
@@ -50,13 +50,13 @@ else
 fi
 
 if [[ $os = "hyper-v" ]]; then
-    img=~/images/qemu/hyper-v-2016-$img.img
+    img=$HOME/images/qemu/hyper-v-2016-$img.img
 elif [[ -n $mbr ]]; then
-    img=~//images/qemu/bios/ubuntu-16.04-server-$img.img
+    img=$HOME//images/qemu/bios/ubuntu-16.04-server-$img.img
 elif [[ -n $hdd ]]; then
     img=/hdd/images/qemu/ubuntu-18.04-server-$img.img
 else
-    img=~/images/qemu/ubuntu-18.04-server-$img.img
+    img=$HOME/images/qemu/ubuntu-18.04-server-$img.img
 fi
 
 qemu="$qemu -no-reboot -name debug-threads=on"
@@ -127,14 +127,14 @@ else
     cpu="-cpu host,host-phys-bits,+invtsc"
     if [[ "$qemu_bin" =~ "i386" ]]; then
         cpu="$cpu,-lm"
-        bios="-bios ~/go/src/seabios.org/seabios/out/bios.bin"
+        bios="-bios $HOME/go/src/seabios.org/seabios/out/bios.bin"
     elif [[ -z $mbr ]]; then
         if [[ -n $pflash ]]; then
-            bios="-drive if=pflash,format=raw,unit=0,file=~/build/ovmf/OVMF$ovmf.fd"
+            bios="-drive if=pflash,format=raw,unit=0,file=$HOME/build/ovmf/OVMF$ovmf.fd"
         elif [[ -n $td ]]; then
-            bios="-device loader,file=~/build/ovmf/OVMFTD$ovmf.fd,id=fd0"
+            bios="-device loader,file=$HOME/build/ovmf/OVMFTD$ovmf.fd,id=fd0"
         else
-            bios="-bios ~/build/ovmf/OVMF$ovmf.fd"
+            bios="-bios $HOME/build/ovmf/OVMF$ovmf.fd"
         fi
         if [[ -n $debug_con ]]; then
             bios="$bios -debugcon file:debug.log -global isa-debugcon.iobase=0x402"
@@ -160,7 +160,7 @@ if [[ -n $daemon ]]; then
 fi
 
 if [[ -n $unittest ]]; then
-    os="-kernel ~/go/src/kernel.org/kvm-unit-tests/x86/$unittest.flat -device pc-testdev -device isa-debug-exit,iobase=0xf4,iosize=0x4 -device pci-testdev"
+    os="-kernel $HOME/go/src/kernel.org/kvm-unit-tests/x86/$unittest.flat -device pc-testdev -device isa-debug-exit,iobase=0xf4,iosize=0x4 -device pci-testdev"
 elif [[ $virtio == "false" || $virtio == "n" ]]; then
     os="-hda $img"
     append="root=/dev/sda1 rootfstype=ext4 $append"
@@ -182,12 +182,12 @@ elif [[ -n $kernel ]]; then
         append="$append ignore_loglevel"
     fi
     append="$append kvm-intel.nested=1 l1tf=off noapic nohpet"
-    os="$os -kernel ~/build/kernel/$kernel/arch/x86/boot/bzImage"
+    os="$os -kernel $HOME/build/kernel/$kernel/arch/x86/boot/bzImage"
     if [[ $modules != "false" && $modules != "n" ]]; then
-        os="$os -virtfs local,path=~/build/kernel/$kernel/lib/modules,security_model=passthrough,mount_tag=kmodules"
+        os="$os -virtfs local,path=$HOME/build/kernel/$kernel/lib/modules,security_model=passthrough,mount_tag=kmodules"
     fi
     if [[ -n $init ]]; then
-        os="$os -initrd ~/build/initramfs/$init.cpio"
+        os="$os -initrd $HOME/build/initramfs/$init.cpio"
     fi
 elif [[ -z $unittest ]]; then
     os="$os -boot c"
