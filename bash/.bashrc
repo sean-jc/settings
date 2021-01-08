@@ -2,7 +2,7 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 HOSTPOST=${HOSTNAME#seanjc-}
-if [[ -z $SSH_CONNECTION ]]; then
+if [[ -z $SSH_CONNECTION && ! $HOSTPOST =~ purg- ]]; then
     export HOSTDISPLAY=""
 else
     if [[ $HOSTPOST == purgatory ]]; then
