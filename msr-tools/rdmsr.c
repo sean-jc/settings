@@ -117,6 +117,9 @@ static void rdmsr_on_cpu(const struct format *fmt, uint32_t reg, int cpu)
 			fprintf(stderr, "rdmsr: CPU %d doesn't support MSRs\n",
 				cpu);
 			exit(3);
+		} else if (errno == ENOENT) {
+			fprintf(stderr, "rdmsr: %s doesn't exist\n", msr_file_name);
+			exit(4);
 		} else {
 			perror("rdmsr: open");
 			exit(127);
@@ -128,7 +131,7 @@ static void rdmsr_on_cpu(const struct format *fmt, uint32_t reg, int cpu)
 			fprintf(stderr, "rdmsr: CPU %d cannot read "
 				"MSR 0x%08"PRIx32"\n",
 				cpu, reg);
-			exit(4);
+			exit(5);
 		} else {
 			perror("rdmsr: pread");
 			exit(127);

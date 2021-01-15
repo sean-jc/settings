@@ -66,6 +66,9 @@ static void wrmsr_on_cpu(uint32_t reg, uint64_t data, int cpu)
 			fprintf(stderr, "wrmsr: CPU %d doesn't support MSRs\n",
 				cpu);
 			exit(3);
+		} else if (errno == ENOENT) {
+			fprintf(stderr, "wrmsr: %s doesn't exist\n", msr_file_name);
+			exit(4);
 		} else {
 			perror("wrmsr: open");
 			exit(127);
@@ -77,7 +80,7 @@ static void wrmsr_on_cpu(uint32_t reg, uint64_t data, int cpu)
 				"wrmsr: CPU %d cannot set MSR "
 				"0x%08"PRIx32" to 0x%016"PRIx64"\n",
 				cpu, reg, data);
-			exit(4);
+			exit(5);
 		} else {
 			perror("wrmsr: pwrite");
 			exit(127);
