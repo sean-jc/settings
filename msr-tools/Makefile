@@ -14,9 +14,9 @@
 # Makefile for MSRs
 #
 
-CC       = gcc -Wall
+CC       = gcc -Wall -Werror
 CFLAGS   = -g -O2 -fomit-frame-pointer -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64
-LDFLAGS  = 
+LDFLAGS  = -static
 
 BIN	= wrmsr rdmsr
 
