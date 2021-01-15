@@ -1,12 +1,17 @@
 #!/bin/bash
-ssh d "mkdir -p /data/local/seanjc/build/qemu/static-5.2; mkdir -p /data/local/seanjc/go/src/github.com/sean-jc; mkdir -p /data/local/seanjc/go/src/kernel.org"
-rsync --checksum ~/.bashrc d:/data/local/seanjc
-rsync --checksum ~/.inputrc d:/data/local/seanjc
-rsync --checksum ~/.vimrc d:/data/local/seanjc
-rsync --checksum ~/build/qemu/static-5.2/qemu-system-x86_64 d:/data/local/seanjc/build/qemu/static-5.2
-rsync --checksum --recursive --links ~/build/pc-bios d:/data/local/seanjc/build/qemu/static-5.2
-rsync --checksum --recursive --links ~/build/ovmf d:/data/local/seanjc/build
-rsync --checksum --recursive --exclude='.git*' ~/go/src/github.com/sean-jc/settings d:/data/local/seanjc/go/src/github.com/sean-jc
-ssh d "chmod +x /data/local/seanjc/go/src/github.com/sean-jc/bin/timeout"
-rsync --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kvm-unit-tests d:/data/local/seanjc/go/src/kernel.org
-ssh d "ln -s /data/local/seanjc/build/qemu/static-5.2/qemu-system-x86_64 /data/local/seanjc/build/qemu/stable"
+if [[ $# -ne 1 ]]; then
+        printf "usage: dsync <host>\n"
+        return 1
+fi
+
+ssh $1 "mkdir -p /data/local/seanjc/build/qemu/static-5.2; mkdir -p /data/local/seanjc/go/src/github.com/sean-jc; mkdir -p /data/local/seanjc/go/src/kernel.org"
+rsync --checksum ~/.bashrc $1:/data/local/seanjc
+rsync --checksum ~/.inputrc $1:/data/local/seanjc
+rsync --checksum ~/.vimrc $1:/data/local/seanjc
+rsync --checksum ~/build/qemu/static-5.2/qemu-system-x86_64 $1:/data/local/seanjc/build/qemu/static-5.2
+rsync --checksum --recursive --links ~/build/pc-bios $1:/data/local/seanjc/build/qemu/static-5.2
+rsync --checksum --recursive --links ~/build/ovmf $1:/data/local/seanjc/build
+rsync --checksum --recursive --exclude='.git*' ~/go/src/github.com/sean-jc/settings $1:/data/local/seanjc/go/src/github.com/sean-jc
+ssh $1 "chmod +x /data/local/seanjc/go/src/github.com/sean-jc/settings/bin/timeout"
+rsync --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kvm-unit-tests $1:/data/local/seanjc/go/src/kernel.org
+ssh $1 "ln -s /data/local/seanjc/build/qemu/static-5.2/qemu-system-x86_64 /data/local/seanjc/build/qemu/stable"
