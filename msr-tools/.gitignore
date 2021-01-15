@@ -1,0 +1,4 @@
+rdmsr
+wrmsr
+*.o
+*~
