@@ -21,10 +21,8 @@ for dir in /proc/$qemu_pid/task/*; do
             fi
             qemu_pcpu=$(($nr_cpus-$qemu_vcpu))
             qemu_task=$(echo $dir | cut -f 2 -d ' ' | cut -f 5 -d '/')
-            qemu_mask=$(printf "%x\n" $((1<<$qemu_pcpu)))
-            printf "pinning vCPU $(($qemu_vcpu-1)) to $qemu_mask\n"
-            taskset -p $qemu_mask $qemu_task
+            printf "pinning vCPU $(($qemu_vcpu-1)) to pCPU $qemu_pcpu\n"
+            taskset -p -c $qemu_pcpu $qemu_task
         fi
     fi
 done
-
