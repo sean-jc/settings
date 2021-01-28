@@ -64,7 +64,22 @@ if [[ -n $gdb ]]; then
     qemu="$qemu -s -S"
 fi
 
-ifup=$(which ifup)
+ifconfig -a | grep -q br0
+if [[ $? -eq 0 ]]; then
+    ifup=br0
+else
+    ifconfig -a | grep -q tap0
+    if [[ $? -eq 0 ]]; then
+        ifup=tap0
+    fi
+fi
+if [[ -z $ifup ]]; then
+    die "Cannot find br0 or tap0\n"
+fi
+ifup=$(which ifup_"$ifup")
+if [[ $? -ne 0 ]]; then
+        die "Cannot find ifup_$ifup script"
+fi
 
 net="-device virtio-net-pci,netdev=net0,mac=$mac,romfile="" -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
 

@@ -1,0 +1,5 @@
+#!/bin/bash
+ip tuntap add dev tap0 mode tap user root
+ip addr flush dev tap0
+ip -6 addr add fe80::$(ifconfig -a tap0 | grep -Eo ..:..:..:..:..:.. | sed "s/\(..\):\(..\)/\1\2/g")/64 scope link dev tap0 nodad
+ifconfig -a tap0
