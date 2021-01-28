@@ -27,20 +27,35 @@ elif [[ maxcpus -lt $cpus ]]; then
 fi
 
 if [[ $pin != false ]]; then
-    cgroup=/sys/fs/cgroup/cpuset/vm
+    cgroup=$(grep ^cgroup /proc/mounts | grep cpuset | cut -f 2 -d ' ')
+    if [[ ! -d $cgroup ]]; then
+        printf "Cannot find cpuset mount point, got '$cgroup'\n"
+        exit 1
+    fi
+
+    cgroup="$cgroup/vm"
     if [[ ! -d $cgroup ]]; then
         sudo mkdir $cgroup
-        sudo chown sean:sean $cgroup/*
+        if [[ $(id -u) -ne 0 ]]; then
+            sudo chown sean:sean $cgroup/*
+        fi
     fi
     echo "$((maxcpus-cpus))-$((maxcpus-1))" > $cgroup/cpuset.cpus
     echo "0" > $cgroup/cpuset.mems
     echo $BASHPID > $cgroup/cgroup.procs
 fi
 
-cgroup=/sys/fs/cgroup/memory/vm
+cgroup=$(grep ^cgroup /proc/mounts | grep memory | cut -f 2 -d ' ')
+if [[ ! -d $cgroup ]]; then
+    printf "Cannot find memory cgroup mount point, got '$cgroup'\n"
+    exit 1
+fi
+cgroup="$cgroup/vm"
 if [[ ! -d $cgroup ]]; then
     sudo mkdir $cgroup
-    sudo chown sean:sean $cgroup/*
+    if [[ $(id -u) -ne 0 ]]; then
+        sudo chown sean:sean $cgroup/*
+    fi
 fi
 echo $BASHPID > $cgroup/cgroup.procs
 
