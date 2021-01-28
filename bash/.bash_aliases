@@ -923,7 +923,7 @@ function make-kernel() {
     fi
     THREADS=$(grep -c '^processor' /proc/cpuinfo)
     if [[ -z $TARGET ]]; then
-        make O=~/build/kernel/$1 -j$THREADS
+        make O=~/build/kernel/$1 $SPARSE -j$THREADS
         if [[ $? -eq 0 ]]; then
             make O=~/build/kernel/$1 INSTALL_MOD_PATH=~/build/kernel/$1 modules_install
         fi
@@ -944,34 +944,35 @@ function make-kernel() {
 }
 alias mk='make-kernel'
 alias mc='make-kernel'
+alias ms='SPARSE="C=1" make-kernel'
 alias mks='sgx=true make-kernel'
 alias mkb='TARGET=bzImage make-kernel'
 
 function make-kernel-opt() {
     if [[ $# -ne 1 && $# -ne 2 ]]; then
-        printf "usage: m{d,l,m,o} [dir]\n"
+        printf "usage: m{d,l,m,o,e} [dir]\n"
         return 1
-    elif [[ $1 != "htmldocs" && $1 != "oldconfig" && $1 != "menuconfig" && $1 != "localmodconfig" ]]; then
-        printf "usage: m{d,l,m,o} [dir]\n"
+    elif [[ $1 != "htmldocs" && $1 != "oldconfig" && $1 != "menuconfig" && $1 != "localmodconfig" && $1 != "clean" ]]; then
+        printf "usage: m{d,l,m,o,e} [dir]\n"
         return 1
     elif [[ $# -eq 2 ]]; then
         if [[ ! -f .git/info/sparse-checkout ]]; then
-            printf "m{d,l,m,o} <dir> without sparse directory\n"
+            printf "m{d,l,m,o,e} <dir> without sparse directory\n"
             return 1
         elif [[ -f REPORTING-BUGS ]]; then
-            printf "m{d,l,m,o} <dir> with probable host directory\n"
+            printf "m{d,l,m,o,e} <dir> with probable host directory\n"
             return 1
         elif [[ -f .config ]]; then
-            printf "m{d,l,m,o} <dir> with local config\n"
+            printf "m{d,l,m,o,e} <dir> with local config\n"
             return 1
         fi
         TARGET=$1 make-kernel $2
     else
         if [[ ! -f REPORTING-BUGS ]]; then
-            printf "m{d,l,m,o} without REPORTING-BUGS\n"
+            printf "m{d,l,m,o,e} without REPORTING-BUGS\n"
             return 1
         elif [[ ! -f .config ]]; then
-            printf "m{d,l,m,o} without local config\n"
+            printf "m{d,l,m,o,e} without local config\n"
             return 1
         fi
         make $1
@@ -981,6 +982,7 @@ alias md='make-kernel-opt htmldocs'
 alias ml='make-kernel-opt localmodconfig'
 alias mm='make-kernel-opt menuconfig'
 alias mo='make-kernel-opt oldconfig'
+alias me='make-kernel-opt clean'
 
 alias amc='ARCH=arm64 CROSS_COMPILE=/opt/cross/aarch64-linux/bin/aarch64-linux- make-kernel cc_arm'
 alias amm='ARCH=arm64 CROSS_COMPILE=/opt/cross/aarch64-linux/bin/aarch64-linux- make-kernel-opt menuconfig cc_arm'
