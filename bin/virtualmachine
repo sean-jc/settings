@@ -196,7 +196,7 @@ elif [[ -n $kernel ]]; then
     if [[ -n $verbose ]]; then
         append="$append ignore_loglevel"
     fi
-    append="$append kvm-intel.nested=1 l1tf=off noapic nohpet"
+    append="$append l1tf=off noapic nohpet"
     os="$os -kernel $HOME/build/kernel/$kernel/arch/x86/boot/bzImage"
     if [[ $modules != "false" && $modules != "n" ]]; then
         os="$os -virtfs local,path=$HOME/build/kernel/$kernel/lib/modules,security_model=passthrough,mount_tag=kmodules"
