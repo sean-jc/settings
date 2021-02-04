@@ -81,7 +81,11 @@ if [[ $? -ne 0 ]]; then
         die "Cannot find ifup_$ifup script"
 fi
 
-net="-device virtio-net-pci,netdev=net0,mac=$mac,romfile="" -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
+iommu=off
+if [[ -n $sev ]]; then
+    iommu=on
+fi
+net="-device virtio-net-pci,netdev=net0,mac=$mac,disable-legacy=on,iommu_platform=$iommu,romfile= -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
 
 maxmem=16G
 if [[ -n $epc ]]; then
@@ -126,13 +130,16 @@ if [[ -n $epc ]]; then
 fi
 
 machine="-enable-kvm -smp $cpus,sockets=1 -machine q35,accel=kvm"
+if [[ -n $mach ]]; then
+    machine="$machine,$mach"
+fi
 if [[ -n $td ]]; then
     machine="$machine,kvm-type=tdx,kernel_irqchip=split,guest-memory-protection=tdx,pit=off,pic=off -object tdx-guest,id=tdx,debug"
 else
     machine="$machine,kernel_irqchip"
 fi
-if [[ -n $mach ]]; then
-    machine="$machine,$mach"
+if [[ -n $sev ]]; then
+    machine="$machine,memory-encryption=sev -object sev-guest,id=sev,cbitpos=47,reduced-phys-bits=1"
 fi
 machine="$machine -no-hpet"
 
@@ -144,8 +151,11 @@ else
         cpu="$cpu,-lm"
         bios="-bios $HOME/go/src/seabios.org/seabios/out/bios.bin"
     elif [[ -z $mbr ]]; then
-        if [[ -n $pflash ]]; then
-            bios="-drive if=pflash,format=raw,unit=0,file=$HOME/build/ovmf/OVMF$ovmf.fd"
+        if [[ -n $sev ]]; then
+            bios="-drive if=pflash,format=raw,readonly,unit=0,file=$HOME/build/ovmf/OVMF_CODE$ovmf.fd"
+            bios="$bios -drive if=pflash,format=raw,unit=1,file=$HOME/build/ovmf/OVMF_VARS$ovmf.fd"
+        elif [[ -n $pflash ]]; then
+            bios="-drive if=pflash,format=raw,readonly,unit=0,file=$HOME/build/ovmf/OVMF$ovmf.fd"
         elif [[ -n $td ]]; then
             bios="-device loader,file=$HOME/build/ovmf/OVMFTD$ovmf.fd,id=fd0"
         else
@@ -167,7 +177,7 @@ else
     if [[ -n $daemon ]]; then
         display="$display -serial null -monitor null -parallel null"
     elif [[ -z $serial ]]; then
-        display="$display -chardev stdio,id=mux,mux=on,signal=off -device virtio-serial,romfile= -device virtconsole,chardev=mux -serial chardev:mux -monitor chardev:mux"
+        display="$display -chardev stdio,id=mux,mux=on,signal=off -device virtio-serial,disable-legacy=on,iommu_platform=$iommu,romfile= -device virtconsole,chardev=mux -serial chardev:mux -monitor chardev:mux"
     fi
 fi
 if [[ -n $daemon ]]; then
@@ -180,7 +190,7 @@ elif [[ $virtio == "false" || $virtio == "n" ]]; then
     os="-hda $img"
     append="root=/dev/sda1 rootfstype=ext4 $append"
 else
-    os="-drive file=$img,if=virtio"
+    os="-drive file=$img,if=none,id=drive -device virtio-blk-pci,drive=drive,id=virtblk,disable-legacy=on,iommu_platform=$iommu"
     append="root=/dev/vda1 rootfstype=ext4 $append"
 fi
 
@@ -199,7 +209,7 @@ elif [[ -n $kernel ]]; then
     append="$append l1tf=off noapic nohpet"
     os="$os -kernel $HOME/build/kernel/$kernel/arch/x86/boot/bzImage"
     if [[ $modules != "false" && $modules != "n" ]]; then
-        os="$os -virtfs local,path=$HOME/build/kernel/$kernel/lib/modules,security_model=passthrough,mount_tag=kmodules"
+        os="$os -fsdev local,path=$HOME/build/kernel/$kernel/lib/modules,security_model=passthrough,id=plan9fs -device virtio-9p-pci,fsdev=plan9fs,mount_tag=kmodules,disable-legacy=on,iommu_platform=$iommu"
     fi
     if [[ -n $init ]]; then
         os="$os -initrd $HOME/build/initramfs/$init.cpio"
