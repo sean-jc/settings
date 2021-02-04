@@ -33,6 +33,18 @@ function floating-castle-restart() {
 alias fsr='floating-castle-restart'
 
 # -----------------------------------------------------------------------------
+# Audio Mixer
+# -----------------------------------------------------------------------------
+function amixer-volume() {
+    if [[ $# -eq 0 ]]; then
+        amixer -D pulse sget Master
+    else
+        amixer -D pulse sset Master $1
+    fi
+}
+alias av='amixer-volume'
+
+# -----------------------------------------------------------------------------
 # Git
 # -----------------------------------------------------------------------------
 function git-show() {
