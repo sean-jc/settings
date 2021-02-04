@@ -1,0 +1,34 @@
+#!/bin/bash
+if [[ $EUID != 0 ]]; then
+    printf "Must run 'kvm_trace' as root\n"
+    exit 1
+fi
+
+if [[ $# -gt 1 ]]; then
+    printf "Only one param accepted by 'kvm_trace'\n"
+    exit 1
+fi
+
+echo 8 > /sys/kernel/debug/tracing/buffer_size_kb
+echo 1 > /sys/kernel/debug/tracing/tracing_on
+
+if [[ $# -eq 0 ]]; then
+    echo 1 > /sys/kernel/debug/tracing/events/kvm/enable
+elif [[ $1 == "off" ]]; then
+    echo 0 > /sys/kernel/debug/tracing/events/kvm/enable
+elif [[ $1 == "nested" ]]; then
+    echo 1 > /sys/kernel/debug/tracing/events/kvm/kvm_nested_intercepts/enable
+    echo 1 > /sys/kernel/debug/tracing/events/kvm/kvm_nested_intr_vmexit/enable
+    echo 1 > /sys/kernel/debug/tracing/events/kvm/kvm_nested_vmenter_failed/enable
+    echo 1 > /sys/kernel/debug/tracing/events/kvm/kvm_nested_vmexit/enable
+    echo 1 > /sys/kernel/debug/tracing/events/kvm/kvm_nested_vmexit_inject/enable
+    echo 1 > /sys/kernel/debug/tracing/events/kvm/kvm_nested_vmrun/enable
+elif [[ $1 == "fail" ]]; then
+    echo 1 > /sys/kernel/debug/tracing/events/kvm/kvm_nested_vmenter_failed/enable
+elif [[ $1 == "mmu" ]]; then
+    echo 1 > /sys/kernel/debug/tracing/events/kvmmmu/enable
+elif [[ $1 == "exits" ]]; then
+    echo 1 > /sys/kernel/debug/tracing/events/kvm/kvm_exit/enable
+else
+    printf "Unknown 'kvm_trace' shorthand '$1\n"
+fi

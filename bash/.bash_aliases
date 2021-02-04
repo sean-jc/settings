@@ -1046,6 +1046,14 @@ alias rkv='rkt TESTNAME=vmx TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cp
 alias rkc='rkt TESTNAME=vmx_controls TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cpu host,+vmx -m 2560 -append vmx_controls_test'
 
 # -----------------------------------------------------------------------------
+# KVM tracing
+# -----------------------------------------------------------------------------
+alias kt='kvm_trace'
+alias ct='echo 0 > /sys/kernel/debug/tracing/trace'
+alias ton='echo 1 > /sys/kernel/debug/tracing/tracing_on'
+alias toff='echo 0 > /sys/kernel/debug/tracing/tracing_on'
+
+# -----------------------------------------------------------------------------
 # LXD
 # -----------------------------------------------------------------------------
 alias slxd='sudo -E $GOPATH/bin/lxd --group sudo'
