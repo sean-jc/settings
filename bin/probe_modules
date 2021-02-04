@@ -41,6 +41,13 @@ if [[ ! $(lsmod | cut -f 1 -d ' ' | grep vhost_net) ]]; then
     psudo modprobe vhost_net
 fi
 
+if [[ ! -f /dev/vhost-net ]];then
+    udevadm test /devices/virtual/misc/vhost-net
+fi
+if [[ -n $sev && ! -f /dev/sev ]]; then
+    udevadm test /devices/virtual/misc/sev
+fi
+
 if [[ $EUID != 0 ]]; then
     config-priv-file /bin/ip 750
     config-priv-file /dev/kvm
