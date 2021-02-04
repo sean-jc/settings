@@ -231,6 +231,11 @@ else
     trace="exec"
 fi
 
+which gcontain
+if [[ $? -eq 0 ]]; then
+    gcontain enter /
+fi
+
 if [[ -n $kernel ]]; then
     $trace $qemu $machine $cpu $bios $mem $display $net $os $extra -append "$append" $migrate &
 else
