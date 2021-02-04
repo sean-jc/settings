@@ -1034,6 +1034,11 @@ function make-qemu() {
 }
 alias mq='make-qemu'
 
+function make-ovmf() {
+    build -n $(grep -c '^processor' /proc/cpuinfo) -a X64 -a IA32 -t GCC5 -p OvmfPkg/OvmfPkgIa32X64.dsc
+}
+alias mf=make-ovmf
+
 function prep-kvm-unittest() {
     qemu=stable probe_modules
     cd ~/go/src/kernel.org/kvm-unit-tests
