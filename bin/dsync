@@ -11,6 +11,7 @@ rsync --checksum ~/.vimrc $1:/data/local/seanjc
 rsync --checksum ~/build/qemu/static-5.2/qemu-system-x86_64 $1:/data/local/seanjc/build/qemu/static-5.2
 rsync --checksum --recursive --links ~/build/pc-bios $1:/data/local/seanjc/build/qemu/static-5.2
 rsync --checksum --recursive --links ~/build/ovmf $1:/data/local/seanjc/build
+rsync --checksum --recursive --links ~/build/selftests $1:/data/local/seanjc/build
 rsync --checksum --recursive --exclude='.git*' ~/go/src/github.com/sean-jc/settings $1:/data/local/seanjc/go/src/github.com/sean-jc
 ssh $1 "chmod +x /data/local/seanjc/go/src/github.com/sean-jc/settings/bin/timeout"
 rsync --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kvm-unit-tests $1:/data/local/seanjc/go/src/kernel.org
