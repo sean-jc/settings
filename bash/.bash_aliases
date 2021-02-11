@@ -720,6 +720,29 @@ function extract() {
         fi
     fi
 }
+alias mguest='guest=true make-kernel-package'
+
+function make-selftests() {
+    local tests=( $(grep -v -e s390 -e aarch64 -e SPDX -e ipi $HOME/go/src/kernel.org/linux/tools/testing/selftests/kvm/.gitignore) )
+    local i
+    local selftest
+    for i in "${tests[@]}"; do
+        selftest="$HOME/go/src/kernel.org/linux/tools/testing/selftests/kvm$i"
+        if [[ -f $selftest ]]; then
+            cp $selftest $HOME/build/selftests
+        fi
+    done
+}
+alias mtests='make-selftests'
+
+function run-selftests() {
+    local tests=( $(/bin/ls -1 $HOME/build/selftests) )
+    local i
+    for i in "${tests[@]}"; do
+        $HOME/build/selftests/$i
+    done
+}
+alias rtests='run-selftests'
 
 function make-kernel-package() {
     if [[ $# -lt 1 ]]; then
