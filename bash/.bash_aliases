@@ -753,6 +753,7 @@ function make-kernel-package() {
         dpkg -i ../*${name}*_${rev}_*.deb
     fi
 }
+alias mguest='guest=true make-kernel-package'
 
 function make-host {
     if [[ $# -lt 1 ]]; then
@@ -778,7 +779,18 @@ function make-host {
     fi
 }
 alias mh='make-host'
-alias mg='guest=true make-kernel-package'
+
+function make-gbuild {
+    if [[ $# -lt 1 ]]; then
+        printf "Must specify the target kernel name\n"
+        return 1
+    fi
+
+    local name="-$(git show -s --pretty='tformat:%h')-$1"
+
+    gbuild RELEASE=$name
+}
+alias mg='make-gbuild'
 
 function get-kernel {
     if [[ ! -f /boot/efi/loader/loader.conf ]]; then
