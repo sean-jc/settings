@@ -514,7 +514,7 @@ alias services='sys list-unit-files --type=service'
 
 # misc system
 alias bm='blueman-manager &'
-alias gcm='gcert -s -m kernel-development'
+alias gcm='gcert -s -m kernel-development,corevirt-team-testing'
 alias ds='dsync'
 
 # List all UDP/TCP ports
