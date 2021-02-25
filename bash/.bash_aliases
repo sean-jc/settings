@@ -39,7 +39,7 @@ function amixer-volume() {
     if [[ $# -eq 0 ]]; then
         amixer -D pulse sget Master
     else
-        amixer -D pulse sset Master $1
+        amixer -D pulse sset Master $(($1 * 65536 / 100))
     fi
 }
 alias av='amixer-volume'
