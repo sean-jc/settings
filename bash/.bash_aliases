@@ -357,6 +357,13 @@ alias vmd='daemon=y run_vm stable kvm'
 alias vm2='v2_cgroup=memory vm'
 alias vb='mbr=y run_vm bios kvm'
 
+function vm-mig-src {
+    gb=32 modules=n cpus=16 cpuid="-invtsc" vm vm
+}
+function vm-mig-dst {
+    migrate=6666 gb=32 modules=n cpus=16 cpuid="-invtsc" vm vm
+}
+
 # SGX, i.e. expose EPC
 alias vbd='daemon=y mbr=y run_vm bios kvm'
 alias vmi='epc=64M,prealloc run_vm sgx kvm'
@@ -407,6 +414,18 @@ function vm-stats() {
 }
 alias vs='vm-stats'
 alias vss='vm-stats true'
+
+alias ssl='ssh -6 sean@fe80::216:3eff:fe68:0%tap1'
+
+function scp-to {
+    scp -6 $1 sean@[fe80::216:3eff:fe68:0%tap1]:$2
+}
+alias scl='scp-to'
+
+function scp-from {
+    scp -6 sean@[fe80::216:3eff:fe68:0%tap1]:$2 $1
+}
+alias scl='scp-from'
 
 alias dvm='gdb -x $SETTINGS/bin/debug_vm'
 
