@@ -41,10 +41,10 @@ if [[ ! $(lsmod | cut -f 1 -d ' ' | grep vhost_net) ]]; then
     psudo modprobe vhost_net
 fi
 
-if [[ ! -f /dev/vhost-net ]];then
+if [[ ! -c /dev/vhost-net ]];then
     udevadm test /devices/virtual/misc/vhost-net
 fi
-if [[ -n $sev && ! -f /dev/sev ]]; then
+if [[ -n $sev && ! -c /dev/sev ]]; then
     udevadm test /devices/virtual/misc/sev
 fi
 
