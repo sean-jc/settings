@@ -415,7 +415,8 @@ function vm-stats() {
 alias vs='vm-stats'
 alias vss='vm-stats true'
 
-alias ssl='ssh -6 sean@fe80::216:3eff:fe68:0%tap1'
+alias ssl='ssh -6 sean@fe80::216:3eff:fe68:00%tap1'
+alias ssi='ssh -6 sean@fe80::216:3eff:fe68:80%tap1'
 
 function scp-to {
     scp -6 $1 sean@[fe80::216:3eff:fe68:0%tap1]:$2

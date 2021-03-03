@@ -4,7 +4,13 @@ if [[ $# -ne 1 ]]; then
         exit 1
 fi
 
-ssh $1 "mkdir -p /data/local/seanjc/build/kernel/vm/arch/x86/boot; mkdir -p /data/local/seanjc/build/kernel/vm/lib/modules; mkdir -p /data/local/seanjc/build/qemu/static-5.2; mkdir -p /data/local/seanjc/go/src/github.com/sean-jc; mkdir -p /data/local/seanjc/go/src/kernel.org"
+ssh $1 "mkdir -p /data/local/seanjc/build/kernel/vm/arch/x86/boot; \
+        mkdir -p /data/local/seanjc/build/kernel/vm/lib/modules; \
+        mkdir -p /data/local/seanjc/build/kernel/i386/arch/x86/boot; \
+        mkdir -p /data/local/seanjc/build/kernel/i386/lib/modules; \
+        mkdir -p /data/local/seanjc/build/qemu/static-5.2; \
+        mkdir -p /data/local/seanjc/go/src/github.com/sean-jc; \
+        mkdir -p /data/local/seanjc/go/src/kernel.org"
 rsync --checksum ~/.bashrc $1:/data/local/seanjc
 rsync --checksum ~/.inputrc $1:/data/local/seanjc
 rsync --checksum ~/.vimrc $1:/data/local/seanjc
@@ -18,3 +24,5 @@ rsync --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/sr
 ssh $1 "rm -f /data/local/seanjc/build/qemu/stable; ln -s /data/local/seanjc/build/qemu/static-5.2/qemu-system-x86_64 /data/local/seanjc/build/qemu/stable"
 rsync --checksum ~/build/kernel/vm/arch/x86/boot/bzImage $1:/data/local/seanjc/build/kernel/vm/arch/x86/boot
 rsync --checksum --recursive ~/build/kernel/vm/lib/modules $1:/data/local/seanjc/build/kernel/vm/lib
+rsync --checksum ~/build/kernel/i386/arch/x86/boot/bzImage $1:/data/local/seanjc/build/kernel/i386/arch/x86/boot
+rsync --checksum --recursive ~/build/kernel/i386/lib/modules $1:/data/local/seanjc/build/kernel/i386/lib
