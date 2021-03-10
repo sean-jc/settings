@@ -173,7 +173,10 @@ fi
 if [[ -n $vnc ]]; then
     display="-vga std -display vnc=:$vnc"
 else
-    display="-nographic -vga none"
+    display="-nographic"
+    if [[ -z $vga ]]; then
+        display="$display -vga none"
+    fi
     if [[ -n $daemon ]]; then
         display="$display -serial null -monitor null -parallel null"
     elif [[ -z $serial ]]; then

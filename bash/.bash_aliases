@@ -1117,6 +1117,31 @@ alias rku='rkt ./run_tests.sh -v'
 alias rkv='rkt TESTNAME=vmx TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cpu host,+vmx -append'
 alias rkc='rkt TESTNAME=vmx_controls TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cpu host,+vmx -m 2560 -append vmx_controls_test'
 
+function run-memslot-test() {
+    if [[ $(id -u) -ne 0 ]]; then
+        printf "Must be run as root\n"
+        return 1
+    fi
+    if [[ $# -ne 0 && $# -ne 2 ]]; then
+        printf "Usage for memslot test: 'rms [threads] [mem in gb]'\n"
+        return 2
+    fi
+    if [[ ! -f /sys/bus/pci/devices/0000:00:01.0/rom ]]; then
+        printf "No ROM at /sys/bus/pci/devices/0000:00:01.0, try vga=1\n"
+        return 3
+    fi
+
+    local nr_threads=8
+    local nr_gigabytes=1
+    if [[ $# -eq 2 ]]; then
+        nr_threads=$1
+        nr_gigabytes=$2
+    fi
+
+    $SETTINGS/bin/memslot_test -c $nr_threads -m $nr_gigabytes -e $SETTINGS/lib/memslot_test/rom.sh
+}
+alias rms='run-memslot-test'
+
 # -----------------------------------------------------------------------------
 # KVM tracing
 # -----------------------------------------------------------------------------
