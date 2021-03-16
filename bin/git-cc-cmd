@@ -28,4 +28,5 @@ fi
 maint="$maint$(echo $pfiles | xargs cat | grep -v stable@vger.kernel.org | grep -v lkp@intel.com | grep -e Cc: -e Suggested-by -e Reported-by -e Tested-by -e Reported-and-tested-by -e Reviewed-by -e Signed-off-by | cut -d ' ' -f 2- | tr '\n' ',')"
 maint=${maint%,};
 maint=${maint/namit@vmware.com/nadav.amit@gmail.com}
+maint=${maint/sean.j.christopherson@intel.com/seanjc@google.com}
 echo $maint
