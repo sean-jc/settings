@@ -743,11 +743,11 @@ function extract() {
 alias mguest='guest=true make-kernel-package'
 
 function make-selftests() {
-    local tests=( $(grep -v -e s390 -e aarch64 -e SPDX -e ipi $HOME/go/src/kernel.org/linux/tools/testing/selftests/kvm/.gitignore) )
+    local tests=( $(grep -v -e s390 -e aarch64 -e SPDX -e ipi $HOME/go/src/kernel.org/sinux/tools/testing/selftests/kvm/.gitignore) )
     local i
     local selftest
     for i in "${tests[@]}"; do
-        selftest="$HOME/go/src/kernel.org/linux/tools/testing/selftests/kvm$i"
+        selftest="$HOME/go/src/kernel.org/sinux/tools/testing/selftests/kvm$i"
         if [[ -f $selftest ]]; then
             cp $selftest $HOME/build/selftests
         fi
@@ -1019,7 +1019,7 @@ function make-kernel-opt() {
     if [[ $# -ne 1 && $# -ne 2 ]]; then
         printf "usage: m{d,l,m,o,e} [dir]\n"
         return 1
-    elif [[ $1 != "htmldocs" && $1 != "oldconfig" && $1 != "menuconfig" && $1 != "localmodconfig" && $1 != "clean" ]]; then
+    elif [[ $1 != "defconfig" && $1 != "oldconfig" && $1 != "menuconfig" && $1 != "localmodconfig" && $1 != "clean" ]]; then
         printf "usage: m{d,l,m,o,e} [dir]\n"
         return 1
     elif [[ $# -eq 2 ]]; then
@@ -1051,21 +1051,30 @@ alias mm='make-kernel-opt menuconfig'
 alias mo='make-kernel-opt oldconfig'
 alias me='make-kernel-opt clean'
 
-alias amc='ARCH=arm64 CROSS_COMPILE=/opt/cross/aarch64-linux/bin/aarch64-linux- make-kernel cc_arm'
-alias amm='ARCH=arm64 CROSS_COMPILE=/opt/cross/aarch64-linux/bin/aarch64-linux- make-kernel-opt menuconfig cc_arm'
-alias amo='ARCH=arm64 CROSS_COMPILE=/opt/cross/aarch64-linux/bin/aarch64-linux- make-kernel-opt oldconfig cc_arm'
+alias amc='ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make-kernel cc_arm'
+alias amd='ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make-kernel-opt defconfig cc_arm'
+alias amm='ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make-kernel-opt menuconfig cc_arm'
+alias amo='ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make-kernel-opt oldconfig cc_arm'
 
-alias mmc='ARCH=mips CROSS_COMPILE=/opt/cross/mips64-linux/bin/mips64-linux- make-kernel cc_mips64'
-alias mmm='ARCH=mips CROSS_COMPILE=/opt/cross/mips64-linux/bin/mips64-linux- make-kernel-opt menuconfig cc_mips64'
-alias mmo='ARCH=mips CROSS_COMPILE=/opt/cross/mips64-linux/bin/mips64-linux- make-kernel-opt oldconfig cc_mips64'
+alias mmc='ARCH=mips CROSS_COMPILE=mips64-linux-gnuabi64- make-kernel cc_mips64'
+alias mmd='ARCH=mips CROSS_COMPILE=mips64-linux-gnuabi64- make-kernel-opt defconfig cc_mips64'
+alias mmm='ARCH=mips CROSS_COMPILE=mips64-linux-gnuabi64- make-kernel-opt menuconfig cc_mips64'
+alias mmo='ARCH=mips CROSS_COMPILE=mips64-linux-gnuabi64- make-kernel-opt oldconfig cc_mips64'
 
-alias pmc='ARCH=powerpc CROSS_COMPILE=/opt/cross/powerpc64-linux/bin/powerpc64-linux- make-kernel cc_ppc64'
-alias pmm='ARCH=powerpc CROSS_COMPILE=/opt/cross/powerpc64-linux/bin/powerpc64-linux- make-kernel-opt menuconfig cc_ppc64'
-alias pmo='ARCH=powerpc CROSS_COMPILE=/opt/cross/powerpc64-linux/bin/powerpc64-linux- make-kernel-opt oldconfig cc_ppc64'
+alias pmc='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel cc_ppc64'
+alias pmd='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel-opt defconfig cc_ppc64'
+alias pmm='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel-opt menuconfig cc_ppc64'
+alias pmo='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel-opt oldconfig cc_ppc64'
 
-alias smc='ARCH=s390 CROSS_COMPILE=/opt/cross/s390-linux/bin/s390-linux- make-kernel cc_s390'
-alias smm='ARCH=s390 CROSS_COMPILE=/opt/cross/s390-linux/bin/s390-linux- make-kernel-opt menuconfig cc_s390'
-alias smo='ARCH=s390 CROSS_COMPILE=/opt/cross/s390-linux/bin/s390-linux- make-kernel-opt oldconfig cc_s390'
+alias emc='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel cc_e500mc'
+alias emd='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel-opt defconfig cc_e500mc'
+alias emm='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel-opt menuconfig cc_e500mc'
+alias emo='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel-opt oldconfig cc_e500mc'
+
+alias smc='ARCH=s390 CROSS_COMPILE=s390x-linux-gnu- make-kernel cc_s390'
+alias smd='ARCH=s390 CROSS_COMPILE=s390x-linux-gnu- make-kernel-opt defconfig cc_s390'
+alias smm='ARCH=s390 CROSS_COMPILE=s390x-linux-gnu- make-kernel-opt menuconfig cc_s390'
+alias smo='ARCH=s390 CROSS_COMPILE=s390x-linux-gnu- make-kernel-opt oldconfig cc_s390'
 
 # time kernel
 function time-kernel() {
