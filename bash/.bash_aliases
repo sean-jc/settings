@@ -421,7 +421,7 @@ alias ssi='ssh -6 sean@fe80::216:3eff:fe68:80%tap1'
 function scp-to {
     scp -6 $1 sean@[fe80::216:3eff:fe68:0%tap1]:$2
 }
-alias scl='scp-to'
+alias scr='scp-to'
 
 function scp-from {
     scp -6 sean@[fe80::216:3eff:fe68:0%tap1]:$2 $1
