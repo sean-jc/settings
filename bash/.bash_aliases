@@ -377,6 +377,9 @@ alias vuefi='run_vm stable uefi'
 # alias vuefi='qemu=stable img=uefi display=vnc iso=~/images/ubuntu/ubuntu-16.04.3-desktop-amd64.iso virtualmachine'
 alias vanilla='virtio=false run_vm stable'
 
+alias mountvm='sudo mount -o loop,offset=210763776 ~/images/qemu/ubuntu-18.04-server-kvm.raw ~/images/qemu/mnt_vm'
+alias mounti386='sudo mount -o loop,offset=1048576 ~/images/qemu/ubuntu-18.04-server-i386.raw ~/images/qemu/mnt_i386'
+
 # Get the PID of the VM.  Obviously expects a single VM to be running...
 alias vp='psg /sean/build/qemu | grep sean | tr -s " " | cut -f 2 -d " "'
 
