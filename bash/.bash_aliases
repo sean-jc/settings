@@ -1155,6 +1155,7 @@ alias rms='run-memslot-test'
 # KVM tracing
 # -----------------------------------------------------------------------------
 alias kt='kvm_trace'
+alias lt='less /sys/kernel/debug/tracing/trace'
 alias ct='echo 0 > /sys/kernel/debug/tracing/trace'
 alias ton='echo 1 > /sys/kernel/debug/tracing/tracing_on'
 alias toff='echo 0 > /sys/kernel/debug/tracing/tracing_on'
