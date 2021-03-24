@@ -25,6 +25,11 @@ elif [[ $1 == "nested" ]]; then
     echo 1 > /sys/kernel/debug/tracing/events/kvm/kvm_nested_vmrun/enable
 elif [[ $1 == "fail" ]]; then
     echo 1 > /sys/kernel/debug/tracing/events/kvm/kvm_nested_vmenter_failed/enable
+elif [[ $1 == "mn" ]]; then
+    echo 1 > /sys/kernel/debug/tracing/events/kvm/kvm_age_hva/enable
+    echo 1 > /sys/kernel/debug/tracing/events/kvm/kvm_set_spte_hva/enable
+    echo 1 > /sys/kernel/debug/tracing/events/kvm/kvm_test_age_hva/enable
+    echo 1 > /sys/kernel/debug/tracing/events/kvm/kvm_unmap_hva_range/enable
 elif [[ $1 == "mmu" ]]; then
     echo 1 > /sys/kernel/debug/tracing/events/kvmmmu/enable
 elif [[ $1 == "exits" ]]; then
