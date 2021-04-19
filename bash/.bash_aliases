@@ -993,9 +993,9 @@ function make-kernel() {
     fi
     THREADS=$(grep -c '^processor' /proc/cpuinfo)
     if [[ -z $TARGET ]]; then
-        make O=~/build/kernel/$1 $SPARSE -j$THREADS
+        make O=~/build/kernel/$1 $SPARSE $COMPILER -j$THREADS
         if [[ $? -eq 0 ]]; then
-            make O=~/build/kernel/$1 INSTALL_MOD_PATH=~/build/kernel/$1 modules_install
+            make O=~/build/kernel/$1 $COMPILER INSTALL_MOD_PATH=~/build/kernel/$1 modules_install
         fi
     else
         make O=~/build/kernel/$1 $TARGET
@@ -1015,6 +1015,7 @@ function make-kernel() {
 alias mk='make-kernel'
 alias mc='make-kernel'
 alias ms='SPARSE="C=1" make-kernel'
+alias mcc='COMPILER="CC=clang" make-kernel clang'
 alias mks='sgx=true make-kernel'
 alias mkb='TARGET=bzImage make-kernel'
 
