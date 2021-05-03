@@ -27,7 +27,7 @@ elif [[ maxcpus -lt $cpus ]]; then
 fi
 
 if [[ $pin != false ]]; then
-    cgroup=$(grep ^cgroup /proc/mounts | grep cpuset | cut -f 2 -d ' ')
+    cgroup=$(grep ^cgroup /proc/mounts | grep cpuset | grep -v root | cut -f 2 -d ' ')
     if [[ ! -d $cgroup ]]; then
         printf "Cannot find cpuset mount point, got '$cgroup'\n"
         exit 1
@@ -45,7 +45,7 @@ if [[ $pin != false ]]; then
     echo $BASHPID > $cgroup/cgroup.procs
 fi
 
-cgroup=$(grep ^cgroup /proc/mounts | grep memory | cut -f 2 -d ' ')
+cgroup=$(grep ^cgroup /proc/mounts | grep memory | grep -v root | cut -f 2 -d ' ')
 if [[ ! -d $cgroup ]]; then
     printf "Cannot find memory cgroup mount point, got '$cgroup'\n"
     exit 1
