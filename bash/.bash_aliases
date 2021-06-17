@@ -538,7 +538,52 @@ alias services='sys list-unit-files --type=service'
 # misc system
 alias bm='blueman-manager &'
 alias gcm='gcert -s -m kernel-development,corevirt-team-testing'
-alias ds='dsync'
+
+function dev-sync() {
+    if [[ $# -ne 2 ]]; then
+        printf "usage: dev-sync <host> <option>\n"
+        return 1
+    elif [[ $1 != "full" && $1 != "settings" && $1 != "binaries" && $1 != "kvm" ]]; then
+        printf "usage: ds[,b,k,s] <target>\n"
+        return 1
+    fi
+
+    if [[ $1 == "full" ]]; then
+        ssh $2 "mkdir -p /data/local/seanjc/build/kernel/vm/arch/x86/boot; \
+                mkdir -p /data/local/seanjc/build/kernel/vm/lib/modules; \
+                mkdir -p /data/local/seanjc/build/kernel/i386/arch/x86/boot; \
+                mkdir -p /data/local/seanjc/build/kernel/i386/lib/modules; \
+                mkdir -p /data/local/seanjc/build/qemu/static-5.2; \
+                mkdir -p /data/local/seanjc/go/src/github.com/sean-jc; \
+                mkdir -p /data/local/seanjc/go/src/kernel.org; \
+                mkdir -p /data/local/seanjc/images/qemu"
+    fi
+    if [[ $1 == "full" || $1 == "settings" ]]; then
+        rsync --checksum ~/.bashrc $2:/data/local/seanjc
+        rsync --checksum ~/.inputrc $2:/data/local/seanjc
+        rsync --checksum ~/.vimrc $2:/data/local/seanjc
+        rsync --checksum --recursive --exclude='.git*' ~/go/src/github.com/sean-jc/settings $2:/data/local/seanjc/go/src/github.com/sean-jc
+        ssh $2 "chmod +x /data/local/seanjc/go/src/github.com/sean-jc/settings/bin/timeout"
+    fi
+    if [[ $1 == "full" || $1 == "binaries" ]]; then
+        rsync --checksum ~/build/qemu/static-5.2/qemu-system-x86_64 $2:/data/local/seanjc/build/qemu/static-5.2
+        rsync --checksum --recursive --links ~/build/pc-bios $2:/data/local/seanjc/build/qemu/static-5.2
+        rsync --checksum --recursive --links ~/build/ovmf $2:/data/local/seanjc/build
+        rsync --checksum --recursive --links ~/build/selftests $2:/data/local/seanjc/build
+        ssh $2 "rm -f /data/local/seanjc/build/qemu/stable; ln -s /data/local/seanjc/build/qemu/static-5.2/qemu-system-x86_64 /data/local/seanjc/build/qemu/stable"
+    fi
+    if [[ $1 == "full" || $1 == "kvm" ]]; then
+        rsync --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kvm-unit-tests $2:/data/local/seanjc/go/src/kernel.org
+        rsync --checksum ~/build/kernel/vm/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/vm/arch/x86/boot
+        rsync --checksum --recursive ~/build/kernel/vm/lib/modules $2:/data/local/seanjc/build/kernel/vm/lib
+        rsync --checksum ~/build/kernel/i386/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/i386/arch/x86/boot
+        rsync --checksum --recursive ~/build/kernel/i386/lib/modules $2:/data/local/seanjc/build/kernel/i386/lib
+    fi
+}
+alias ds='dev-sync full'
+alias dsb='dev-sync binaries'
+alias dsk='dev-sync kvm'
+alias dss='dev-sync settings'
 
 # List all UDP/TCP ports
 alias ports='netstat -tulanp'
