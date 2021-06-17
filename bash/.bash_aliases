@@ -807,22 +807,22 @@ function make-host {
         return 1
     fi
 
-    if [[ ! -f /boot/efi/loader/loader.conf ]]; then
+    if [[ -f /boot/grub/grub.cfg ]]; then
         make-kernel-package $@
-	return 0
+        return 0
     fi
 
     local name="-$(git show -s --pretty='tformat:%h')-$1"
     local threads=$(grep -c '^processor' /proc/cpuinfo)
     make LOCALVERSION=$name -j $threads && sudo make modules_install && sudo make install
-    if [[ $? -eq 0 ]]; then
-        local version=$(ls -1 /boot | egrep "vmlinuz-[.0-9]+(-rc[0-9])?$name" | sed -e "s/vmlinuz-//")
-        if [[ -z $version ]]; then
-            printf "Failed to locate new kernel $name\n"
-            return 1
-        fi
-        sudo kernel-install add $version /boot/vmlinuz-$version /boot/initrd.img-$version
-    fi
+    # if [[ $? -eq 0 && ]]; then
+    #     local version=$(ls -1 /boot | egrep "vmlinuz-[.0-9]+(-rc[0-9])?$name" | sed -e "s/vmlinuz-//")
+    #     if [[ -z $version ]]; then
+    #         printf "Failed to locate new kernel $name\n"
+    #         return 1
+    #     fi
+    #     sudo kernel-install add $version /boot/vmlinuz-$version /boot/initrd.img-$version
+    # fi
 }
 alias mh='make-host'
 
@@ -839,19 +839,19 @@ function make-gbuild {
 alias mg='make-gbuild'
 
 function get-kernel {
-    if [[ ! -f /boot/efi/loader/loader.conf ]]; then
+    if [[ -f /boot/grub/grub.cfg ]]; then
         grep menuentry /boot/grub/grub.cfg | grep -v -e \( -e generic | grep "'Ubuntu, with Linux." | cut -f 2 -d "'"
     else
-        sudo bootctl list | grep -E "\s+id:" | tr -s " " | cut -f 3 -d " " | grep -v firmware | grep -v Pop_OS
+        ls -1 /boot/config-* | cut -f 3 -d "/" | cut -f 2- -d "-" | grep -v generic
     fi
 }
 alias gkp=get-kernel
 
 function list-kernel {
-    if [[ ! -f /boot/efi/loader/loader.conf ]]; then
+    if [[ -f /boot/grub/grub.cfg ]]; then
         gkp | grep -o -e "Ubuntu, with Linux.*$1+\?" | cut -f 4 -d " "
     else
-        gkp | cut -f 2- -d "-" | sed -e "s/\.conf//"
+        gkp
     fi
 }
 alias lk='list-kernel'
@@ -861,7 +861,7 @@ function boot-kernel {
         printf "Must specify the target kernel name\n"
         return 1
     fi
-    if [[ ! -f /boot/efi/loader/loader.conf ]]; then
+    if [[ -f /boot/grub/grub.cfg ]]; then
         local k=${1%%+}
         if [[ $(gkp | grep -c -e "Ubuntu, with Linux.*$k+\?") != "1" ]]; then
             gkp | grep -o -e "Ubuntu, with Linux.*$k+\?" | cut -f 2 -d "'"
@@ -893,8 +893,12 @@ function boot-kernel {
             printf "$entry\nFound multiple entries for '$1'\n"
             return 1
         fi
-        sudo bootctl set-oneshot $entry
-        sudo bootctl list | grep "(default)" -A 1 | grep -o $entry
+        sudo rm /boot/vmlinuz /boot/initrd.img
+        sudo ln -s /boot/initrd.img-$version /boot/initrd.img
+        sudo ln -s /boot/vmlinuz-$version /boot/vmlinuz
+        sudo cp /boot/initrd.img-$version /boot/efi/EFI/Pop_OS-f3ed92a4-e46e-48f6-b760-8af78b9bc3be/initrd.img
+        sudo cp /boot/vmlinuz-$version /boot/efi/EFI/Pop_OS-f3ed92a4-e46e-48f6-b760-8af78b9bc3be/vmlinuz.efi
+        printf "Next Kernel: %s\n" $(readlink -e /boot/vmlinuz | cut -f 3 -d "/")
     fi
 }
 alias bk='boot-kernel'
@@ -909,7 +913,7 @@ function purge-kernel {
         printf "Must specify the target kernel name\n"
         return 1
     fi
-    if [[ ! -f /boot/efi/loader/loader.conf ]]; then
+    if [[ -f /boot/grub/grub.cfg ]]; then
         local k=${1%%+}
         if [[ $(dpkg-query-size | grep -c -e "linux-image.*$k+\?") != "1" ]]; then
             dpkg-query-size | grep -e "linux-image.*$k+"
@@ -938,7 +942,6 @@ function purge-kernel {
             printf "$version\nFound multiple entries for '$1'\n"
             return 1
         fi
-        sudo kernel-install remove $version
         sudo rm -f /boot/config-$version /boot/vmlinuz-$version /boot/initrd.img-$version /boot/System.map-$version
     fi
 }
