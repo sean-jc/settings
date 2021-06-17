@@ -22,7 +22,6 @@ echo "!tools/accounting/*" >> .git/info/sparse-checkout
 echo "!tools/arch/*" >> .git/info/sparse-checkout
 echo "!tools/bootconfig/*" >> .git/info/sparse-checkout
 echo "!tools/bpf/*" >> .git/info/sparse-checkout
-echo "!tools/build/*" >> .git/info/sparse-checkout
 echo "!tools/cgroup/*" >> .git/info/sparse-checkout
 echo "!tools/debugging/*" >> .git/info/sparse-checkout
 echo "!tools/edid/*" >> .git/info/sparse-checkout
