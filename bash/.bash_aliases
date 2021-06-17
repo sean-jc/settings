@@ -684,6 +684,8 @@ alias li='cd ~/go/src/kernel.org/linux'
 alias no='cd ~/go/src/kernel.org/nox'
 alias si='cd ~/go/src/kernel.org/sinux'
 alias sy='cd ~/go/src/kernel.org/syz'
+alias te='cd ~/go/src/kernel.org/tests'
+alias tk='cd ~/go/src/kernel.org/tests/tools/testing/selftests/kvm'
 alias bi='cd ~/build'
 alias kn='cd ~/build/kernel'
 alias qe='cd ~/build/qemu'
@@ -1139,7 +1141,7 @@ function time-kernel() {
     sleep .25
     ftime -o ~/build/kernel/$1/tk_time.log make -j$THREADS O=~/build/kernel/$1 > ~/build/kernel/$1/tk_build.log 2>&1
 }
-alias tk='time-kernel'
+alias tik='time-kernel'
 
 function system-info() {
     printf "IP Address:\t       $(ipa)\n"
