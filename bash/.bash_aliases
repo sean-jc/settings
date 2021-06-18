@@ -684,8 +684,8 @@ alias li='cd ~/go/src/kernel.org/linux'
 alias no='cd ~/go/src/kernel.org/nox'
 alias si='cd ~/go/src/kernel.org/sinux'
 alias sy='cd ~/go/src/kernel.org/syz'
-alias te='cd ~/go/src/kernel.org/tests'
-alias tk='cd ~/go/src/kernel.org/tests/tools/testing/selftests/kvm'
+alias te='cd ~/go/src/kernel.org/slf'
+alias tk='cd ~/go/src/kernel.org/slf/tools/testing/selftests/kvm'
 alias bi='cd ~/build'
 alias kn='cd ~/build/kernel'
 alias qe='cd ~/build/qemu'
@@ -793,11 +793,11 @@ function extract() {
 alias mguest='guest=true make-kernel-package'
 
 function make-selftests() {
-    local tests=( $(grep -v -e s390 -e aarch64 -e SPDX -e ipi $HOME/go/src/kernel.org/sinux/tools/testing/selftests/kvm/.gitignore) )
+    local tests=( $(grep -v -e s390 -e aarch64 -e SPDX -e ipi $HOME/go/src/kernel.org/slf/tools/testing/selftests/kvm/.gitignore) )
     local i
     local selftest
     for i in "${tests[@]}"; do
-        selftest="$HOME/go/src/kernel.org/sinux/tools/testing/selftests/kvm$i"
+        selftest="$HOME/go/src/kernel.org/slf/tools/testing/selftests/kvm$i"
         if [[ -f $selftest ]]; then
             cp $selftest $HOME/build/selftests
         fi
