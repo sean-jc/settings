@@ -139,7 +139,7 @@ else
     machine="$machine,kernel_irqchip"
 fi
 if [[ -n $sev ]]; then
-    machine="$machine,memory-encryption=sev -object sev-guest,id=sev,cbitpos=47,reduced-phys-bits=1"
+    machine="$machine,memory-encryption=sev -object sev-guest,id=sev,policy=0,cbitpos=47,reduced-phys-bits=1"
 fi
 machine="$machine -no-hpet"
 
