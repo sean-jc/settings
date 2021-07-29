@@ -545,16 +545,18 @@ function dev-sync() {
     if [[ $# -ne 2 ]]; then
         printf "usage: dev-sync <host> <option>\n"
         return 1
-    elif [[ $1 != "full" && $1 != "settings" && $1 != "binaries" && $1 != "kvm" ]]; then
-        printf "usage: ds[,b,k,s] <target>\n"
+    elif [[ $1 != "full" && $1 != "settings" && $1 != "binaries" && $1 != "kvm" && $1 != "tests" ]]; then
+        printf "usage: ds[,b,k,s,t] <target>\n"
         return 1
     fi
 
     if [[ $1 == "full" ]]; then
         ssh $2 "mkdir -p /data/local/seanjc/build/kernel/vm/arch/x86/boot; \
                 mkdir -p /data/local/seanjc/build/kernel/vm/lib/modules; \
-                mkdir -p /data/local/seanjc/build/kernel/i386/arch/x86/boot; \
-                mkdir -p /data/local/seanjc/build/kernel/i386/lib/modules; \
+                mkdir -p /data/local/seanjc/build/kernel/pae/arch/x86/boot; \
+                mkdir -p /data/local/seanjc/build/kernel/pae/lib/modules; \
+                mkdir -p /data/local/seanjc/build/kernel/pse/arch/x86/boot; \
+                mkdir -p /data/local/seanjc/build/kernel/pse/lib/modules; \
                 mkdir -p /data/local/seanjc/build/qemu/static-5.2; \
                 mkdir -p /data/local/seanjc/go/src/github.com/sean-jc; \
                 mkdir -p /data/local/seanjc/go/src/kernel.org; \
@@ -571,21 +573,26 @@ function dev-sync() {
         rsync --checksum ~/build/qemu/static-5.2/qemu-system-x86_64 $2:/data/local/seanjc/build/qemu/static-5.2
         rsync --checksum --recursive --links ~/build/pc-bios $2:/data/local/seanjc/build/qemu/static-5.2
         rsync --checksum --recursive --links ~/build/ovmf $2:/data/local/seanjc/build
-        rsync --checksum --recursive --links ~/build/selftests $2:/data/local/seanjc/build
         ssh $2 "rm -f /data/local/seanjc/build/qemu/stable; ln -s /data/local/seanjc/build/qemu/static-5.2/qemu-system-x86_64 /data/local/seanjc/build/qemu/stable"
     fi
-    if [[ $1 == "full" || $1 == "kvm" ]]; then
+    if [[ $1 == "full" || $1 == "tests" ]]; then
+        rsync --checksum --recursive --links ~/build/selftests $2:/data/local/seanjc/build
         rsync --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kvm-unit-tests $2:/data/local/seanjc/go/src/kernel.org
+    fi
+    if [[ $1 == "full" || $1 == "kvm" ]]; then
         rsync --checksum ~/build/kernel/vm/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/vm/arch/x86/boot
         rsync --checksum --recursive ~/build/kernel/vm/lib/modules $2:/data/local/seanjc/build/kernel/vm/lib
-        rsync --checksum ~/build/kernel/i386/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/i386/arch/x86/boot
-        rsync --checksum --recursive ~/build/kernel/i386/lib/modules $2:/data/local/seanjc/build/kernel/i386/lib
+        rsync --checksum ~/build/kernel/pae/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/pae/arch/x86/boot
+        rsync --checksum --recursive ~/build/kernel/pae/lib/modules $2:/data/local/seanjc/build/kernel/pae/lib
+        rsync --checksum ~/build/kernel/pse/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/pse/arch/x86/boot
+        rsync --checksum --recursive ~/build/kernel/pse/lib/modules $2:/data/local/seanjc/build/kernel/pse/lib
     fi
 }
 alias ds='dev-sync full'
 alias dsb='dev-sync binaries'
 alias dsk='dev-sync kvm'
 alias dss='dev-sync settings'
+alias dst='dev-sync tests'
 
 # List all UDP/TCP ports
 alias ports='netstat -tulanp'
