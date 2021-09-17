@@ -447,7 +447,13 @@ alias vs='vm-stats'
 alias vss='vm-stats true'
 
 alias ssl='ssh -6 sean@fe80::216:3eff:fe68:00%tap1'
+alias ssl1='ssh -6 sean@fe80::216:3eff:fe68:00%tap1'
+alias ssl2='ssh -6 sean@fe80::216:3eff:fe68:10%tap1'
+alias ssl3='ssh -6 sean@fe80::216:3eff:fe68:20%tap1'
 alias ssi='ssh -6 sean@fe80::216:3eff:fe68:80%tap1'
+alias ssi1='ssh -6 sean@fe80::216:3eff:fe68:80%tap1'
+alias ssi2='ssh -6 sean@fe80::216:3eff:fe68:90%tap1'
+alias ssi3='ssh -6 sean@fe80::216:3eff:fe68:a0%tap1'
 
 function scp-to {
     scp -6 $1 sean@[fe80::216:3eff:fe68:0%tap1]:$2
