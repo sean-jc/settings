@@ -199,6 +199,15 @@ function git-archive-branch() {
         return 1
     fi
 }
+
+function git-get() {
+    if [[ $# -eq 0 ]]; then
+        gwo --pretty="%C(auto)   %D"
+    else
+        git checkout $@
+    fi
+}
+
 function git-get-branch() {
     if [[ $# -eq 1 ]]; then
         git checkout -b $1 origin/$1
@@ -288,7 +297,7 @@ alias gfu='git fetch upstream'
 alias gfp='git format-patch -M --minimal --patience -o ~/patches -1'
 alias gfk='nosend=1 git-email kvm'
 alias gft='git fetch --tags'
-alias gg='git checkout'
+alias gg='git-get'
 alias ggc='git-get-cc'
 alias ggs='git-get-prefixed-branch sgx'
 alias gsb='git-get-prefixed-branch sgx/base'
