@@ -733,6 +733,7 @@ alias ox='cd ~/outbox/linux/x86'
 # Direct navigation to misc directories
 alias dl='cd ~/Downloads'
 alias cpa='cd ~/patches'
+alias sp='rm -f ~/patches/* && scp c:~/patches/* ~/patches/'
 
 # Kernel grep and gdb commands
 alias gk='readelf -sW vmlinux | grep'
