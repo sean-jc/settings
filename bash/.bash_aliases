@@ -331,6 +331,15 @@ alias gt='git-tree'
 alias gus='git-update-subs'
 alias gv='git remote -vv'
 
+# b4 and other lore stuff
+function b4-am() {
+    rm -f ~/patches/*
+    pushd ~/patches
+    $HOME/go/src/kernel.org/b4/b4.sh am $1
+    rm -f ~/patches/*.cover
+    popd
+}
+alias bb="b4-am"
 
 # -----------------------------------------------------------------------------
 # Go
