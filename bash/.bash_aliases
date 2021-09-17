@@ -6,6 +6,14 @@ function psudo() {
     sudo $@
 }
 
+function pushd() {
+    command pushd "$@" > /dev/null
+}
+
+function popd() {
+    command popd "$@" > /dev/null
+}
+
 # -----------------------------------------------------------------------------
 # Floating Castle
 # -----------------------------------------------------------------------------
@@ -14,14 +22,14 @@ alias fu='ff cache -u'
 alias fm='ff moon -i'
 
 function floating-castle-gulp() {
-    pushd ~/go/src/github.com/zombull/floating-castle/server > /dev/null
+    pushd ~/go/src/github.com/zombull/floating-castle/server
     gulp
     popd
 }
 alias fsg='floating-castle-gulp'
 
 function floating-castle-restart() {
-    pushd ~/go/src/github.com/zombull/floating-castle > /dev/null
+    pushd ~/go/src/github.com/zombull/floating-castle
     set -o xtrace
     go install -v && \
     sudo cp /home/sean/go/src/github.com/zombull/floating-castle/server/nginx/nginx.conf /etc/nginx/nginx.conf && \
@@ -754,14 +762,6 @@ alias mkdir='mkdir -p'
 function mcd() {
     mkdir $1
     cd $1
-}
-
-function pushd() {
-    command pushd "$@" > /dev/null
-}
-
-function popd() {
-    command popd "$@" > /dev/null
 }
 
 function extract() {
