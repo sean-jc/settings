@@ -1099,7 +1099,9 @@ function make-kernel() {
 alias mk='make-kernel'
 alias mc='make-kernel'
 alias ms='SPARSE="C=1" make-kernel'
-alias mcc='COMPILER="CC=clang" make-kernel clang'
+alias cmc='COMPILER="CC=clang" make-kernel'
+alias cms='COMPILER="CC=clang" SPARSE="C=1" make-kernel'
+
 alias mks='sgx=true make-kernel'
 alias mkb='TARGET=bzImage make-kernel'
 
@@ -1138,6 +1140,12 @@ alias ml='make-kernel-opt localmodconfig'
 alias mm='make-kernel-opt menuconfig'
 alias mo='make-kernel-opt oldconfig'
 alias me='make-kernel-opt clean'
+
+alias cmd='COMPILER="CC=clang" make-kernel-opt htmldocs'
+alias cml='COMPILER="CC=clang" make-kernel-opt localmodconfig'
+alias cmm='COMPILER="CC=clang" make-kernel-opt menuconfig'
+alias cmo='COMPILER="CC=clang" make-kernel-opt oldconfig'
+alias cme='COMPILER="CC=clang" make-kernel-opt clean'
 
 alias amc='ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make-kernel cc_arm'
 alias amd='ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make-kernel-opt defconfig cc_arm'
