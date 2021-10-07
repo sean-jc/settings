@@ -1149,28 +1149,43 @@ alias cme='COMPILER="CC=clang" make-kernel-opt clean'
 
 alias amc='ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make-kernel cc_arm'
 alias amd='ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make-kernel-opt defconfig cc_arm'
+alias ame='ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make-kernel-opt clean cc_arm'
 alias amm='ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make-kernel-opt menuconfig cc_arm'
 alias amo='ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make-kernel-opt oldconfig cc_arm'
 
 alias mmc='ARCH=mips CROSS_COMPILE=mips64-linux-gnuabi64- make-kernel cc_mips64'
 alias mmd='ARCH=mips CROSS_COMPILE=mips64-linux-gnuabi64- make-kernel-opt defconfig cc_mips64'
+alias mme='ARCH=mips CROSS_COMPILE=mips64-linux-gnuabi64- make-kernel-opt clean cc_mips64'
 alias mmm='ARCH=mips CROSS_COMPILE=mips64-linux-gnuabi64- make-kernel-opt menuconfig cc_mips64'
 alias mmo='ARCH=mips CROSS_COMPILE=mips64-linux-gnuabi64- make-kernel-opt oldconfig cc_mips64'
 
 alias pmc='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel cc_ppc64'
 alias pmd='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel-opt defconfig cc_ppc64'
+alias pme='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel-opt clean cc_ppc64'
 alias pmm='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel-opt menuconfig cc_ppc64'
 alias pmo='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel-opt oldconfig cc_ppc64'
 
 alias emc='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel cc_e500mc'
 alias emd='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel-opt defconfig cc_e500mc'
+alias eme='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel-opt clean cc_e500mc'
 alias emm='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel-opt menuconfig cc_e500mc'
 alias emo='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel-opt oldconfig cc_e500mc'
+
+alias rmc='ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- make-kernel cc_riscv'
+alias rmd='ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- make-kernel-opt defconfig cc_riscv'
+alias rme='ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- make-kernel-opt clean cc_riscv'
+alias rmm='ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- make-kernel-opt menuconfig cc_riscv'
+alias rmo='ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- make-kernel-opt oldconfig cc_riscv'
 
 alias smc='ARCH=s390 CROSS_COMPILE=s390x-linux-gnu- make-kernel cc_s390'
 alias smd='ARCH=s390 CROSS_COMPILE=s390x-linux-gnu- make-kernel-opt defconfig cc_s390'
 alias smm='ARCH=s390 CROSS_COMPILE=s390x-linux-gnu- make-kernel-opt menuconfig cc_s390'
 alias smo='ARCH=s390 CROSS_COMPILE=s390x-linux-gnu- make-kernel-opt oldconfig cc_s390'
+
+alias xmc='make-kernel cc_x86'
+alias xmd='make-kernel-opt defconfig cc_x86'
+alias xmm='make-kernel-opt menuconfig cc_x86'
+alias xmo='make-kernel-opt oldconfig cc_x86'
 
 # time kernel
 function time-kernel() {
