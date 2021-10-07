@@ -11,6 +11,7 @@ echo "arch/Kconfig" >> .git/info/sparse-checkout
 echo "arch/arm64" >> .git/info/sparse-checkout
 echo "arch/mips" >> .git/info/sparse-checkout
 echo "arch/powerpc" >> .git/info/sparse-checkout
+echo "arch/riscv" >> .git/info/sparse-checkout
 echo "arch/s390" >> .git/info/sparse-checkout
 echo "arch/x86" >> .git/info/sparse-checkout
 echo "tools/arch/x86" >> .git/info/sparse-checkout
