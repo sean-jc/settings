@@ -41,7 +41,6 @@ stubdirs=(
         drivers/hwtracing/intel_th
         drivers/hwtracing/stm
         drivers/i2c
-        drivers/ide
         drivers/idle
         drivers/iio
         drivers/infiniband
@@ -49,7 +48,6 @@ stubdirs=(
         drivers/isdn
         drivers/leds
         drivers/lguest
-        drivers/lightnvm
         drivers/macintosh
         drivers/mcb
         drivers/media
@@ -88,7 +86,6 @@ stubdirs=(
         drivers/reset
         drivers/rpmsg
         drivers/sbus
-        drivers/sfi
         drivers/sh
         drivers/siox
         drivers/slimbus

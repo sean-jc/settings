@@ -5,16 +5,17 @@ git config core.sparseCheckout true
 
 echo "!arch/*" > .git/info/sparse-checkout
 echo "!tools/arch/*" >> .git/info/sparse-checkout
+echo "/*/" >> .git/info/sparse-checkout
 echo "/*" >> .git/info/sparse-checkout
 echo "arch/.gitignore" >> .git/info/sparse-checkout
 echo "arch/Kconfig" >> .git/info/sparse-checkout
-echo "arch/arm64" >> .git/info/sparse-checkout
-echo "arch/mips" >> .git/info/sparse-checkout
-echo "arch/powerpc" >> .git/info/sparse-checkout
-echo "arch/riscv" >> .git/info/sparse-checkout
-echo "arch/s390" >> .git/info/sparse-checkout
-echo "arch/x86" >> .git/info/sparse-checkout
-echo "tools/arch/x86" >> .git/info/sparse-checkout
+echo "arch/arm64/" >> .git/info/sparse-checkout
+echo "arch/mips/" >> .git/info/sparse-checkout
+echo "arch/powerpc/" >> .git/info/sparse-checkout
+echo "arch/riscv/" >> .git/info/sparse-checkout
+echo "arch/s390/" >> .git/info/sparse-checkout
+echo "arch/x86/" >> .git/info/sparse-checkout
+echo "tools/arch/x86/" >> .git/info/sparse-checkout
 for i in "${stubdirs[@]}"; do
         echo "!$i" >> .git/info/sparse-checkout
 done

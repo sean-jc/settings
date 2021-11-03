@@ -6,11 +6,12 @@ git config core.sparseCheckout true
 echo "!arch/*" > .git/info/sparse-checkout
 echo "!tools/arch/*" >> .git/info/sparse-checkout
 echo "!virt/kvm/arm/*" >> .git/info/sparse-checkout
+echo "/*/" >> .git/info/sparse-checkout
 echo "/*" >> .git/info/sparse-checkout
 echo "arch/.gitignore" >> .git/info/sparse-checkout
 echo "arch/Kconfig" >> .git/info/sparse-checkout
-echo "arch/x86" >> .git/info/sparse-checkout
-echo "tools/arch/x86" >> .git/info/sparse-checkout
+echo "arch/x86/" >> .git/info/sparse-checkout
+echo "tools/arch/x86/" >> .git/info/sparse-checkout
 echo "tools/include/uapi/linux/kvm.h" >> .git/info/sparse-checkout
 for i in "${stubdirs[@]}"; do
         echo "!$i" >> .git/info/sparse-checkout

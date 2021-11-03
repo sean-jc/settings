@@ -28,7 +28,7 @@ echo "lib/*" >> .git/info/sparse-checkout
 echo "kernel/*" >> .git/info/sparse-checkout
 echo "mm/*" >> .git/info/sparse-checkout
 echo "security/*" >> .git/info/sparse-checkout
-echo "tools/arch/x86" >> .git/info/sparse-checkout
+echo "tools/arch/x86/" >> .git/info/sparse-checkout
 echo "tools/include/uapi/linux/kvm.h" >> .git/info/sparse-checkout
 echo "tools/objtool" >> .git/info/sparse-checkout
 echo "tools/testing/selftests/kselftest.h" >> .git/info/sparse-checkout
