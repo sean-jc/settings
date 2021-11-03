@@ -202,7 +202,7 @@ function git-archive-branch() {
 
 function git-get() {
     if [[ $# -eq 0 ]]; then
-        gwo --pretty="%C(auto)   %D"
+        git show -s --pretty="%C(auto)   %D"
     else
         git checkout $@
     fi
