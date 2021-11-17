@@ -16,7 +16,7 @@ fi
 
 maxcpus=$(grep -c '^processor' /proc/cpuinfo)
 if [[ -z $cpus ]]; then
-    cpus=maxcpus
+    cpus=$maxcpus
 elif [[ $maxcpus -lt $cpus ]]; then
     pin=n
 fi
