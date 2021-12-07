@@ -9,9 +9,7 @@ if [[ $2 == "kvm" ]]; then
     opts="$opts --pattern-depth=1"
 fi
 
-if [[ $2 == "ku" ]]; then
-    maint="kvm@vger.kernel.org,"
-elif [[ $(basename $1) =~ ^$40000- ]] ; then
+if [[ $(basename $1) =~ ^$40000- ]] ; then
     maint=$(./scripts/get_maintainer.pl $opts $(dirname $1)/!($40000-cover-letter.patch) | tr '\n' ',')
 else
     maint=$(./scripts/get_maintainer.pl $opts $1 | tr '\n' ',')

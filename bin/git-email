@@ -143,9 +143,7 @@ while true; do
 done
 
 if [[ -z $to ]]; then
-    if [[ $ml == "ku" ]]; then
-        to="--to=\"Paolo Bonzini <pbonzini@redhat.com>\""
-    elif [[ $ml == "lsm" ]]; then
+    if [[ $ml == "lsm" ]]; then
         ml="sgx"
         to="--to=\"Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>\""
         cc="--cc=\"linux-sgx@vger.kernel.org\" --cc=\"linux-security-module@vger.kernel.org\" --cc=\"selinux@vger.kernel.org\" --cc=\"Bill Roberts <william.c.roberts@intel.com>\" --cc=\"Casey Schaufler <casey.schaufler@intel.com>\" --cc=\"James Morris <jmorris@namei.org>\" --cc=\"Dave Hansen <dave.hansen@intel.com>\" --cc=\"Cedric Xing <cedric.xing@intel.com>\" --cc=\"Andy Lutomirski <luto@kernel.org>\" --cc=\"Jethro Beekman <jethro@fortanix.com>\" --cc=\"Dr. Greg Wettstein <greg@enjellic.com>\" --cc=\"Stephen Smalley <sds@tycho.nsa.gov>\""
