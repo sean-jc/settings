@@ -69,7 +69,6 @@ stubdirs=(
         drivers/parisc
         drivers/parport
         drivers/pcmcia
-        drivers/perf
         drivers/phy
         drivers/pinctrl
         drivers/platform/chrome
