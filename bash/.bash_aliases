@@ -14,6 +14,11 @@ function popd() {
     command popd "$@" > /dev/null
 }
 
+function get-nr-cpus() {
+    grep -c '^processor' /proc/cpuinfo
+}
+alias cpus=get-nr-cpus
+
 # -----------------------------------------------------------------------------
 # Floating Castle
 # -----------------------------------------------------------------------------
@@ -864,7 +869,7 @@ function run-gvisor {
 alias rung='run-gvisor 1000'
 
 function run-nx-gvisor {
-    local nr_cpus=$(grep -c '^processor' /proc/cpuinfo)
+    local nr_cpus=$(get-nr-cpus)
     for i in $(seq 1 $nr_cpus); do
         run-gvisor 1000 > /dev/null 2>&1 &
     done
@@ -903,8 +908,7 @@ function make-kernel-package() {
     rm -f ../*$1+_${rev}_*.deb
     name="$(git show -s --pretty='tformat:%h')-$1"
 
-    THREADS=$(grep -c '^processor' /proc/cpuinfo)
-    CONCURRENCY_LEVEL=$THREADS make-kpkg --initrd --append-to-version=-$name kernel_headers kernel_image --revision $rev
+    CONCURRENCY_LEVEL=$(get-nr-cpus) make-kpkg --initrd --append-to-version=-$name kernel_headers kernel_image --revision $rev
 
     if [[ $? -eq 0 && $# -lt 2 && $guest != "true" ]]; then
         dpkg -i ../*${name}*_${rev}_*.deb
@@ -1096,35 +1100,21 @@ function make-kernel() {
         stubify-linux $1
     fi
 
-    if [[ $sgx == "true" ]]; then
-        if git diff --quiet && git diff --staged --quiet ; then
-            git cherry-pick sgx/zzz-token || return 1
-        else
-            git stash save
-            git cherry-pick sgx/zzz-token || return 1
-            git stash pop
-        fi
-    fi
-    THREADS=$(grep -c '^processor' /proc/cpuinfo)
+    local ret
     if [[ -z $TARGET ]]; then
-        make O=~/build/kernel/$1 $SPARSE $COMPILER -j$THREADS
-        if [[ $? -eq 0 ]]; then
+        make O=~/build/kernel/$1 $SPARSE $COMPILER -j$(get-nr-cpus)
+        ret=$?
+        if [[ $ret -eq 0 ]]; then
             make O=~/build/kernel/$1 $COMPILER INSTALL_MOD_PATH=~/build/kernel/$1 modules_install
         fi
     else
         make O=~/build/kernel/$1 $TARGET
+        ret=$?
     fi
-    if [[ $sgx == "true" ]]; then
-        if git diff --quiet && git diff --staged --quiet ; then
-            git reset HEAD^ --hard
-        else
-            git stash save
-            git reset HEAD^ --hard
-            git stash pop
-        fi
-    fi
+
     unset TARGET
-    unset THREADS
+
+    return $ret
 }
 alias mk='make-kernel'
 alias mc='make-kernel'
@@ -1223,10 +1213,9 @@ function time-kernel() {
         printf "Must specify the target kernel name\n"
         return 1
     fi
-    THREADS=$(grep -c '^processor' /proc/cpuinfo)
     make O=~/build/kernel/$1 clean
     sleep .25
-    ftime -o ~/build/kernel/$1/tk_time.log make -j$THREADS O=~/build/kernel/$1 > ~/build/kernel/$1/tk_build.log 2>&1
+    ftime -o ~/build/kernel/$1/tk_time.log make -j$(get-nr-cpus) O=~/build/kernel/$1 > ~/build/kernel/$1/tk_build.log 2>&1
 }
 alias tik='time-kernel'
 
@@ -1246,13 +1235,12 @@ function system-info-verbose() {
 alias siv='system-info-verbose'
 
 function make-qemu() {
-    THREADS=$(grep -c '^processor' /proc/cpuinfo)
-    make -j$THREADS
+    make -j$(get-nr-cpus)
 }
 alias mq='make-qemu'
 
 function make-ovmf() {
-    build -n $(grep -c '^processor' /proc/cpuinfo) -a X64 -a IA32 -t GCC5 -p OvmfPkg/OvmfPkgIa32X64.dsc
+    build -n $(get-nr-cpus) -a X64 -a IA32 -t GCC5 -p OvmfPkg/OvmfPkgIa32X64.dsc
 }
 alias mf=make-ovmf
 
