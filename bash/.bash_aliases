@@ -605,6 +605,7 @@ function dev-sync() {
         rsync --checksum ~/build/qemu/static-5.2/qemu-system-x86_64 $2:/data/local/seanjc/build/qemu/static-5.2
         rsync --checksum --recursive --links ~/build/pc-bios $2:/data/local/seanjc/build/qemu/static-5.2
         rsync --checksum --recursive --links ~/build/ovmf $2:/data/local/seanjc/build
+        rsync --checksum --recursive --links ~/build/gvisor $2:/data/local/seanjc/build
         ssh $2 "rm -f /data/local/seanjc/build/qemu/stable; ln -s /data/local/seanjc/build/qemu/static-5.2/qemu-system-x86_64 /data/local/seanjc/build/qemu/stable"
     fi
     if [[ $1 == "full" || $1 == "tests" ]]; then
@@ -853,6 +854,29 @@ function run-selftests() {
     done
 }
 alias rtests='run-selftests'
+
+function run-gvisor {
+    #!/bin/bash
+    for i in $(seq 1 $1); do
+	    runsc --platform=kvm --network=none do echo ok
+    done
+}
+alias rung='run-gvisor 1000'
+
+function run-nx-gvisor {
+    local nr_cpus=$(grep -c '^processor' /proc/cpuinfo)
+    for i in $(seq 1 $nr_cpus); do
+        run-gvisor 1000 > /dev/null 2>&1 &
+    done
+
+    for i in $(seq 1 100); do
+        echo Y > /sys/module/kvm/parameters/nx_huge_pages
+        sleep 1
+        echo N > /sys/module/kvm/parameters/nx_huge_pages
+        sleep 1
+    done
+}
+alias runx='run-nx-gvisor'
 
 function make-kernel-package() {
     if [[ $# -lt 1 ]]; then
