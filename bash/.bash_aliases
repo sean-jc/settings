@@ -830,12 +830,18 @@ function make-selftests() {
     local tests=( $(grep -v -e s390 -e aarch64 -e SPDX -e ipi $HOME/go/src/kernel.org/slf/tools/testing/selftests/kvm/.gitignore) )
     local i
     local selftest
-    for i in "${tests[@]}"; do
-        selftest="$HOME/go/src/kernel.org/slf/tools/testing/selftests/kvm$i"
-        if [[ -f $selftest ]]; then
-            cp $selftest $HOME/build/selftests
-        fi
-    done
+
+    pushd $HOME/go/src/kernel.org/slf/tools/testing/selftests/kvm
+    EXTRA_CFLAGS="-static" make
+    if [[ $? -eq 0 ]]; then
+        for i in "${tests[@]}"; do
+            selftest="$HOME/go/src/kernel.org/slf/tools/testing/selftests/kvm$i"
+            if [[ -f $selftest ]]; then
+                cp $selftest $HOME/build/selftests
+            fi
+        done
+    fi
+    popd
 }
 alias mtests='make-selftests'
 
