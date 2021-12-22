@@ -1116,14 +1116,6 @@ function make-kernel() {
 
     return $ret
 }
-alias mk='make-kernel'
-alias mc='make-kernel'
-alias ms='SPARSE="C=1" make-kernel'
-alias cmc='COMPILER="CC=clang" make-kernel'
-alias cms='COMPILER="CC=clang" SPARSE="C=1" make-kernel'
-
-alias mks='sgx=true make-kernel'
-alias mkb='TARGET=bzImage make-kernel'
 
 function make-kernel-opt() {
     if [[ $# -ne 1 && $# -ne 2 ]]; then
@@ -1155,57 +1147,196 @@ function make-kernel-opt() {
         make $1
     fi
 }
+
+alias mk='make-kernel'
+alias mc='make-kernel'
+alias ms='SPARSE="C=1" make-kernel'
 alias md='make-kernel-opt htmldocs'
 alias ml='make-kernel-opt localmodconfig'
 alias mm='make-kernel-opt menuconfig'
 alias mo='make-kernel-opt oldconfig'
 alias me='make-kernel-opt clean'
 
-alias cmd='COMPILER="CC=clang" make-kernel-opt htmldocs'
-alias cml='COMPILER="CC=clang" make-kernel-opt localmodconfig'
-alias cmm='COMPILER="CC=clang" make-kernel-opt menuconfig'
-alias cmo='COMPILER="CC=clang" make-kernel-opt oldconfig'
-alias cme='COMPILER="CC=clang" make-kernel-opt clean'
+function make-clang() {
+    COMPILER="CC=clang" $@
+}
+function make-kernel-clang() {
+    make-clang make-kernel $@
+}
+function make-kernel-clang-opt() {
+    make-clang make-kernel-opt $@
+}
+alias cmc='make-kernel-clang'
+alias cms='SPARSE="C=1" make-kernel-clang'
+alias cmd='make-kernel-clang-opt htmldocs'
+alias cml='make-kernel-clang-opt localmodconfig'
+alias cmm='make-kernel-clang-opt menuconfig'
+alias cmo='make-kernel-clang-opt oldconfig'
+alias cme='make-kernel-clang-opt clean'
 
-alias amc='ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make-kernel cc_arm'
-alias amd='ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make-kernel-opt defconfig cc_arm'
-alias ame='ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make-kernel-opt clean cc_arm'
-alias amm='ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make-kernel-opt menuconfig cc_arm'
-alias amo='ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make-kernel-opt oldconfig cc_arm'
+function make-arm() {
+    ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- $@
+}
+function make-kernel-arm() {
+    make-arm make-kernel $@
+}
+function make-kernel-arm-opt() {
+    make-arm make-kernel-opt $@
+}
+alias amc='make-kernel-arm cc_arm'
+alias amd='make-kernel-arm-opt defconfig cc_arm'
+alias ame='make-kernel-arm-opt clean cc_arm'
+alias amm='make-kernel-arm-opt menuconfig cc_arm'
+alias amo='make-kernel-arm-opt oldconfig cc_arm'
 
-alias mmc='ARCH=mips CROSS_COMPILE=mips64-linux-gnuabi64- make-kernel cc_mips64'
-alias mmd='ARCH=mips CROSS_COMPILE=mips64-linux-gnuabi64- make-kernel-opt defconfig cc_mips64'
-alias mme='ARCH=mips CROSS_COMPILE=mips64-linux-gnuabi64- make-kernel-opt clean cc_mips64'
-alias mmm='ARCH=mips CROSS_COMPILE=mips64-linux-gnuabi64- make-kernel-opt menuconfig cc_mips64'
-alias mmo='ARCH=mips CROSS_COMPILE=mips64-linux-gnuabi64- make-kernel-opt oldconfig cc_mips64'
+function make-mips() {
+    ARCH=mips CROSS_COMPILE=mips64-linux-gnuabi64- $@
+}
+function make-kernel-mips() {
+    make-mips make-kernel $@
+}
+function make-kernel-mips-opt() {
+    make-mips make-kernel-opt $@
+}
+alias mmc='make-kernel-mips cc_mips64'
+alias mmd='make-kernel-mips-opt defconfig cc_mips64'
+alias mme='make-kernel-mips-opt clean cc_mips64'
+alias mmm='make-kernel-mips-opt menuconfig cc_mips64'
+alias mmo='make-kernel-mips-opt oldconfig cc_mips64'
 
-alias pmc='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel cc_ppc64'
-alias pmd='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel-opt defconfig cc_ppc64'
-alias pme='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel-opt clean cc_ppc64'
-alias pmm='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel-opt menuconfig cc_ppc64'
-alias pmo='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel-opt oldconfig cc_ppc64'
+function make-ppc() {
+    ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- $@
+}
+function make-kernel-ppc() {
+    make-ppc make-kernel $@
+}
+function make-kernel-ppc-opt() {
+    make-ppc make-kernel-opt $@
+}
+alias pmc='make-kernel-ppc cc_ppc64'
+alias pmd='make-kernel-ppc-opt defconfig cc_ppc64'
+alias pme='make-kernel-ppc-opt clean cc_ppc64'
+alias pmm='make-kernel-ppc-opt menuconfig cc_ppc64'
+alias pmo='make-kernel-ppc-opt oldconfig cc_ppc64'
 
-alias emc='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel cc_e500mc'
-alias emd='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel-opt defconfig cc_e500mc'
-alias eme='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel-opt clean cc_e500mc'
-alias emm='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel-opt menuconfig cc_e500mc'
-alias emo='ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- make-kernel-opt oldconfig cc_e500mc'
+alias emc='make-kernel-ppc cc_e500mc'
+alias emd='make-kernel-ppc-opt defconfig cc_e500mc'
+alias eme='make-kernel-ppc-opt clean cc_e500mc'
+alias emm='make-kernel-ppc-opt menuconfig cc_e500mc'
+alias emo='make-kernel-ppc-opt oldconfig cc_e500mc'
 
-alias rmc='ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- make-kernel cc_riscv'
-alias rmd='ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- make-kernel-opt defconfig cc_riscv'
-alias rme='ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- make-kernel-opt clean cc_riscv'
-alias rmm='ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- make-kernel-opt menuconfig cc_riscv'
-alias rmo='ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- make-kernel-opt oldconfig cc_riscv'
+function make-riscv() {
+    ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- $@
+}
+function make-kernel-riscv() {
+    make-riscv make-kernel $@
+}
+function make-kernel-riscv-opt() {
+    make-riscv make-kernel-opt $@
+}
+alias rmc='make-kernel-riscv cc_riscv'
+alias rmd='make-kernel-riscv-opt defconfig cc_riscv'
+alias rme='make-kernel-riscv-opt clean cc_riscv'
+alias rmm='make-kernel-riscv-opt menuconfig cc_riscv'
+alias rmo='make-kernel-riscv-opt oldconfig cc_riscv'
 
-alias smc='ARCH=s390 CROSS_COMPILE=s390x-linux-gnu- make-kernel cc_s390'
-alias smd='ARCH=s390 CROSS_COMPILE=s390x-linux-gnu- make-kernel-opt defconfig cc_s390'
-alias smm='ARCH=s390 CROSS_COMPILE=s390x-linux-gnu- make-kernel-opt menuconfig cc_s390'
-alias smo='ARCH=s390 CROSS_COMPILE=s390x-linux-gnu- make-kernel-opt oldconfig cc_s390'
+function make-s390() {
+    ARCH=s390 CROSS_COMPILE=s390x-linux-gnu- $@
+}
+function make-kernel-s390() {
+    make-s390 make-kernel $@
+}
+function make-kernel-s390-opt() {
+    make-s390 make-kernel-opt $@
+}
+alias smc='make-kernel-s390 cc_s390'
+alias smd='make-kernel-s390-opt defconfig cc_s390'
+alias smm='make-kernel-s390-opt menuconfig cc_s390'
+alias smo='make-kernel-s390-opt oldconfig cc_s390'
 
 alias xmc='make-kernel cc_x86'
 alias xmd='make-kernel-opt defconfig cc_x86'
 alias xmm='make-kernel-opt menuconfig cc_x86'
 alias xmo='make-kernel-opt oldconfig cc_x86'
+
+function make-kernel-branch() {
+    local RED='\033[1;31m' # Bold Red
+    local cyan='\033[0;36m' # Cyan
+    local NOF='\033[0m' # No Format
+    local current=$(git rev-parse --abbrev-ref HEAD)
+    local arbitrary=1000
+    local targets
+    local ret
+
+    if [[ $# -ne 2 ]]; then
+        printf "Must specify the starting git commit and targets\n"
+        return 1
+    fi
+
+    if [[ $1 == "x86" ]]; then
+        targets=("make-kernel vm"
+                 "make-kernel pae"
+                 "make-kernel pse"
+                 "make-kernel-clang clang")
+    else
+        targets=("make-kernel-arm cc_arm"
+                 "make-kernel-mips cc_mips64"
+                 "make-kernel-ppc cc_ppc64"
+                 "make-kernel-ppc cc_e500mc"
+                 "make-kernel-riscv cc_riscv"
+                 "make-kernel-s390 cc_s390"
+                 "make-kernel cc_x86")
+    fi
+
+    local first=$(git rev-parse $2)
+    if [[ $? -ne 0 ]]; then
+        printf "Did not find $2 in git\n"
+        return 1
+    fi
+
+    local commits=$(glo | head -$arbitrary | grep -B $arbitrary $first | tac | cut -f 1 -d ' ')
+    if [[ $? -ne 0 ]]; then
+        printf "Did not find $2 in git log\n"
+        return 1
+    fi
+    commits=(${commits//:/ })
+
+    printf "Current branch is '$current'\n\n"
+
+    gb -D $1/autotest 2> /dev/null
+    gg -b $1/autotest
+    for i in "${commits[@]}"; do
+        local commit=$(gwo $i)
+        git reset --hard $i
+
+        ret=$?
+        if [[ $ret -ne 0 ]]; then
+            printf "\n$REDFailed to reset to commit ${cyan}$commit$NC\n\n"
+            break
+        fi
+
+        for target in "${targets[@]}"; do
+            $target
+
+            ret=$?
+            if [[ $ret -ne 0 ]]; then
+                printf "\n${RED}Commit ${cyan}$commit${RED} failed to build with '$target'.${NOF}\n\n"
+                break
+            fi
+        done
+        if [[ $ret -ne 0 ]]; then
+            break
+        fi
+    done
+
+    unset TARGETS
+    gg $current
+    gb -D $1/autotest
+}
+alias mkx='make-kernel-branch x86'
+alias mkc='make-kernel-branch all'
+
+alias mkb='TARGET=bzImage make-kernel'
 
 # time kernel
 function time-kernel() {
