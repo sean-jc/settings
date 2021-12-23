@@ -19,6 +19,12 @@ function get-nr-cpus() {
 }
 alias cpus=get-nr-cpus
 
+function curl-time()
+{
+    curl -4 -w "@$SETTINGS/bin/curl-format.txt" -o /dev/null -s $@
+}
+alias curlt='curl-time'
+
 # -----------------------------------------------------------------------------
 # Floating Castle
 # -----------------------------------------------------------------------------
