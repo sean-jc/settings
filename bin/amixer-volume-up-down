@@ -1,0 +1,9 @@
+#!/bin/bash
+vol=$(amixer -D pulse sget Master | grep "Front Left: Playback" | cut -f 6 -d " ")
+vol=$((vol & ~0x3ff))
+if [[ $1 == "down" ]]; then
+    vol=$((vol - 0x400))
+else
+    vol=$((vol + 0x400))
+fi
+amixer -D pulse sset Master $vol
