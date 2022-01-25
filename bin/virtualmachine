@@ -201,6 +201,9 @@ if [[ -n $iso ]]; then
     os="$os -drive file=$iso,index=0,media=cdrom -boot d"
 elif [[ -n $kernel ]]; then
     append="quiet earlyprintk=ttyS0 net.ifnames=0 $append"
+    if [[ $status != "n" ]]; then
+        append="$append systemd.show_status=1"
+    fi
     if [[ -z $serial ]]; then
         append="console=hvc0 $append"
     else
@@ -208,6 +211,9 @@ elif [[ -n $kernel ]]; then
     fi
     if [[ -n $verbose ]]; then
         append="$append ignore_loglevel"
+        if [[ $verbose == "2" ]]; then
+            append="$append systemd.journald.forward_to_console"
+        fi
     fi
     append="$append l1tf=off noapic nohpet"
     os="$os -kernel $HOME/build/kernel/$kernel/arch/x86/boot/bzImage"
