@@ -97,7 +97,7 @@ else
 
     pre="--subject-prefix=\"$pre\""
 
-    sh -c "git format-patch --base=auto -M --minimal --patience --from=\"Sean Christopherson <seanjc@google.com>\" $opt $pre -o $dir -$nr"
+    sh -c "git format-patch --base=HEAD~$nr -M --minimal --patience --from=\"Sean Christopherson <seanjc@google.com>\" $opt $pre -o $dir -$nr"
     #--base=auto
 
     if [[ $dir =~ "qemu" ]]; then
