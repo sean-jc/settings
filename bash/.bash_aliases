@@ -1340,7 +1340,7 @@ function make-kernel-branch() {
     gb -D $1/autotest
 }
 alias mkx='make-kernel-branch x86'
-alias mkc='make-kernel-branch all'
+alias mka='make-kernel-branch all'
 
 alias mkb='TARGET=bzImage make-kernel'
 
