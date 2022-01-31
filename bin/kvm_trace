@@ -9,7 +9,7 @@ if [[ $# -gt 1 ]]; then
     exit 1
 fi
 
-echo 8 > /sys/kernel/debug/tracing/buffer_size_kb
+echo 131072 > /sys/kernel/debug/tracing/buffer_size_kb
 echo 1 > /sys/kernel/debug/tracing/tracing_on
 
 if [[ $# -eq 0 ]]; then
