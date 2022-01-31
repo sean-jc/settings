@@ -1114,7 +1114,7 @@ function make-kernel() {
             make O=~/build/kernel/$1 $COMPILER INSTALL_MOD_PATH=~/build/kernel/$1 modules_install
         fi
     else
-        make O=~/build/kernel/$1 $TARGET
+        make O=~/build/kernel/$1 $COMPILER $TARGET
         ret=$?
     fi
 
@@ -1150,7 +1150,7 @@ function make-kernel-opt() {
             printf "m{d,l,m,o,e} without local config\n"
             return 1
         fi
-        make $1
+        make $COMPILER $1
     fi
 }
 
