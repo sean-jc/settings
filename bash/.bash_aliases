@@ -203,11 +203,32 @@ function git-push() {
 }
 
 function git-archive-branch() {
-    if [[ $# -eq 1 ]]; then
-        git push archive $1 && git branch -D $1 && git push --delete origin $1
-    else
+    if [[ $# -ne 1 ]]; then
         printf "git-archive-branch <branch>\n"
         return 1
+    fi
+
+    if [[ $1 == "sync" ]]; then
+        rsync --checksum -a c:/usr/local/google/home/seanjc/outbox/ $HOME/archive
+        return 0
+    fi
+    local branch=$1
+    local dir=${branch//\//.}
+    local repo=$(pwd | rev | cut -d'/' -f1 | rev)
+
+    if [[ $HOSTDISPLAY == "@cloud" ]]; then
+        dir="$HOME/outbox/$repo/$dir"
+    else
+        dir="$HOME/archive/$repo/$dir"
+    fi
+    if [[ ! -d $dir ]]; then
+        printf "'$branch' is not archived at '$dir'\n"
+        return 1
+    fi
+    if [[ $HOSTDISPLAY == "@cloud" ]]; then
+        git branch -D $1 && git push --delete origin $1
+    else
+        git branch -D $1 && git push --delete origin $1 || ssh c "cd /usr/local/google/home/seanjc/outbox/linux; git branch -D $1"
     fi
 }
 
