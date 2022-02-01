@@ -748,14 +748,9 @@ alias iv='cd ~/images/hyper-v'
 alias dr='cd ~/images/devrez'
 
 # Direct navigation to outbox directories
-alias ol='cd ~/outbox/linux'
-alias oi='cd ~/outbox/linux/intel'
-alias ok='cd ~/outbox/linux/kvm'
-alias ou='cd ~/outbox/kvm-unit-tests/ku'
-alias om='cd ~/outbox/linux/mm'
+alias ok='cd ~/outbox/linux'
+alias ou='cd ~/outbox/kvm-unit-tests'
 alias oq='cd ~/outbox/qemu'
-alias os='cd ~/outbox/linux/sgx'
-alias ox='cd ~/outbox/linux/x86'
 
 # Direct navigation to misc directories
 alias dl='cd ~/Downloads'
