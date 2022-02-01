@@ -1299,7 +1299,9 @@ function make-kernel-branch() {
         targets=("make-kernel vm"
                  "make-kernel pae"
                  "make-kernel pse"
-                 "make-kernel-clang clang")
+                 "make-kernel-clang clang"
+                 "make-kernel-clang clang_pae"
+                 "make-kernel-clang clang_pse")
     else
         targets=("make-kernel-arm cc_arm"
                  "make-kernel-mips cc_mips64"
