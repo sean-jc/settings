@@ -129,12 +129,12 @@ if [[ -n $epc ]]; then
     done
 fi
 
-machine="-enable-kvm -smp $cpus,sockets=1 -machine q35,accel=kvm"
+machine="-enable-kvm -smp $cpus,sockets=1 -machine q35,accel=kvm,pit=off"
 if [[ -n $mach ]]; then
     machine="$machine,$mach"
 fi
 if [[ -n $td ]]; then
-    machine="$machine,kvm-type=tdx,kernel_irqchip=split,guest-memory-protection=tdx,pit=off,pic=off -object tdx-guest,id=tdx,debug"
+    machine="$machine,kvm-type=tdx,kernel_irqchip=split,guest-memory-protection=tdx,pic=off -object tdx-guest,id=tdx,debug"
 else
     machine="$machine,kernel_irqchip"
 fi
