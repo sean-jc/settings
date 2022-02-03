@@ -147,6 +147,9 @@ if [[ $os = "hyper-v" ]]; then
     cpu="-cpu host,host-phys-bits,hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time,+vmx"
 else
     cpu="-cpu host,host-phys-bits,+invtsc"
+    if [[ $x2apic == "false" || $x2apic == "n" ]]; then
+        cpu="$cpu,-x2apic"
+    fi
     if [[ "$qemu_bin" =~ "i386" ]]; then
         cpu="$cpu,-lm"
         bios="-bios $HOME/go/src/seabios.org/seabios/out/bios.bin"
@@ -215,7 +218,10 @@ elif [[ -n $kernel ]]; then
             append="$append systemd.journald.forward_to_console"
         fi
     fi
-    append="$append l1tf=off noapic nohpet"
+    append="$append l1tf=off nohpet"
+    if [[ $x2apic == "false" || $x2apic == "n" ]]; then
+        append="$append noapic"
+    fi
     os="$os -kernel $HOME/build/kernel/$kernel/arch/x86/boot/bzImage"
     if [[ $modules != "false" && $modules != "n" ]]; then
         os="$os -fsdev local,path=$HOME/build/kernel/$kernel/lib/modules,security_model=passthrough,id=plan9fs -device virtio-9p-pci,fsdev=plan9fs,mount_tag=kmodules,disable-legacy=on,iommu_platform=$iommu"
