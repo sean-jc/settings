@@ -1,5 +1,6 @@
 " Ctrl+b to add Reviewed-by in insert mode
-imap <C-b> Reviewed-by: Sean Christopherson <seanjc@google.com> 
+imap <C-b> Reviewed-by: Sean Christopherson <seanjc@google.com>
+imap <C-t> Reviewed-and-tested-by: Sean Christopherson <seanjc@google.com>
 
 " Don't use Ex mode, use Q for formatting.
 " Revert with ":unmap Q".
