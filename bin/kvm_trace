@@ -24,6 +24,8 @@ if [[ $# -eq 0 ]]; then
 elif [[ $cmd == "o" || $cmd == "off" ]]; then
     echo 0 > /sys/kernel/debug/tracing/events/kvm/enable
     echo 0 > /sys/kernel/debug/tracing/events/kvmmmu/enable
+elif [[ $cmd == "a" || $cmd == "apicv" ]]; then
+    echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_apicv_inhibit_changed/enable
 elif [[ $cmd == "em" || $cmd == "emulate" ]]; then
     echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_emulate_insn/enable
 elif [[ $cmd == "em" || $cmd == "emulate" ]]; then
