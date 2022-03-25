@@ -26,30 +26,28 @@ function curl-time()
 alias curlt='curl-time'
 
 # -----------------------------------------------------------------------------
-# Floating Castle
+# MOOn
 # -----------------------------------------------------------------------------
-alias ff='floating-castle'
-alias fu='ff cache -u'
-alias fm='ff moon -i'
+alias mu='moo cache -u'
 
-function floating-castle-gulp() {
-    pushd ~/go/src/github.com/zombull/floating-castle/server
+function moo-server-gulp() {
+    pushd ~/go/src/github.com/zombull/moo/server
     gulp
     popd
 }
-alias fsg='floating-castle-gulp'
+alias msg='moo-server-gulp'
 
-function floating-castle-restart() {
-    pushd ~/go/src/github.com/zombull/floating-castle
+function moo-server-restart() {
+    pushd ~/go/src/github.com/zombull/moo
     set -o xtrace
     go install -v && \
-    sudo cp /home/sean/go/src/github.com/zombull/floating-castle/server/nginx/nginx.conf /etc/nginx/nginx.conf && \
+    sudo cp /home/sean/go/src/github.com/zombull/moo/server/nginx/nginx.conf /etc/nginx/nginx.conf && \
     cd server && gulp && \
-    systemctl restart fc
+    systemctl restart moo
     set +o xtrace
     popd
 }
-alias fsr='floating-castle-restart'
+alias msr='moo-server-restart'
 
 # -----------------------------------------------------------------------------
 # Audio Mixer
