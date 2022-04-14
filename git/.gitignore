@@ -1,3 +1,4 @@
 .vscode/
 arch/x86/kvm/*emulation/
+modules.builtin
 REPORTING-BUGS
