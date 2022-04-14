@@ -36,6 +36,8 @@ elif [[ $cmd == "f" || $cmd == "fail" ]]; then
     echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_nested_vmenter_failed/enable
 elif [[ $cmd == "h" || $cmd == "hypercall" ]]; then
     echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_hypercall/enable
+elif [[ $cmd == "i" || $cmd == "irqs" ]]; then
+    echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_inj_virq/enable
 elif [[ $cmd == "mmu" ]]; then
     echo $val > /sys/kernel/debug/tracing/events/kvmmmu/enable
 elif [[ $cmd == "mn" ]]; then
