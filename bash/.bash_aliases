@@ -1177,6 +1177,10 @@ alias mm='make-kernel-opt menuconfig'
 alias mo='make-kernel-opt oldconfig'
 alias me='make-kernel-opt clean'
 
+function make-x86() {
+    $@
+}
+
 function make-clang() {
     COMPILER="CC=clang" $@
 }
@@ -1197,6 +1201,8 @@ alias cme='make-kernel-clang-opt clean'
 function make-arm() {
     ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- $@
 }
+alias mam='make-arm make'
+
 function make-kernel-arm() {
     make-arm make-kernel $@
 }
@@ -1248,6 +1254,8 @@ alias emo='make-kernel-ppc-opt oldconfig cc_e500mc'
 function make-riscv() {
     ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- $@
 }
+alias mrm='make-riscv make'
+
 function make-kernel-riscv() {
     make-riscv make-kernel $@
 }
@@ -1263,6 +1271,8 @@ alias rmo='make-kernel-riscv-opt oldconfig cc_riscv'
 function make-s390() {
     ARCH=s390 CROSS_COMPILE=s390x-linux-gnu- $@
 }
+alias msm='make-s390 make'
+
 function make-kernel-s390() {
     make-s390 make-kernel $@
 }
@@ -1300,7 +1310,7 @@ function make-kernel-branch() {
                  "make-kernel-clang clang"
                  "make-kernel-clang clang_pae"
                  "make-kernel-clang clang_pse")
-    else
+    elif [[ $1 == "all" ]]; then
         targets=("make-kernel-arm cc_arm"
                  "make-kernel-mips cc_mips64"
                  "make-kernel-ppc cc_ppc64"
@@ -1308,6 +1318,13 @@ function make-kernel-branch() {
                  "make-kernel-riscv cc_riscv"
                  "make-kernel-s390 cc_s390"
                  "make-kernel cc_x86")
+    elif [[ $1 == "tests-"* ]]; then
+        local test_arch=${1#"tests-"}
+        targets=("make-$test_arch make clean"
+                 "make-$test_arch make")
+    else
+        printf "Unknown target '$1'\n"
+        return 1
     fi
 
     local first=$(git rev-parse $2)
@@ -1338,6 +1355,7 @@ function make-kernel-branch() {
         fi
 
         for target in "${targets[@]}"; do
+            printf "\n\n$target\n\n"
             $target
 
             ret=$?
@@ -1357,6 +1375,10 @@ function make-kernel-branch() {
 }
 alias mkx='make-kernel-branch x86'
 alias mka='make-kernel-branch all'
+alias mkt='make-kernel-branch tests-x86'
+alias mkm='make-kernel-branch tests-arm'
+alias mkr='make-kernel-branch tests-riscv'
+alias mks='make-kernel-branch tests-s390'
 
 alias mkb='TARGET=bzImage make-kernel'
 
