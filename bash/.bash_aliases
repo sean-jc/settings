@@ -1,3 +1,6 @@
+# VS code linting gets confused :-()
+. $SETTINGS/bash/catch
+
 # Refresh bash terminal
 alias rf='source ~/.bashrc'
 
@@ -872,10 +875,36 @@ function make-selftests() {
 alias mtests='make-selftests'
 
 function run-selftests() {
+    local RED='\033[1;31m' # Bold Red
+    local GREEN='\e[0;32m' # Bold Green
+    local BROWN='\e[1;33m'  # Bold Brown
+    local BLUE='\e[1;34m'  # Bold Blue
+    local cyan='\033[0;36m' # Cyan
+    local NOF='\033[0m' # No Format
     local tests=( $(/bin/ls -1 $HOME/build/selftests) )
     local i
+
     for i in "${tests[@]}"; do
-        $HOME/build/selftests/$i
+        local __stdout
+        local __stderr
+
+        printf "Running $i\n"
+
+        catch __stdout __stderr $HOME/build/selftests/$i
+
+        local ret=$?
+        if [[ $ret -eq 0 ]]; then
+            printf "${GREEN}PASSED ${cyan}$i${NOF}\n"
+        elif [[ $ret -eq 4 ]]; then
+            printf "${BROWN}SKIPPED ${cyan}$i${NOF}\n"
+        elif [[ $ret -eq 139 ]]; then
+            printf "${RED}SEGFAULT ${cyan}$i${NOF}\n"
+        else
+            printf "${RED}FAILED ${cyan}$i${RED} : ret ='$ret'${NOF}\n"
+            printf "$__stdout\n"
+            printf "$__stderr\n"
+        fi
+        echo ""
     done
 }
 alias rtests='run-selftests'
