@@ -632,6 +632,7 @@ function dev-sync() {
         rsync --checksum ~/.inputrc $2:/data/local/seanjc
         rsync --checksum ~/.vimrc $2:/data/local/seanjc
         rsync --checksum --recursive --exclude='.git*' ~/go/src/github.com/sean-jc/settings $2:/data/local/seanjc/go/src/github.com/sean-jc
+        rsync --checksum ~/go/src/github.com/sean-jc/settings/git/.git-completion.bash $2:/data/local/seanjc/go/src/github.com/sean-jc/settings/git
         ssh $2 "chmod +x /data/local/seanjc/go/src/github.com/sean-jc/settings/bin/timeout"
     fi
     if [[ $1 == "full" || $1 == "binaries" ]]; then
