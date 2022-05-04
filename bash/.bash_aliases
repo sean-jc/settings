@@ -442,7 +442,7 @@ alias mounti386='sudo mount -o loop,offset=1048576 ~/images/qemu/ubuntu-18.04-se
 alias mountvm='sudo mount -o loop,offset=210763776 ~/images/qemu/ubuntu-18.04-server-kvm.raw ~/images/qemu/mnt'
 
 # Get the PID of the VM.  Obviously expects a single VM to be running...
-alias vp='psg /sean/build/qemu | grep sean | tr -s " " | cut -f 2 -d " "'
+alias vp='psg build/qemu | grep sean | tr -s " " | cut -f 2 -d " "'
 
 function vm-stats() {
     local pid=$(vp)
