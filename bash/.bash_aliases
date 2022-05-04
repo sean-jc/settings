@@ -857,7 +857,7 @@ function extract() {
 alias mguest='guest=true make-kernel-package'
 
 function make-selftests() {
-    local tests=( $(grep -v -e s390 -e aarch64 -e SPDX -e ipi $HOME/go/src/kernel.org/slf/tools/testing/selftests/kvm/.gitignore) )
+    local tests=( $(grep -v -e s390 -e aarch64 -e SPDX $HOME/go/src/kernel.org/slf/tools/testing/selftests/kvm/.gitignore) )
     local i
     local selftest
 
