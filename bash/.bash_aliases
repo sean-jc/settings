@@ -370,6 +370,7 @@ alias gsop='git-stash "show -p"'
 alias gsp='git-stash pop'
 alias gss='git-stash save'
 alias gt='git-tree'
+alias gtc='git tag -l --contains'
 alias gus='git-update-subs'
 alias gv='git remote -vv'
 
