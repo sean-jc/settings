@@ -863,7 +863,7 @@ function make-selftests() {
     local selftest
 
     pushd $HOME/go/src/kernel.org/slf/tools/testing/selftests/kvm
-    EXTRA_CFLAGS="-static" make
+    EXTRA_CFLAGS="-static -Werror" make
     if [[ $? -eq 0 ]]; then
         for i in "${tests[@]}"; do
             selftest="$HOME/go/src/kernel.org/slf/tools/testing/selftests/kvm$i"
@@ -1326,6 +1326,7 @@ function make-kernel-branch() {
     local NOF='\033[0m' # No Format
     local current=$(git rev-parse --abbrev-ref HEAD)
     local arbitrary=1000
+    local cflags=""
     local targets
     local ret
 
@@ -1353,6 +1354,7 @@ function make-kernel-branch() {
         local test_arch=${1#"tests-"}
         targets=("make-$test_arch make clean"
                  "make-$test_arch make")
+        cflags="-Werror"
     else
         printf "Unknown target '$1'\n"
         return 1
@@ -1387,7 +1389,7 @@ function make-kernel-branch() {
 
         for target in "${targets[@]}"; do
             printf "\n\n$target\n\n"
-            $target
+            EXTRA_CFLAGS="$cflags" $target
 
             ret=$?
             if [[ $ret -ne 0 ]]; then
