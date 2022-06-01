@@ -16,3 +16,10 @@ macro index \Cu "<change-folder> =Lists/x86<enter>"  "go to lists/x86"
 macro index \Ck "<change-folder> =Lists/kvm<enter>"  "go to lists/kvm"
 macro index \Cg "<change-folder> =Lists/sgx<enter>"  "go to lists/sgx"
 macro index \Co "<change-folder> =Lists/todo<enter>"  "go to lists/todo"
+
+# Get mail for the current folder
+bind index g imap-fetch-mail
+
+# unset imap_passive
+# set imap_check_subscribed
+# set mail_check=60
