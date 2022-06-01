@@ -863,7 +863,7 @@ function make-selftests() {
     local selftest
 
     pushd $HOME/go/src/kernel.org/slf/tools/testing/selftests/kvm
-    EXTRA_CFLAGS="-static -Werror" make
+    EXTRA_CFLAGS="-static -Werror -gdwarf-4" make
     if [[ $? -eq 0 ]]; then
         for i in "${tests[@]}"; do
             selftest="$HOME/go/src/kernel.org/slf/tools/testing/selftests/kvm$i"
