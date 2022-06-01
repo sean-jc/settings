@@ -861,9 +861,13 @@ function make-selftests() {
     local tests=( $(grep -v -e s390 -e aarch64 -e SPDX $HOME/go/src/kernel.org/slf/tools/testing/selftests/kvm/.gitignore) )
     local i
     local selftest
+    local static=""
 
     pushd $HOME/go/src/kernel.org/slf/tools/testing/selftests/kvm
-    EXTRA_CFLAGS="-static -Werror -gdwarf-4" make
+    if [[ $(whoami) == "seanjc" ]]; then
+        static="-static"
+    fi
+    EXTRA_CFLAGS="$static -Werror -gdwarf-4" make
     if [[ $? -eq 0 ]]; then
         for i in "${tests[@]}"; do
             selftest="$HOME/go/src/kernel.org/slf/tools/testing/selftests/kvm$i"
