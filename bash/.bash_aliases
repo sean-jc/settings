@@ -867,6 +867,13 @@ function make-selftests() {
     if [[ $(whoami) == "seanjc" ]]; then
         static="-static"
     fi
+    if [[ $# -eq 1 && $1 == "clean" ]]; then
+        make clean
+    elif [[ $# -gt 0 ]]; then
+        printf "Can only specify 'clean' or nothing at all\n"
+        return 1
+    fi
+
     EXTRA_CFLAGS="$static -Werror -gdwarf-4" make
     if [[ $? -eq 0 ]]; then
         for i in "${tests[@]}"; do
@@ -878,7 +885,8 @@ function make-selftests() {
     fi
     popd
 }
-alias mtests='make-selftests'
+alias mt='make-selftests'
+alias mtc='make-selftests clean'
 
 function run-selftests() {
     local RED='\033[1;31m' # Bold Red
@@ -913,7 +921,7 @@ function run-selftests() {
         echo ""
     done
 }
-alias rtests='run-selftests'
+alias rt='run-selftests'
 
 function run-gvisor {
     #!/bin/bash
