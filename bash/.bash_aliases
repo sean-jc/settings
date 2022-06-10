@@ -1049,16 +1049,17 @@ function make-host {
 alias mh='make-host'
 
 function make-gbuild {
-    if [[ $# -lt 1 ]]; then
-        printf "Must specify the target kernel name\n"
+    if [[ $# -ne 2 ]]; then
+        printf "Must specify the target arch and kernel name\n"
         return 1
     fi
 
-    local name="-$(git show -s --pretty='tformat:%h')-$1"
+    local name="-$(git show -s --pretty='tformat:%h')-$2"
 
-    gbuild RELEASE=$name
+    gbuild RELEASE=$name ARCH=$1
 }
-alias mg='make-gbuild'
+alias mg='make-gbuild x86_64'
+alias mga='make-gbuild arm64'
 
 function get-kernel {
     if [[ -f /boot/grub/grub.cfg ]]; then
