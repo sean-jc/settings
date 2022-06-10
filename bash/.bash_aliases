@@ -857,27 +857,69 @@ function extract() {
 }
 alias mguest='guest=true make-kernel-package'
 
+
+function make-x86() {
+    $@
+}
+function make-clang() {
+    COMPILER="CC=clang" $@
+}
+function make-arm() {
+    ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- $@
+}
+alias mam='make-arm make'
+
+function make-mips() {
+    ARCH=mips CROSS_COMPILE=mips64-linux-gnuabi64- $@
+}
+function make-ppc() {
+    ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- $@
+}
+function make-riscv() {
+    ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- $@
+}
+alias mrm='make-riscv make'
+function make-s390() {
+    ARCH=s390 CROSS_COMPILE=s390x-linux-gnu- $@
+}
+alias msm='make-s390 make'
+
 function make-selftests() {
-    local tests=( $(grep -v -e s390 -e aarch64 -e SPDX $HOME/go/src/kernel.org/slf/tools/testing/selftests/kvm/.gitignore) )
+    local tests
     local i
     local selftest
     local static=""
 
-    pushd $HOME/go/src/kernel.org/slf/tools/testing/selftests/kvm
+    if [[ $# -lt 1 ]] || [[ $1 != "x86" && $1 != "arm" ]]; then
+        printf "Must specify 'x86' or 'arm' as first argument\n"
+        return 1
+    fi
+     if [[ $# -lt 2 ]] || [[ $2 != "slf" && $2 != "nox" ]]; then
+        printf "Must specify 'slf' or 'nox' as second argument\n"
+        return 1
+    fi
+    if [[ $# -eq 3 && $3 == "clean" ]]; then
+        make clean
+    elif [[ $# -gt 2 ]]; then
+        printf "Can only specify 'clean' as third argument\n"
+        return 1
+    fi
+    if [[ $1 == "x86" ]]; then
+        tests=( $(grep -v -e s390 -e aarch64 -e SPDX $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm/.gitignore) )
+    else
+        tests=( $(grep -v -e s390 -e x86_64 -e SPDX $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm/.gitignore) )
+    fi
+
+    pushd $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm
     if [[ $(whoami) == "seanjc" ]]; then
         static="-static"
     fi
-    if [[ $# -eq 1 && $1 == "clean" ]]; then
-        make clean
-    elif [[ $# -gt 0 ]]; then
-        printf "Can only specify 'clean' or nothing at all\n"
-        return 1
-    fi
 
-    EXTRA_CFLAGS="$static -Werror -gdwarf-4" make
+    EXTRA_CFLAGS="$static -Werror -gdwarf-4" make-$1 make
     if [[ $? -eq 0 ]]; then
+        rm -f $HOME/build/selftests/*
         for i in "${tests[@]}"; do
-            selftest="$HOME/go/src/kernel.org/slf/tools/testing/selftests/kvm$i"
+            selftest="$HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm$i"
             if [[ -f $selftest ]]; then
                 cp $selftest $HOME/build/selftests
             fi
@@ -885,8 +927,10 @@ function make-selftests() {
     fi
     popd
 }
-alias mt='make-selftests'
-alias mtc='make-selftests clean'
+alias mt='make-selftests x86 slf'
+alias mtc='make-selftests x86 slf clean'
+alias mta='make-selftests arm nox'
+alias mtac='make-selftests arm nox clean'
 
 function run-selftests() {
     local RED='\033[1;31m' # Bold Red
@@ -1220,13 +1264,6 @@ alias mm='make-kernel-opt menuconfig'
 alias mo='make-kernel-opt oldconfig'
 alias me='make-kernel-opt clean'
 
-function make-x86() {
-    $@
-}
-
-function make-clang() {
-    COMPILER="CC=clang" $@
-}
 function make-kernel-clang() {
     make-clang make-kernel $@
 }
@@ -1241,11 +1278,6 @@ alias cmm='make-kernel-clang-opt menuconfig'
 alias cmo='make-kernel-clang-opt oldconfig'
 alias cme='make-kernel-clang-opt clean'
 
-function make-arm() {
-    ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- $@
-}
-alias mam='make-arm make'
-
 function make-kernel-arm() {
     make-arm make-kernel $@
 }
@@ -1258,9 +1290,6 @@ alias ame='make-kernel-arm-opt clean cc_arm'
 alias amm='make-kernel-arm-opt menuconfig cc_arm'
 alias amo='make-kernel-arm-opt oldconfig cc_arm'
 
-function make-mips() {
-    ARCH=mips CROSS_COMPILE=mips64-linux-gnuabi64- $@
-}
 function make-kernel-mips() {
     make-mips make-kernel $@
 }
@@ -1273,9 +1302,6 @@ alias mme='make-kernel-mips-opt clean cc_mips64'
 alias mmm='make-kernel-mips-opt menuconfig cc_mips64'
 alias mmo='make-kernel-mips-opt oldconfig cc_mips64'
 
-function make-ppc() {
-    ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- $@
-}
 function make-kernel-ppc() {
     make-ppc make-kernel $@
 }
@@ -1294,11 +1320,6 @@ alias eme='make-kernel-ppc-opt clean cc_e500mc'
 alias emm='make-kernel-ppc-opt menuconfig cc_e500mc'
 alias emo='make-kernel-ppc-opt oldconfig cc_e500mc'
 
-function make-riscv() {
-    ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- $@
-}
-alias mrm='make-riscv make'
-
 function make-kernel-riscv() {
     make-riscv make-kernel $@
 }
@@ -1310,11 +1331,6 @@ alias rmd='make-kernel-riscv-opt defconfig cc_riscv'
 alias rme='make-kernel-riscv-opt clean cc_riscv'
 alias rmm='make-kernel-riscv-opt menuconfig cc_riscv'
 alias rmo='make-kernel-riscv-opt oldconfig cc_riscv'
-
-function make-s390() {
-    ARCH=s390 CROSS_COMPILE=s390x-linux-gnu- $@
-}
-alias msm='make-s390 make'
 
 function make-kernel-s390() {
     make-s390 make-kernel $@
