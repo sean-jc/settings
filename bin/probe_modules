@@ -46,6 +46,9 @@ if [[ ! -c /dev/vhost-net ]];then
 fi
 if [[ -n $sev && ! -c /dev/sev ]]; then
     udevadm test /devices/virtual/misc/sev
+    if [[ ! -c /dev/sev ]]; then
+        ln -s /mnt/devtmpfs/sev /dev/sev
+    fi
 fi
 
 if [[ $EUID != 0 ]]; then
