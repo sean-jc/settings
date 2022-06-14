@@ -49,6 +49,11 @@ if [[ -n $sev && ! -c /dev/sev ]]; then
     if [[ ! -c /dev/sev ]]; then
         ln -s /mnt/devtmpfs/sev /dev/sev
     fi
+
+    lmod=$(lsmod | cut -f 1 -d ' ' | grep ccp)
+    if [[ $? -eq 0 ]]; then
+        psudo modprobe ccp init_ex_path=/var/google/persistent/bios/psp_nv_data psp_init_on_probe=1
+    fi
 fi
 
 if [[ $EUID != 0 ]]; then
