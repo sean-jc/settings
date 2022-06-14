@@ -13,6 +13,8 @@ else
         export HOSTDISPLAY="@work"
     elif [[ $HOSTPOST =~ seanjc.*.com ]]; then
         export HOSTDISPLAY="@cloud"
+    elif [[ $HOSTPOST =~ zagreus.*.com ]]; then
+        export HOSTDISPLAY="@zag"
     else
         HOSTPOST=${HOSTPOST%.prod.google.com}
         export HOSTDISPLAY="@$HOSTPOST"
