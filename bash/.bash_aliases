@@ -384,6 +384,14 @@ function b4-am() {
 }
 alias bb="b4-am"
 
+# offlineimap
+alias oi='offlineimap -f "INBOX"'
+alias ol='offlineimap -f "Lists/linus"'
+alias ok='offlineimap -f "Lists/kvm"'
+alias op='offlineimap -f "Lists/posted"'
+alias oo='offlineimap -f "Lists/todo"'
+alias ou='offlineimap -f "Lists/x86"'
+
 # -----------------------------------------------------------------------------
 # Go
 # -----------------------------------------------------------------------------
@@ -772,10 +780,10 @@ alias iq='cd ~/images/qemu'
 alias iv='cd ~/images/hyper-v'
 alias dr='cd ~/images/devrez'
 
-# Direct navigation to outbox directories
-alias ok='cd ~/outbox/linux'
-alias ou='cd ~/outbox/kvm-unit-tests'
-alias oq='cd ~/outbox/qemu'
+# Direct navigation to outbox directories (posted patches)
+alias pp='cd ~/outbox/linux'
+alias pu='cd ~/outbox/kvm-unit-tests'
+alias pq='cd ~/outbox/qemu'
 
 # Direct navigation to misc directories
 alias dl='cd ~/Downloads'

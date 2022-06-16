@@ -11,11 +11,11 @@ bind index \Ce     previous-unread
 
 # Switch to folders
 macro index \Ci "<change-folder> =INBOX<enter>"  "go to INBOX"
-macro index \Cl "<change-folder> =Lists/linus<enter>"  "go to lists/linus"
-macro index \Cu "<change-folder> =Lists/x86<enter>"  "go to lists/x86"
-macro index \Ck "<change-folder> =Lists/kvm<enter>"  "go to lists/kvm"
-macro index \Cg "<change-folder> =Lists/sgx<enter>"  "go to lists/sgx"
-macro index \Co "<change-folder> =Lists/todo<enter>"  "go to lists/todo"
+macro index \Cl "<change-folder> =Lists.linus<enter>"  "go to lists/linus"
+macro index \Ck "<change-folder> =Lists.kvm<enter>"  "go to lists/kvm"
+macro index \Co "<change-folder> =Lists.todo<enter>"  "go to lists/todo"
+macro index \Cp "<change-folder> =Lists.posted<enter>"  "go to lists/posted"
+macro index \Cu "<change-folder> =Lists.x86<enter>"  "go to lists/x86"
 
 # Get mail for the current folder
 bind index g imap-fetch-mail
