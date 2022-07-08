@@ -117,9 +117,9 @@ function git-blob() {
 
 function git-apply() {
     if [ $# -eq 0 ]; then
-        git am -3 ~/patches/*.*
+        git am -s -3 ~/patches/*.*
     else
-        git am -3 $1/*.*
+        git am -s -3 $1/*.*
     fi
 }
 
