@@ -377,10 +377,7 @@ alias gv='git remote -vv'
 # b4 and other lore stuff
 function b4-am() {
     rm -f ~/patches/*
-    pushd ~/patches
-    $HOME/go/src/kernel.org/b4/b4.sh am $1
-    rm -f ~/patches/*.cover
-    popd
+    $HOME/go/src/kernel.org/b4/b4.sh am --no-cover -l -o $HOME/patches/ $1 && git-apply
 }
 alias bb="b4-am"
 
