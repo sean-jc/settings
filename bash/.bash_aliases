@@ -893,8 +893,8 @@ function make-selftests() {
     local selftest
     local static=""
 
-    if [[ $# -lt 1 ]] || [[ $1 != "x86" && $1 != "arm" ]]; then
-        printf "Must specify 'x86' or 'arm' as first argument\n"
+    if [[ $# -lt 1 ]] || [[ $1 != "x86" && $1 != "clang" && $1 != "arm" ]]; then
+        printf "Must specify 'x86', 'clang' or 'arm' as first argument\n"
         return 1
     fi
      if [[ $# -lt 2 ]] || [[ $2 != "slf" && $2 != "nox" ]]; then
@@ -932,6 +932,8 @@ function make-selftests() {
 }
 alias mt='make-selftests x86 slf'
 alias mtc='make-selftests x86 slf clean'
+alias mct='make-selftests clang slf'
+alias mctc='make-selftests clang slf clean'
 alias mta='make-selftests arm nox'
 alias mtac='make-selftests arm nox clean'
 
