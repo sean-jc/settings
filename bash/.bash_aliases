@@ -210,27 +210,23 @@ function git-archive-branch() {
     fi
 
     if [[ $1 == "sync" ]]; then
-        rsync --checksum -a c:/usr/local/google/home/seanjc/outbox/ $HOME/archive
+        rsync --checksum -a z:/usr/local/google/home/seanjc/outbox/ $HOME/archive
         return 0
     fi
     local branch=$1
     local dir=${branch//\//.}
     local repo=$(pwd | rev | cut -d'/' -f1 | rev)
 
-    if [[ $HOSTDISPLAY == "@cloud" ]]; then
-        dir="$HOME/outbox/$repo/$dir"
-    else
-        dir="$HOME/archive/$repo/$dir"
+    if [[ $HOSTDISPLAY == "@cloud" || $HOSTDISPLAY == "@zagreus" ]]; then
+        printf "Archiving branches from remotes is not allowed\n"
+        return 1;
     fi
-    if [[ ! -d $dir ]]; then
+
+    if [[ ! -d "$HOME/archive/$repo/$dir" ]]; then
         printf "'$branch' is not archived at '$dir'\n"
         return 1
     fi
-    if [[ $HOSTDISPLAY == "@cloud" ]]; then
-        git branch -D $1 && git push --delete origin $1
-    else
-        git branch -D $1 && git push --delete origin $1 || ssh c "cd /usr/local/google/home/seanjc/outbox/linux; git branch -D $1"
-    fi
+    git branch -D $1 && git push --delete origin $1 || ssh z "cd /usr/local/google/home/seanjc/outbox/linux; git branch -D $1"
 }
 
 function git-get() {
