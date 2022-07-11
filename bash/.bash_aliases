@@ -641,7 +641,6 @@ function dev-sync() {
         rsync --checksum ~/build/qemu/static-5.2/qemu-system-x86_64 $2:/data/local/seanjc/build/qemu/static-5.2
         rsync --checksum --recursive --links ~/build/pc-bios $2:/data/local/seanjc/build/qemu/static-5.2
         rsync --checksum --recursive --links ~/build/ovmf $2:/data/local/seanjc/build
-        rsync --checksum --recursive --links ~/build/gvisor $2:/data/local/seanjc/build
         ssh $2 "rm -f /data/local/seanjc/build/qemu/stable; ln -s /data/local/seanjc/build/qemu/static-5.2/qemu-system-x86_64 /data/local/seanjc/build/qemu/stable"
     fi
     if [[ $1 == "full" || $1 == "tests" ]]; then
