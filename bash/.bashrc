@@ -26,6 +26,9 @@ export LSDT_CONFIG=$SETTINGS/.config/lsdt/config.yml
 
 # Define GOPATH
 export GOPATH=$HOME/go
+if [[ $(whoami) == "sean" ]]; then
+    export GO111MODULE=off
+fi
 
 # For development of GO itself
 export GOROOT_BOOTSTRAP=/usr/local/go
