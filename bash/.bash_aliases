@@ -646,6 +646,7 @@ function dev-sync() {
     if [[ $1 == "full" || $1 == "tests" ]]; then
         rsync --checksum --recursive --links ~/build/selftests $2:/data/local/seanjc/build
         rsync --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kvm-unit-tests $2:/data/local/seanjc/go/src/kernel.org
+        rsync --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kut-32 $2:/data/local/seanjc/go/src/kernel.org
     fi
     if [[ $1 == "full" || $1 == "kvm" ]]; then
         rsync --checksum ~/build/kernel/vm/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/vm/arch/x86/boot
@@ -1485,14 +1486,22 @@ function make-ovmf() {
 }
 alias mf=make-ovmf
 
-function prep-kvm-unittest() {
+function prep-kut32() {
+    qemu=stable probe_modules
+    cd ~/go/src/kernel.org/kut-32
+    return 0
+}
+
+function prep-kut() {
     qemu=stable probe_modules
     cd ~/go/src/kernel.org/kvm-unit-tests
     return 0
 }
 
-alias rkt='prep-kvm-unittest && QEMU=~/build/qemu/stable'
+alias rkt='prep-kut && QEMU=~/build/qemu/stable'
 alias rku='rkt ./run_tests.sh -v'
+alias rkt32='prep-kut32 && QEMU=~/build/qemu/stable'
+alias rku32='rkt32 ./run_tests.sh -v'
 alias rkv='rkt TESTNAME=vmx TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cpu host,+vmx -append'
 alias rkc='rkt TESTNAME=vmx_controls TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cpu host,+vmx -m 2560 -append vmx_controls_test'
 
