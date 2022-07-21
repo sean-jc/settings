@@ -906,7 +906,7 @@ function make-selftests() {
         printf "Can only specify 'clean' as third argument\n"
         return 1
     fi
-    if [[ $1 == "x86" ]]; then
+    if [[ $1 != "arm" ]]; then
         tests=( $(grep -v -e s390 -e aarch64 -e SPDX $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm/.gitignore) )
     else
         tests=( $(grep -v -e s390 -e x86_64 -e SPDX $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm/.gitignore) )
