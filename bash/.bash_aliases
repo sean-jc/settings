@@ -117,9 +117,9 @@ function git-blob() {
 
 function git-apply() {
     if [ $# -eq 0 ]; then
-        git am -s -3 ~/patches/*.*
+        git am -3 ~/patches/*.*
     else
-        git am -s -3 $1/*.*
+        git am -3 $1/*.*
     fi
 }
 
@@ -373,7 +373,7 @@ alias gv='git remote -vv'
 # b4 and other lore stuff
 function b4-am() {
     rm -f ~/patches/*
-    $HOME/go/src/kernel.org/b4/b4.sh am --no-cover -l -o $HOME/patches/ $1 && git-apply
+    $HOME/go/src/kernel.org/b4/b4.sh am --no-cover -l -s -o $HOME/patches/ $1 && git-apply
 }
 alias bb="b4-am"
 
