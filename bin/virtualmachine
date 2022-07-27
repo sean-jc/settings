@@ -136,7 +136,7 @@ fi
 if [[ -n $td ]]; then
     machine="$machine,kvm-type=tdx,kernel_irqchip=split,guest-memory-protection=tdx,pic=off -object tdx-guest,id=tdx,debug"
 else
-    machine="$machine,kernel_irqchip"
+    machine="$machine,kernel_irqchip=on"
 fi
 if [[ -n $sev ]]; then
     machine="$machine,memory-encryption=sev -object sev-guest,id=sev,policy=0,cbitpos=47,reduced-phys-bits=1"

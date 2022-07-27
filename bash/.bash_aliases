@@ -624,7 +624,7 @@ function dev-sync() {
                 mkdir -p /data/local/seanjc/build/kernel/pae/lib/modules; \
                 mkdir -p /data/local/seanjc/build/kernel/pse/arch/x86/boot; \
                 mkdir -p /data/local/seanjc/build/kernel/pse/lib/modules; \
-                mkdir -p /data/local/seanjc/build/qemu/static-5.2; \
+                mkdir -p /data/local/seanjc/build/qemu; \
                 mkdir -p /data/local/seanjc/go/src/github.com/sean-jc; \
                 mkdir -p /data/local/seanjc/go/src/kernel.org; \
                 mkdir -p /data/local/seanjc/images/qemu"
@@ -638,10 +638,9 @@ function dev-sync() {
         ssh $2 "chmod +x /data/local/seanjc/go/src/github.com/sean-jc/settings/bin/timeout"
     fi
     if [[ $1 == "full" || $1 == "binaries" ]]; then
-        rsync --checksum ~/build/qemu/static-5.2/qemu-system-x86_64 $2:/data/local/seanjc/build/qemu/static-5.2
-        rsync --checksum --recursive --links ~/build/pc-bios $2:/data/local/seanjc/build/qemu/static-5.2
+        rsync --checksum --recursive --links ~/build/qemu/static-7.0 $2:/data/local/seanjc/build/qemu
         rsync --checksum --recursive --links ~/build/ovmf $2:/data/local/seanjc/build
-        ssh $2 "rm -f /data/local/seanjc/build/qemu/stable; ln -s /data/local/seanjc/build/qemu/static-5.2/qemu-system-x86_64 /data/local/seanjc/build/qemu/stable"
+        ssh $2 "rm -f /data/local/seanjc/build/qemu/stable; ln -s /data/local/seanjc/build/qemu/static-7.0/x86_64-softmmu/qemu-system-x86_64 /data/local/seanjc/build/qemu/stable"
     fi
     if [[ $1 == "full" || $1 == "tests" ]]; then
         rsync --checksum --recursive --links ~/build/selftests $2:/data/local/seanjc/build
