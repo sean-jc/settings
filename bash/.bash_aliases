@@ -1497,7 +1497,7 @@ function prep-kut() {
     return 0
 }
 
-alias rkt='prep-kut && QEMU=~/build/qemu/stable'
+alias rkt='prep-kut && QEMU=~/build/qemu/stable EFI_UEFI=~/build/ovmf/OVMF.fd'
 alias rku='rkt ./run_tests.sh -v'
 alias rkt32='prep-kut32 && QEMU=~/build/qemu/stable'
 alias rku32='rkt32 ./run_tests.sh -v'
