@@ -1,5 +1,3 @@
-. $SETTINGS/bin/stubdirs-common
-
 stubdirs+=(
         drivers/irqchip
         drivers/of

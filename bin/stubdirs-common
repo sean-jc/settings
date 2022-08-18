@@ -8,7 +8,6 @@ stubdirs=(
         drivers/bcma
         drivers/bluetooth
         drivers/bus
-        drivers/char/agp
         drivers/char/hw_random
         drivers/char/ipmi
         drivers/char/mwave
@@ -19,20 +18,12 @@ stubdirs=(
         drivers/dca
         drivers/devfreq
         drivers/dio
-        drivers/dma
-        drivers/dma-buf
         drivers/edac
         drivers/eisa
         drivers/extcon
         drivers/firewire
         drivers/fpga
         drivers/fsi
-        drivers/gpu
-        drivers/gpu/drm
-        drivers/gpu/host1x
-        drivers/gpu/ipu-v3
-        drivers/gpu/trace
-        drivers/gpu/vga
         drivers/hid
         drivers/hsi
         drivers/hwmon
@@ -40,7 +31,6 @@ stubdirs=(
         drivers/hwtracing/coresight
         drivers/hwtracing/intel_th
         drivers/hwtracing/stm
-        drivers/i2c
         drivers/idle
         drivers/iio
         drivers/infiniband
@@ -100,11 +90,6 @@ stubdirs=(
         drivers/thunderbolt
         drivers/uio
         drivers/usb
-        drivers/video/backlight
-        drivers/video/fbdev
-        drivers/video/fbdev/i810
-        drivers/video/fbdev/intelfb
-        drivers/video/logo
         drivers/virt
         drivers/visorbus
         drivers/vlynq

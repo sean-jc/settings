@@ -1,5 +1,7 @@
 #!/bin/bash
-. $SETTINGS/bin/stubdirs
+. $SETTINGS/bin/stubdirs-common
+. $SETTINGS/bin/stubdirs-nogpu
+. $SETTINGS/bin/stubdirs-x86
 
 for i in "${stubdirs[@]}"
 do
