@@ -373,9 +373,11 @@ alias gv='git remote -vv'
 # b4 and other lore stuff
 function b4-am() {
     rm -f ~/patches/*
-    $HOME/go/src/kernel.org/b4/b4.sh am --no-cover -l -s -o $HOME/patches/ $1 && git-apply
+    $HOME/go/src/kernel.org/b4/b4.sh am --no-cover $2 -s -o $HOME/patches/ $1 && git-apply
 }
-alias bb="b4-am"
+alias bb='b4-am -l'
+alias bbl='b4-am ""'
+alias bbc='b4-am -t'
 
 # offlineimap
 alias oi='offlineimap -f "INBOX"'
