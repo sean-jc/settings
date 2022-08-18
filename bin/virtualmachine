@@ -147,6 +147,9 @@ if [[ $os = "hyper-v" ]]; then
     cpu="-cpu host,host-phys-bits,hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time,+vmx"
 else
     cpu="-cpu host,host-phys-bits,+invtsc"
+    if [[ -z $migrate ]]; then
+        cput="$cpu,migratable=no"
+    fi
     if [[ $x2apic == "false" || $x2apic == "n" ]]; then
         cpu="$cpu,-x2apic"
     fi
@@ -236,7 +239,7 @@ if [[ -n $iso1 ]]; then
     os ="$os -drive file=$iso1,index=1,media=cdrom"
 fi
 
-if [[ -n $migrate ]]; then
+if [[ -n $migrate && migrate != "dest" ]]; then
     migrate="-incoming tcp:0:$migrate"
 fi
 
