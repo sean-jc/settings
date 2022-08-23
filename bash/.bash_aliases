@@ -903,7 +903,7 @@ function make-selftests() {
         return 1
     fi
     if [[ $# -eq 3 && $3 == "clean" ]]; then
-        make clean
+        make-$1 make clean
     elif [[ $# -gt 2 ]]; then
         printf "Can only specify 'clean' as third argument\n"
         return 1
