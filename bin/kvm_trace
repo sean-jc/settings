@@ -37,7 +37,9 @@ elif [[ $cmd == "f" || $cmd == "fail" ]]; then
 elif [[ $cmd == "h" || $cmd == "hypercall" ]]; then
     echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_hypercall/enable
 elif [[ $cmd == "i" || $cmd == "irqs" ]]; then
+    echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_apic_ipi/enable
     echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_inj_virq/enable
+    echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_apic_accept_irq/enable
 elif [[ $cmd == "mmu" ]]; then
     echo $val > /sys/kernel/debug/tracing/events/kvmmmu/enable
 elif [[ $cmd == "mn" ]]; then
@@ -51,13 +53,17 @@ elif [[ $cmd == "n" || $cmd == "nested" ]]; then
     echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_nested_vmenter_failed/enable
     echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_nested_vmexit/enable
     echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_nested_vmexit_inject/enable
-    echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_nested_vmrun/enable
+    echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_nested_vmenter/enable
+elif [[ $cmd == "pf" || $cmd == "pagefaults" ]]; then
+    echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_page_fault/enable
 elif [[ $cmd == "q" || $cmd == "query" ]]; then
     tail /sys/kernel/debug/tracing/events/kvm/**/enable | grep -B 1 1
 elif [[ $cmd == "r" || $cmd == "msr" ]]; then
     echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_msr/enable
 elif [[ $cmd == "u" || $cmd == "user" ]]; then
     echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_userspace_exit/enable
+elif [[ $cmd == "v" || $cmd == "avic" ]]; then
+    echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_avic_kick_vcpu_slowpath/enable
 elif [[ $cmd == "x" || $cmd == "xfers" ]]; then
     echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_entry/enable
     echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_exit/enable
