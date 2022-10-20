@@ -15,6 +15,7 @@ macro index \Cl "<change-folder> =Lists.linus<enter>"  "go to lists/linus"
 macro index \Ck "<change-folder> =Lists.kvm<enter>"  "go to lists/kvm"
 macro index \Co "<change-folder> =Lists.todo<enter>"  "go to lists/todo"
 macro index \Cp "<change-folder> =Lists.posted<enter>"  "go to lists/posted"
+macro index \Cf "<change-folder> =Lists.for_paolo<enter>"  "go to lists/for_paolo"
 macro index \Cu "<change-folder> =Lists.x86<enter>"  "go to lists/x86"
 
 # Get mail for the current folder

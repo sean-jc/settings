@@ -384,6 +384,7 @@ alias oi='offlineimap -f "INBOX"'
 alias ol='offlineimap -f "Lists/linus"'
 alias ok='offlineimap -f "Lists/kvm"'
 alias op='offlineimap -f "Lists/posted"'
+alias of='offlineimap -f "Lists/for_paolo"'
 alias oo='offlineimap -f "Lists/todo"'
 alias ou='offlineimap -f "Lists/x86"'
 
