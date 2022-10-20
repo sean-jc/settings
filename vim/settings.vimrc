@@ -45,7 +45,7 @@ syntax on
 " 'cindent' is on in C files, etc.
 " Also load indent files, to automatically do language-dependent indenting.
 " Revert with ":filetype off".
-filetype plugin indent on
+" filetype plugin indent on
 
 " Put these in an autocmd group, so that you can revert them with:
 " ":augroup vimStartup | au! | augroup END"
