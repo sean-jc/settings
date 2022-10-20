@@ -40,6 +40,9 @@ elif [[ $cmd == "i" || $cmd == "irqs" ]]; then
     echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_apic_ipi/enable
     echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_inj_virq/enable
     echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_apic_accept_irq/enable
+    echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_apicv_accept_irq/enable
+    echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_avic_unaccelerated_access/enable
+    echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_eoi/enable
 elif [[ $cmd == "mmu" ]]; then
     echo $val > /sys/kernel/debug/tracing/events/kvmmmu/enable
 elif [[ $cmd == "mn" ]]; then
