@@ -978,7 +978,7 @@ alias rt='run-selftests'
 function run-gvisor {
     #!/bin/bash
     for i in $(seq 1 $1); do
-	    runsc --platform=kvm --network=none do echo ok
+	    ~/build/runc/runsc --platform=kvm --network=none do echo ok
     done
 }
 alias rung='run-gvisor 1000'
