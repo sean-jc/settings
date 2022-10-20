@@ -10,6 +10,7 @@ echo "!Documentation/*" >> .git/info/sparse-checkout
 echo "!drivers/*" >> .git/info/sparse-checkout
 echo "!fs/*" >> .git/info/sparse-checkout
 echo "!init/*" >> .git/info/sparse-checkout
+echo "!io_uring/*" >> .git/info/sparse-checkout
 echo "!ipc/*" >> .git/info/sparse-checkout
 echo "!kernel/*" >> .git/info/sparse-checkout
 echo "!lib/*" >> .git/info/sparse-checkout
@@ -78,5 +79,13 @@ echo "Documentation/process/*" >> .git/info/sparse-checkout
 echo "Documentation/virtual/*" >> .git/info/sparse-checkout
 echo "Documentation/virt/*" >> .git/info/sparse-checkout
 echo "Documentation/x86/*" >> .git/info/sparse-checkout
+
+# checkpatch.pl refuses to run if these directories don't exit.
+mkdir -p drivers
+mkdir -p fs
+mkdir -p init
+mkdir -p ipc
+mkdir -p lib
+mkdir -p kernel
 
 git read-tree -mu HEAD
