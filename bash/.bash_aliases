@@ -1181,181 +1181,152 @@ alias pk='purge-kernel'
 # Make Custom kernel
 function make-kernel() {
     if [[ $# -lt 1 ]]; then
-        printf "Must specify the target kernel name\n"
+        printf "Must specify the command\n"
         return 1
     fi
     if [[ $# -gt 2 ]]; then
-        printf "Maximum of 2 arguments supported: kernel (1) and target (2)\n"
+        printf "Maximum of 2 arguments supported: command (1) and kernel (2)\n"
         return 2
     fi
-    if [[ $# -eq 2 ]]; then
-        if [[ -n $TARGET ]]; then
-            printf "Maximum of 1 argument when \$target is defined\n"
-            return 2
+    if [[ $# -eq 1 ]]; then
+        if [[ $1 == "make" ]]; then
+            printf "Use make-host (mh) for local build\n"
+            return 3
         fi
-        TARGET=$2
+        if [[ ! -f REPORTING-BUGS ]]; then
+            printf "Local build without REPORTING-BUGS\n"
+            return 3
+        elif [[ ! -f .config ]]; then
+            printf "Local build without local config\n"
+            return 3
+        elif [[ -f .git/info/sparse-checkout ]]; then
+            printf "Local build with sparse directory\n"
+            return 3
+        fi
+        make $COMPILER $1
     fi
-    if [[ ! -d ~/build/kernel/$1 ]]; then
-        printf "Target build directory '~/build/kernel/$1' does not exist\n"
+
+    if [[ ! -d ~/build/kernel/$2 ]]; then
+        printf "Target build directory '~/build/kernel/$2' does not exist\n"
+        return 4
+    elif [[ ! -d .git/info || ! -d kernel ]]; then
+        printf "Must run from a top-level Linux repository\n"
+        return 4
+    elif [[ ! -f .git/info/sparse-checkout ]]; then
+        printf "Remote build without sparse directory\n"
+        return 4
+    elif [[ -f REPORTING-BUGS ]]; then
+        printf "Remote build with probable host directory (detected REPORTING-BUGS)\n"
+        return 4
+    elif [[ -f .config ]]; then
+        printf "Remote build with local config\n"
         return 4
     fi
-    if [[ ! -d .git/info || ! -d kernel ]]; then
-        printf "Must run from a top-level Linux repository\n"
-        return 5
-    fi
-    if [[ -d ~/build/kernel/$1/source ]]; then
-        local prev=$(readlink -f ~/build/kernel/$1/source)
+
+    if [[ -d ~/build/kernel/$2/source ]]; then
+        local prev=$(readlink -f ~/build/kernel/$2/source)
         local curr=$(readlink -f $PWD)
         if [[ $prev != $curr ]]; then
             printf "Mismatch in build's previous source dir\n"
-            return 6
+            return 5
         fi
-    fi
-
-    if [[ -f .git/info/sparse-checkout && -z $TARGET ]]; then
-        stubify-linux $1
     fi
 
     local ret
-    if [[ -z $TARGET ]]; then
-        make O=~/build/kernel/$1 $SPARSE $COMPILER -j$(get-nr-cpus)
+    if [[ $1 == "make" ]]; then
+        stubify-linux $2
+
+        make O=~/build/kernel/$2 $SPARSE $COMPILER -j$(get-nr-cpus)
         ret=$?
         if [[ $ret -eq 0 ]]; then
-            make O=~/build/kernel/$1 $COMPILER INSTALL_MOD_PATH=~/build/kernel/$1 modules_install
+            make O=~/build/kernel/$2 $COMPILER INSTALL_MOD_PATH=~/build/kernel/$1 modules_install
         fi
     else
-        make O=~/build/kernel/$1 $COMPILER $TARGET
+        if [[ $1 != "defconfig" && $1 != "oldconfig" && $1 != "menuconfig" && $1 != "localmodconfig" && $1 != "clean" ]]; then
+            printf "Unsupported command '$1'\n"
+            return 7
+        fi
+        make O=~/build/kernel/$2 $COMPILER $1
         ret=$?
     fi
-
-    unset TARGET
 
     return $ret
 }
 
-function make-kernel-opt() {
-    if [[ $# -ne 1 && $# -ne 2 ]]; then
-        printf "usage: m{d,l,m,o,e} [dir]\n"
-        return 1
-    elif [[ $1 != "defconfig" && $1 != "oldconfig" && $1 != "menuconfig" && $1 != "localmodconfig" && $1 != "clean" ]]; then
-        printf "usage: m{d,l,m,o,e} [dir]\n"
-        return 1
-    elif [[ $# -eq 2 ]]; then
-        if [[ ! -f .git/info/sparse-checkout ]]; then
-            printf "m{d,l,m,o,e} <dir> without sparse directory\n"
-            return 1
-        elif [[ -f REPORTING-BUGS ]]; then
-            printf "m{d,l,m,o,e} <dir> with probable host directory\n"
-            return 1
-        elif [[ -f .config ]]; then
-            printf "m{d,l,m,o,e} <dir> with local config\n"
-            return 1
-        fi
-        TARGET=$1 make-kernel $2
-    else
-        if [[ ! -f REPORTING-BUGS ]]; then
-            printf "m{d,l,m,o,e} without REPORTING-BUGS\n"
-            return 1
-        elif [[ ! -f .config ]]; then
-            printf "m{d,l,m,o,e} without local config\n"
-            return 1
-        fi
-        make $COMPILER $1
-    fi
-}
-
-alias mk='make-kernel'
-alias mc='make-kernel'
-alias ms='SPARSE="C=1" make-kernel'
-alias md='make-kernel-opt htmldocs'
-alias ml='make-kernel-opt localmodconfig'
-alias mm='make-kernel-opt menuconfig'
-alias mo='make-kernel-opt oldconfig'
-alias me='make-kernel-opt clean'
+alias mk='make-kernel make'
+alias mc='make-kernel make'
+alias ms='SPARSE="C=1" make-kernel make'
+alias md='make-kernel htmldocs'
+alias ml='make-kernel localmodconfig'
+alias mm='make-kernel menuconfig'
+alias mo='make-kernel oldconfig'
+alias me='make-kernel clean'
 
 function make-kernel-clang() {
     make-clang make-kernel $@
 }
-function make-kernel-clang-opt() {
-    make-clang make-kernel-opt $@
-}
-alias cmc='make-kernel-clang'
+alias cmc='make-kernel-clang make'
 alias cms='SPARSE="C=1" make-kernel-clang'
-alias cmd='make-kernel-clang-opt htmldocs'
-alias cml='make-kernel-clang-opt localmodconfig'
-alias cmm='make-kernel-clang-opt menuconfig'
-alias cmo='make-kernel-clang-opt oldconfig'
-alias cme='make-kernel-clang-opt clean'
+alias cmd='make-kernel-clang htmldocs'
+alias cml='make-kernel-clang localmodconfig'
+alias cmm='make-kernel-clang menuconfig'
+alias cmo='make-kernel-clang oldconfig'
+alias cme='make-kernel-clang clean'
 
 function make-kernel-arm() {
     make-arm make-kernel $@
 }
-function make-kernel-arm-opt() {
-    make-arm make-kernel-opt $@
-}
-alias amc='make-kernel-arm cc_arm'
-alias amd='make-kernel-arm-opt defconfig cc_arm'
-alias ame='make-kernel-arm-opt clean cc_arm'
-alias amm='make-kernel-arm-opt menuconfig cc_arm'
-alias amo='make-kernel-arm-opt oldconfig cc_arm'
+alias amc='make-kernel-arm make cc_arm'
+alias amd='make-kernel-arm defconfig cc_arm'
+alias ame='make-kernel-arm clean cc_arm'
+alias amm='make-kernel-arm menuconfig cc_arm'
+alias amo='make-kernel-arm oldconfig cc_arm'
 
 function make-kernel-mips() {
     make-mips make-kernel $@
 }
-function make-kernel-mips-opt() {
-    make-mips make-kernel-opt $@
-}
-alias mmc='make-kernel-mips cc_mips64'
-alias mmd='make-kernel-mips-opt defconfig cc_mips64'
-alias mme='make-kernel-mips-opt clean cc_mips64'
-alias mmm='make-kernel-mips-opt menuconfig cc_mips64'
-alias mmo='make-kernel-mips-opt oldconfig cc_mips64'
+alias mmc='make-kernel-mips make cc_mips64'
+alias mmd='make-kernel-mips defconfig cc_mips64'
+alias mme='make-kernel-mips clean cc_mips64'
+alias mmm='make-kernel-mips menuconfig cc_mips64'
+alias mmo='make-kernel-mips oldconfig cc_mips64'
 
 function make-kernel-ppc() {
     make-ppc make-kernel $@
 }
-function make-kernel-ppc-opt() {
-    make-ppc make-kernel-opt $@
-}
-alias pmc='make-kernel-ppc cc_ppc64'
-alias pmd='make-kernel-ppc-opt defconfig cc_ppc64'
-alias pme='make-kernel-ppc-opt clean cc_ppc64'
-alias pmm='make-kernel-ppc-opt menuconfig cc_ppc64'
-alias pmo='make-kernel-ppc-opt oldconfig cc_ppc64'
+alias pmc='make-kernel-ppc make cc_ppc64'
+alias pmd='make-kernel-ppc defconfig cc_ppc64'
+alias pme='make-kernel-ppc clean cc_ppc64'
+alias pmm='make-kernel-ppc menuconfig cc_ppc64'
+alias pmo='make-kernel-ppc oldconfig cc_ppc64'
 
-alias emc='make-kernel-ppc cc_e500mc'
-alias emd='make-kernel-ppc-opt defconfig cc_e500mc'
-alias eme='make-kernel-ppc-opt clean cc_e500mc'
-alias emm='make-kernel-ppc-opt menuconfig cc_e500mc'
-alias emo='make-kernel-ppc-opt oldconfig cc_e500mc'
+alias emc='make-kernel-ppc make cc_e500mc'
+alias emd='make-kernel-ppc defconfig cc_e500mc'
+alias eme='make-kernel-ppc clean cc_e500mc'
+alias emm='make-kernel-ppc menuconfig cc_e500mc'
+alias emo='make-kernel-ppc oldconfig cc_e500mc'
 
 function make-kernel-riscv() {
     make-riscv make-kernel $@
 }
-function make-kernel-riscv-opt() {
-    make-riscv make-kernel-opt $@
-}
-alias rmc='make-kernel-riscv cc_riscv'
-alias rmd='make-kernel-riscv-opt defconfig cc_riscv'
-alias rme='make-kernel-riscv-opt clean cc_riscv'
-alias rmm='make-kernel-riscv-opt menuconfig cc_riscv'
-alias rmo='make-kernel-riscv-opt oldconfig cc_riscv'
+alias rmc='make-kernel-riscv make cc_riscv'
+alias rmd='make-kernel-riscv defconfig cc_riscv'
+alias rme='make-kernel-riscv clean cc_riscv'
+alias rmm='make-kernel-riscv menuconfig cc_riscv'
+alias rmo='make-kernel-riscv oldconfig cc_riscv'
 
 function make-kernel-s390() {
     make-s390 make-kernel $@
 }
-function make-kernel-s390-opt() {
-    make-s390 make-kernel-opt $@
-}
-alias smc='make-kernel-s390 cc_s390'
-alias smd='make-kernel-s390-opt defconfig cc_s390'
-alias smm='make-kernel-s390-opt menuconfig cc_s390'
-alias smo='make-kernel-s390-opt oldconfig cc_s390'
+alias smc='make-kernel-s390 make cc_s390'
+alias smd='make-kernel-s390 defconfig cc_s390'
+alias smm='make-kernel-s390 menuconfig cc_s390'
+alias smo='make-kernel-s390 oldconfig cc_s390'
 
-alias xmc='make-kernel cc_x86'
-alias xmd='make-kernel-opt defconfig cc_x86'
-alias xmm='make-kernel-opt menuconfig cc_x86'
-alias xmo='make-kernel-opt oldconfig cc_x86'
+alias xmc='make-kernel make cc_x86'
+alias xmd='make-kernel defconfig cc_x86'
+alias xmm='make-kernel menuconfig cc_x86'
+alias xmo='make-kernel oldconfig cc_x86'
 
 function make-kernel-branch() {
     local RED='\033[1;31m' # Bold Red
@@ -1365,28 +1336,34 @@ function make-kernel-branch() {
     local arbitrary=1000
     local cflags=""
     local targets
+    local start
     local ret
 
-    if [[ $# -ne 2 ]]; then
-        printf "Must specify the starting git commit and targets\n"
+    if [[ $# -lt 2 ]]; then
+        printf "Must specify the target and command\n"
+        return 1
+    fi
+
+    if [[ $# -gt 3 ]]; then
+        printf "Maximum of 3 arguments supported: target (1), command (2) and commit (3)\n"
         return 1
     fi
 
     if [[ $1 == "x86" ]]; then
-        targets=("make-kernel vm"
-                 "make-kernel pae"
-                 "make-kernel pse"
-                 "make-kernel-clang clang"
-                 "make-kernel-clang clang_pae"
-                 "make-kernel-clang clang_pse")
+        targets=("make-kernel $2 vm"
+                 "make-kernel $2 pae"
+                 "make-kernel $2 pse"
+                 "make-kernel-clang $2 clang"
+                 "make-kernel-clang $2 clang_pae"
+                 "make-kernel-clang $2 clang_pse")
     elif [[ $1 == "all" ]]; then
-        targets=("make-kernel-arm cc_arm"
-                 "make-kernel-mips cc_mips64"
-                 "make-kernel-ppc cc_ppc64"
-                 "make-kernel-ppc cc_e500mc"
-                 "make-kernel-riscv cc_riscv"
-                 "make-kernel-s390 cc_s390"
-                 "make-kernel cc_x86")
+        targets=("make-kernel-arm $2 cc_arm"
+                 "make-kernel-mips $2 cc_mips64"
+                 "make-kernel-ppc $2 cc_ppc64"
+                 "make-kernel-ppc $2 cc_e500mc"
+                 "make-kernel-riscv $2 cc_riscv"
+                 "make-kernel-s390 $2 cc_s390"
+                 "make-kernel $2 cc_x86")
     elif [[ $1 == "tests-"* ]]; then
         local test_arch=${1#"tests-"}
         targets=("make-$test_arch make clean"
@@ -1397,15 +1374,21 @@ function make-kernel-branch() {
         return 1
     fi
 
-    local first=$(git rev-parse $2)
+    if [[ $# -lt 3 ]]; then
+        start="HEAD"
+    else
+        start="$3"
+    fi
+
+    local first=$(git rev-parse $start)
     if [[ $? -ne 0 ]]; then
-        printf "Did not find $2 in git\n"
+        printf "Did not find $start in git\n"
         return 1
     fi
 
     local commits=$(glo | head -$arbitrary | grep -B $arbitrary $first | tac | cut -f 1 -d ' ')
     if [[ $? -ne 0 ]]; then
-        printf "Did not find $2 in git log\n"
+        printf "Did not find $start in git log\n"
         return 1
     fi
     commits=(${commits//:/ })
@@ -1439,18 +1422,19 @@ function make-kernel-branch() {
         fi
     done
 
-    unset TARGETS
     gg $current
     gb -D $1/autotest
 }
-alias mkx='make-kernel-branch x86'
-alias mka='make-kernel-branch all'
-alias mkt='make-kernel-branch tests-x86'
-alias mkm='make-kernel-branch tests-arm'
-alias mkr='make-kernel-branch tests-riscv'
-alias mks='make-kernel-branch tests-s390'
+alias mkx='make-kernel-branch x86 make'
+alias mkxc='make-kernel-branch x86 clean'
+alias mka='make-kernel-branch all make'
+alias mkac='make-kernel-branch all clean'
+alias mkt='make-kernel-branch tests-x86 ign'
+alias mkm='make-kernel-branch tests-arm ign'
+alias mkr='make-kernel-branch tests-riscv ign'
+alias mks='make-kernel-branch tests-s390 ign'
 
-alias mkb='TARGET=bzImage make-kernel'
+alias mkb='TARGET=bzImage make-kernel make'
 
 # time kernel
 function time-kernel() {
