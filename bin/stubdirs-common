@@ -1,5 +1,12 @@
 stubdirs=(
         Documentation
+        arch/arm/crypto
+        arch/arm64/crypto
+        arch/mips/crypto
+        arch/powerpc/crypto
+        arch/s390/crypto
+        arch/sparc/crypto
+        arch/x86/crypto
         drivers/accessibility
         drivers/amba
         drivers/android
