@@ -1436,6 +1436,16 @@ alias mks='make-kernel-branch tests-s390 ign'
 
 alias mkb='TARGET=bzImage make-kernel make'
 
+function clean-modules() {
+    local dirs=( $(/bin/ls -1 $HOME/build/kernel) )
+    local i
+
+    for i in "${dirs[@]}"; do
+        rm -rf "$HOME/build/kernel/$i/lib/modules"
+    done
+}
+alias cmod=clean-modules
+
 # time kernel
 function time-kernel() {
     if [[ $# -ne 1 ]]; then
