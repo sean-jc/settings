@@ -1239,7 +1239,7 @@ function make-kernel() {
         make O=~/build/kernel/$2 $SPARSE $COMPILER -j$(get-nr-cpus)
         ret=$?
         if [[ $ret -eq 0 ]]; then
-            make O=~/build/kernel/$2 $COMPILER INSTALL_MOD_PATH=~/build/kernel/$1 modules_install
+            make O=~/build/kernel/$2 $COMPILER INSTALL_MOD_PATH=~/build/kernel/$2 modules_install
         fi
     else
         if [[ $1 != "defconfig" && $1 != "oldconfig" && $1 != "menuconfig" && $1 != "localmodconfig" && $1 != "clean" ]]; then
