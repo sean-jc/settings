@@ -1244,7 +1244,7 @@ function make-kernel() {
         elif [[ ! -f .config ]]; then
             printf "Local build without local config\n"
             return 3
-        elif [[ -f .git/info/sparse-checkout ]]; then
+        elif [[ -f .git/info/sparse-checkout && ! -f .config ]]; then
             printf "Local build with sparse directory\n"
             return 3
         fi
