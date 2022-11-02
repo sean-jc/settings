@@ -1409,6 +1409,10 @@ function make-kernel-branch() {
                  "make-kernel-riscv $2 cc_riscv"
                  "make-kernel-s390 $2 cc_s390"
                  "make-kernel $2 cc_x86")
+    elif [[ $1 == "kut"* ]]; then
+        targets=("make clean"
+                 "make -j$(get-nr-cpus)")
+        cflags="-Werror"
     elif [[ $1 == "tests-"* ]]; then
         local test_arch=${1#"tests-"}
         targets=("make-$test_arch make clean"
@@ -1478,6 +1482,7 @@ alias mkt='make-kernel-branch tests-x86 ign'
 alias mkm='make-kernel-branch tests-arm ign'
 alias mkr='make-kernel-branch tests-riscv ign'
 alias mks='make-kernel-branch tests-s390 ign'
+alias mku='make-kernel-branch kut ign'
 
 alias mkb='TARGET=bzImage make-kernel make'
 
