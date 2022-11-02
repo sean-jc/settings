@@ -1545,10 +1545,18 @@ function prep-kut() {
     return 0
 }
 
+function prep-kut-efi() {
+    qemu=stable probe_modules
+    cd ~/go/src/kernel.org/kut-efi
+    return 0
+}
+
 alias rkt='prep-kut && QEMU=~/build/qemu/stable EFI_UEFI=~/build/ovmf/OVMF.fd'
 alias rku='rkt ./run_tests.sh -v'
 alias rkt32='prep-kut32 && QEMU=~/build/qemu/stable'
 alias rku32='rkt32 ./run_tests.sh -v'
+alias rkte='prep-kut-efi && QEMU=~/build/qemu/stable'
+alias rkue='rkte ./run_tests.sh -v'
 alias rkv='rkt TESTNAME=vmx TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cpu host,+vmx -append'
 alias rkc='rkt TESTNAME=vmx_controls TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cpu host,+vmx -m 2560 -append vmx_controls_test'
 
