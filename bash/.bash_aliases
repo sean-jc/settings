@@ -998,6 +998,28 @@ function run-nx-gvisor {
 }
 alias runx='run-nx-gvisor'
 
+function modprobe-kvm-loop {
+    for i in $(seq 1 1000); do
+	    psudo modprobe kvm_intel
+        psudo modprobe kvm_amd
+        psudo rmmod kvm_amd
+        psudo rmmod kvm_intel
+
+        psudo modprobe kvm_amd
+        psudo modprobe kvm_intel
+        psudo rmmod kvm_intel
+        psudo rmmod kvm_amd
+    done
+}
+
+function modprobe-kvm-all {
+    local nr_cpus=$(get-nr-cpus)
+    for i in $(seq 1 $nr_cpus); do
+        modprobe-kvm-loop > /dev/null 2>&1 &
+    done
+}
+alias mpka='modprobe-kvm-all'
+
 function modprobe-kvm() {
     grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
     if [[ $? -eq 0 ]]; then
