@@ -1031,6 +1031,18 @@ function modprobe-kvm() {
 }
 alias mpk='modprobe-kvm'
 
+function rmmod-kvm() {
+    grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
+    if [[ $? -eq 0 ]]; then
+        kvm=kvm_amd
+    else
+        kvm=kvm_intel
+    fi
+    psudo rmmod $kvm $@
+}
+alias rmk='rmmod-kvm'
+alias rmkk='rmmod-kvm kvm'
+
 function make-kernel-package() {
     if [[ $# -lt 1 ]]; then
         printf "Must specify the target kernel name\n"
