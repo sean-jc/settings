@@ -998,6 +998,17 @@ function run-nx-gvisor {
 }
 alias runx='run-nx-gvisor'
 
+function modprobe-kvm() {
+    grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
+    if [[ $? -eq 0 ]]; then
+        kvm=kvm_amd
+    else
+        kvm=kvm_intel
+    fi
+    psudo modprobe $kvm $@
+}
+alias mpk='modprobe-kvm'
+
 function make-kernel-package() {
     if [[ $# -lt 1 ]]; then
         printf "Must specify the target kernel name\n"
