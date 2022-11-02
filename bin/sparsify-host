@@ -1,4 +1,6 @@
 #!/bin/bash
+. $SETTINGS/bin/stubdirs-common
+
 git config core.sparseCheckout true
 
 echo "!arch/*" > .git/info/sparse-checkout
@@ -11,8 +13,28 @@ echo "arch/Kconfig" >> .git/info/sparse-checkout
 echo "arch/x86/" >> .git/info/sparse-checkout
 echo "tools/arch/x86/" >> .git/info/sparse-checkout
 echo "tools/include/uapi/linux/kvm.h" >> .git/info/sparse-checkout
+echo "arch/arm/crypto" >> .git/info/sparse-checkout
+echo "arch/arm64/crypto" >> .git/info/sparse-checkout
+echo "arch/mips/crypto" >> .git/info/sparse-checkout
+echo "arch/powerpc/crypto" >> .git/info/sparse-checkout
+echo "arch/s390/crypto" >> .git/info/sparse-checkout
+echo "arch/sparce/crypto" >> .git/info/sparse-checkout
+
+for i in "${stubdirs[@]}"; do
+        if [[ $i != arch*crypto || $i == "arch/x86/crypto" ]]; then
+                continue
+        fi
+        echo "$i" >> .git/info/sparse-checkout
+done
 
 git read-tree -mu HEAD
+
+for i in "${stubdirs[@]}"; do
+        if [[ $i != arch*crypto || $i == "arch/x86/crypto" ]]; then
+                continue
+        fi
+        touch $i/Kconfig
+done
 
 # One off case for user-mode Linux
 mkdir -p arch/um/scripts
