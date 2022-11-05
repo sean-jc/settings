@@ -1249,6 +1249,7 @@ function make-kernel() {
             return 3
         fi
         make $COMPILER $1
+        return 0
     fi
 
     if [[ ! -d ~/build/kernel/$2 ]]; then
