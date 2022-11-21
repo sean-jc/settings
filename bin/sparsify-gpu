@@ -15,6 +15,9 @@ echo "arch/x86/" >> .git/info/sparse-checkout
 echo "tools/arch/x86/" >> .git/info/sparse-checkout
 echo "tools/include/uapi/linux/kvm.h" >> .git/info/sparse-checkout
 for i in "${stubdirs[@]}"; do
+        if [[ $i == "arch/x86/crypto" ]]; then
+                continue
+        fi
         echo "!$i" >> .git/info/sparse-checkout
 done
 echo "drivers/char/agp" >> .git/info/sparse-checkout
@@ -41,7 +44,9 @@ for i in "${stubdirs[@]}"; do
                 continue
         fi
         mkdir -p $i
-        touch $i/Makefile
+        if [[ $i != arch*crypto ]]; then
+                touch $i/Makefile
+        fi
         if [[ $i != "drivers/cdrom" &&
               $i != "drivers/char/mwave" &&
               $i != "drivers/char/xilinx_hwicap" &&
