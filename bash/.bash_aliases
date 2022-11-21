@@ -1226,6 +1226,7 @@ function purge-kernel {
             return 1
         fi
         sudo rm -f /boot/config-$version /boot/vmlinuz-$version /boot/initrd.img-$version /boot/System.map-$version
+        sudo rm -rf /usr/lib/modules/$version
     fi
 }
 alias pk='purge-kernel'
