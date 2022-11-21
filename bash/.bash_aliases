@@ -625,8 +625,6 @@ function dev-sync() {
                 mkdir -p /data/local/seanjc/build/kernel/vm/lib/modules; \
                 mkdir -p /data/local/seanjc/build/kernel/pae/arch/x86/boot; \
                 mkdir -p /data/local/seanjc/build/kernel/pae/lib/modules; \
-                mkdir -p /data/local/seanjc/build/kernel/pse/arch/x86/boot; \
-                mkdir -p /data/local/seanjc/build/kernel/pse/lib/modules; \
                 mkdir -p /data/local/seanjc/build/qemu; \
                 mkdir -p /data/local/seanjc/go/src/github.com/sean-jc; \
                 mkdir -p /data/local/seanjc/go/src/kernel.org; \
@@ -655,8 +653,6 @@ function dev-sync() {
         rsync --checksum --recursive ~/build/kernel/vm/lib/modules $2:/data/local/seanjc/build/kernel/vm/lib
         rsync --checksum ~/build/kernel/pae/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/pae/arch/x86/boot
         rsync --checksum --recursive ~/build/kernel/pae/lib/modules $2:/data/local/seanjc/build/kernel/pae/lib
-        rsync --checksum ~/build/kernel/pse/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/pse/arch/x86/boot
-        rsync --checksum --recursive ~/build/kernel/pse/lib/modules $2:/data/local/seanjc/build/kernel/pse/lib
     fi
 }
 alias ds='dev-sync full'
@@ -1398,10 +1394,9 @@ function make-kernel-branch() {
     if [[ $1 == "x86" ]]; then
         targets=("make-kernel $2 vm"
                  "make-kernel $2 pae"
-                 "make-kernel $2 pse"
+                 "make-kernel $2 up"
                  "make-kernel-clang $2 clang"
-                 "make-kernel-clang $2 clang_pae"
-                 "make-kernel-clang $2 clang_pse")
+                 "make-kernel-clang $2 clang_pae")
     elif [[ $1 == "all" ]]; then
         targets=("make-kernel-arm $2 cc_arm"
                  "make-kernel-mips $2 cc_mips64"
