@@ -917,7 +917,7 @@ function make-selftests() {
         static="-static"
     fi
 
-    EXTRA_CFLAGS="$static -Werror -gdwarf-4" make-$1 make
+    EXTRA_CFLAGS="$static -Werror -gdwarf-4" make-$1 make -j$(get-nr-cpus)
     if [[ $? -eq 0 ]]; then
         rm -f $HOME/build/selftests/*
         for i in "${tests[@]}"; do
@@ -1084,7 +1084,7 @@ function make-host {
     fi
 
     local name="-$(git show -s --pretty='tformat:%h')-$1"
-    local threads=$(grep -c '^processor' /proc/cpuinfo)
+    local threads=$(get-nr-cpus)
     make LOCALVERSION=$name -j $threads && sudo make modules_install && sudo make install
     # if [[ $? -eq 0 && ]]; then
     #     local version=$(ls -1 /boot | egrep "vmlinuz-[.0-9]+(-rc[0-9])?$name" | sed -e "s/vmlinuz-//")
