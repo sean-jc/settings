@@ -270,6 +270,17 @@ function git-update-subs() {
     git submodule update --recursive
 }
 
+function git-format-patch() {
+    local nr
+
+    if [[ $# -eq 0 ]]; then
+        nr=1
+    else
+        nr=$1
+    fi
+    git format-patch --base="HEAD~$nr" -M --minimal --patience -o ~/patches -$nr
+}
+
 . $SETTINGS/git/.git-completion.bash
 
 # Add git completion to aliases
@@ -323,7 +334,7 @@ alias gex='git-email x86'
 alias gf='git fetch'
 alias gfo='git fetch origin'
 alias gfu='git fetch upstream'
-alias gfp='git format-patch --base=HEAD~1 -M --minimal --patience -o ~/patches -1'
+alias gfp='git-format-patch'
 alias gfk='nosend=1 git-email kvm'
 alias gft='git fetch --tags'
 alias gg='git-get'
