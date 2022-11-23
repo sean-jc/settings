@@ -1293,6 +1293,7 @@ function make-kernel() {
         make O=~/build/kernel/$2 $SPARSE $COMPILER -j$(get-nr-cpus)
         ret=$?
         if [[ $ret -eq 0 ]]; then
+            rm -rf ~/build/kernel/$2/lib/modules/*
             make O=~/build/kernel/$2 $COMPILER INSTALL_MOD_PATH=~/build/kernel/$2 modules_install
         fi
     else
