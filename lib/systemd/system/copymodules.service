@@ -1,0 +1,11 @@
+[Unit]
+Description=Copy Modules
+After=mnt-lib-modules.mount
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/home/sean/go/src/github.com/sean-jc/settings/bin/copy_modules
+
+[Install]
+WantedBy=multi-user.target

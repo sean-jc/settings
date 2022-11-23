@@ -1,0 +1,12 @@
+#!/bin/bash
+function copy-modules() {
+    local old=( $(/bin/ls -1 /lib/modules | grep -v generic) )
+
+    for m in "${old[@]}"; do
+        rm -rf /lib/modules/$m
+    done
+
+    cp -r /mnt/lib/modules/* /lib/modules
+}
+
+copy-modules
