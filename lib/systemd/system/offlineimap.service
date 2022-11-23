@@ -1,0 +1,11 @@
+[Unit]
+Description=Offlineimap Main Sync
+Documentation=man:offlineimap(1)
+
+[Service]
+Type=oneshot
+User=seanjc
+ExecStart=/usr/bin/offlineimap -o -f "INBOX","Lists/todo","Lists/posted"
+
+[Install]
+WantedBy=mail.target
