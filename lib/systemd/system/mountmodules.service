@@ -1,0 +1,10 @@
+[Unit]
+Description=Mount 9pfs Modules
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/home/sean/go/src/github.com/sean-jc/settings/bin/mount_modules
+
+[Install]
+WantedBy=multi-user.target

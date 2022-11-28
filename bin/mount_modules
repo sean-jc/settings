@@ -1,0 +1,12 @@
+#!/bin/bash
+function mount-modules() {
+    rm -rf /mnt/lib/modules/*
+
+    mount -t 9p -o trans=virtio -o ro kmodules /mnt/9pfs/lib/modules
+    cp -r /mnt/9pfs/lib/modules/* /mnt/lib/modules
+    umount /mnt/9pfs/lib/modules
+
+    mount --bind -o ro /mnt/lib/modules /lib/modules
+}
+
+mount-modules

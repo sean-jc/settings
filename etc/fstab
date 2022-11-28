@@ -1,1 +1,0 @@
-kmodules	/mnt/lib/modules	9p	trans=virtio,auto,nofail,x-systemd.device-timeout=2,ro	0	0
