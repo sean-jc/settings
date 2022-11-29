@@ -1,24 +1,21 @@
 #!/bin/bash
 shopt -s extglob
 
-opts="--nogit --nogit-fallback --norolestats --nofixes"
+opts="--nogit --nogit-fallback --norolestats --nofixes --pattern-depth=$4"
 if [[ $1 == $3 ]]; then
     opts="$opts --nom"
 fi
-if [[ $2 == "kvm" ]]; then
-    opts="$opts --pattern-depth=1"
-fi
 
-if [[ $(basename $1) =~ ^$40000- ]] ; then
-    maint=$(./scripts/get_maintainer.pl $opts $(dirname $1)/!($40000-cover-letter.patch) | tr '\n' ',')
+if [[ $(basename $1) =~ ^$50000- ]] ; then
+    maint=$(./scripts/get_maintainer.pl $opts $(dirname $1)/!($50000-cover-letter.patch) | tr '\n' ',')
 else
     maint=$(./scripts/get_maintainer.pl $opts $1 | tr '\n' ',')
 fi
 if [[ $2 != "ku" && $2 != "qemu" ]]; then
     maint="$maint""linux-kernel@vger.kernel.org,"
 fi
-if [[ $(basename $1) =~ ^$40000- ]] ; then
-    pfiles=$(ls -1 $(dirname $1)/!($40000-cover-letter.patch))
+if [[ $(basename $1) =~ ^$50000- ]] ; then
+    pfiles=$(ls -1 $(dirname $1)/!($50000-cover-letter.patch))
 else
     pfiles=$1
 fi

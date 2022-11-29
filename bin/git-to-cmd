@@ -1,13 +1,10 @@
 #!/bin/bash
 shopt -s extglob
 
-opts="--nogit --nogit-fallback --norolestats --nor --nol --nofixes"
-if [[ $2 == "kvm" ]]; then
-    opts="$opts --pattern-depth=1"
-fi
+opts="--nogit --nogit-fallback --norolestats --nor --nol --nofixes --pattern-depth=$3"
 
-if [[ $(basename $1) =~ ^$30000- ]] ; then
-    maint=$(./scripts/get_maintainer.pl $opts $(dirname $1)/!($30000-cover-letter.patch) | tr '\n' ',')
+if [[ $(basename $1) =~ ^$40000- ]] ; then
+    maint=$(./scripts/get_maintainer.pl $opts $(dirname $1)/!($40000-cover-letter.patch) | tr '\n' ',')
 else
     maint=$(./scripts/get_maintainer.pl $opts $1 | tr '\n' ',')
     if [ "$maint" == "" ]; then
