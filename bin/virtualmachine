@@ -59,9 +59,12 @@ else
     img=$HOME/images/qemu/ubuntu-18.04-server-$img.img
 fi
 
-qemu="$qemu -no-reboot -name debug-threads=on"
+qemu="$qemu -name debug-threads=on"
 if [[ -n $gdb ]]; then
     qemu="$qemu -s -S"
+fi
+if [[ -z $reboot ]]; then
+    qemu="$qemu -no-reboot"
 fi
 
 ifconfig -a | grep -q br0
