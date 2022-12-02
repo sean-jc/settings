@@ -222,6 +222,10 @@ function git-archive-branch() {
         return 1;
     fi
 
+    if [[ $repo == "slf" ]]; then
+        repo="linux"
+    fi
+
     if [[ ! -d "$HOME/archive/$repo/$dir" ]]; then
         printf "'$branch' is not archived at '$dir'\n"
         return 1
