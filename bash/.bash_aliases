@@ -226,7 +226,11 @@ function git-archive-branch() {
         printf "'$branch' is not archived at '$dir'\n"
         return 1
     fi
-    git branch -D $1 && git push --delete origin $1 || ssh z "cd /usr/local/google/home/seanjc/outbox/linux; git branch -D $1"
+    git branch -D $1
+    if [[ $? -eq 0 ]]; then
+        git push --delete origin $1
+        ssh z "cd /usr/local/google/home/seanjc/go/src/kernel.org/linux; git branch -D $1"
+    fi
 }
 
 function git-get() {
