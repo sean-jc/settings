@@ -101,7 +101,7 @@ else
     if [[ $dir =~ "qemu" ]]; then
         ./scripts/checkpatch.pl --branch HEAD~$nr..HEAD
     elif [ -f ./scripts/checkpatch.pl ]; then
-        ./scripts/checkpatch.pl -g HEAD-$nr
+        ./scripts/checkpatch.pl -g HEAD-$nr --codespell --codespellfile=$SETTINGS/codespell/dictionary.txt
     fi
 fi
 

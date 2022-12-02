@@ -560,10 +560,12 @@ function check_patch_head() {
     if [[ $dir == "qemu" ]]; then
         ./scripts/checkpatch.pl --branch HEAD~1..HEAD
     else
-        ./scripts/checkpatch.pl -g HEAD
+        ./scripts/checkpatch.pl -g HEAD --codespell --codespellfile=$SETTINGS/codespell/dictionary.txt
     fi
 }
 alias cph='check_patch_head'
+
+alias cs='codespell -D $SETTINGS/codespell/dictionary.txt'
 
 function cpio-initramfs() {
     if [[ $# -ne 2 ]]; then
