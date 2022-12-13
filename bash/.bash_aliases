@@ -1459,9 +1459,9 @@ function make-kernel-branch() {
     elif [[ $1 == "tests-"* ]]; then
         local test_arch=${1#"tests-"}
         targets=("make-$test_arch make clean"
-                 "make-$test_arch make"
+                 "make-$test_arch make -j$(get-nr-cpus)"
                  "make-clang make-$test_arch make clean"
-                 "make-clang make-$test_arch make")
+                 "make-clang make-$test_arch make -j$(get-nr-cpus)")
         cflags="-Werror"
     else
         printf "Unknown target '$1'\n"
