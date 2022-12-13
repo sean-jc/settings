@@ -885,7 +885,7 @@ function make-x86() {
     $@
 }
 function make-clang() {
-    COMPILER="CC=clang" $@
+    LLVM=1 $@
 }
 function make-arm() {
     ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- $@
@@ -1266,7 +1266,7 @@ function make-kernel() {
             printf "Local build with sparse directory\n"
             return 3
         fi
-        make $COMPILER $1
+        make $1
         return 0
     fi
 
@@ -1300,18 +1300,18 @@ function make-kernel() {
     if [[ $1 == "make" ]]; then
         stubify-linux $2
 
-        make O=~/build/kernel/$2 $SPARSE $COMPILER -j$(get-nr-cpus)
+        make O=~/build/kernel/$2 $SPARSE -j$(get-nr-cpus)
         ret=$?
         if [[ $ret -eq 0 ]]; then
             rm -rf ~/build/kernel/$2/lib/modules/*
-            make O=~/build/kernel/$2 $COMPILER INSTALL_MOD_PATH=~/build/kernel/$2 modules_install
+            make O=~/build/kernel/$2 INSTALL_MOD_PATH=~/build/kernel/$2 modules_install
         fi
     else
         if [[ $1 != "defconfig" && $1 != "oldconfig" && $1 != "menuconfig" && $1 != "localmodconfig" && $1 != "clean" ]]; then
             printf "Unsupported command '$1'\n"
             return 7
         fi
-        make O=~/build/kernel/$2 $COMPILER $1
+        make O=~/build/kernel/$2 $1
         ret=$?
     fi
 
