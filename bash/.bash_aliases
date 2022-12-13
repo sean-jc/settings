@@ -908,6 +908,7 @@ function make-s390() {
 alias msm='make-s390 make'
 
 function make-selftests() {
+    local arch_dir
     local tests
     local i
     local selftest
@@ -921,30 +922,38 @@ function make-selftests() {
         printf "Must specify 'slf' or 'nox' as second argument\n"
         return 1
     fi
-    if [[ $# -eq 3 && $3 == "clean" ]]; then
-        make-$1 make clean
-    elif [[ $# -gt 2 ]]; then
+    if [[ $# -gt 3 ]]; then
+        printf "Max of 3 arguments supported\n"
+    fi
+    if [[ $# -gt 2 && $3 != "clean" ]]; then
         printf "Can only specify 'clean' as third argument\n"
         return 1
     fi
-    if [[ $1 != "arm" ]]; then
-        tests=( $(grep -v -e s390 -e aarch64 -e SPDX $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm/.gitignore) )
-    else
-        tests=( $(grep -v -e s390 -e x86_64 -e SPDX $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm/.gitignore) )
-    fi
 
     pushd $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm
+    if [[ $# -gt 2 && $3 == "clean" ]]; then
+        git clean -fdx
+    fi
+
     if [[ $(whoami) == "seanjc" ]]; then
         static="-static"
     fi
+
+    if [[ $1 == "arm" ]]; then
+        arch_dir="aarch64"
+    else
+        arch_dir="x86_64"
+    fi
+    tests=( $(/usr/bin/ls -1 $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm/*.c $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm/$arch_dir/*.c) )
 
     EXTRA_CFLAGS="$static -Werror -gdwarf-4" make-$1 make -j$(get-nr-cpus)
     if [[ $? -eq 0 ]]; then
         rm -f $HOME/build/selftests/*
         for i in "${tests[@]}"; do
-            selftest="$HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm$i"
-            if [[ -f $selftest ]]; then
-                cp $selftest $HOME/build/selftests
+            i="${i%.*}"
+            selftest=$(basename -- "$i")
+            if [[ -f $i ]]; then
+                cp $i $HOME/build/selftests/$selftest
             fi
         done
     fi
