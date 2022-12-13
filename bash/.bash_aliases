@@ -1316,7 +1316,12 @@ function make-kernel() {
             make O=~/build/kernel/$2 INSTALL_MOD_PATH=~/build/kernel/$2 modules_install
         fi
     else
-        if [[ $1 != "defconfig" && $1 != "oldconfig" && $1 != "menuconfig" && $1 != "localmodconfig" && $1 != "clean" ]]; then
+        if [[ $1 != "defconfig" &&
+              $1 != "oldconfig" &&
+              $1 != "menuconfig" &&
+              $1 != "localmodconfig" &&
+              $1 != "htmldocs" &&
+              $1 != "clean" ]]; then
             printf "Unsupported command '$1'\n"
             return 7
         fi
