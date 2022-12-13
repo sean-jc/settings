@@ -1125,7 +1125,7 @@ function make-host {
     #     sudo kernel-install add $version /boot/vmlinuz-$version /boot/initrd.img-$version
     # fi
 }
-alias mh='make-host'
+alias mho='make-host'
 
 function make-gbuild {
     if [[ $# -ne 2 ]]; then
