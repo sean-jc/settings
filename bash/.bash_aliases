@@ -890,7 +890,9 @@ function make-clang() {
 function make-arm() {
     ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- $@
 }
-alias mam='make-arm make'
+alias ma='make-arm make'
+alias ja='make-clang make-arm make'
+alias mah='make-arm make headers_install'
 
 function make-mips() {
     ARCH=mips CROSS_COMPILE=mips64-linux-gnuabi64- $@
@@ -901,11 +903,16 @@ function make-ppc() {
 function make-riscv() {
     ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- $@
 }
-alias mrm='make-riscv make'
+alias mr='make-riscv make'
+alias jr='make-clang make-riscv make'
+alias mrh='make-riscv make headers_install'
+
 function make-s390() {
     ARCH=s390 CROSS_COMPILE=s390x-linux-gnu- $@
 }
-alias msm='make-s390 make'
+alias ms='make-s390 make'
+alias js='make-clang make-s390 make'
+alias msh='make-s390 make headers_install'
 
 function make-selftests() {
     local arch_dir
@@ -961,10 +968,14 @@ function make-selftests() {
 }
 alias mt='make-selftests x86 slf'
 alias mtc='make-selftests x86 slf clean'
-alias mct='make-selftests clang slf'
-alias mctc='make-selftests clang slf clean'
+alias jt='make-clang make-selftests x86 slf'
+alias jtc='make-clang make-selftests x86 slf clean'
+alias jtx='make-clang make-selftests x86 nox'
+alias jtxc='make-clang make-selftests x86 nox clean'
 alias mta='make-selftests arm nox'
 alias mtac='make-selftests arm nox clean'
+alias jta='make-clang make-selftests arm nox'
+alias jtac='make-clang make-selftests arm nox clean'
 
 function run-selftests() {
     local RED='\033[1;31m' # Bold Red
@@ -1332,9 +1343,9 @@ function make-kernel() {
     return $ret
 }
 
-alias mk='make-kernel make'
 alias mc='make-kernel make'
-alias ms='SPARSE="C=1" make-kernel make'
+alias mh='make headers_install'
+alias msp='SPARSE="C=1" make-kernel make'
 alias md='make-kernel htmldocs'
 alias ml='make-kernel localmodconfig'
 alias mm='make-kernel menuconfig'
@@ -1344,13 +1355,12 @@ alias me='make-kernel clean'
 function make-kernel-clang() {
     make-clang make-kernel $@
 }
-alias cmc='make-kernel-clang make'
-alias cms='SPARSE="C=1" make-kernel-clang'
-alias cmd='make-kernel-clang htmldocs'
-alias cml='make-kernel-clang localmodconfig'
-alias cmm='make-kernel-clang menuconfig'
-alias cmo='make-kernel-clang oldconfig'
-alias cme='make-kernel-clang clean'
+alias jc='make-kernel-clang make'
+alias jsp='SPARSE="C=1" make-kernel-clang'
+alias jl='make-kernel-clang localmodconfig'
+alias jm='make-kernel-clang menuconfig'
+alias jo='make-kernel-clang oldconfig'
+alias je='make-kernel-clang clean'
 
 function make-kernel-arm() {
     make-arm make-kernel $@
