@@ -22,6 +22,16 @@ function get-nr-cpus() {
 }
 alias cpus=get-nr-cpus
 
+function is-guest() {
+    grep -q hypervisor /proc/cpuinfo
+    if [[ $? -eq 0 ]]; then
+        echo "y"
+        return 0
+    fi
+
+    return 1
+}
+
 function curl-time()
 {
     curl -4 -w "@$SETTINGS/bin/curl-format.txt" -o /dev/null -s $@
@@ -988,6 +998,7 @@ function run-selftests() {
     local cyan='\033[0;36m' # Cyan
     local NOF='\033[0m' # No Format
     local tests=( $(/bin/ls -1 $HOME/build/selftests) )
+    local ret
     local i
 
     for i in "${tests[@]}"; do
@@ -996,9 +1007,13 @@ function run-selftests() {
 
         printf "Running $i\n"
 
-        catch __stdout __stderr $HOME/build/selftests/$i
+        if [[ $i == "max_guest_memory_test" && $(is-guest) ]]; then
+            ret=4
+        else
+            catch __stdout __stderr $HOME/build/selftests/$i
+            ret=$?
+        fi
 
-        local ret=$?
         if [[ $ret -eq 0 ]]; then
             printf "${GREEN}PASSED ${cyan}$i${NOF}\n"
         elif [[ $ret -eq 4 ]]; then
