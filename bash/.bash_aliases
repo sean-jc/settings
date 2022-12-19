@@ -920,6 +920,7 @@ function make-selftests() {
     local i
     local selftest
     local static=""
+    local ls
 
     if [[ $# -lt 1 ]] || [[ $1 != "x86" && $1 != "clang" && $1 != "arm" ]]; then
         printf "Must specify 'x86', 'clang' or 'arm' as first argument\n"
@@ -951,7 +952,8 @@ function make-selftests() {
     else
         arch_dir="x86_64"
     fi
-    tests=( $(/usr/bin/ls -1 $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm/*.c $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm/$arch_dir/*.c) )
+    ls=$(which ls)
+    tests=( $($ls -1 $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm/*.c $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm/$arch_dir/*.c) )
 
     EXTRA_CFLAGS="$static -Werror -gdwarf-4" make-$1 make -j$(get-nr-cpus)
     if [[ $? -eq 0 ]]; then
