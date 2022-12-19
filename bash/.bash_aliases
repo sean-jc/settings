@@ -785,6 +785,7 @@ alias si='cd ~/go/src/kernel.org/sinux'
 alias sy='cd ~/go/src/kernel.org/syz'
 alias te='cd ~/go/src/kernel.org/slf'
 alias tk='cd ~/go/src/kernel.org/slf/tools/testing/selftests/kvm'
+alias uu='cd ~/go/src/kernel.org/gpu'
 alias bi='cd ~/build'
 alias kn='cd ~/build/kernel'
 alias qe='cd ~/build/qemu'
@@ -1446,6 +1447,9 @@ function make-kernel-branch() {
                  "make-kernel $2 up"
                  "make-kernel-clang $2 clang"
                  "make-kernel-clang $2 clang_pae")
+    elif [[ $1 == "gpu" ]]; then
+        targets=("make-kernel $2 gpu"
+                 "make-kernel-clang $2 clang_gpu")
     elif [[ $1 == "all" ]]; then
         targets=("make-kernel-arm $2 cc_arm"
                  "make-kernel-mips $2 cc_mips64"
@@ -1523,6 +1527,8 @@ function make-kernel-branch() {
 }
 alias mkx='make-kernel-branch x86 make'
 alias mkxc='make-kernel-branch x86 clean'
+alias mkg='make-kernel-branch gpu make'
+alias mkgc='make-kernel-branch gpu clean'
 alias mka='make-kernel-branch all make'
 alias mkac='make-kernel-branch all clean'
 alias mkt='make-kernel-branch tests-x86 ign'
