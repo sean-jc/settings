@@ -402,11 +402,25 @@ alias gv='git remote -vv'
 # b4 and other lore stuff
 function b4-am() {
     rm -f ~/patches/*
-    $HOME/go/src/kernel.org/b4/b4.sh am --no-cover $2 -s -o $HOME/patches/ $1 && git-apply
+    $HOME/go/src/kernel.org/b4/b4.sh am --no-cover $2 -s -C -o $HOME/patches/ $1 && git-apply
 }
-alias bb='b4-am -l'
-alias bbl='b4-am ""'
+
+function b4-ty() {
+    if [[ $# -ne 1 ]]; then
+        return 1
+    fi
+    local dir=$(git rev-parse --abbrev-ref HEAD | cut -f 2 -d '/')
+    b4 ty -o $HOME/thanks -t $1 && printf "\nMoving to '$HOME/thanks/$dir'\n" && mv $HOME/thanks/*.thanks $HOME/thanks/$dir
+}
+
+alias b4=$HOME/go/src/kernel.org/b4/b4.sh
+
+alias bbl='B4_THANKS=1 b4-am -l'
+alias bb='b4-am ""'
 alias bbc='b4-am -t'
+alias ty='b4-ty'
+alias yy='b4 ty -o $HOME/thanks -l'
+alias dy='b4 ty -o $HOME/thanks -d'
 
 # offlineimap
 alias oi='offlineimap -f "INBOX"'
@@ -813,6 +827,7 @@ alias pq='cd ~/outbox/qemu'
 # Direct navigation to misc directories
 alias dl='cd ~/Downloads'
 alias cpa='cd ~/patches'
+alias th='cd ~/thanks'
 alias sp='rm -f ~/patches/* && scp c:~/patches/* ~/patches/'
 
 # Kernel grep and gdb commands
