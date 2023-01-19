@@ -299,6 +299,25 @@ function git-format-patch() {
     git format-patch --base="HEAD~$nr" -M --minimal --patience -o ~/patches -$nr
 }
 
+function git-merge-kvm-x86() {
+    git fetch kx && \
+    git branch apic kx/apic && \
+    git branch generic kx/generic && \
+    git branch misc kx/misc && \
+    git branch mmu kx/mmu && \
+    git branch pmu kx/pmu && \
+    git branch selftests kx/selftests && \
+    git branch svm kx/svm && \
+    git branch vmx kx/vmx && \
+    git merge --no-ff --log apic generic misc mmu pmu selftests svm vmx
+
+    git branch -D  apic generic misc mmu pmu selftests svm vmx
+}
+
+function git-push-kvm-x86() {
+    git push kx q/apic:apic q/generic:generic q/misc:misc q/mmu:mmu q/pmu:pmu q/selftests:selftests q/svm:svm q/vmx:vmx
+}
+
 . $SETTINGS/git/.git-completion.bash
 
 # Add git completion to aliases
@@ -368,6 +387,7 @@ alias gl='git log --decorate'
 alias glc='git log --pretty=oneline --decorate --author=christopherson'
 alias glo='git log --pretty=oneline --decorate'
 alias gm="git status | grep modified | tr -d '\t' | tr -d ' ' | cut -f 2 -d :"
+alias gmk='git-merge-kvm-x86'
 alias gw="git show"
 alias gwo="git show -s --pretty='tformat:%h (\"%s\")'"
 alias gwp="git show -s --pretty='tformat:%h, \"%s\"'"
@@ -380,6 +400,7 @@ alias gpb='git-cherry-pick-branch'
 alias gpc='git cherry-pick --continue'
 alias gpl='git-cherry-pick-log'
 alias gps='git-cherry-pick-show'
+alias gpk='git-push-kvm-x86'
 alias gr='git reset'
 alias grh='git reset HEAD'
 alias grhh='git reset HEAD --hard'
