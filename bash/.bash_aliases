@@ -1542,8 +1542,10 @@ function make-kernel-branch() {
         targets=("make-kernel $2 vm"
                  "make-kernel $2 pae"
                  "make-kernel $2 up"
+                 "make-kernel $2 xen"
                  "make-kernel-clang $2 clang"
-                 "make-kernel-clang $2 clang_pae")
+                 "make-kernel-clang $2 clang_pae"
+                 "make-kernel-clang $2 clang_xen")
     elif [[ $1 == "gpu" ]]; then
         targets=("make-kernel $2 gpu"
                  "make-kernel-clang $2 clang_gpu")
