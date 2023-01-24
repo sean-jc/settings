@@ -299,6 +299,21 @@ function git-format-patch() {
     git format-patch --base="HEAD~$nr" -M --minimal --patience -o ~/patches -$nr
 }
 
+function git-send-thank-you() {
+    if [[ ! -d ~/thanks/$1 ]]; then
+        printf "Target directory '~/thanks/$1' does not exist\n"
+    fi
+
+    git send-email --to="Sean Christopherson <seanjc@google.com>" --confirm=always ~/thanks/$1/*.thanks
+
+    read -r -p "Delete thanks?: [y/N]" response
+
+    response=${response,,}    # tolower
+    if [[ $response =~ ^(yes|y)$ ]]; then
+        rm ~/thanks/$1/*.thanks
+    fi
+}
+
 function git-merge-kvm-x86() {
     git fetch kx && \
     git branch apic kx/apic && \
@@ -415,6 +430,7 @@ alias gso='git-stash show'
 alias gsop='git-stash "show -p"'
 alias gsp='git-stash pop'
 alias gss='git-stash save'
+alias gst='git-send-thank-you'
 alias gt='git-tree'
 alias gtc='git tag -l --contains'
 alias gus='git-update-subs'
@@ -423,7 +439,7 @@ alias gv='git remote -vv'
 # b4 and other lore stuff
 function b4-am() {
     rm -f ~/patches/*
-    $HOME/go/src/kernel.org/b4/b4.sh am --no-cover $2 -s -C -o $HOME/patches/ $1 && git-apply
+    $HOME/go/src/kernel.org/b4/b4.sh am --no-cover $1 $2 -s -C -o $HOME/patches/ $3 && git-apply
 }
 
 function b4-ty() {
@@ -434,14 +450,35 @@ function b4-ty() {
     b4 ty -o $HOME/thanks -t $1 && printf "\nMoving to '$HOME/thanks/$dir'\n" && mv $HOME/thanks/*.thanks $HOME/thanks/$dir
 }
 
+function b4-ty-fixup() {
+    local commits
+    local hash
+    local shortlog
+    local i=1
+
+    if [[ $# -ne 1 ]]; then
+        return 1
+    fi
+
+    commits=$(git log --oneline | head -$1 | tac)
+    echo "$commits" | while IFS= read -r commit ; do
+        hash=$(echo $commit | cut -f 1 -d ' ')
+        shortlog=$(echo $commit | cut -f 2- -d ' ')
+        printf "[$i/$1] $shortlog\n      https://github.com/kvm-x86/linux/commit/$hash\n"
+
+        i=$((i+1))
+    done
+}
+
 alias b4=$HOME/go/src/kernel.org/b4/b4.sh
 
-alias bbl='B4_THANKS=1 b4-am -l'
-alias bb='b4-am ""'
-alias bbc='b4-am -t'
+alias bbl='b4-am -t -l'
+alias bb='b4-am "" ""'
 alias ty='b4-ty'
+alias tyf='b4-ty-fixup'
 alias yy='b4 ty -o $HOME/thanks -l'
 alias dy='b4 ty -o $HOME/thanks -d'
+alias ay=''
 
 # offlineimap
 alias oi='offlineimap -f "INBOX"'
