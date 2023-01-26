@@ -78,7 +78,7 @@ alias av='amixer-volume'
 # clangd
 #
 function gen-clangd-commands() {
-    ./scripts/clang-tools/gen_compile_commands.py -d /home/seanjc/build/kernel/clang
+    ./scripts/clang-tools/gen_compile_commands.py -d /home/seanjc/build/kernel/clang -o ./.vscode/compile_commands.json
     LLVM=1 make -C tools/testing/selftests/kvm -Bnwk | compiledb --overwrite -n -o tools/testing/selftests/kvm/compile_commands.json --build-dir $PWD/tools/testing/selftests/kvm
 }
 alias ccm='gen-clangd-commands'
