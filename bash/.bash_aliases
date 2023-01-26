@@ -324,22 +324,22 @@ function git-send-thank-you() {
 }
 
 function git-merge-kvm-x86() {
-    git fetch kx && \
-    git branch apic kx/apic && \
-    git branch generic kx/generic && \
-    git branch misc kx/misc && \
-    git branch mmu kx/mmu && \
-    git branch pmu kx/pmu && \
-    git branch selftests kx/selftests && \
-    git branch svm kx/svm && \
-    git branch vmx kx/vmx && \
+    git fetch x && \
+    git branch apic x/apic && \
+    git branch generic x/generic && \
+    git branch misc x/misc && \
+    git branch mmu x/mmu && \
+    git branch pmu x/pmu && \
+    git branch selftests x/selftests && \
+    git branch svm x/svm && \
+    git branch vmx x/vmx && \
     git merge --no-ff --log apic generic misc mmu pmu selftests svm vmx
 
     git branch -D  apic generic misc mmu pmu selftests svm vmx
 }
 
 function git-push-kvm-x86() {
-    git push kx q/apic:apic q/generic:generic q/misc:misc q/mmu:mmu q/pmu:pmu q/selftests:selftests q/svm:svm q/vmx:vmx
+    git push x q/apic:apic q/generic:generic q/misc:misc q/mmu:mmu q/pmu:pmu q/selftests:selftests q/svm:svm q/vmx:vmx
 }
 
 . $SETTINGS/git/.git-completion.bash
