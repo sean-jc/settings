@@ -448,7 +448,7 @@ alias gv='git remote -vv'
 # b4 and other lore stuff
 function b4-am() {
     rm -f ~/patches/*
-    $HOME/go/src/kernel.org/b4/b4.sh am --no-cover $1 $2 -s -C -o $HOME/patches/ $3 && git-apply
+    $HOME/go/src/kernel.org/b4/b4.sh am --no-cover -s -C -o $HOME/patches/ "$@" && git-apply
 }
 
 function b4-ty() {
@@ -482,7 +482,7 @@ function b4-ty-fixup() {
 alias b4=$HOME/go/src/kernel.org/b4/b4.sh
 
 alias bbl='b4-am -t -l'
-alias bb='b4-am "" ""'
+alias bb='b4-am'
 alias ty='b4-ty'
 alias tyf='b4-ty-fixup'
 alias yy='b4 ty -o $HOME/thanks -l'
