@@ -653,16 +653,23 @@ if [[ "$HOSTPOST" =~ ^[a-z]+-(vm|l2|l3|i386|i2|ii) ]]; then
     alias ssf='sudo shutdown -f'
 fi
 
-function check_patch_head() {
+function check-patch-head() {
     local dir=$(pwd | rev | cut -d'/' -f1 | rev)
+    local nr
+
+    if [[ $# -eq 0 ]]; then
+        nr=1
+    else
+        nr=$1
+    fi
 
     if [[ $dir == "qemu" ]]; then
         ./scripts/checkpatch.pl --branch HEAD~1..HEAD
     else
-        ./scripts/checkpatch.pl -g HEAD --codespell --codespellfile=$SETTINGS/codespell/dictionary.txt
+        ./scripts/checkpatch.pl -g "HEAD~$nr"..HEAD --codespell --codespellfile=$SETTINGS/codespell/dictionary.txt
     fi
 }
-alias cph='check_patch_head'
+alias cph='check-patch-head'
 
 alias cs='codespell -D $SETTINGS/codespell/dictionary.txt'
 
