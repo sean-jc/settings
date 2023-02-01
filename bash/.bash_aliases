@@ -318,8 +318,14 @@ function git-format-patch() {
 }
 
 function git-send-thank-you() {
+    if [[ $# -ne 1 ]]; then
+        printf "Specify the target directory\n"
+        return 1
+    fi
+
     if [[ ! -d ~/thanks/$1 ]]; then
         printf "Target directory '~/thanks/$1' does not exist\n"
+        return 1
     fi
 
     git send-email --to="Sean Christopherson <seanjc@google.com>" --confirm=always ~/thanks/$1/*.thanks
