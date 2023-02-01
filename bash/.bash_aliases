@@ -1561,7 +1561,11 @@ function make-kernel-branch() {
         return 1
     fi
 
-    if [[ $1 == "x86" ]]; then
+    if [[ $1 == "clang" ]]; then
+        targets=("make-kernel $2 clang")
+    elif [[ $1 == "vm" ]]; then
+        targets=("make-kernel $2 vm")
+    elif [[ $1 == "x86" ]]; then
         targets=("make-kernel $2 vm"
                  "make-kernel $2 pae"
                  "make-kernel $2 up"
@@ -1647,6 +1651,10 @@ function make-kernel-branch() {
     gg $current
     gb -D $1/autotest
 }
+alias mkc='make-kernel-branch clang make'
+alias mkcc='make-kernel-branch clang make'
+alias mkv='make-kernel-branch vm make'
+alias mkvc='make-kernel-branch vm make clean'
 alias mkx='make-kernel-branch x86 make'
 alias mkxc='make-kernel-branch x86 clean'
 alias mkg='make-kernel-branch gpu make'
