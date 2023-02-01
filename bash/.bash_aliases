@@ -78,8 +78,17 @@ alias av='amixer-volume'
 # clangd
 #
 function gen-clangd-commands() {
-    ./scripts/clang-tools/gen_compile_commands.py -d /home/seanjc/build/kernel/clang -o ./.vscode/compile_commands.json
-    LLVM=1 make -C tools/testing/selftests/kvm -Bnwk | compiledb --overwrite -n -o tools/testing/selftests/kvm/compile_commands.json --build-dir $PWD/tools/testing/selftests/kvm
+    local repo=$(pwd | rev | cut -d'/' -f1 | rev)
+
+    if [[ ! -f ./scripts/clang-tools/gen_compile_commands.py ]]; then
+        printf "Needs to be run from top-level directory of kernel repo\n"
+        return 1
+    fi
+    rm ./.vscode/compile_commands.json
+    if [[ $repo != "slf" ]]; then
+        ./scripts/clang-tools/gen_compile_commands.py -d /home/seanjc/build/kernel/clangd_$repo -o ./.vscode/compile_commands.json
+    fi
+    LLVM=1 make -C tools/testing/selftests/kvm -Bnwk | compiledb -n --build-dir ./tools/testing/selftests/kvm -o - >> ./.vscode/compile_commands.json
 }
 alias ccm='gen-clangd-commands'
 
@@ -1463,6 +1472,7 @@ function make-kernel-clang() {
     make-clang make-kernel $@
 }
 alias jc='make-kernel-clang make'
+alias jcc='make-kernel-clang make c'
 alias jsp='SPARSE="C=1" make-kernel-clang'
 alias jl='make-kernel-clang localmodconfig'
 alias jm='make-kernel-clang menuconfig'
