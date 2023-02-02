@@ -499,6 +499,7 @@ alias b4=$HOME/go/src/kernel.org/b4/b4.sh
 alias bbl='b4-am -t -l'
 alias bb='b4-am'
 alias ty='b4-ty'
+alias scy='scp -r ~/thanks/. z:~/thanks'
 alias sy='ll ~/thanks/**/*.thanks'
 alias tyf='b4-ty-fixup'
 alias yy='b4 ty -o $HOME/thanks -l'
