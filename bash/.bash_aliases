@@ -471,7 +471,7 @@ function b4-ty() {
         return 1
     fi
     local dir=$(git rev-parse --abbrev-ref HEAD | cut -f 2 -d '/')
-    b4 ty -o $HOME/thanks -t $1 && printf "\nMoving to '$HOME/thanks/$dir'\n" && mv $HOME/thanks/*.thanks $HOME/thanks/$dir
+    $HOME/go/src/kernel.org/b4/b4.sh ty -o $HOME/thanks -t $1 && printf "\nMoving to '$HOME/thanks/$dir'\n" && mv $HOME/thanks/*.thanks $HOME/thanks/$dir
 }
 
 function b4-ty-fixup() {
