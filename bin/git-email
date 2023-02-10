@@ -1,4 +1,61 @@
 #!/bin/bash
+shopt -s extglob
+
+function git-to-cmd() {
+    local maint
+    local opts="--nogit --nogit-fallback --norolestats --nor --nol --nofixes --pattern-depth=$3"
+
+    if [[ $(basename $1) =~ ^$40000- ]] ; then
+        maint=$(./scripts/get_maintainer.pl $opts $(dirname $1)/!($40000-cover-letter.patch) | tr '\n' ',')
+    else
+        maint=$(./scripts/get_maintainer.pl $opts $1 | tr '\n' ',')
+        if [ "$maint" == "" ]; then
+            maint="linux-kernel@vger.kernel.org"
+        fi
+    fi
+
+    maint=${maint%,};
+    echo $maint
+}
+
+function git-cc-cmd() {
+    local head=$1
+    local ml=$2
+    local cc_head=$3
+    local depth=$4
+    local pre=$5
+    local maint
+    local opts="--nogit --nogit-fallback --norolestats --nofixes --pattern-depth=$depth"
+
+    # In the common case where the To: and Cc: lists come from the same patch,
+    # suppress maintainer for Cc as they'll show up in To.  Note, the intended
+    # use of "primary" is to route a series to a specific maintainer based on a
+    # specific patch within the series, as opposed to all patches.
+    if [[ $head == $cc_head ]]; then
+        opts="$opts --nom"
+    fi
+
+    if [[ $(basename $head) =~ ^${pre}0000- ]] ; then
+        maint=$(./scripts/get_maintainer.pl $opts $(dirname $head)/!(${pre}0000-cover-letter.patch) | tr '\n' ',')
+    else
+        maint=$(./scripts/get_maintainer.pl $opts $head | tr '\n' ',')
+    fi
+    if [[ $ml != "ku" && $ml != "qemu" ]]; then
+        maint="$maint""linux-kernel@vger.kernel.org,"
+    fi
+    if [[ $(basename $head) =~ ^${pre}0000- ]] ; then
+        pfiles=$(ls -1 $(dirname $head)/!(${pre}0000-cover-letter.patch))
+    else
+        pfiles=$head
+    fi
+
+    maint="$maint$(echo $pfiles | xargs cat | grep -v stable@vger.kernel.org | grep -v lkp@intel.com | grep -e Cc: -e Suggested-by -e Reported-by -e Tested-by -e Reported-and-tested-by -e Reviewed-by -e Signed-off-by | cut -d ' ' -f 2- | tr '\n' ',')"
+    maint=${maint%,};
+    maint=${maint/namit@vmware.com/nadav.amit@gmail.com}
+    maint=${maint/sean.j.christopherson@intel.com/seanjc@google.com}
+    echo $maint
+}
+
 branch=$(git rev-parse --abbrev-ref HEAD)
 dir=$(pwd | rev | cut -d'/' -f1 | rev)
 
@@ -170,7 +227,7 @@ else
     to_primary="$cc_primary"
 fi
 if [[ -z $to ]]; then
-    to=$(~/go/src/github.com/sean-jc/settings/bin/git-to-cmd $to_primary $ml $depth $pre)
+    to=$(git-to-cmd $to_primary $ml $depth $pre)
     if [[ -z $to ]]; then
         printf "No --to found for %s\n" "git-to-cmd $to_primary $ml $depth $pre"
         exit 1
@@ -181,7 +238,7 @@ if [[ -z $to ]]; then
     to="${to//VMwarecomma/VMware,}"
 fi
 if [[ -z $cc ]]; then
-    cc=$(~/go/src/github.com/sean-jc/settings/bin/git-cc-cmd $cc_primary $ml $to_primary $depth $pre)
+    cc=$(git-cc-cmd $cc_primary $ml $to_primary $depth $pre)
     if [[ -z $cc ]]; then
         printf "No --cc found for %s\n" "git-cc-cmd $cc_primary $ml $to_primary $depth $pre"
         exit 1
