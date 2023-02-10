@@ -1,23 +1,34 @@
 #!/bin/bash
 shopt -s extglob
 
-opts="--nogit --nogit-fallback --norolestats --nofixes --pattern-depth=$4"
-if [[ $1 == $3 ]]; then
+head=$1
+ml=$2
+cc_head=$3
+depth=$4
+pre=$5
+
+opts="--nogit --nogit-fallback --norolestats --nofixes --pattern-depth=$depth"
+
+# In the common case where the To: and Cc: lists come from the same patch,
+# suppress maintainer for Cc as they'll show up in To.  Note, the intended
+# use of "primary" is to route a series to a specific maintainer based on a
+# specific patch within the series, as opposed to all patches.
+if [[ $head == $cc_head ]]; then
     opts="$opts --nom"
 fi
 
-if [[ $(basename $1) =~ ^$50000- ]] ; then
-    maint=$(./scripts/get_maintainer.pl $opts $(dirname $1)/!($50000-cover-letter.patch) | tr '\n' ',')
+if [[ $(basename $head) =~ ^${pre}0000- ]] ; then
+    maint=$(./scripts/get_maintainer.pl $opts $(dirname $head)/!(${pre}0000-cover-letter.patch) | tr '\n' ',')
 else
-    maint=$(./scripts/get_maintainer.pl $opts $1 | tr '\n' ',')
+    maint=$(./scripts/get_maintainer.pl $opts $head | tr '\n' ',')
 fi
-if [[ $2 != "ku" && $2 != "qemu" ]]; then
+if [[ $ml != "ku" && $ml != "qemu" ]]; then
     maint="$maint""linux-kernel@vger.kernel.org,"
 fi
-if [[ $(basename $1) =~ ^$50000- ]] ; then
-    pfiles=$(ls -1 $(dirname $1)/!($50000-cover-letter.patch))
+if [[ $(basename $head) =~ ^${pre}0000- ]] ; then
+    pfiles=$(ls -1 $(dirname $head)/!(${pre}0000-cover-letter.patch))
 else
-    pfiles=$1
+    pfiles=$head
 fi
 
 maint="$maint$(echo $pfiles | xargs cat | grep -v stable@vger.kernel.org | grep -v lkp@intel.com | grep -e Cc: -e Suggested-by -e Reported-by -e Tested-by -e Reported-and-tested-by -e Reviewed-by -e Signed-off-by | cut -d ' ' -f 2- | tr '\n' ',')"
