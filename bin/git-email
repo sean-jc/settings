@@ -59,13 +59,14 @@ if [[ $# -lt 3 || $3 -lt 1 ]]; then
 fi
 ver=$3
 
-depth=3
-if [[ $# -gt 4 ]]; then
-    printf "usage: git-email list nr_patches version [pattern depth]\n"
+if [[ $# -gt 3 ]]; then
+    printf "usage: git-email list nr_patches version\n"
     exit 1
 fi
-if [[ $# -eq 4 ]]; then
-    depth=$4
+
+depth=3
+if [[ -n $d ]]; then
+    depth=$d
 elif [[ $ml == "kvm" ]]; then
     depth=1
 fi
