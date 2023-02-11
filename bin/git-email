@@ -111,7 +111,7 @@ fi
 
 opt=""
 if [[ -n $reply ]]; then
-    opt="--in-reply-to=$reply"
+    opt="$opt --in-reply-to=$reply"
 fi
 
 while true; do
