@@ -97,26 +97,11 @@ fi
 branch=${branch//\//.}
 dir="$dir/$branch/v$ver"
 if [[ -n $redo ]]; then
-    if [[ -n $indy ]]; then
-        if [[ -n $primary ]]; then
-            printf "indy doesn't work with a predefined primary patch\n"
-            exit 1
-        fi
-        idir="$dir""_indy"
-        if [[ ! -d $idir ]]; then
-            printf "$idir doesn't exists, no existing patch(es) to send\n"
-            exit 1
-        fi
-    fi
     if [[ ! -d $dir ]]; then
         printf "$dir doesn't exists, no existing patch(es) to send\n"
         exit 1
     fi
 else
-    if [[ -n $indy ]]; then
-        printf "indy only works with redo\n"
-        exit 1
-    fi
     if [[ -d $dir ]]; then
         if [[ -n $ovr ]]; then
             rm -f $dir/*.patch
@@ -177,20 +162,14 @@ while true; do
 
     response=${response,,}    # tolower
     if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
-        if [[ -z $indy ]]; then
-            if [[ $nr -gt 1 ]]; then
-                grep -q -e "BLURB HERE" -e "SUBJECT HERE" $dir/*0000-cover-letter.patch
-                if [ $? -eq 0 ]; then
-                    printf "Edit the cover letter (%s) before sending!\n" "$dir/*0000-cover-letter.patch"
-                    continue
-                fi
+        if [[ $nr -gt 1 ]]; then
+            grep -q -e "BLURB HERE" -e "SUBJECT HERE" $dir/*0000-cover-letter.patch
+            if [ $? -eq 0 ]; then
+                printf "Edit the cover letter (%s) before sending!\n" "$dir/*0000-cover-letter.patch"
+                continue
             fi
-            git send-email --suppress-cc=all --confirm=always --to=seanjc@google.com --reply-to="Sean Christopherson <seanjc@google.com>" $opt $dir
-        else
-            for filename in $idir/*.patch; do
-                git send-email --suppress-cc=all --confirm=always --to=seanjc@google.com --reply-to="Sean Christopherson <seanjc@google.com>" $opt $filename
-            done
         fi
+        git send-email --suppress-cc=all --confirm=always --to=seanjc@google.com --reply-to="Sean Christopherson <seanjc@google.com>" $opt $dir
         break
     else
         exit 0
@@ -214,9 +193,7 @@ else
     pre=""
 fi
 
-if [[ -n $indy ]]; then
-    cc_primary=$(ls -1 $idir/*00$indy*)
-elif [[ $nr -gt 1 ]]; then
+if [[ $nr -gt 1 ]]; then
     cc_primary=$(ls -1 $dir/*0000-cover-letter.patch)
 else
     cc_primary=$(ls -1 $dir/*0001*)
@@ -255,11 +232,5 @@ read -r -p "Send email: [Y/n]" response
 
 response=${response,,}    # tolower
 if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
-    if [[ -z $indy ]]; then
-        eval $(printf "%s\n" "git send-email --confirm=always --suppress-cc=all --reply-to=\"Sean Christopherson <seanjc@google.com>\" $to $bcc $cc $opt $dir")
-    else
-        for filename in $idir/*.patch; do
-            eval $(printf "%s\n" "git send-email --confirm=always --suppress-cc=cccmd --reply-to=\"Sean Christopherson <seanjc@google.com>\" $to $bcc $cc $opt $filename")
-        done
-    fi
+    eval $(printf "%s\n" "git send-email --confirm=always --suppress-cc=all --reply-to=\"Sean Christopherson <seanjc@google.com>\" $to $bcc $cc $opt $dir")
 fi
