@@ -182,6 +182,9 @@ else
 fi
 
 gm_opts="--nogit --nogit-fallback --norolestats --nor --nofixes --pattern-depth=$depth"
+if [[ -n $nok ]]; then
+    gm_opts="$gm_opts --nokeywords"
+fi
 if [[ -z $to ]]; then
     to=$(get-maintainers to $head $ml "$gm_opts" $pre)
     if [[ -z $to ]]; then
