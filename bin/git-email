@@ -1,43 +1,37 @@
 #!/bin/bash
 shopt -s extglob
 
-function git-to-cmd() {
+function get-maintainers() {
+    local cmd=$1
+    local head=$2
+    local ml=$3
+    local opts=$4
+    local pre=$5
     local maint
-    local opts="--nogit --nogit-fallback --norolestats --nor --nol --nofixes --pattern-depth=$3"
 
-    if [[ $(basename $1) =~ ^$40000- ]] ; then
-        maint=$(./scripts/get_maintainer.pl $opts $(dirname $1)/!($40000-cover-letter.patch) | tr '\n' ',')
+    if [[ $cmd == "to" ]]; then
+        opts="$opts --nol"
     else
-        maint=$(./scripts/get_maintainer.pl $opts $1 | tr '\n' ',')
+        opts="$opts --nom"
     fi
-
-    maint=${maint%,};
-    echo $maint
-}
-
-function git-cc-cmd() {
-    local head=$1
-    local ml=$2
-    local depth=$3
-    local pre=$4
-    local maint
-    local opts="--nogit --nogit-fallback --norolestats --nofixes --nom --pattern-depth=$depth"
 
     if [[ $(basename $head) =~ ^${pre}0000- ]] ; then
         maint=$(./scripts/get_maintainer.pl $opts $(dirname $head)/!(${pre}0000-cover-letter.patch) | tr '\n' ',')
     else
         maint=$(./scripts/get_maintainer.pl $opts $head | tr '\n' ',')
     fi
-    if [[ $ml != "ku" && $ml != "qemu" ]]; then
-        maint="$maint""linux-kernel@vger.kernel.org,"
-    fi
-    if [[ $(basename $head) =~ ^${pre}0000- ]] ; then
-        pfiles=$(ls -1 $(dirname $head)/!(${pre}0000-cover-letter.patch))
-    else
-        pfiles=$head
+    if [[ $cmd == "cc" ]]; then
+        if [[ $ml != "ku" && $ml != "qemu" ]]; then
+            maint="$maint""linux-kernel@vger.kernel.org,"
+        fi
+        if [[ $(basename $head) =~ ^${pre}0000- ]] ; then
+            pfiles=$(ls -1 $(dirname $head)/!(${pre}0000-cover-letter.patch))
+        else
+            pfiles=$head
+        fi
+        maint="$maint$(echo $pfiles | xargs cat | grep -v stable@vger.kernel.org | grep -v lkp@intel.com | grep -e Cc: -e Suggested-by -e Reported-by -e Tested-by -e Reported-and-tested-by -e Reviewed-by -e Signed-off-by | cut -d ' ' -f 2- | tr '\n' ',')"
     fi
 
-    maint="$maint$(echo $pfiles | xargs cat | grep -v stable@vger.kernel.org | grep -v lkp@intel.com | grep -e Cc: -e Suggested-by -e Reported-by -e Tested-by -e Reported-and-tested-by -e Reviewed-by -e Signed-off-by | cut -d ' ' -f 2- | tr '\n' ',')"
     maint=${maint%,};
     maint=${maint/namit@vmware.com/nadav.amit@gmail.com}
     maint=${maint/sean.j.christopherson@intel.com/seanjc@google.com}
@@ -186,10 +180,12 @@ if [[ $nr -gt 1 ]]; then
 else
     head=$(ls -1 $dir/*0001*)
 fi
+
+gm_opts="--nogit --nogit-fallback --norolestats --nor --nofixes --pattern-depth=$depth"
 if [[ -z $to ]]; then
-    to=$(git-to-cmd $head $ml $depth $pre)
+    to=$(get-maintainers to $head $ml "$gm_opts" $pre)
     if [[ -z $to ]]; then
-        printf "No --to found for %s\n" "git-to-cmd $head $ml $depth $pre"
+        printf "No --to found for %s\n" "get-maintainers to $head $ml $gm_opts $pre"
         exit 1
     fi
     to="${to//\"/\\\"}"
@@ -197,10 +193,11 @@ if [[ -z $to ]]; then
     to="--to=\"${to//,/\" \-\-to=\"}\""
     to="${to//VMwarecomma/VMware,}"
 fi
+
 if [[ -z $cc ]]; then
-    cc=$(git-cc-cmd $head $ml $depth $pre)
+    cc=$(get-maintainers cc $head $ml "$gm_opts" $pre)
     if [[ -z $cc ]]; then
-        printf "No --cc found for %s\n" "git-cc-cmd $head $ml $depth $pre"
+        printf "No --cc found for %s\n" "get-maintainers cc $head $ml $gm_opts $pre"
         exit 1
     fi
     cc="${cc//\"/\\\"}"
