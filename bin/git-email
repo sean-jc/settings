@@ -9,9 +9,6 @@ function git-to-cmd() {
         maint=$(./scripts/get_maintainer.pl $opts $(dirname $1)/!($40000-cover-letter.patch) | tr '\n' ',')
     else
         maint=$(./scripts/get_maintainer.pl $opts $1 | tr '\n' ',')
-        if [ "$maint" == "" ]; then
-            maint="linux-kernel@vger.kernel.org"
-        fi
     fi
 
     maint=${maint%,};
