@@ -1644,7 +1644,6 @@ function make-kernel-branch() {
     local RED='\033[1;31m' # Bold Red
     local cyan='\033[0;36m' # Cyan
     local NOF='\033[0m' # No Format
-    local current=$(git rev-parse --abbrev-ref HEAD)
     local arbitrary=1000
     local cflags=""
     local targets
@@ -1656,8 +1655,8 @@ function make-kernel-branch() {
         return 1
     fi
 
-    if [[ $# -gt 3 ]]; then
-        printf "Maximum of 3 arguments supported: target (1), command (2) and commit (3)\n"
+    if [[ $# -gt 4 ]]; then
+        printf "Usage: target (1), command (2), branch (3) and first commit (4)\n"
         return 1
     fi
 
@@ -1700,10 +1699,19 @@ function make-kernel-branch() {
         return 1
     fi
 
-    if [[ $# -lt 3 ]]; then
+    gg autotest
+
+    if [[ $# -gt 2 ]]; then
+        git reset --hard $3
+        if [[ $? -ne 0 ]]; then
+            printf "Did not find $3 in git\n"
+            return 1
+        fi
+    fi
+    if [[ $# -lt 4 ]]; then
         start="HEAD"
     else
-        start="$3"
+        start="$4"
     fi
 
     local first=$(git rev-parse $start)
@@ -1719,10 +1727,6 @@ function make-kernel-branch() {
     fi
     commits=(${commits//:/ })
 
-    printf "Current branch is '$current'\n\n"
-
-    gb -D $1/autotest 2> /dev/null
-    gg -b $1/autotest
     for i in "${commits[@]}"; do
         local commit=$(gwo $i)
         git reset --hard $i
@@ -1748,8 +1752,7 @@ function make-kernel-branch() {
         fi
     done
 
-    gg $current
-    gb -D $1/autotest
+    gg autotest
 }
 alias mkc='make-kernel-branch clang make'
 alias mkcc='make-kernel-branch clang make'
