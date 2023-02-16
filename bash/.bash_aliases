@@ -41,8 +41,6 @@ alias curlt='curl-time'
 # -----------------------------------------------------------------------------
 # MOOn
 # -----------------------------------------------------------------------------
-alias mu='moo cache -u'
-
 function moo-server-gulp() {
     pushd ~/go/src/github.com/zombull/moo/server
     gulp
@@ -145,7 +143,7 @@ function git-blob() {
 
 function git-apply() {
     if [ $# -eq 0 ]; then
-        git am -3 ~/patches/*.*
+        git am -3 $HOME/patches/*.*
     else
         git am -3 $1/*.*
     fi
@@ -545,8 +543,21 @@ alias gv='git remote -vv'
 
 # b4 and other lore stuff
 function b4-am() {
-    rm -f ~/patches/*
+    rm -f $HOME/patches/*
     $HOME/go/src/kernel.org/b4/b4.sh am --no-cover -s -C -o $HOME/patches/ "$@" && git-apply
+}
+
+function b4-mbox() {
+    $HOME/go/src/kernel.org/b4/b4.sh mbox -o $HOME/mail/ "$1"
+}
+
+function b4-mbox-mutt() {
+    $HOME/go/src/kernel.org/b4/b4.sh mbox -o $HOME/mail/ "$1" && mutt -f "$HOME/mail/$1.mbx"
+}
+
+function b4-am-mbox() {
+    b4-mbox "${@: -1}"
+    b4-am "$@"
 }
 
 function b4-ty() {
@@ -581,13 +592,18 @@ alias b4=$HOME/go/src/kernel.org/b4/b4.sh
 
 alias bbl='b4-am -t -l'
 alias bb='b4-am'
+alias bm='b4-mbox'
+alias bmm='b4-mbox-mutt'
+alias bam='b4-am-mbox -t -l'
 alias ty='b4-ty'
 alias scy='scp -r ~/thanks/. z:~/thanks'
 alias sy='ll ~/thanks/**/*.thanks'
 alias tyf='b4-ty-fixup'
 alias yy='b4 ty -o $HOME/thanks -l'
 alias dy='b4 ty -o $HOME/thanks -d'
-alias ay=''
+
+alias mu='mutt -f $HOME/mail/*.mbx'
+alias mf='mutt -f'
 
 # offlineimap
 alias oi='offlineimap -f "INBOX"'
@@ -1798,7 +1814,7 @@ alias mq='make-qemu'
 function make-ovmf() {
     build -n $(get-nr-cpus) -a X64 -a IA32 -t GCC5 -p OvmfPkg/OvmfPkgIa32X64.dsc
 }
-alias mf=make-ovmf
+alias maf=make-ovmf
 
 function prep-kut32() {
     qemu=stable probe_modules
