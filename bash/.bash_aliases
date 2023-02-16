@@ -357,6 +357,86 @@ function git-push-kvm-x86() {
     git push x q/apic:apic q/generic:generic q/misc:misc q/mmu:mmu q/pmu:pmu q/selftests:selftests q/svm:svm q/vmx:vmx
 }
 
+function git-get-tag() {
+    local major=$(grep -E "^VERSION" Makefile | cut -f 3 -d ' ')
+    local minor=$(($(grep -E "^PATCHLEVEL" Makefile | cut -f 3 -d ' ')+1))
+
+    if [[ $# -ne 1 ]]; then
+        printf "Specify the target branch\n"
+        return 1
+    fi
+
+    tag="kvm-x86-$1-$major.$minor"
+    if [[ $1 != "apic" &&
+          $1 != "generic" &&
+          $1 != "misc" &&
+          $1 != "mmu" &&
+          $1 != "pmu" &&
+          $1 != "selftests" &&
+          $1 != "svm" &&
+          $1 != "vmx" ]]; then
+        printf "$1 isn't a known branch\n"
+        return 1
+    fi
+
+    echo "kvm-x86-$1-$major.$minor"
+    return 0
+}
+
+function git-make-tag() {
+    local tag=$(git-get-tag $@)
+
+    if [[ $? -ne 0 ]]; then
+        return 1
+    fi
+
+    git fetch x
+    git checkout x86/autopull && git reset --hard x/$1 && git tag -s $tag && git push x $tag
+}
+
+
+function git-request-pull() {
+    local tag=$(git-get-tag $@)
+
+    if [[ $? -ne 0 ]]; then
+        return 1
+    fi
+
+    git request-pull kvm/next https://github.com/kvm-x86/linux.git tags/$tag > $HOME/pulls/$1.mail
+}
+
+function git-send-pull-requests() {
+    local branches=("apic"
+                    "generic"
+                    "misc"
+                    "mmu"
+                    "pmu"
+                    "selftests"
+                    "svm"
+                    "vmx")
+
+    for branch in "${branches[@]}"; do
+        if [[ ! -f $HOME/pulls/$branch.mail ]]; then
+            printf "Dude, generate a pull request for $branch"
+            return 1;
+        fi
+    done
+
+    read -r -p "Send pull requests to self: [Y/n]" response
+    response=${response,,}    # tolower
+    if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
+        git send-email --confirm=always --suppress-cc=all --reply-to="Sean Christopherson <seanjc@google.com>" --to="Sean Christopherson <seanjc@google.com>" $HOME/pulls
+    else
+        return 1
+    fi
+
+    read -r -p "Send pull requests to Paolo: [Y/n]" response
+    response=${response,,}    # tolower
+    if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
+        git send-email --confirm=always --suppress-cc=all --reply-to="Sean Christopherson <seanjc@google.com>" --to="Paolo Bonzini <pbonzini@redhat.com>" --cc=kvm@vger.kernel.org --bcc="Sean Christopherson <seanjc@google.com>" $HOME/pulls
+    fi
+}
+
 . $SETTINGS/git/.git-completion.bash
 
 # Add git completion to aliases
@@ -427,6 +507,7 @@ alias glc='git log --pretty=oneline --decorate --author=christopherson'
 alias glo='git log --pretty=oneline --decorate'
 alias gm="git status | grep modified | tr -d '\t' | tr -d ' ' | cut -f 2 -d :"
 alias gmk='git-merge-kvm-x86'
+alias gmt='git-make-tag'
 alias gw="git show"
 alias gwo="git show -s --pretty='tformat:%h (\"%s\")'"
 alias gwp="git show -s --pretty='tformat:%h, \"%s\"'"
@@ -443,6 +524,7 @@ alias gpk='git-push-kvm-x86'
 alias gr='git reset'
 alias grh='git reset HEAD'
 alias grhh='git reset HEAD --hard'
+alias grp='git-request-pull'
 alias grc='git rebase --continue'
 alias gri='git rebase --interactive'
 alias gu='git pull'
@@ -453,6 +535,7 @@ alias gsl='git-stash list'
 alias gso='git-stash show'
 alias gsop='git-stash "show -p"'
 alias gsp='git-stash pop'
+alias gsr='git-send-pull-requests'
 alias gss='git-stash save'
 alias gst='git-send-thank-you'
 alias gt='git-tree'
@@ -744,7 +827,7 @@ alias failed='sys list-units --state=failed'
 alias services='sys list-unit-files --type=service'
 
 # misc system
-alias bm='blueman-manager &'
+alias btm='blueman-manager &'
 alias gcm='gcert -s -m kernel-development,corevirt-team-testing'
 
 function dev-sync() {
