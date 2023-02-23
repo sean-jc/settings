@@ -552,9 +552,12 @@ function b4-mbox() {
 }
 
 function b4-mbox-mutt() {
-    local fname="$(date +%Y-%m-%d-%s%N).mbox"
+    local fname=$($HOME/go/src/kernel.org/b4/b4.sh mbox -o $HOME/mail/ "$1" 2>&1 | grep Saved | cut -f 2 -d ' ')
 
-    $HOME/go/src/kernel.org/b4/b4.sh mbox -o $HOME/mail/ -n $fname "$1" && mutt -f "$HOME/mail/$fname"
+    if [[ $? -eq 0 ]]; then
+        printf "Saved $fname\n"
+        mutt -f "$fname"
+    fi
 }
 
 function b4-am-mbox() {
