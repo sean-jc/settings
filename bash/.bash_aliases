@@ -552,7 +552,9 @@ function b4-mbox() {
 }
 
 function b4-mbox-mutt() {
-    $HOME/go/src/kernel.org/b4/b4.sh mbox -o $HOME/mail/ "$1" && mutt -f "$HOME/mail/$1.mbx"
+    local fname="$(date +%Y-%m-%d-%s%N).mbox"
+
+    $HOME/go/src/kernel.org/b4/b4.sh mbox -o $HOME/mail/ -n $fname "$1" && mutt -f "$HOME/mail/$fname"
 }
 
 function b4-am-mbox() {
