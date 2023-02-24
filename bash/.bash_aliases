@@ -1668,6 +1668,11 @@ function make-kernel-branch() {
 
     branch=$(git rev-parse --abbrev-ref HEAD)
 
+    git rev-parse --verify autotest
+    if [[ $? -ne 0 ]]; then
+        git branch autotest
+    fi
+
     if [[ $1 == "clang" ]]; then
         targets=("make-kernel $2 clang")
     elif [[ $1 == "vm" ]]; then
