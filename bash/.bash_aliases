@@ -1662,7 +1662,7 @@ function make-kernel-branch() {
     fi
 
     if [[ $# -gt 4 ]]; then
-        printf "Usage: target (1), command (2), branch (3) and first commit (4)\n"
+        printf "Usage: target (1), command (2), first commit (3), and branch (4)\n"
         return 1
     fi
 
@@ -1712,19 +1712,17 @@ function make-kernel-branch() {
         return 1
     fi
 
-    gg autotest
-
-    if [[ $# -gt 2 ]]; then
-        git reset --hard $3
+    if [[ $# -gt 3 ]]; then
+        git rev-parse --verify $4
         if [[ $? -ne 0 ]]; then
-            printf "Did not find $3 in git\n"
+            printf "Did not find $4 in git\n"
             return 1
         fi
     fi
-    if [[ $# -lt 4 ]]; then
+    if [[ $# -lt 3 ]]; then
         start="HEAD"
     else
-        start="$4"
+        start="$3"
     fi
 
     local first=$(git rev-parse $start)
@@ -1739,6 +1737,8 @@ function make-kernel-branch() {
         return 1
     fi
     commits=(${commits//:/ })
+
+    gg autotest
 
     for i in "${commits[@]}"; do
         local commit=$(gwo $i)
