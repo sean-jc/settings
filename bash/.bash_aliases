@@ -107,11 +107,12 @@ function git-show() {
 }
 
 function git-diff() {
-    if [ $# -eq 0 ]
-    then
+    if [[ $# -eq 0 ]]; then
         git diff $(git rev-parse --verify HEAD^) $(git rev-parse --verify HEAD)
-    else
+    elif [[ $# -eq 1 ]]; then
         git diff $1^ $1
+    else
+        git diff --no-index $1 $2
     fi
 }
 
