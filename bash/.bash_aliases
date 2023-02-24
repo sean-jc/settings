@@ -502,6 +502,7 @@ alias ggb='git-get-branch'
 alias ggd='gs | grep deleted: | cut -f 2 | tr -s " " | cut -f 2 -d " " | xargs git checkout'
 alias gl='git log --decorate'
 alias glc='git log --pretty=oneline --decorate --author=christopherson'
+alias glg='git log --pretty=oneline --decorate --graph'
 alias glo='git log --pretty=oneline --decorate'
 alias gm="git status | grep modified | tr -d '\t' | tr -d ' ' | cut -f 2 -d :"
 alias gmk='git-merge-kvm-x86'
