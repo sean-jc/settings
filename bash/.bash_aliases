@@ -1652,6 +1652,7 @@ function make-kernel-branch() {
     local arbitrary=1000
     local cflags=""
     local targets
+    local branch
     local start
     local ret
 
@@ -1664,6 +1665,8 @@ function make-kernel-branch() {
         printf "Usage: target (1), command (2), branch (3) and first commit (4)\n"
         return 1
     fi
+
+    branch=$(git rev-parse --abbrev-ref HEAD)
 
     if [[ $1 == "clang" ]]; then
         targets=("make-kernel $2 clang")
@@ -1757,7 +1760,7 @@ function make-kernel-branch() {
         fi
     done
 
-    gg autotest
+    gg $branch
 }
 alias mkc='make-kernel-branch clang make'
 alias mkcc='make-kernel-branch clang make'
