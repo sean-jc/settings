@@ -154,22 +154,22 @@ function git-cherry-pick-branch() {
     local arbitrary=1000
 
     if [ $# -ne 2 ]; then
-        printf "Usage for cherry picking a branch: 'gpb <last commit> <first commit>'\n"
+        printf "Usage for cherry picking a branch: 'gpb <first commit> <last commit>'\n"
         return 1
     fi
 
-    git log --pretty=oneline --decorate $1 | head -$arbitrary | grep -q $2
+    git log --pretty=oneline --decorate $2 | head -$arbitrary | grep -q $1
     if [[ $? -ne 0 ]]; then
-        printf "Did not find $2 in log from $1\n"
+        printf "Did not find $1 in log from $2\n"
         return 1
     fi
-    git log --pretty=oneline --decorate $1 | head -$arbitrary | grep -B $arbitrary $2
+    git log --pretty=oneline --decorate $2 | head -$arbitrary | grep -B $arbitrary $1
     printf "\e[1;7;35mCherry pick these commits?"
     read -r -p "[Y/n] " response
     printf "\e[0m"
     response=${response,,}    # tolower
     if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
-        commits=$(glo $1 | head -$arbitrary | grep -B $arbitrary $2 | tac | cut -f 1 -d ' ' | xargs)
+        commits=$(glo $2 | head -$arbitrary | grep -B $arbitrary $1 | tac | cut -f 1 -d ' ' | xargs)
         git cherry-pick $commits
         return $?
     fi
