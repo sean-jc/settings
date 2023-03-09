@@ -773,7 +773,13 @@ alias sk='SEAN_HOME=$HOME sudo -sE'
 alias sbn='sudo reboot now'
 alias sbf='sudo reboot -f'
 
+function reboot-sysrq() {
+    echo 1 | sudo tee /proc/sys/kernel/sysrq > /dev/null
+    echo b | sudo tee /proc/sysrq-trigger > /dev/null
+}
+
 if [[ "$HOSTPOST" =~ ^[a-z]+-(vm|l2|l3|i386|i2|ii) ]]; then
+    alias sbr='reboot-sysrq'
     alias ssn='sudo shutdown now'
     alias ssf='sudo shutdown -f'
 fi
