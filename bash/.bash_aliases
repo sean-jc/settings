@@ -1665,6 +1665,7 @@ function make-kernel-branch() {
     local targets
     local branch
     local start
+    local end
     local ret
 
     if [[ $# -lt 2 ]]; then
@@ -1723,26 +1724,28 @@ function make-kernel-branch() {
         return 1
     fi
 
-    if [[ $# -gt 3 ]]; then
-        git rev-parse --verify $4
+    if [[ $# -lt 3 ]]; then
+        start=$(git rev-parse HEAD)
+    else
+        start=$(git rev-parse --verify $3)
+        if [[ $? -ne 0 ]]; then
+            printf "Did not find $3 in git\n"
+            return 1
+        fi
+    fi
+    if [[ $# -lt 4 ]]; then
+        end=$(git rev-parse HEAD)
+    else
+        end=$(git rev-parse --verify $4)
         if [[ $? -ne 0 ]]; then
             printf "Did not find $4 in git\n"
             return 1
         fi
     fi
-    if [[ $# -lt 3 ]]; then
-        start="HEAD"
-    else
-        start="$3"
-    fi
 
-    local first=$(git rev-parse $start)
-    if [[ $? -ne 0 ]]; then
-        printf "Did not find $start in git\n"
-        return 1
-    fi
+    printf "start = $start, end = $end\n"
 
-    local commits=$(glo | head -$arbitrary | grep -B $arbitrary $first | tac | cut -f 1 -d ' ')
+    local commits=$(glo $end | head -$arbitrary | grep -B $arbitrary $start | tac | cut -f 1 -d ' ')
     if [[ $? -ne 0 ]]; then
         printf "Did not find $start in git log\n"
         return 1
@@ -1750,6 +1753,7 @@ function make-kernel-branch() {
     commits=(${commits//:/ })
 
     gg autotest
+    git reset --hard $end
 
     for i in "${commits[@]}"; do
         local commit=$(gwo $i)
