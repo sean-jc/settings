@@ -1517,7 +1517,11 @@ function make-kernel() {
             printf "Local build with sparse directory\n"
             return 3
         fi
-        make $1
+        if [[ $1 == "htmldocs" ]]; then
+            make htmldocs SPHINXOPTS=-v
+        else
+            make $1
+        fi
         return 0
     fi
 
@@ -1558,11 +1562,14 @@ function make-kernel() {
             make O=~/build/kernel/$2 INSTALL_MOD_PATH=~/build/kernel/$2 modules_install
         fi
     else
+        if [[ $1 == "htmldocs" ]]; then
+            printf "'htmldocs' isn't supported for sparse trees\n"
+            return 6
+        fi
         if [[ $1 != "defconfig" &&
               $1 != "oldconfig" &&
               $1 != "menuconfig" &&
               $1 != "localmodconfig" &&
-              $1 != "htmldocs" &&
               $1 != "clean" ]]; then
             printf "Unsupported command '$1'\n"
             return 7
