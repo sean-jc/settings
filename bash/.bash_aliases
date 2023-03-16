@@ -231,16 +231,17 @@ function git-push() {
 }
 
 function git-archive-branch() {
-    if [[ $# -ne 1 ]]; then
-        printf "git-archive-branch <branch>\n"
+    if [[ $# -eq 2 && $1 != "-f" || $# -gt 2 ]]; then
+        printf "git-archive-branch [-f] <branch>\n"
         return 1
     fi
 
-    if [[ $1 == "sync" ]]; then
-        rsync --checksum -a z:/usr/local/google/home/seanjc/outbox/ $HOME/archive
-        return 0
+    local branch
+    if [[ $# -eq 1 ]]; then
+        branch=$1
+    else
+        branch=$2
     fi
-    local branch=$1
     local dir=${branch//\//.}
     local repo=$(pwd | rev | cut -d'/' -f1 | rev)
 
@@ -249,18 +250,17 @@ function git-archive-branch() {
         return 1;
     fi
 
-    if [[ $repo == "slf" ]]; then
+    if [[ $repo == "slf" || $repo == "nox" ]]; then
         repo="linux"
     fi
 
-    if [[ ! -d "$HOME/archive/$repo/$dir" ]]; then
-        printf "'$branch' is not archived at '$dir'\n"
+    if [[ $# -eq 1  && ! -d "$HOME/outbox/$repo/$dir" ]]; then
+        printf "'$branch' is not archived at '$HOME/outbox/$repo/$dir'\n"
         return 1
     fi
-    git branch -D $1
+    git branch -D $branch
     if [[ $? -eq 0 ]]; then
-        git push --delete origin $1
-        ssh z "cd /usr/local/google/home/seanjc/go/src/kernel.org/linux; git branch -D $1"
+        git push --delete origin $branch
     fi
 }
 
