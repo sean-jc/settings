@@ -544,9 +544,14 @@ alias gus='git-update-subs'
 alias gv='git remote -vv'
 
 # b4 and other lore stuff
-function b4-am() {
+function b4-am-apply() {
     rm -f $HOME/patches/*
     $HOME/go/src/kernel.org/b4/b4.sh am --no-cover -s -C -o $HOME/patches/ "$@" && git-apply
+}
+
+function b4-am() {
+    rm -f $HOME/patches/*
+    $HOME/go/src/kernel.org/b4/b4.sh am --no-cover -s -C -o $HOME/patches/ "$@"
 }
 
 function b4-mbox() {
@@ -566,7 +571,7 @@ function b4-mbox-mutt() {
 
 function b4-am-mbox() {
     b4-mbox "${@: -1}"
-    b4-am "$@"
+    b4-am-apply "$@"
 }
 
 function b4-ty() {
@@ -574,7 +579,7 @@ function b4-ty() {
         return 1
     fi
     local dir=$(git rev-parse --abbrev-ref HEAD | cut -f 2 -d '/')
-    $HOME/go/src/kernel.org/b4/b4.sh ty -o $HOME/thanks -t $1 && printf "\nMoving to '$HOME/thanks/$dir'\n" && mv $HOME/thanks/*.thanks $HOME/thanks/$dir
+    $HOME/go/src/kernel.org/b4/b4.sh ty -o $HOME/thanks/$dir -t $1
 }
 
 function b4-ty-fixup() {
@@ -583,15 +588,15 @@ function b4-ty-fixup() {
     local shortlog
     local i=1
 
-    if [[ $# -ne 1 ]]; then
+    if [[ $# -ne 2 ]]; then
         return 1
     fi
 
-    commits=$(git log --oneline | head -$1 | tac)
+    commits=$(git log --oneline $1 | head -$2 | tac)
     echo "$commits" | while IFS= read -r commit ; do
         hash=$(echo $commit | cut -f 1 -d ' ')
         shortlog=$(echo $commit | cut -f 2- -d ' ')
-        printf "[$i/$1] $shortlog\n      https://github.com/kvm-x86/linux/commit/$hash\n"
+        printf "[$i/$2] $shortlog\n      https://github.com/kvm-x86/linux/commit/$hash\n"
 
         i=$((i+1))
     done
@@ -599,8 +604,9 @@ function b4-ty-fixup() {
 
 alias b4=$HOME/go/src/kernel.org/b4/b4.sh
 
-alias bbl='b4-am -t -l'
-alias bb='b4-am'
+alias bb='b4-am-apply'
+alias bbl='b4-am-apply -t -l'
+alias bbn='b4-am'
 alias bm='b4-mbox'
 alias bmm='b4-mbox-mutt'
 alias bam='b4-am-mbox -t -l'
