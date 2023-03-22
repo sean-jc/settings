@@ -26,6 +26,8 @@ elif [[ $cmd == "o" || $cmd == "off" ]]; then
     echo 0 > /sys/kernel/debug/tracing/events/kvmmmu/enable
 elif [[ $cmd == "a" || $cmd == "apicv" ]]; then
     echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_apicv_inhibit_changed/enable
+elif [[ $cmd == "c" || $cmd == "cpuid" ]]; then
+    echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_cpuid/enable
 elif [[ $cmd == "em" || $cmd == "emulate" ]]; then
     echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_emulate_insn/enable
 elif [[ $cmd == "em" || $cmd == "emulate" ]]; then
