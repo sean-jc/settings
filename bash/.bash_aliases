@@ -32,6 +32,16 @@ function is-guest() {
     return 1
 }
 
+function is-integer() {
+    local re='^[0-9]+$'
+
+    if [[ $1 =~ $re ]] ; then
+        echo "y"
+        return 0
+    fi
+    return 1
+}
+
 function curl-time()
 {
     curl -4 -w "@$SETTINGS/bin/curl-format.txt" -o /dev/null -s $@
@@ -153,24 +163,34 @@ function git-apply() {
 function git-cherry-pick-branch() {
     local commits
     local arbitrary=1000
+    local start
+    local end
 
     if [ $# -ne 2 ]; then
-        printf "Usage for cherry picking a branch: 'gpb <first commit> <last commit>'\n"
+        printf "Usage for cherry picking a branch: 'gpb <first commit> <last commit> (or <start> <nr commits>)'\n"
         return 1
     fi
 
-    git log --pretty=oneline --decorate $2 | head -$arbitrary | grep -q $1
+    if [[ $(is-number $2) ]]; then
+        end=$1
+        start=$(git rev-parse "$end~$(($2-1))")
+    else
+        start=$1
+        end=$2
+    fi
+
+    git log --pretty=oneline --decorate $end | head -$arbitrary | grep -q $start
     if [[ $? -ne 0 ]]; then
-        printf "Did not find $1 in log from $2\n"
+        printf "Did not find $start in log from $end\n"
         return 1
     fi
-    git log --pretty=oneline --decorate $2 | head -$arbitrary | grep -B $arbitrary $1
+    git log --pretty=oneline --decorate $end | head -$arbitrary | grep -B $arbitrary $start
     printf "\e[1;7;35mCherry pick these commits?"
     read -r -p "[Y/n] " response
     printf "\e[0m"
     response=${response,,}    # tolower
     if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
-        commits=$(glo $2 | head -$arbitrary | grep -B $arbitrary $1 | tac | cut -f 1 -d ' ' | xargs)
+        commits=$(glo $end | head -$arbitrary | grep -B $arbitrary $start | tac | cut -f 1 -d ' ' | xargs)
         git cherry-pick $commits
         return $?
     fi
@@ -1746,7 +1766,10 @@ function make-kernel-branch() {
         fi
     fi
     if [[ $# -lt 4 ]]; then
-        end=$(git rev-parse HEAD)
+        end=$start
+    elif [[ $(is-integer $4) ]]; then
+        end=$start
+        start=$(git rev-parse "$end~$4")
     else
         end=$(git rev-parse --verify $4)
         if [[ $? -ne 0 ]]; then
