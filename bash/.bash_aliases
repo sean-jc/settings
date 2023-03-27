@@ -368,8 +368,12 @@ function git-merge-kvm-x86() {
     git branch svm x/svm && \
     git branch vmx x/vmx && \
     git merge --no-ff --log apic generic misc mmu pmu selftests svm vmx
+}
 
-    git branch -D  apic generic misc mmu pmu selftests svm vmx
+function git-tag-kvm-x86-next() {
+    local tag="kvm-x86-next-$(date +%Y.%m.%d)"
+
+    git tag $tag && printf "Created tag '$tag'\n"
 }
 
 function git-push-kvm-x86() {
@@ -560,6 +564,7 @@ alias gss='git-stash save'
 alias gst='git-send-thank-you'
 alias gt='git-tree'
 alias gtc='git tag -l --contains'
+alias gtn='git-tag-kvm-x86-next'
 alias gus='git-update-subs'
 alias gv='git remote -vv'
 
