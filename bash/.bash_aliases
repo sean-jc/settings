@@ -380,6 +380,21 @@ function git-push-kvm-x86() {
     git push x q/apic:apic q/generic:generic q/misc:misc q/mmu:mmu q/pmu:pmu q/selftests:selftests q/svm:svm q/vmx:vmx
 }
 
+function git-rebase-kvm-x86() {
+    local branches=("apic"
+                "generic"
+                "misc"
+                "mmu"
+                "pmu"
+                "selftests"
+                "svm"
+                "vmx")
+
+    for branch in "${branches[@]}"; do
+        git checkout q/$branch && git merge --ff-only kvm/next && git push x q/$branch:$branch
+    done
+}
+
 function git-get-tag() {
     local major=$(grep -E "^VERSION" Makefile | cut -f 3 -d ' ')
     local minor=$(($(grep -E "^PATCHLEVEL" Makefile | cut -f 3 -d ' ')+1))
