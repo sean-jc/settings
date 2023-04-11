@@ -610,6 +610,7 @@ function b4-mbox-mutt() {
         $HOME/go/src/kernel.org/b4/b4.sh mbox -o $HOME/mail/ "$1"
         return 1;
     fi
+    sed -i -r 's/"([a-zA-Z0-9]+),+\s+([a-zA-Z0-9]+\s*[a-zA-Z0-9]*)"/\2 \1/' "$fname"
     printf "Saved and Opening $fname\n"
     mutt -f "$fname"
 }
