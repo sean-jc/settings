@@ -1954,6 +1954,39 @@ alias rkue='rkte ./run_tests.sh -v'
 alias rkv='rkt TESTNAME=vmx TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cpu host,+vmx -append'
 alias rkc='rkt TESTNAME=vmx_controls TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cpu host,+vmx -m 2560 -append vmx_controls_test'
 
+function really-run-all-tests() {
+    run-selftests
+
+    cd ~/go/src/kernel.org/kvm-unit-tests
+    QEMU=~/build/qemu/stable EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v
+    QEMU=~/build/qemu/stable EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v -g nodefault
+
+    cd ~/go/src/kernel.org/kut-efi
+    QEMU=~/build/qemu/stable EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v
+    QEMU=~/build/qemu/stable EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v -g nodefault
+
+    cd ~/go/src/kernel.org/kut-32
+    QEMU=~/build/qemu/stable EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v
+    QEMU=~/build/qemu/stable EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v -g nodefault
+}
+function run-all-tests() {
+    local paging_param
+
+    rmmod-kvm kvm
+    qemu=stable probe_modules
+    really-run-all-tests
+
+    rmmod-kvm
+    grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
+    if [[ $? -eq 0 ]]; then
+        psudo modprobe kvm_amd npt=0
+    else
+        psudo modprobe kvm_intel ept=0
+    fi
+    really-run-all-tests
+}
+alias ra='run-all-tests'
+
 function run-memslot-test() {
     if [[ $(id -u) -ne 0 ]]; then
         printf "Must be run as root\n"
