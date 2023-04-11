@@ -429,7 +429,7 @@ function git-make-tag() {
     fi
 
     git fetch x
-    git checkout x86/autopull && git reset --hard x/$1 && git tag -s $tag && git push x $tag
+    git checkout autopull && git reset --hard x/$1 && git tag -s $tag && git push x $tag
 }
 
 
