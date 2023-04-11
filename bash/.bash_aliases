@@ -1286,6 +1286,8 @@ function run-selftests() {
     local ret
     local i
 
+    qemu=stable probe_modules
+
     for i in "${tests[@]}"; do
         local __stdout
         local __stderr
