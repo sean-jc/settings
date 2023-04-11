@@ -358,16 +358,35 @@ function git-send-thank-you() {
 }
 
 function git-merge-kvm-x86() {
-    git fetch x && \
-    git branch apic x/apic && \
-    git branch generic x/generic && \
-    git branch misc x/misc && \
-    git branch mmu x/mmu && \
-    git branch pmu x/pmu && \
-    git branch selftests x/selftests && \
-    git branch svm x/svm && \
-    git branch vmx x/vmx && \
-    git merge --no-ff --log apic generic misc mmu pmu selftests svm vmx
+    local branches=(
+                    "apic"
+                    "generic"
+                    "misc"
+                    "mmu"
+                    "selftests"
+                    "svm"
+                    "vmx"
+                    "pmu"
+                   )
+    local all="${branches[@]}"
+
+    git fetch x
+
+    for branch in "${branches[@]}"; do
+        if [[ $CTHULU == "n" ]]; then
+            git branch $branch x/$branch && git merge --no-ff --log $branch
+        else
+            git branch $branch x/$branch
+        fi
+    done
+
+    if [[ $CTHULU != "n" ]]; then
+        git merge --no-ff --log $all
+    fi
+
+    for branch in "${branches[@]}"; do
+        git branch -D $branch
+    done
 }
 
 function git-tag-kvm-x86-next() {
@@ -549,6 +568,7 @@ alias glg='git log --pretty=oneline --decorate --graph'
 alias glo='git log --pretty=oneline --decorate'
 alias gm="git status | grep modified | tr -d '\t' | tr -d ' ' | cut -f 2 -d :"
 alias gmk='git-merge-kvm-x86'
+alias gmks='CTHULU=n git-merge-kvm-x86'
 alias gmt='git-make-tag'
 alias gw="git show"
 alias gwo="git show -s --pretty='tformat:%h (\"%s\")'"
