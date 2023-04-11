@@ -1784,7 +1784,9 @@ function make-kernel-branch() {
                  "make-kernel $2 cc_x86")
     elif [[ $1 == "kut"* ]]; then
         targets=("make clean"
-                 "make -j$(get-nr-cpus)")
+                 "make -j$(get-nr-cpus)"
+                 "make clean"
+                 "make-clang make -j$(get-nr-cpus)")
         cflags="-Werror"
     elif [[ $1 == "tests-"* ]]; then
         local test_arch=${1#"tests-"}
