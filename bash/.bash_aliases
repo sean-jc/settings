@@ -443,6 +443,19 @@ function git-request-pull() {
     git request-pull kvm/next https://github.com/kvm-x86/linux.git tags/$tag > $HOME/pulls/$1.mail
 }
 
+function git-make-kut-tag() {
+    local tag="kvm-x86-$(TZ=":America/Los_Angeles" date +%Y.%m.%d)"
+
+    git fetch x
+    git checkout autopull && git reset --hard x/next && git tag -s $tag && git push x $tag
+}
+
+function git-request-kut-pull() {
+    local tag="kvm-x86-$(TZ=":America/Los_Angeles" date +%Y.%m.%d)"
+
+    git request-pull $1 https://github.com/kvm-x86/kvm-unit-tests.git tags/$tag > $HOME/pulls/kut.mail
+}
+
 function git-send-pull-requests() {
     local branches=("apic"
                     "generic"
@@ -452,6 +465,10 @@ function git-send-pull-requests() {
                     "selftests"
                     "svm"
                     "vmx")
+
+    if [[ $1 == "kut" ]]; then
+        branches=("kut")
+    fi
 
     for branch in "${branches[@]}"; do
         if [[ ! -f $HOME/pulls/$branch.mail ]]; then
@@ -550,6 +567,7 @@ alias gr='git reset'
 alias grh='git reset HEAD'
 alias grhh='git reset HEAD --hard'
 alias grp='git-request-pull'
+alias gru='git-request-kut-pull'
 alias grc='git rebase --continue'
 alias gri='git rebase --interactive'
 alias gu='git pull'
@@ -563,6 +581,7 @@ alias gsp='git-stash pop'
 alias gsr='git-send-pull-requests'
 alias gss='git-stash save'
 alias gst='git-send-thank-you'
+alias gsu='git-send-pull-requests kut'
 alias gt='git-tree'
 alias gtc='git tag -l --contains'
 alias gtn='git-tag-kvm-x86-next'
