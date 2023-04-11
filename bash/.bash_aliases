@@ -948,6 +948,7 @@ function dev-sync() {
         rsync --checksum --recursive --links ~/build/selftests $2:/data/local/seanjc/build
         rsync --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kvm-unit-tests $2:/data/local/seanjc/go/src/kernel.org
         rsync --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kut-32 $2:/data/local/seanjc/go/src/kernel.org
+        rsync --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kut-efi $2:/data/local/seanjc/go/src/kernel.org
     fi
     if [[ $1 == "full" || $1 == "kvm" ]]; then
         rsync --checksum ~/build/kernel/vm/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/vm/arch/x86/boot
@@ -1908,18 +1909,21 @@ function make-ovmf() {
 alias maf=make-ovmf
 
 function prep-kut32() {
+    # ./configure --erratatxt="" --disable-pretty-print-stacks --arch=i386 --processor=i386
     qemu=stable probe_modules
     cd ~/go/src/kernel.org/kut-32
     return 0
 }
 
 function prep-kut() {
+    # ./configure --erratatxt="" --disable-pretty-print-stacks
     qemu=stable probe_modules
     cd ~/go/src/kernel.org/kvm-unit-tests
     return 0
 }
 
 function prep-kut-efi() {
+    # ./configure --erratatxt="" --disable-pretty-print-stacks --enable-efi
     qemu=stable probe_modules
     cd ~/go/src/kernel.org/kut-efi
     return 0
