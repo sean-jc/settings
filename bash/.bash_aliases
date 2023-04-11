@@ -623,7 +623,21 @@ function b4-ty() {
     if [[ $# -ne 1 ]]; then
         return 1
     fi
+
     local dir=$(git rev-parse --abbrev-ref HEAD | cut -f 2 -d '/')
+
+    if [[ $dir != "apic" &&
+          $dir != "generic" &&
+          $dir != "misc" &&
+          $dir != "mmu" &&
+          $dir != "pmu" &&
+          $dir != "selftests" &&
+          $dir != "svm" &&
+          $dir != "vmx" &&
+          $dir != "next" ]]; then
+        printf "Switch to the right branch...\n"
+        return 1
+    fi
     $HOME/go/src/kernel.org/b4/b4.sh ty -o $HOME/thanks/$dir -t $1
 }
 
