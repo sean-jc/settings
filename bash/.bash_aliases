@@ -371,7 +371,7 @@ function git-merge-kvm-x86() {
 }
 
 function git-tag-kvm-x86-next() {
-    local tag="kvm-x86-next-$(date +%Y.%m.%d)"
+    local tag="kvm-x86-next-$(TZ=":America/Los_Angeles" date +%Y.%m.%d)"
 
     git tag $tag && printf "Created tag '$tag'\n"
 }
