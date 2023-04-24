@@ -171,7 +171,7 @@ function git-cherry-pick-branch() {
         return 1
     fi
 
-    if [[ $(is-number $2) ]]; then
+    if [[ $(is-integer $2) ]]; then
         end=$1
         start=$(git rev-parse "$end~$(($2-1))")
     else
@@ -1834,7 +1834,7 @@ function make-kernel-branch() {
         end=$start
     elif [[ $(is-integer $4) ]]; then
         end=$start
-        start=$(git rev-parse "$end~$4")
+        start=$(git rev-parse "$end~$(($4-1))")
     else
         end=$(git rev-parse --verify $4)
         if [[ $? -ne 0 ]]; then
