@@ -2,6 +2,7 @@ stubdirs=(
         Documentation
         arch/arm/crypto
         arch/arm64/crypto
+        arch/loongarch/crypto
         arch/mips/crypto
         arch/powerpc/crypto
         arch/s390/crypto
