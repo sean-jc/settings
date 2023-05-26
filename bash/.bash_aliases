@@ -1660,7 +1660,7 @@ function make-kernel() {
     if [[ $1 == "make" ]]; then
         stubify-linux $2
 
-        make O=~/build/kernel/$2 $SPARSE -j$(get-nr-cpus)
+        make O=~/build/kernel/$2 $EXTRAS -j$(get-nr-cpus)
         ret=$?
         if [[ $ret -eq 0 ]]; then
             rm -rf ~/build/kernel/$2/lib/modules/*
@@ -1687,8 +1687,9 @@ function make-kernel() {
 }
 
 alias mc='make-kernel make'
+alias mw='EXTRAS="W=1" make-kernel make'
 alias mh='make headers_install'
-alias msp='SPARSE="C=1" make-kernel make'
+alias msp='EXTRAS="C=1" make-kernel make'
 alias md='make-kernel htmldocs'
 alias ml='make-kernel localmodconfig'
 alias mm='make-kernel menuconfig'
@@ -1699,8 +1700,9 @@ function make-kernel-clang() {
     make-clang make-kernel $@
 }
 alias jc='make-kernel-clang make'
+alias jw='EXTRAS="W=1" make-kernel-clang make'
 alias jcc='make-kernel-clang make c'
-alias jsp='SPARSE="C=1" make-kernel-clang'
+alias jsp='EXTRAS="C=1" make-kernel-clang'
 alias jl='make-kernel-clang localmodconfig'
 alias jm='make-kernel-clang menuconfig'
 alias jo='make-kernel-clang oldconfig'
