@@ -1403,6 +1403,7 @@ function modprobe-kvm() {
     psudo modprobe $kvm $@
 }
 alias mpk='modprobe-kvm'
+alias mpkk='psudo modprobe kvm'
 
 function rmmod-kvm() {
     grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
