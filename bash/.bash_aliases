@@ -280,7 +280,7 @@ function git-archive-branch() {
     fi
     git branch -D $branch
     if [[ $? -eq 0 ]]; then
-        git push --delete origin $branch
+        git push --delete o $branch
     fi
 }
 
@@ -294,7 +294,7 @@ function git-get() {
 
 function git-get-branch() {
     if [[ $# -eq 1 ]]; then
-        git checkout -b $1 origin/$1
+        git checkout -b $1 o/$1
     elif [[ $# -eq 2 ]]; then
         git checkout -b $1 $2
     else
@@ -558,19 +558,19 @@ alias gem='git-email mm'
 alias geq='git-email qemu'
 alias gex='git-email x86'
 alias gf='git fetch'
-alias gfo='git fetch origin'
+alias gfo='git fetch o'
 alias gfu='git fetch upstream'
 alias gfx='git fetch x'
 alias gfp='git-format-patch'
 alias gfk='nosend=1 git-email kvm'
 alias gft='git fetch --tags'
 alias gg='git-get'
-alias gga='git branch -r | grep archive | grep'
+alias gga='git branch -r | tr -d " " | grep -v -E "^o/" | grep'
 alias ggb='git-get-branch'
 alias ggc='git-get-cc'
 alias ggd='gs | grep deleted: | cut -f 2 | tr -s " " | cut -f 2 -d " " | xargs git checkout'
 alias ggl='git branch | grep'
-alias ggo='git branch -r | grep origin | grep'
+alias ggo='git branch -r | tr -d " " | grep -E "^o/" | grep'
 alias gl='git log --decorate'
 alias glc='git log --pretty=oneline --decorate --author=christopherson'
 alias glg='git log --pretty=oneline --decorate --graph'
@@ -585,7 +585,7 @@ alias gwo="git show -s --pretty='tformat:%h (\"%s\")'"
 alias gwp="git show -s --pretty='tformat:%h, \"%s\"'"
 alias gpa='git-apply'
 alias gpu='git-push'
-alias gpo='git-push origin'
+alias gpo='git-push o'
 alias gpf='git-push force'
 alias gp='git cherry-pick'
 alias gpb='git-cherry-pick-branch'
