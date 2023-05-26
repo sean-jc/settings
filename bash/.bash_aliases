@@ -1011,6 +1011,21 @@ alias dst='dev-sync tests'
 # List all UDP/TCP ports
 alias ports='netstat -tulanp'
 
+#org.gnome.settings-daemon.plugins.media-keys play-static ['XF86AudioPlay', '<Ctrl>XF86AudioPlay']
+#org.gnome.settings-daemon.plugins.media-keys next-static ['XF86AudioNext', '<Ctrl>XF86AudioNext']
+#org.gnome.settings-daemon.plugins.media-keys previous-static ['XF86AudioPrev', '<Ctrl>XF86AudioPrev']
+function show-keybindings() {
+    (for schema in $(gsettings list-schemas); do gsettings list-recursively $schema; done)
+}
+alias shks="'show-keybindings' | grep '<Super>'"
+alias shkc="'show-keybindings' | grep '<Ctrl>'"
+alias shka="'show-keybindings' | grep '<Alt>'"
+
+function unset-keybinding() {
+    gsettings set $@ []
+}
+alias ukb='unset-keybinding'
+
 # Find my systems in the lab...
 alias christ='sudo nmap -sP 10.54.74.* | grep -e sjchrist -e "for 10"'
 alias jchrist='sudo nmap -sP 10.54.31.* | grep -e sjchrist -e "for 10"'
