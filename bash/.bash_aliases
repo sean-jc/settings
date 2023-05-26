@@ -410,18 +410,13 @@ function git-rebase-kvm-x86() {
                 "vmx")
 
     for branch in "${branches[@]}"; do
-        git checkout q/$branch && git merge --ff-only kvm/next && git push x q/$branch:$branch
+        git checkout q/$branch && git merge --ff-only kvm/next
     done
 }
 
 function git-get-tag() {
     local major=$(grep -E "^VERSION" Makefile | cut -f 3 -d ' ')
     local minor=$(($(grep -E "^PATCHLEVEL" Makefile | cut -f 3 -d ' ')+1))
-
-    if [[ $# -ne 1 ]]; then
-        printf "Specify the target branch\n"
-        return 1
-    fi
 
     tag="kvm-x86-$1-$major.$minor"
     if [[ $1 != "apic" &&
@@ -440,26 +435,40 @@ function git-get-tag() {
     return 0
 }
 
-function git-make-tag() {
-    local tag=$(git-get-tag $@)
+function git-request-pull() {
+    local tag=$(git-get-tag $1)
 
     if [[ $? -ne 0 ]]; then
+        return 1
+    fi
+
+    if [[ $# -ne 1 && $# -ne 2 ]]; then
+        printf "Usage: git-request-pull <target branch> [number of commits to omit]\n"
         return 1
     fi
 
     git fetch x
-    git checkout autopull && git reset --hard x/$1 && git tag -s $tag && git push x $tag
-}
-
-
-function git-request-pull() {
-    local tag=$(git-get-tag $@)
-
-    if [[ $? -ne 0 ]]; then
-        return 1
+    if [[ $# -eq 2 ]]; then
+        git checkout autopull && git reset --hard "x/$1~$2" && git tag -s $tag
+    else
+        git checkout autopull && git reset --hard x/$1 && git tag -s $tag
     fi
 
-    git request-pull kvm/next https://github.com/kvm-x86/linux.git tags/$tag > $HOME/pulls/$1.mail
+    printf "\e[1;7;35mPush '$tag' to kvm-x86?"
+    read -r -p "[Y/n] " response
+    printf "\e[0m"
+    response=${response,,}    # tolower
+    if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
+        git push x $tag
+
+        printf "\e[1;7;35mGenerate $HOME/pulls/$1.mail?"
+        read -r -p "[Y/n] " response
+        printf "\e[0m"
+        response=${response,,}    # tolower
+        if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
+            git request-pull kvm/next https://github.com/kvm-x86/linux.git tags/$tag > $HOME/pulls/$1.mail
+        fi
+    fi
 }
 
 function git-make-kut-tag() {
@@ -569,6 +578,7 @@ alias glo='git log --pretty=oneline --decorate'
 alias gm="git status | grep modified | tr -d '\t' | tr -d ' ' | cut -f 2 -d :"
 alias gmk='git-merge-kvm-x86'
 alias gmks='CTHULU=n git-merge-kvm-x86'
+alias gmr='git pull --rebase=false --no-ff'
 alias gmt='git-make-tag'
 alias gw="git show"
 alias gwo="git show -s --pretty='tformat:%h (\"%s\")'"
