@@ -426,9 +426,16 @@ function git-get-tag() {
           $1 != "pmu" &&
           $1 != "selftests" &&
           $1 != "svm" &&
-          $1 != "vmx" ]]; then
+          $1 != "vmx" &&
+          $1 != "fixes" ]]; then
         printf "$1 isn't a known branch\n"
         return 1
+    fi
+
+    if [[ $1 == "fixes" ]]; then
+        minor=$(($(grep -E "^PATCHLEVEL" Makefile | cut -f 3 -d ' ')))
+    else
+        minor=$(($(grep -E "^PATCHLEVEL" Makefile | cut -f 3 -d ' ')+1))
     fi
 
     echo "kvm-x86-$1-$major.$minor"
@@ -466,7 +473,8 @@ function git-request-pull() {
         printf "\e[0m"
         response=${response,,}    # tolower
         if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
-            git request-pull kvm/next https://github.com/kvm-x86/linux.git tags/$tag > $HOME/pulls/$1.mail
+            printf "Subject: [GIT PULL] KVM: x86: $tag *** SUBJECT HERE ***\n\n*** BLURB HERE ***\n\n" > $HOME/pulls/$1.mail
+            git request-pull kvm/master https://github.com/kvm-x86/linux.git tags/$tag >> $HOME/pulls/$1.mail
         fi
     fi
 }
@@ -481,12 +489,12 @@ function git-make-kut-tag() {
 function git-request-kut-pull() {
     local tag="kvm-x86-$(TZ=":America/Los_Angeles" date +%Y.%m.%d)"
 
-    git request-pull $1 https://github.com/kvm-x86/kvm-unit-tests.git tags/$tag > $HOME/pulls/kut.mail
+    printf "Subject: [kvm-unit-tests GIT PULL] x86: *** SUBJECT HERE ***\n\n*** BLURB HERE ***\n\n" > $HOME/pulls/kut.mail
+    git request-pull $1 https://github.com/kvm-x86/kvm-unit-tests.git tags/$tag >> $HOME/pulls/kut.mail
 }
 
 function git-send-pull-requests() {
-    local branches=("apic"
-                    "generic"
+    local branches=("generic"
                     "misc"
                     "mmu"
                     "pmu"
@@ -502,6 +510,12 @@ function git-send-pull-requests() {
         if [[ ! -f $HOME/pulls/$branch.mail ]]; then
             printf "Dude, generate a pull request for $branch"
             return 1;
+        fi
+
+        grep -q -e "BLURB HERE" -e "SUBJECT HERE" $HOME/pulls/$branch.mail
+        if [ $? -eq 0 ]; then
+            printf "Edit the subject+blurb (%s) before sending!\n" "$HOME/pulls/$branch.mail"
+            return 1
         fi
     done
 
@@ -665,7 +679,8 @@ function b4-ty() {
           $dir != "selftests" &&
           $dir != "svm" &&
           $dir != "vmx" &&
-          $dir != "next" ]]; then
+          $dir != "next" &&
+          $dir != "fixes" ]]; then
         printf "Switch to the right branch...\n"
         return 1
     fi
