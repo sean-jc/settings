@@ -42,8 +42,11 @@ fi
 
 cgroup=$(grep ^cgroup /proc/mounts | grep memory | grep -v root | cut -f 2 -d ' ')
 if [[ ! -d $cgroup ]]; then
-    printf "Cannot find memory cgroup mount point, got '$cgroup'\n"
-    exit 1
+    cgroup="/dev/cgroup/memory"
+    if [[ ! -d $cgroup ]]; then
+        printf "Cannot find memory cgroup mount point, got '$cgroup'\n"
+        exit 1
+    fi
 fi
 cgroup="$cgroup/vm"
 if [[ ! -d $cgroup ]]; then
