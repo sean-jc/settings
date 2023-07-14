@@ -19,7 +19,6 @@ stubdirs=(
         drivers/char/hw_random
         drivers/char/ipmi
         drivers/char/mwave
-        drivers/char/pcmcia
         drivers/char/tpm
         drivers/char/xilinx_hwicap
         drivers/char/xillybus
@@ -99,9 +98,7 @@ stubdirs=(
         drivers/uio
         drivers/usb
         drivers/virt
-        drivers/visorbus
         drivers/vlynq
-        drivers/vme
         drivers/w1
         drivers/xen
         drivers/zorro
