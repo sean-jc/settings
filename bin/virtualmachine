@@ -218,9 +218,9 @@ elif [[ -n $kernel ]]; then
     else
         append="console=ttyS0 $append"
     fi
-    if [[ -n $verbose ]]; then
+    if [[ -z $quiet ]]; then
         append="$append ignore_loglevel"
-        if [[ $verbose == "2" ]]; then
+        if [[ -n $verbose ]]; then
             append="$append systemd.journald.forward_to_console"
         fi
     fi
