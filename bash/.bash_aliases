@@ -1506,14 +1506,21 @@ function make-host {
 alias mho='make-host'
 
 function make-gbuild {
-    if [[ $# -ne 2 ]]; then
+    if [[ $# -lt 2 ]]; then
         printf "Must specify the target arch and kernel name\n"
         return 1
+    fi
+    if [[ $# -gt 3 ]]; then
+        printf "Usage: make-gbuild <arch> <name> [version override]\n"
     fi
 
     local name="-$(git show -s --pretty='tformat:%h')-$2"
 
-    gbuild RELEASE=$name ARCH=$1
+    if [[ $# -eq 2 ]]; then
+        gbuild RELEASE=$name ARCH=$1
+    else
+        gbuild RELEASE=$name ARCH=$1 EXTRA_MODULES_VERSION=$3
+    fi
 }
 alias mg='make-gbuild x86_64'
 alias mga='make-gbuild arm64'
