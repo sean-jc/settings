@@ -14,4 +14,8 @@ set attribution   = "On %d, %n wrote:"
 
 set pipe_split    = yes
 
+# Omit iso-8859-1, mutt will incorrectly interpret utf-8 emails as iso-8859-1
+# and mangle response
+set send_charset="us-ascii:utf-8"
+
 my_hdr Bcc: seanjc@google.com
