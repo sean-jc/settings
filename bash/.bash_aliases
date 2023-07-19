@@ -530,7 +530,52 @@ function git-send-pull-requests() {
     read -r -p "Send pull requests to Paolo: [Y/n]" response
     response=${response,,}    # tolower
     if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
-        git send-email --confirm=always --suppress-cc=all --reply-to="Sean Christopherson <seanjc@google.com>" --to="Paolo Bonzini <pbonzini@redhat.com>" --cc=kvm@vger.kernel.org --bcc="Sean Christopherson <seanjc@google.com>" $HOME/pulls
+        git send-email --confirm=always --suppress-cc=all --reply-to="Sean Christopherson <seanjc@google.com>" --to="Paolo Bonzini <pbonzini@redhat.com>" --cc=kvm@vger.kernel.org --cc="Sean Christopherson <seanjc@google.com>" $HOME/pulls
+    fi
+}
+
+function git-email-puck() {
+    local dir
+    local file
+
+    if [[ $# -gt 2 || $# -lt 1 ]]; then
+        printf "git-email-puck <a|n> [date]\n"
+        return 1
+    fi
+
+    if [[ $1 == "a" ]]; then
+        file="agenda.mail"
+    elif [[ $1 == "n" ]]; then
+        file="notes.mail"
+    else
+        printf "Specific 'a' (agenda) or 'n' (notes)\n"
+        return 1
+    fi
+
+    if [[ $# -lt 2 ]]; then
+        dir=$(basename $(pwd))
+    else
+        dir=$2
+    fi
+    dir="$HOME/puck/$dir"
+    if [[ ! -d $dir ]]; then
+        printf "$dir isn't a PUCK directory\n"
+    fi
+
+    file="$dir/$file"
+
+    read -r -p "Send $file to self: [Y/n]" response
+    response=${response,,}    # tolower
+    if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
+        git send-email --confirm=always --suppress-cc=all --reply-to="Sean Christopherson <seanjc@google.com>" --to="Sean Christopherson <seanjc@google.com>" $file
+    else
+        return 1
+    fi
+
+    read -r -p "Send $file to list: [Y/n]" response
+    response=${response,,}    # tolower
+    if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
+        git send-email --confirm=always --suppress-cc=all --reply-to="Sean Christopherson <seanjc@google.com>" --to="kvm@vger.kernel.org" --cc="Sean Christopherson <seanjc@google.com>" --cc="Paolo Bonzini <pbonzini@redhat.com>" --cc="linux-kernel@vger.kernel.org" $file
     fi
 }
 
@@ -570,6 +615,7 @@ alias gek='git-email kvm'
 alias geu='git-email ku'
 alias gem='git-email mm'
 alias geq='git-email qemu'
+alias gep='git-email-puck'
 alias gex='git-email x86'
 alias gf='git fetch'
 alias gfo='git fetch o'
