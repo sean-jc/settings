@@ -84,11 +84,13 @@ if [[ $? -ne 0 ]]; then
         die "Cannot find ifup_$ifup script"
 fi
 
-iommu=off
+iommu="iommu_platform=off"
 if [[ -n $sev ]]; then
-    iommu=on
+    iommu="disable-legacy=on,iommu_platform=on"
+elif [[ -n $i386 ]]; then
+    iommu="disable-modern=on,disable-legacy=off,iommu_platform=off"
 fi
-net="-device virtio-net-pci,netdev=net0,mac=$mac,disable-legacy=on,iommu_platform=$iommu,romfile= -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
+net="-device virtio-net-pci,netdev=net0,mac=$mac,$iommu,romfile= -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
 
 maxmem=16G
 if [[ -n $epc ]]; then
@@ -189,7 +191,7 @@ else
     if [[ -n $daemon ]]; then
         display="$display -serial null -monitor null -parallel null"
     elif [[ -z $serial ]]; then
-        display="$display -chardev stdio,id=mux,mux=on,signal=off -device virtio-serial,disable-legacy=on,iommu_platform=$iommu,romfile= -device virtconsole,chardev=mux -serial chardev:mux -monitor chardev:mux"
+        display="$display -chardev stdio,id=mux,mux=on,signal=off -device virtio-serial,$iommu,romfile= -device virtconsole,chardev=mux -serial chardev:mux -monitor chardev:mux"
     fi
 fi
 if [[ -n $daemon ]]; then
@@ -202,7 +204,7 @@ elif [[ $virtio == "false" || $virtio == "n" ]]; then
     os="-hda $img"
     append="root=/dev/sda1 rootfstype=ext4 $append"
 else
-    os="-drive file=$img,if=none,id=drive -device virtio-blk-pci,drive=drive,id=virtblk,disable-legacy=on,iommu_platform=$iommu"
+    os="-drive file=$img,if=none,id=drive -device virtio-blk-pci,drive=drive,id=virtblk,$iommu"
     append="root=/dev/vda1 rootfstype=ext4 $append"
 fi
 
@@ -230,7 +232,7 @@ elif [[ -n $kernel ]]; then
     fi
     os="$os -kernel $HOME/build/kernel/$kernel/arch/x86/boot/bzImage"
     if [[ $modules != "false" && $modules != "n" ]]; then
-        os="$os -fsdev local,path=$HOME/build/kernel/$kernel/lib/modules,security_model=passthrough,id=plan9fs -device virtio-9p-pci,fsdev=plan9fs,mount_tag=kmodules,disable-legacy=on,iommu_platform=$iommu"
+        os="$os -fsdev local,path=$HOME/build/kernel/$kernel/lib/modules,security_model=passthrough,id=plan9fs -device virtio-9p-pci,fsdev=plan9fs,mount_tag=kmodules,$iommu"
     fi
     if [[ -n $init ]]; then
         os="$os -initrd $HOME/build/initramfs/$init.cpio"
