@@ -5,7 +5,9 @@ HOSTPOST=${HOSTNAME#seanjc-}
 if [[ -z $SSH_CONNECTION && ! $HOSTPOST =~ purg- && ! $HOSTPOST =~ dev- ]]; then
     export HOSTDISPLAY=""
 else
-    if [[ $HOSTPOST == purgatory ]]; then
+    if [[ $HOSTPOST == velociraptor ]]; then
+        export HOSTDISPLAY="@velo"
+    elif [[ $HOSTPOST == purgatory ]]; then
         export HOSTDISPLAY="@purg"
     elif [[ $HOSTPOST == glaptop ]]; then
         export HOSTDISPLAY="@lap"
@@ -20,7 +22,7 @@ else
         export HOSTDISPLAY="@$HOSTPOST"
     fi
 fi
-export HOSTPOST=${HOSTPOST#purgatory-}
+export HOSTPOST=${HOSTPOST#velociraptor-}
 export SETTINGS=$HOME/go/src/github.com/sean-jc/settings
 export LSDT_CONFIG=$SETTINGS/.config/lsdt/config.yml
 
