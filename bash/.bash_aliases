@@ -803,13 +803,13 @@ alias gol='git-golint | grep -v -e "should have comment" -e ALL_CAPS -e Id -e Ur
 # Virtual Machines
 # -----------------------------------------------------------------------------
 alias virtd='daemon=y run_vm'
-alias vm='run_vm stable kvm'
+alias vm='run_vm qemu kvm'
 alias vme='run_vm emulator kvm'
 alias vmm='modules=n vm'
 alias vm32='ovmf=32 vm'
-alias ivm='i386=y run_vm stable i386'
-alias tvm='trace=1 run_vm stable kvm'
-alias vmd='daemon=y run_vm stable kvm'
+alias ivm='i386=y run_vm qemu i386'
+alias tvm='trace=1 run_vm qemu kvm'
+alias vmd='daemon=y run_vm qemu kvm'
 alias vm2='v2_cgroup=memory vm'
 alias vb='mbr=y run_vm bios kvm'
 
@@ -828,10 +828,10 @@ alias vms='epc="16M,prealloc 16M,prealloc 16M 16M 16M 12M" run_vm sgx kvm'
 alias vmsd='daemon=y vms'
 alias vepc='v2_cgroup=sgx_epc vms'
 
-alias hyv='run_vm stable hyv'
-alias vuefi='run_vm stable uefi'
-# alias vuefi='qemu=stable img=uefi display=vnc iso=~/images/ubuntu/ubuntu-16.04.3-desktop-amd64.iso virtualmachine'
-alias vanilla='virtio=false run_vm stable'
+alias hyv='run_vm qemu hyv'
+alias vuefi='run_vm qemu uefi'
+# alias vuefi='qemu=qemu img=uefi display=vnc iso=~/images/ubuntu/ubuntu-16.04.3-desktop-amd64.iso virtualmachine'
+alias vanilla='virtio=false run_vm qemu'
 
 alias mountbase='sudo mount -o loop,offset=210763776 ~/images/qemu/ubuntu-18.04-server-base.raw ~/images/qemu/mnt'
 alias mountk2='sudo mount -o loop,offset=210763776 ~/images/qemu/ubuntu-18.04-server-k2.raw ~/images/qemu/mnt'
@@ -897,13 +897,13 @@ alias scl='scp-from'
 
 alias dvm='gdb -x $SETTINGS/bin/debug_vm'
 
-alias hv='os=hyper-v run_vm stable machine'
-alias hvd='os=hyper-v display=vnc run_vm stable machine'
-alias hvi='os=hyper-v display=vnc iso1=~/images/hyper-v/virtio-win-0.1.126.iso run_vm stable machine'
-alias hvnew='os=hyper-v display=vnc iso=~images/hyper-v/hyper-v-2016.iso iso1=~/images/hyper-v/virtio-win-0.1.126.iso run_vm stable'
+alias hv='os=hyper-v run_vm qemu machine'
+alias hvd='os=hyper-v display=vnc run_vm qemu machine'
+alias hvi='os=hyper-v display=vnc iso1=~/images/hyper-v/virtio-win-0.1.126.iso run_vm qemu machine'
+alias hvnew='os=hyper-v display=vnc iso=~images/hyper-v/hyper-v-2016.iso iso1=~/images/hyper-v/virtio-win-0.1.126.iso run_vm qemu'
 
-alias mvm='modules=false run_vm stable kvm'
-alias mivm='modules=false i386=y run_vm stable i386'
+alias mvm='modules=false run_vm qemu kvm'
+alias mivm='modules=false i386=y run_vm qemu i386'
 
 # -----------------------------------------------------------------------------
 # SGX
@@ -1048,7 +1048,7 @@ function dev-sync() {
     if [[ $1 == "full" || $1 == "binaries" ]]; then
         rsync --checksum --recursive --links ~/build/qemu/static-7.0 $2:/data/local/seanjc/build/qemu
         rsync --checksum --recursive --links ~/build/ovmf $2:/data/local/seanjc/build
-        ssh $2 "rm -f /data/local/seanjc/build/qemu/stable; ln -s /data/local/seanjc/build/qemu/static-7.0/x86_64-softmmu/qemu-system-x86_64 /data/local/seanjc/build/qemu/stable"
+        ssh $2 "rm -f /data/local/seanjc/build/qemu/qemu; ln -s /data/local/seanjc/build/qemu/static-7.0/x86_64-softmmu/qemu-system-x86_64 /data/local/seanjc/build/qemu/qemu"
     fi
     if [[ $1 == "full" || $1 == "tests" ]]; then
         rsync --checksum --recursive --links ~/build/selftests $2:/data/local/seanjc/build
@@ -1212,7 +1212,7 @@ alias gk='readelf -sW vmlinux | grep'
 alias gkv='readelf -sW arch/x86/kvm/kvm-intel.ko | grep'
 alias gkk='readelf -sW arch/x86/kvm/kvm.ko | grep'
 alias gx='readelf -sW drivers/platform/x86/intel_sgx/intel_sgx.ko | grep'
-alias gq='readelf -sW ~/build/qemu/stable | grep'
+alias gq='readelf -sW ~/build/qemu/qemu | grep'
 
 function gdb-disassemble() {
     if [[ $# -lt 2 ]]; then
@@ -1238,7 +1238,7 @@ alias dks='gdb-disassemble arch/x86/kvm/kvm-amd.ko'
 alias dkv='gdb-disassemble arch/x86/kvm/kvm-intel.ko'
 alias dkk='gdb-disassemble arch/x86/kvm/kvm.ko'
 alias dx='gdb-disassemble drivers/platform/x86/intel_sgx/intel_sgx.ko'
-alias dq='gdb-disassemble ~/build/qemu/stable'
+alias dq='gdb-disassemble ~/build/qemu/qemu'
 
 alias mkdir='mkdir -p'
 function mcd() {
@@ -1393,7 +1393,7 @@ function run-selftests() {
     local ret
     local i
 
-    qemu=stable probe_modules
+    qemu=qemu probe_modules
 
     for i in "${tests[@]}"; do
         local __stdout
@@ -2045,30 +2045,30 @@ alias maf=make-ovmf
 
 function prep-kut32() {
     # ./configure --erratatxt="" --disable-pretty-print-stacks --arch=i386 --processor=i386
-    qemu=stable probe_modules
+    qemu=qemu probe_modules
     cd ~/go/src/kernel.org/kut-32
     return 0
 }
 
 function prep-kut() {
     # ./configure --erratatxt="" --disable-pretty-print-stacks
-    qemu=stable probe_modules
+    qemu=qemu probe_modules
     cd ~/go/src/kernel.org/kvm-unit-tests
     return 0
 }
 
 function prep-kut-efi() {
     # ./configure --erratatxt="" --disable-pretty-print-stacks --enable-efi
-    qemu=stable probe_modules
+    qemu=qemu probe_modules
     cd ~/go/src/kernel.org/kut-efi
     return 0
 }
 
-alias rkt='prep-kut && QEMU=~/build/qemu/stable EFI_UEFI=~/build/ovmf/OVMF.fd'
+alias rkt='prep-kut && QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd'
 alias rku='rkt ./run_tests.sh -v'
-alias rkt32='prep-kut32 && QEMU=~/build/qemu/stable'
+alias rkt32='prep-kut32 && QEMU=~/build/qemu/qemu'
 alias rku32='rkt32 ./run_tests.sh -v'
-alias rkte='prep-kut-efi && QEMU=~/build/qemu/stable'
+alias rkte='prep-kut-efi && QEMU=~/build/qemu/qemu'
 alias rkue='rkte ./run_tests.sh -v'
 alias rkv='rkt TESTNAME=vmx TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cpu host,+vmx -append'
 alias rkc='rkt TESTNAME=vmx_controls TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cpu host,+vmx -m 2560 -append vmx_controls_test'
@@ -2077,22 +2077,22 @@ function really-run-all-tests() {
     run-selftests
 
     cd ~/go/src/kernel.org/kvm-unit-tests
-    QEMU=~/build/qemu/stable EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v
-    QEMU=~/build/qemu/stable EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v -g nodefault
+    QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v
+    QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v -g nodefault
 
     cd ~/go/src/kernel.org/kut-efi
-    QEMU=~/build/qemu/stable EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v
-    QEMU=~/build/qemu/stable EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v -g nodefault
+    QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v
+    QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v -g nodefault
 
     cd ~/go/src/kernel.org/kut-32
-    QEMU=~/build/qemu/stable EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v
-    QEMU=~/build/qemu/stable EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v -g nodefault
+    QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v
+    QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v -g nodefault
 }
 function run-all-tests() {
     local paging_param
 
     rmmod-kvm kvm
-    qemu=stable probe_modules
+    qemu=qemu probe_modules
     really-run-all-tests
 
     rmmod-kvm
