@@ -358,15 +358,17 @@ function git-send-thank-you() {
 }
 
 function git-merge-kvm-x86() {
+    local RED='\033[1;31m' # Bold Red
+    local NOF='\033[0m' # No Format
     local branches=(
                     "apic"
                     "generic"
-                    "misc"
                     "mmu"
                     "selftests"
                     "svm"
                     "vmx"
                     "pmu"
+                    "misc"
                    )
     local all="${branches[@]}"
 
@@ -375,6 +377,14 @@ function git-merge-kvm-x86() {
     for branch in "${branches[@]}"; do
         if [[ $CTHULU == "n" ]]; then
             git branch $branch x/$branch && git merge --no-ff --log $branch
+            if [[ $? -eq 0 ]]; then
+                continue
+            fi
+
+            printf "\n${RED}Pausing until conflicted merge is completed.${NOF}\n"
+            while [[ $(git status --porcelain=v1 2>/dev/null | wc -l) -ne 0 ]]; do
+                sleep .1
+            done
         else
             git branch $branch x/$branch
         fi
