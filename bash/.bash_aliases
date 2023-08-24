@@ -1022,6 +1022,7 @@ alias failed='sys list-units --state=failed'
 alias services='sys list-unit-files --type=service'
 
 # misc system
+alias bt='$SETTINGS/bin/bpftrace'
 alias btm='blueman-manager &'
 alias gcm='gcert -s -m kernel-development,corevirt-team-testing'
 
