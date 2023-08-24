@@ -493,6 +493,28 @@ function git-request-kut-pull() {
     git request-pull $1 https://github.com/kvm-x86/kvm-unit-tests.git tags/$tag >> $HOME/pulls/kut.mail
 }
 
+function git-send-email() {
+    read -r -p "Send $1 to self: [Y/n]" response
+    response=${response,,}    # tolower
+    if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
+        git send-email --confirm=always --suppress-cc=all --reply-to="Sean Christopherson <seanjc@google.com>" --to="Sean Christopherson <seanjc@google.com>" $1
+    else
+        return 1
+    fi
+
+    read -r -p "Send $1 to lists: [Y/n]" response
+    response=${response,,}    # tolower
+    if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
+        if [[ $2 == "to_paolo" ]]; then
+            git send-email --confirm=always --suppress-cc=all --reply-to="Sean Christopherson <seanjc@google.com>" --to="Paolo Bonzini <pbonzini@redhat.com>" --cc=kvm@vger.kernel.org  --cc=linux-kernel@vger.kernel.org --cc="Sean Christopherson <seanjc@google.com>" $1
+        elif [[ $2 == "cc_paolo" ]]; then
+            git send-email --confirm=always --suppress-cc=all --reply-to="Sean Christopherson <seanjc@google.com>" --to="Sean Christopherson <seanjc@google.com>" --cc=kvm@vger.kernel.org  --cc=linux-kernel@vger.kernel.org --cc="Paolo Bonzini <pbonzini@redhat.com>" $1
+        else
+            git send-email --confirm=always --suppress-cc=all --reply-to="Sean Christopherson <seanjc@google.com>" --to="Sean Christopherson <seanjc@google.com>" --cc=kvm@vger.kernel.org  --cc=linux-kernel@vger.kernel.org $1
+        fi
+    fi
+}
+
 function git-send-pull-requests() {
     local branches=("generic"
                     "misc"
@@ -519,19 +541,7 @@ function git-send-pull-requests() {
         fi
     done
 
-    read -r -p "Send pull requests to self: [Y/n]" response
-    response=${response,,}    # tolower
-    if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
-        git send-email --confirm=always --suppress-cc=all --reply-to="Sean Christopherson <seanjc@google.com>" --to="Sean Christopherson <seanjc@google.com>" $HOME/pulls
-    else
-        return 1
-    fi
-
-    read -r -p "Send pull requests to Paolo: [Y/n]" response
-    response=${response,,}    # tolower
-    if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
-        git send-email --confirm=always --suppress-cc=all --reply-to="Sean Christopherson <seanjc@google.com>" --to="Paolo Bonzini <pbonzini@redhat.com>" --cc=kvm@vger.kernel.org --cc="Sean Christopherson <seanjc@google.com>" $HOME/pulls
-    fi
+    git-send-email "$HOME/pulls" to_paolo
 }
 
 function git-email-puck() {
@@ -562,21 +572,16 @@ function git-email-puck() {
         printf "$dir isn't a PUCK directory\n"
     fi
 
-    file="$dir/$file"
+    git-send-email "$dir/$file" no_paolo
+}
 
-    read -r -p "Send $file to self: [Y/n]" response
-    response=${response,,}    # tolower
-    if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
-        git send-email --confirm=always --suppress-cc=all --reply-to="Sean Christopherson <seanjc@google.com>" --to="Sean Christopherson <seanjc@google.com>" $file
-    else
+function git-email-lpc() {
+    if [[ $# -ne 1 ]]; then
+        printf "git-email-lpc <file>\n"
         return 1
     fi
 
-    read -r -p "Send $file to list: [Y/n]" response
-    response=${response,,}    # tolower
-    if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
-        git send-email --confirm=always --suppress-cc=all --reply-to="Sean Christopherson <seanjc@google.com>" --to="kvm@vger.kernel.org" --cc="Sean Christopherson <seanjc@google.com>" --cc="Paolo Bonzini <pbonzini@redhat.com>" --cc="linux-kernel@vger.kernel.org" $file
-    fi
+    git-send-email "$HOME/lpc/$1.mail" cc_paolo
 }
 
 . $SETTINGS/git/.git-completion.bash
@@ -616,6 +621,7 @@ alias geu='git-email ku'
 alias gem='git-email mm'
 alias geq='git-email qemu'
 alias gep='git-email-puck'
+alias gel='git-email-lpc'
 alias gex='git-email x86'
 alias gf='git fetch'
 alias gfo='git fetch o'
@@ -1198,7 +1204,7 @@ alias dr='cd ~/images/devrez'
 
 # Direct navigation to outbox directories (posted patches)
 alias pp='cd ~/outbox/linux'
-alias pu='cd ~/outbox/kvm-unit-tests'
+alias pt='cd ~/outbox/kvm-unit-tests'
 alias pq='cd ~/outbox/qemu'
 
 # Direct navigation to misc directories
@@ -1206,6 +1212,8 @@ alias dl='cd ~/Downloads'
 alias cpa='cd ~/patches'
 alias th='cd ~/thanks'
 alias sp='rm -f ~/patches/* && scp c:~/patches/* ~/patches/'
+alias pu='cd ~/puck'
+alias lc='cd ~/lpc'
 
 # Kernel grep and gdb commands
 alias gk='readelf -sW vmlinux | grep'
