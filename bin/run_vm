@@ -20,43 +20,6 @@ if [[ -z $cpus ]]; then
 elif [[ $maxcpus -lt $cpus ]]; then
     pin=n
 fi
-
-if [[ $pin != "n" ]]; then
-    cgroup=$(grep ^cgroup /proc/mounts | grep cpuset | grep -v root | cut -f 2 -d ' ')
-    if [[ ! -d $cgroup ]]; then
-        printf "Cannot find cpuset mount point, got '$cgroup'\n"
-        exit 1
-    fi
-
-    cgroup="$cgroup/vm"
-    if [[ ! -d $cgroup ]]; then
-        sudo mkdir $cgroup
-        if [[ $(id -u) -ne 0 ]]; then
-            sudo chown sean:sean $cgroup/*
-        fi
-    fi
-    echo "$((maxcpus-cpus))-$((maxcpus-1))" > $cgroup/cpuset.cpus
-    echo "0" > $cgroup/cpuset.mems
-    echo $BASHPID > $cgroup/cgroup.procs
-fi
-
-cgroup=$(grep ^cgroup /proc/mounts | grep memory | grep -v root | cut -f 2 -d ' ')
-if [[ ! -d $cgroup ]]; then
-    cgroup="/dev/cgroup/memory"
-    if [[ ! -d $cgroup ]]; then
-        printf "Cannot find memory cgroup mount point, got '$cgroup'\n"
-        exit 1
-    fi
-fi
-cgroup="$cgroup/vm"
-if [[ ! -d $cgroup ]]; then
-    sudo mkdir $cgroup
-    if [[ $(id -u) -ne 0 ]]; then
-        sudo chown sean:sean $cgroup/*
-    fi
-fi
-echo $BASHPID > $cgroup/cgroup.procs
-
 if [[ $# -eq 1 ]]; then
     qemu=$1 img=$2 exec virtualmachine
 elif [[ -s $v2_cgroup ]]; then
