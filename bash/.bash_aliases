@@ -1121,7 +1121,7 @@ alias cls='c;ls'
 alias cll='c;ll'
 
 # dmesg
-alias dm='dmesg'
+alias dm='sudo dmesg'
 alias dmc='sudo dmesg -c'
 
 # disk usage
