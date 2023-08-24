@@ -43,6 +43,8 @@ else
         mac=$((mac + 16))
     elif [[ -n $i386 ]]; then
         mac="0x80"
+    elif [[ $HOSTPOST = "purgatory" ]]; then
+        mac="0x40"
     else
         mac="0"
     fi
