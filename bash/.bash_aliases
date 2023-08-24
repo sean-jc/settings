@@ -2083,16 +2083,20 @@ alias rkv='rkt TESTNAME=vmx TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cp
 alias rkc='rkt TESTNAME=vmx_controls TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cpu host,+vmx -m 2560 -append vmx_controls_test'
 
 function really-run-all-tests() {
+    printf "\n\nRunning selftests with $1\n"
     run-selftests
 
+    printf "\n\nRunning KUT with $1\n"
     cd ~/go/src/kernel.org/kvm-unit-tests
     QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v
     QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v -g nodefault
 
+    printf "\n\nRunning KUT EFI with $1\n"
     cd ~/go/src/kernel.org/kut-efi
     QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v
     QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v -g nodefault
 
+    printf "\n\nRunning KUT-32 with $1\n"
     cd ~/go/src/kernel.org/kut-32
     QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v
     QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v -g nodefault
@@ -2102,7 +2106,7 @@ function run-all-tests() {
 
     rmmod-kvm kvm
     qemu=qemu probe_modules
-    really-run-all-tests
+    really-run-all-tests "TDP enabled"
 
     rmmod-kvm
     grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
@@ -2111,7 +2115,7 @@ function run-all-tests() {
     else
         psudo modprobe kvm_intel ept=0
     fi
-    really-run-all-tests
+    really-run-all-tests "TDP disabled"
 }
 alias ra='run-all-tests'
 
