@@ -725,6 +725,7 @@ function b4-ty() {
 
     if [[ $dir != "apic" &&
           $dir != "generic" &&
+          $dir != "guest_memfd" &&
           $dir != "misc" &&
           $dir != "mmu" &&
           $dir != "pmu" &&
