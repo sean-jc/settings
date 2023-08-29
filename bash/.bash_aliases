@@ -1595,20 +1595,24 @@ alias mga='make-gbuild arm64'
 function get-kernel {
     if [[ -f /boot/grub/grub.cfg ]]; then
         grep menuentry /boot/grub/grub.cfg | grep -v -e \( -e generic | grep "'Ubuntu, with Linux." | cut -f 2 -d "'"
+    elif [[ -n $EXCLUDE ]]; then
+        ls -1 /boot/config-* | cut -f 3 -d "/" | cut -f 2- -d "-" | grep -v $EXCLUDE
     else
-        ls -1 /boot/config-* | cut -f 3 -d "/" | cut -f 2- -d "-" | grep -v generic
+        ls -1 /boot/config-* | cut -f 3 -d "/" | cut -f 2- -d "-"
     fi
 }
-alias gkp=get-kernel
+alias gkp'EXCLUDE=generic get-kernel'
+alias gkpg='get-kernel'
 
 function list-kernel {
     if [[ -f /boot/grub/grub.cfg ]]; then
-        gkp | grep -o -e "Ubuntu, with Linux.*$1+\?" | cut -f 4 -d " "
+        get-kernel | grep -o -e "Ubuntu, with Linux.*$1+\?" | cut -f 4 -d " "
     else
-        gkp
+        get-kernel
     fi
 }
-alias lk='list-kernel'
+alias lk='EXCLUDE=generic list-kernel'
+alias lkg='list-kernel'
 
 function boot-kernel {
     if [[ $# -ne 1 ]]; then
@@ -1617,12 +1621,12 @@ function boot-kernel {
     fi
     if [[ -f /boot/grub/grub.cfg ]]; then
         local k=${1%%+}
-        if [[ $(gkp | grep -c -e "Ubuntu, with Linux.*$k+\?") != "1" ]]; then
-            gkp | grep -o -e "Ubuntu, with Linux.*$k+\?" | cut -f 2 -d "'"
+        if [[ $(get-kernel | grep -c -e "Ubuntu, with Linux.*$k+\?") != "1" ]]; then
+            get-kernel | grep -o -e "Ubuntu, with Linux.*$k+\?" | cut -f 2 -d "'"
             printf "Failed to find single entry for $1\n"
             return 1
         fi
-        local entry=$(gkp | grep -o -e "Ubuntu, with Linux.*$k+\?" | cut -f 2 -d "'")
+        local entry=$(get-kernel | grep -o -e "Ubuntu, with Linux.*$k+\?" | cut -f 2 -d "'")
         if [[ -z $entry ]]; then
             printf "Failed to find entry=$entry\n"
             return 1
@@ -1631,19 +1635,19 @@ function boot-kernel {
         sudo grub-reboot "Advanced options for Ubuntu>$entry"
         grep next_entry /boot/grub/grubenv
     else
-        local version=$(lk | grep $1)
+        local version=$(list-kernel | grep $1)
         if [[ -z $version ]]; then
-            printf "Failed to find for '$1'\n"
+            printf "Failed to find entry for '$1'\n"
             return 1
-        elif [[ $(echo $version | wc -l) -gt 1 ]]; then
+        elif [[ $(echo "$version" | wc -l) -gt 1 ]]; then
             printf "$version\nFound multiple entries for '$1'\n"
             return 1
         fi
-        local entry=$(gkp | grep $version)
+        local entry=$(get-kernel | grep $version)
         if [[ -z $entry ]]; then
-            printf "Failed to find for '$1'\n"
+            printf "Failed to find entry for '$1'\n"
             return 1
-        elif [[ $(echo $entry | wc -l) -gt 1 ]]; then
+        elif [[ $(echo "$entry" | wc -l) -gt 1 ]]; then
             printf "$entry\nFound multiple entries for '$1'\n"
             return 1
         fi
@@ -1663,7 +1667,8 @@ function boot-kernel {
         printf "Next Kernel: %s\n" $(readlink -e /boot/vmlinuz | cut -f 3 -d "/")
     fi
 }
-alias bk='boot-kernel'
+alias bk='EXCLUDE=generic boot-kernel'
+alias bkg='boot-kernel'
 
 function boot-windows {
     sudo grub-reboot "Windows Boot Manager (on /dev/sdb2)"
@@ -1696,7 +1701,7 @@ function purge-kernel {
         printf "sudo dpkg --purge $img $hdr\n"
         sudo dpkg --purge $img $hdr
     else
-        local version=$(lk | grep $1)
+        local version=$(list-kernel | grep $1)
         if [[ -z $version ]]; then
             printf "Failed to find entry for '$1'\n"
             return 1
