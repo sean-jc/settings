@@ -652,6 +652,7 @@ alias glc='git log --pretty=oneline --decorate --author=christopherson'
 alias glg='git log --pretty=oneline --decorate --graph'
 alias glo='git log --pretty=oneline --decorate'
 alias gm="git status | grep modified | tr -d '\t' | tr -d ' ' | cut -f 2 -d :"
+alias gmc='git merge --continue'
 alias gmk='git-merge-kvm-x86'
 alias gmks='CTHULU=n git-merge-kvm-x86'
 alias gmr='git pull --rebase=false --no-ff'
