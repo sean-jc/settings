@@ -1646,11 +1646,19 @@ function boot-kernel {
             printf "$entry\nFound multiple entries for '$1'\n"
             return 1
         fi
+        if [[ $HOSTPOST == purgatory ]]; then
+            sudo cp /boot/initrd.img-$version /boot/efi/EFI/Pop_OS-f3ed92a4-e46e-48f6-b760-8af78b9bc3be/initrd.img
+            sudo cp /boot/vmlinuz-$version /boot/efi/EFI/Pop_OS-f3ed92a4-e46e-48f6-b760-8af78b9bc3be/vmlinuz.efi
+        elif [[ $HOSTPOST == velociraptor ]]; then
+            sudo cp /boot/initrd.img-$version /boot/efi/EFI/Pop_OS-e7e49df4-19b5-4e91-9b57-a5fbc29c6a8f/initrd.img
+            sudo cp /boot/vmlinuz-$version /boot/efi/EFI/Pop_OS-e7e49df4-19b5-4e91-9b57-a5fbc29c6a8f/vmlinuz.efi
+        else
+            printf "UUID '$HOSTPOST' not known\n"
+            return 1;
+        fi
         sudo rm /boot/vmlinuz /boot/initrd.img
         sudo ln -s /boot/initrd.img-$version /boot/initrd.img
         sudo ln -s /boot/vmlinuz-$version /boot/vmlinuz
-        sudo cp /boot/initrd.img-$version /boot/efi/EFI/Pop_OS-f3ed92a4-e46e-48f6-b760-8af78b9bc3be/initrd.img
-        sudo cp /boot/vmlinuz-$version /boot/efi/EFI/Pop_OS-f3ed92a4-e46e-48f6-b760-8af78b9bc3be/vmlinuz.efi
         printf "Next Kernel: %s\n" $(readlink -e /boot/vmlinuz | cut -f 3 -d "/")
     fi
 }
