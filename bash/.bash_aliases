@@ -61,7 +61,7 @@ alias msg='moo-server-gulp'
 function moo-server-restart() {
     pushd ~/go/src/github.com/zombull/moo
     set -o xtrace
-    go install -v && \
+    go install -v -tags server && \
     sudo cp /home/sean/go/src/github.com/zombull/moo/server/nginx/nginx.conf /etc/nginx/nginx.conf && \
     cd server && gulp && \
     systemctl restart moo
