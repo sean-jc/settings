@@ -536,11 +536,14 @@ function git-send-pull-requests() {
 
     if [[ $1 == "kut" ]]; then
         branches=("kut")
+    elif [[ ! -f $HOME/pulls/00-cover.mail ]]; then
+        printf "Dude, write a cover letter already\n"
+        return 1;
     fi
 
     for branch in "${branches[@]}"; do
         if [[ ! -f $HOME/pulls/$branch.mail ]]; then
-            printf "Dude, generate a pull request for $branch"
+            printf "Dude, generate a pull request for $branch\n"
             return 1;
         fi
 
