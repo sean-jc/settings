@@ -1,6 +1,7 @@
 " Ctrl+b to add Reviewed-by in insert mode
 imap <C-b> Reviewed-by: Sean Christopherson <seanjc@google.com>
 imap <C-t> Tested-by: Sean Christopherson <seanjc@google.com>
+imap <C-k> Acked-by: Sean Christopherson <seanjc@google.com>
 
 imap <C-p>u Pushed to branch `current` at https://github.com/kvm-x86/linux.git.<CR>
 imap <C-p>n Pushed to branch `next` at https://github.com/kvm-x86/linux.git.<CR>
