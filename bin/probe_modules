@@ -41,7 +41,9 @@ if [[ ! $(lsmod | cut -f 1 -d ' ' | grep vhost_net) ]]; then
     psudo modprobe vhost_net
 fi
 
-echo 1 | psudo tee -a /sys/module/kvm/parameters/force_emulation_prefix > /dev/null
+if [[ $(cat /sys/module/kvm/parameters/force_emulation_prefix) != "1" ]]; then
+    echo 1 | psudo tee -a /sys/module/kvm/parameters/force_emulation_prefix > /dev/null
+fi
 
 if [[ ! -c /dev/vhost-net ]];then
     udevadm test /devices/virtual/misc/vhost-net
