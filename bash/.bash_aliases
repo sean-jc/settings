@@ -500,7 +500,7 @@ function git-request-kut-pull() {
     local tag="kvm-x86-$(TZ=":America/Los_Angeles" date +%Y.%m.%d)"
 
     printf "Subject: [kvm-unit-tests GIT PULL] x86: *** SUBJECT HERE ***\n\n*** BLURB HERE ***\n\n" > $HOME/pulls/kut.mail
-    git request-pull $1 https://github.com/kvm-x86/kvm-unit-tests.git tags/$tag >> $HOME/pulls/kut.mail
+    git request-pull u/master https://github.com/kvm-x86/kvm-unit-tests.git tags/$tag >> $HOME/pulls/kut.mail
 }
 
 function git-send-email() {
