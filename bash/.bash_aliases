@@ -1781,7 +1781,8 @@ function make-kernel() {
     if [[ $1 == "make" ]]; then
         stubify-linux $2
 
-        make O=~/build/kernel/$2 $EXTRAS -j$(get-nr-cpus)
+        local name="-$(git show -s --pretty='tformat:%h')-$(git rev-parse --abbrev-ref HEAD)-$2"
+        make LOCALVERSION=$name O=~/build/kernel/$2 $EXTRAS -j$(get-nr-cpus)
         ret=$?
         if [[ $ret -eq 0 ]]; then
             rm -rf ~/build/kernel/$2/lib/modules/*
