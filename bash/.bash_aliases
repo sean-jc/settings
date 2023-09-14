@@ -1915,9 +1915,12 @@ function make-kernel-branch() {
     fi
 
     if [[ $1 == "clang" ]]; then
-        targets=("make-kernel $2 clang")
+        targets=("make-kernel-clang $2 clang")
     elif [[ $1 == "vm" ]]; then
         targets=("make-kernel $2 vm")
+    elif [[ $1 == "fast" ]]; then
+        targets=("make-kernel-clang $2 clang"
+                 "make-kernel $2 vm")
     elif [[ $1 == "x86" ]]; then
         targets=("make-kernel $2 vm"
                  "make-kernel $2 pae"
@@ -2017,9 +2020,11 @@ function make-kernel-branch() {
     gg $branch
 }
 alias mkc='make-kernel-branch clang make'
-alias mkcc='make-kernel-branch clang make'
+alias mkcc='make-kernel-branch clang clean'
+alias mkf='make-kernel-branch fast make'
+alias mkfc='make-kernel-branch fast clean'
 alias mkv='make-kernel-branch vm make'
-alias mkvc='make-kernel-branch vm make clean'
+alias mkvc='make-kernel-branch vm clean'
 alias mkx='make-kernel-branch x86 make'
 alias mkxc='make-kernel-branch x86 clean'
 alias mkg='make-kernel-branch gpu make'
