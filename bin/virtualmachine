@@ -136,7 +136,7 @@ if [[ -n $epc ]]; then
     done
 fi
 
-machine="-enable-kvm -smp $cpus,sockets=1 -machine q35,accel=kvm,pit=off"
+machine="-enable-kvm -smp $cpus,sockets=1 -machine q35,accel=kvm,pit=off,hpet=off"
 if [[ -n $mach ]]; then
     machine="$machine,$mach"
 fi
@@ -148,7 +148,6 @@ fi
 if [[ -n $sev ]]; then
     machine="$machine,memory-encryption=sev -object sev-guest,id=sev,policy=0,cbitpos=47,reduced-phys-bits=1"
 fi
-machine="$machine -no-hpet"
 
 if [[ $os = "hyper-v" ]]; then
     cpu="-cpu host,host-phys-bits,hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time,+vmx"
