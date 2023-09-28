@@ -360,21 +360,12 @@ function git-send-thank-you() {
 function git-merge-kvm-x86() {
     local RED='\033[1;31m' # Bold Red
     local NOF='\033[0m' # No Format
-    local branches=(
-                    "apic"
-                    "generic"
-                    "mmu"
-                    "selftests"
-                    "svm"
-                    "vmx"
-                    "pmu"
-                    "misc"
-                   )
+    local branches=$(git branch -r --list x/* | grep -v next | cut -f 2 -d '/')
     local all="${branches[@]}"
 
     git fetch x
 
-    for branch in "${branches[@]}"; do
+    for branch in $branches; do
         if [[ $CTHULU == "n" ]]; then
             git branch $branch x/$branch && git merge --no-ff --log $branch
             if [[ $? -eq 0 ]]; then
@@ -394,7 +385,7 @@ function git-merge-kvm-x86() {
         git merge --no-ff --log $all
     fi
 
-    for branch in "${branches[@]}"; do
+    for branch in $branches; do
         git branch -D $branch
     done
 }
@@ -406,21 +397,16 @@ function git-tag-kvm-x86-next() {
 }
 
 function git-push-kvm-x86() {
-    git push x q/apic:apic q/generic:generic q/misc:misc q/mmu:mmu q/pmu:pmu q/selftests:selftests q/svm:svm q/vmx:vmx
-}
+    local branches=$(git branch --list q/* | cut -f 2 -d '/')
 
-function git-rebase-kvm-x86() {
-    local branches=("apic"
-                "generic"
-                "misc"
-                "mmu"
-                "pmu"
-                "selftests"
-                "svm"
-                "vmx")
-
-    for branch in "${branches[@]}"; do
-        git checkout q/$branch && git merge --ff-only kvm/next
+    for branch in $branches; do
+        git branch -r | tr -d " " | grep -q -E "^x/$branch"
+        if [ $? -ne 0 ]; then
+            printf "$branch isn't a tracked branch in kvm-x86\n"
+            return 1
+        fi
+        printf "git push x q/$branch:$branch\n"
+        git push x q/$branch:$branch
     done
 }
 
@@ -429,16 +415,10 @@ function git-get-tag() {
     local minor=$(($(grep -E "^PATCHLEVEL" Makefile | cut -f 3 -d ' ')+1))
 
     tag="kvm-x86-$1-$major.$minor"
-    if [[ $1 != "apic" &&
-          $1 != "generic" &&
-          $1 != "misc" &&
-          $1 != "mmu" &&
-          $1 != "pmu" &&
-          $1 != "selftests" &&
-          $1 != "svm" &&
-          $1 != "vmx" &&
-          $1 != "fixes" ]]; then
-        printf "$1 isn't a known branch\n"
+
+    git branch -r | tr -d " " | grep -q -E "^x/$1"
+    if [ $? -ne 0 ]; then
+        printf "$1 isn't a tracked branch\n"
         return 1
     fi
 
@@ -526,22 +506,16 @@ function git-send-email() {
 }
 
 function git-send-pull-requests() {
-    local branches=("generic"
-                    "misc"
-                    "mmu"
-                    "pmu"
-                    "selftests"
-                    "svm"
-                    "vmx")
+    local branches=$(git branch -r --list x/* | grep -v next | cut -f 2 -d '/')
 
     if [[ $1 == "kut" ]]; then
-        branches=("kut")
+        branches="kut"
     elif [[ ! -f $HOME/pulls/00-cover.mail ]]; then
         printf "Dude, write a cover letter already\n"
         return 1;
     fi
 
-    for branch in "${branches[@]}"; do
+    for branch in $branches; do
         if [[ ! -f $HOME/pulls/$branch.mail ]]; then
             printf "Dude, generate a pull request for $branch\n"
             return 1;
@@ -650,6 +624,7 @@ alias ggc='git-get-cc'
 alias ggd='gs | grep deleted: | cut -f 2 | tr -s " " | cut -f 2 -d " " | xargs git checkout'
 alias ggl='git branch | grep'
 alias ggo='git branch -r | tr -d " " | grep -E "^o/" | cut -f 2- -d "/" | grep'
+alias ggx='git branch -r --list x/* | grep -v next | cut -f 2 -d '/''
 alias gl='git log --decorate'
 alias glc='git log --pretty=oneline --decorate --author=christopherson'
 alias glg='git log --pretty=oneline --decorate --graph'
@@ -735,20 +710,12 @@ function b4-ty() {
         return 1
     fi
 
-    local dir=$(git rev-parse --abbrev-ref HEAD | cut -f 2 -d '/')
+    local branch=$(git rev-parse --abbrev-ref HEAD | sed -e 's/^q/x/')
+    local dir=$(echo $branch | cut -f 2 -d '/')
 
-    if [[ $dir != "apic" &&
-          $dir != "generic" &&
-          $dir != "guest_memfd" &&
-          $dir != "misc" &&
-          $dir != "mmu" &&
-          $dir != "pmu" &&
-          $dir != "selftests" &&
-          $dir != "svm" &&
-          $dir != "vmx" &&
-          $dir != "next" &&
-          $dir != "fixes" ]]; then
-        printf "Switch to the right branch...\n"
+    git branch -r | tr -d " " | grep -q -E "^$branch"
+    if [[ $? -ne 0 || "x/$dir" != "$branch" ]]; then
+        printf "Switch to a tracked branch...\n"
         return 1
     fi
     $HOME/go/src/kernel.org/b4/b4.sh ty -o $HOME/thanks/$dir -t $1
