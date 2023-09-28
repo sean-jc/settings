@@ -360,7 +360,7 @@ function git-send-thank-you() {
 function git-merge-kvm-x86() {
     local RED='\033[1;31m' # Bold Red
     local NOF='\033[0m' # No Format
-    local branches=$(git branch -r --list x/* | grep -v next | cut -f 2 -d '/')
+    local branches=$(git branch -r --list x/* | grep -v next | grep -v guest_memfd | cut -f 2 -d '/')
     local all="${branches[@]}"
 
     git fetch x --prune
@@ -506,7 +506,7 @@ function git-send-email() {
 }
 
 function git-send-pull-requests() {
-    local branches=$(git branch -r --list x/* | grep -v next | cut -f 2 -d '/')
+    local branches=$(git branch -r --list x/* | grep -v next | grep -v guest_memfd | cut -f 2 -d '/')
 
     if [[ $1 == "kut" ]]; then
         branches="kut"
