@@ -363,7 +363,7 @@ function git-merge-kvm-x86() {
     local branches=$(git branch -r --list x/* | grep -v next | cut -f 2 -d '/')
     local all="${branches[@]}"
 
-    git fetch x
+    git fetch x --prune
 
     for branch in $branches; do
         if [[ $CTHULU == "n" ]]; then
@@ -444,7 +444,7 @@ function git-request-pull() {
         return 1
     fi
 
-    git fetch x
+    git fetch x --prune
     if [[ $# -eq 2 ]]; then
         git checkout autopull && git reset --hard "x/$1~$2" && git tag -s $tag
     else
@@ -472,7 +472,7 @@ function git-request-pull() {
 function git-make-kut-tag() {
     local tag="kvm-x86-$(TZ=":America/Los_Angeles" date +%Y.%m.%d)"
 
-    git fetch x
+    git fetch x --prune
     git checkout autopull && git reset --hard x/next && git tag -s $tag && git push x $tag
 }
 
