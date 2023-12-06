@@ -21,15 +21,15 @@ echo "tools/arch/x86/" >> .git/info/sparse-checkout
 echo "tools/arch/arm64/" >> .git/info/sparse-checkout
 echo "tools/arch/s390x/" >> .git/info/sparse-checkout
 for i in "${stubdirs[@]}"; do
-        if [[ $i == "arch/arm64/crypto" ||
-              $i == "arch/mips/crypto" ||
-              $i == "arch/powerpc/crypto" ||
-              $i == "arch/riscv/crypto" ||
-              $i == "arch/s390/crypto" ||
-              $i == "arch/x86/crypto" ]]; then
-                continue
-        fi
-        echo "!$i" >> .git/info/sparse-checkout
+	if [[ $i == "arch/arm64/crypto" ||
+		  $i == "arch/mips/crypto" ||
+		  $i == "arch/powerpc/crypto" ||
+		  $i == "arch/riscv/crypto" ||
+		  $i == "arch/s390/crypto" ||
+		  $i == "arch/x86/crypto" ]]; then
+		continue
+	fi
+	echo "!$i" >> .git/info/sparse-checkout
 done
 echo "!Documentation" >> .git/info/sparse-checkout
 echo "Documentation/admin-guide/cgroup-v2.rst" >> .git/info/sparse-checkout
@@ -43,27 +43,27 @@ echo "Documentation/x86/*" >> .git/info/sparse-checkout
 git read-tree -mu HEAD
 
 for i in "${stubdirs[@]}"; do
-        if [[ $i == "drivers/lguest" ]]; then
-                continue
-        fi
-        mkdir -p $i
-        if [[ $i != arch*crypto ]]; then
-                touch $i/Makefile
-        fi
-        if [[ $i != "drivers/cdrom" &&
-              $i != "drivers/char/mwave" &&
-              $i != "drivers/char/xilinx_hwicap" &&
-              $i != "drivers/dio" &&
-              $i != "drivers/gpu" &&
-              $i != "drivers/message" &&
-              $i != "drivers/nubus" &&
-              $i != "drivers/ps3" &&
-              $i != "drivers/sbus" &&
-              $i != "drivers/tc" &&
-              $i != "drivers/video/fbdev/i810" &&
-              $i != "drivers/video/fbdev/intelfb" ]]; then
-                touch $i/Kconfig
-        fi
+	if [[ $i == "drivers/lguest" ]]; then
+		continue
+	fi
+	mkdir -p $i
+	if [[ $i != arch*crypto ]]; then
+		touch $i/Makefile
+	fi
+	if [[ $i != "drivers/cdrom" &&
+		  $i != "drivers/char/mwave" &&
+		  $i != "drivers/char/xilinx_hwicap" &&
+		  $i != "drivers/dio" &&
+		  $i != "drivers/gpu" &&
+		  $i != "drivers/message" &&
+		  $i != "drivers/nubus" &&
+		  $i != "drivers/ps3" &&
+		  $i != "drivers/sbus" &&
+		  $i != "drivers/tc" &&
+		  $i != "drivers/video/fbdev/i810" &&
+		  $i != "drivers/video/fbdev/intelfb" ]]; then
+		touch $i/Kconfig
+	fi
 done
 
 # One off case for user-mode Linux

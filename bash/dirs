@@ -1,0 +1,44 @@
+# Shortcuts for moving up directories
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+
+# Typos
+alias cd..="cd .."
+
+# Direct navigation to directories
+alias so='cd ~/go/src'
+alias gh='cd ~/go/src/github.com'
+alias se='cd ~/go/src/github.com/sean-jc/settings'
+alias qq='cd ~/go/src/github.com/qemu/qemu'
+alias zz='cd ~/go/src/github.com/zombull'
+alias int='cd ~/go/src/intel.com'
+alias ko='cd ~/go/src/kernel.org'
+alias ho='cd ~/go/src/kernel.org/host'
+alias ku='cd ~/go/src/kernel.org/kvm-unit-tests'
+alias k32='cd ~/go/src/kernel.org/kut-32'
+alias li='cd ~/go/src/kernel.org/linux'
+alias no='cd ~/go/src/kernel.org/nox'
+alias nt='cd ~/go/src/kernel.org/nox/tools/testing/selftests/kvm'
+alias si='cd ~/go/src/kernel.org/sinux'
+alias te='cd ~/go/src/kernel.org/slf'
+alias tk='cd ~/go/src/kernel.org/slf/tools/testing/selftests/kvm'
+alias uu='cd ~/go/src/kernel.org/gpu'
+alias bi='cd ~/build'
+alias kn='cd ~/build/kernel'
+alias qe='cd ~/build/qemu'
+alias tt='cd ~/build/selftests'
+alias iq='cd ~/images/qemu'
+
+# Direct navigation to outbox directories (posted patches)
+alias pp='cd ~/outbox/linux'
+alias pt='cd ~/outbox/kvm-unit-tests'
+
+# Direct navigation to misc directories
+alias dl='cd ~/Downloads'
+alias cpa='cd ~/patches'
+alias th='cd ~/thanks'
+alias sp='rm -f ~/patches/* && scp c:~/patches/* ~/patches/'
+alias pu='cd ~/puck'
+alias lc='cd ~/lpc'

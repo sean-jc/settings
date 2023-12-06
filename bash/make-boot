@@ -1,0 +1,182 @@
+
+function get-kernel {
+	if [[ -f /boot/grub/grub.cfg ]]; then
+		grep menuentry /boot/grub/grub.cfg | grep -v -e \( -e generic | grep "'Ubuntu, with Linux." | cut -f 2 -d "'"
+	elif [[ -n $EXCLUDE ]]; then
+		ls -1 /boot/config-* | cut -f 3 -d "/" | cut -f 2- -d "-" | grep -v $EXCLUDE
+	else
+		ls -1 /boot/config-* | cut -f 3 -d "/" | cut -f 2- -d "-"
+	fi
+}
+alias gkp'EXCLUDE=generic get-kernel'
+alias gkpg='get-kernel'
+
+function list-kernel {
+	if [[ -f /boot/grub/grub.cfg ]]; then
+		get-kernel | grep -o -e "Ubuntu, with Linux.*$1+\?" | cut -f 4 -d " "
+	else
+		get-kernel
+	fi
+}
+alias lk='EXCLUDE=generic list-kernel'
+alias lkg='list-kernel'
+
+function boot-kernel {
+	if [[ $# -ne 1 ]]; then
+		printf "Must specify the target kernel name\n"
+		return 1
+	fi
+	if [[ -f /boot/grub/grub.cfg ]]; then
+		local k=${1%%+}
+		if [[ $(get-kernel | grep -c -e "Ubuntu, with Linux.*$k+\?") != "1" ]]; then
+			get-kernel | grep -o -e "Ubuntu, with Linux.*$k+\?" | cut -f 2 -d "'"
+			printf "Failed to find single entry for $1\n"
+			return 1
+		fi
+		local entry=$(get-kernel | grep -o -e "Ubuntu, with Linux.*$k+\?" | cut -f 2 -d "'")
+		if [[ -z $entry ]]; then
+			printf "Failed to find entry=$entry\n"
+			return 1
+		fi
+		printf "sudo grub-reboot 'Advanced options for Ubuntu>$entry'\n"
+		sudo grub-reboot "Advanced options for Ubuntu>$entry"
+		grep next_entry /boot/grub/grubenv
+	else
+		local version=$(list-kernel | grep $1)
+		if [[ -z $version ]]; then
+			printf "Failed to find entry for '$1'\n"
+			return 1
+		elif [[ $(echo "$version" | wc -l) -gt 1 ]]; then
+			printf "$version\nFound multiple entries for '$1'\n"
+			return 1
+		fi
+		local entry=$(get-kernel | grep $version)
+		if [[ -z $entry ]]; then
+			printf "Failed to find entry for '$1'\n"
+			return 1
+		elif [[ $(echo "$entry" | wc -l) -gt 1 ]]; then
+			printf "$entry\nFound multiple entries for '$1'\n"
+			return 1
+		fi
+		if [[ $HOSTPOST == purgatory ]]; then
+			sudo cp /boot/initrd.img-$version /boot/efi/EFI/Pop_OS-f3ed92a4-e46e-48f6-b760-8af78b9bc3be/initrd.img
+			sudo cp /boot/vmlinuz-$version /boot/efi/EFI/Pop_OS-f3ed92a4-e46e-48f6-b760-8af78b9bc3be/vmlinuz.efi
+		elif [[ $HOSTPOST == velociraptor ]]; then
+			sudo cp /boot/initrd.img-$version /boot/efi/EFI/Pop_OS-e7e49df4-19b5-4e91-9b57-a5fbc29c6a8f/initrd.img
+			sudo cp /boot/vmlinuz-$version /boot/efi/EFI/Pop_OS-e7e49df4-19b5-4e91-9b57-a5fbc29c6a8f/vmlinuz.efi
+		else
+			printf "UUID '$HOSTPOST' not known\n"
+			return 1;
+		fi
+		sudo rm /boot/vmlinuz /boot/initrd.img
+		sudo ln -s /boot/initrd.img-$version /boot/initrd.img
+		sudo ln -s /boot/vmlinuz-$version /boot/vmlinuz
+		printf "Next Kernel: %s\n" $(readlink -e /boot/vmlinuz | cut -f 3 -d "/")
+	fi
+}
+alias bk='EXCLUDE=generic boot-kernel'
+alias bkg='boot-kernel'
+
+function boot-windows {
+	sudo grub-reboot "Windows Boot Manager (on /dev/sdb2)"
+	grep next_entry /boot/grub/grubenv
+}
+
+function purge-kernel {
+	if [[ $# -ne 1 ]]; then
+		printf "Must specify the target kernel name\n"
+		return 1
+	fi
+	if [[ -f /boot/grub/grub.cfg ]]; then
+		local k=${1%%+}
+		if [[ $(dpkg-query-size | grep -c -e "linux-image.*$k+\?") != "1" ]]; then
+			dpkg-query-size | grep -e "linux-image.*$k+"
+			printf "Failed to find single image for '$1'\n"
+			return 1
+		fi
+		if [[ $(dpkg-query-size | grep -c -e "linux-headers.*$k+\?") != "1" ]]; then
+			dpkg-query-size | grep -e "linux-headers.*$k+"
+			printf "Failed to find single headers for '$1'\n"
+			return 1
+		fi
+		local img=$(dpkg-query-size | grep -e "linux-image.*$k+\?"	| cut -f 2)
+		local hdr=$(dpkg-query-size | grep -e "linux-headers.*$k+\?"  | cut -f 2)
+		if [[ -z $img || -z $hdr ]]; then
+			printf "Failed to find image=$img or headers=$hdr\n"
+			return 1
+		fi
+		printf "sudo dpkg --purge $img $hdr\n"
+		sudo dpkg --purge $img $hdr
+	else
+		local version=$(list-kernel | grep $1)
+		if [[ -z $version ]]; then
+			printf "Failed to find entry for '$1'\n"
+			return 1
+		elif [[ $(echo $version | wc -l) -gt 1 ]]; then
+			printf "$version\nFound multiple entries for '$1'\n"
+			return 1
+		fi
+		sudo rm -f /boot/config-$version /boot/vmlinuz-$version /boot/initrd.img-$version /boot/System.map-$version
+		sudo rm -rf /usr/lib/modules/$version
+	fi
+}
+alias pk='purge-kernel'
+
+
+function make-kernel-package() {
+	if [[ $# -lt 1 ]]; then
+		printf "Must specify the target kernel name\n"
+		return 1
+	fi
+	if [[ $# -gt 3 ]]; then
+		printf "Maximum of 2 arguments supported: kernel (1), and no-install (2)\n"
+		return 2
+	fi
+	if [[ ! -f REPORTING-BUGS ]]; then
+		printf "REPORTING-BUGS file not detected\n"
+		return 3
+	fi
+	if [[ $(id -u) -ne 0 ]]; then
+		printf "Must be run as root\n"
+		return 4
+	fi
+	if [[ $guest == "true" ]]; then
+		stubify-guest
+	fi
+
+	rev="1"
+	rm -f ../*$1+_${rev}_*.deb
+	name="$(git show -s --pretty='tformat:%h')-$1"
+
+	CONCURRENCY_LEVEL=$(get-nr-cpus) make-kpkg --initrd --append-to-version=-$name kernel_headers kernel_image --revision $rev
+
+	if [[ $? -eq 0 && $# -lt 2 && $guest != "true" ]]; then
+		dpkg -i ../*${name}*_${rev}_*.deb
+	fi
+}
+alias mguest='guest=true make-kernel-package'
+
+function make-host {
+	if [[ $# -lt 1 ]]; then
+		printf "Must specify the target kernel name\n"
+		return 1
+	fi
+
+	if [[ -f /boot/grub/grub.cfg ]]; then
+		make-kernel-package $@
+		return 0
+	fi
+
+	local name="-$(git show -s --pretty='tformat:%h')-$1"
+	local threads=$(get-nr-cpus)
+	make LOCALVERSION=$name -j $threads && sudo make modules_install && sudo make install
+	# if [[ $? -eq 0 && ]]; then
+	#	 local version=$(ls -1 /boot | egrep "vmlinuz-[.0-9]+(-rc[0-9])?$name" | sed -e "s/vmlinuz-//")
+	#	 if [[ -z $version ]]; then
+	#		 printf "Failed to locate new kernel $name\n"
+	#		 return 1
+	#	 fi
+	#	 sudo kernel-install add $version /boot/vmlinuz-$version /boot/initrd.img-$version
+	# fi
+}
+alias mho='make-host'

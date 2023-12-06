@@ -5,6 +5,6 @@
 
 for i in "${stubdirs[@]}"
 do
-        mkdir -p ~/build/kernel/$1/$i
-        echo "!<arch>" > ~/build/kernel/$1/$i/built-in.o
+	mkdir -p ~/build/kernel/$1/$i
+	echo "!<arch>" > ~/build/kernel/$1/$i/built-in.o
 done

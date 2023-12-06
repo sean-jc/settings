@@ -1,17 +1,17 @@
 stubdirs+=(
-        drivers/char/agp
-        drivers/dma
-        drivers/dma-buf
-        drivers/gpu
-        drivers/gpu/drm
-        drivers/gpu/host1x
-        drivers/gpu/ipu-v3
-        drivers/gpu/trace
-        drivers/gpu/vga
-        drivers/i2c
-        drivers/video/backlight
-        drivers/video/fbdev
-        drivers/video/fbdev/i810
-        drivers/video/fbdev/intelfb
-        drivers/video/logo
+	drivers/char/agp
+	drivers/dma
+	drivers/dma-buf
+	drivers/gpu
+	drivers/gpu/drm
+	drivers/gpu/host1x
+	drivers/gpu/ipu-v3
+	drivers/gpu/trace
+	drivers/gpu/vga
+	drivers/i2c
+	drivers/video/backlight
+	drivers/video/fbdev
+	drivers/video/fbdev/i810
+	drivers/video/fbdev/intelfb
+	drivers/video/logo
 )

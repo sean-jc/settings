@@ -1,29 +1,29 @@
 #!/bin/bash
 if [[ $# -lt 2 ]]; then
-    printf "Must specify the qemu build and target image\n"
-    exit 1
+	printf "Must specify the qemu build and target image\n"
+	exit 1
 fi
 
 if [[ $# -gt 3 ]]; then
-    printf "Maximum of 3 arguments supported: qemu (1), image (2) and kernel (3)\n"
-    exit 1
+	printf "Maximum of 3 arguments supported: qemu (1), image (2) and kernel (3)\n"
+	exit 1
 fi
 
 # Allow up to 64gb worth of on-demand hugeTLB pages.
 if [[ $(cat /proc/sys/vm/nr_overcommit_hugepages) != "32768" ]]; then
-    echo 32768 | sudo tee /proc/sys/vm/nr_overcommit_hugepages
+	echo 32768 | sudo tee /proc/sys/vm/nr_overcommit_hugepages
 fi
 
 maxcpus=$(grep -c '^processor' /proc/cpuinfo)
 if [[ -z $cpus ]]; then
-    cpus=$maxcpus
+	cpus=$maxcpus
 elif [[ $maxcpus -lt $cpus ]]; then
-    pin=n
+	pin=n
 fi
 if [[ $# -eq 1 ]]; then
-    qemu=$1 img=$2 exec virtualmachine
+	qemu=$1 img=$2 exec virtualmachine
 elif [[ -s $v2_cgroup ]]; then
-    qemu=$1 img=$2 kernel=$3 cpus=$cpus append="cgroup_no_v1=$v2_cgroup" exec virtualmachine
+	qemu=$1 img=$2 kernel=$3 cpus=$cpus append="cgroup_no_v1=$v2_cgroup" exec virtualmachine
 else
-    qemu=$1 img=$2 kernel=$3 cpus=$cpus exec virtualmachine
+	qemu=$1 img=$2 kernel=$3 cpus=$cpus exec virtualmachine
 fi

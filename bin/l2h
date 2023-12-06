@@ -1,10 +1,10 @@
 #!/bin/bash
 function pushd() {
-    command pushd "$@" > /dev/null
+	command pushd "$@" > /dev/null
 }
 
 function popd() {
-    command popd "$@" > /dev/null
+	command popd "$@" > /dev/null
 }
 
 set -e
@@ -15,8 +15,8 @@ popd
 pushd ~/go/src/kernel.org/host
 hrev=$(git rev-parse HEAD)
 if [[ $rev != $hrev ]]; then
-    printf "linux and host must be on the same commit"
-    exit 1
+	printf "linux and host must be on the same commit"
+	exit 1
 fi
 git reset --hard HEAD
 echo "$patch" | patch -p0

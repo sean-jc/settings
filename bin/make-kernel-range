@@ -1,0 +1,174 @@
+#!/bin/bash
+. $SETTINGS/bash/utils
+. $SETTINGS/bash/make-kernel
+
+declare -a pids=()
+
+function cleanup {
+	for pid in "${pids[@]}"; do
+		kill pid
+	done
+	exit
+}
+trap cleanup SIGINT SIGTERM
+
+function do-make-kernel-range() {
+	local RED='\033[1;31m' # Bold Red
+	local cyan='\033[0;36m' # Cyan
+	local NOF='\033[0m' # No Format
+	local arbitrary=1000
+	local cflags=""
+	local targets
+	local branch
+	local start
+	local end
+	local ret
+
+	if [[ $# -lt 2 ]]; then
+		printf "Must specify the target and command\n"
+		return 1
+	fi
+
+	if [[ $# -gt 4 ]]; then
+		printf "Usage: target (1), command (2), first commit (3), and branch (4)\n"
+		return 1
+	fi
+
+	branch=$(git rev-parse --abbrev-ref HEAD)
+
+	git rev-parse --verify autotest
+	if [[ $? -ne 0 ]]; then
+		git branch autotest
+	fi
+
+	if [[ $1 == "clang" ]]; then
+		targets=("make-kernel-clang $2 clang")
+	elif [[ $1 == "vm" ]]; then
+		targets=("make-kernel $2 vm")
+	elif [[ $1 == "fast" ]]; then
+		targets=("make-kernel $2 vm"
+			 "make-kernel-clang $2 clang")
+	elif [[ $1 == "x86" ]]; then
+		targets=("make-kernel $2 vm"
+			 "make-kernel $2 pae"
+			 "make-kernel $2 up"
+			 "make-kernel $2 all"
+			 "make-kernel-clang $2 clang"
+			 "make-kernel-clang $2 clang_pae"
+			 "make-kernel-clang $2 clang_all")
+	elif [[ $1 == "gpu" ]]; then
+		targets=("make-kernel $2 gpu"
+			 "make-kernel-clang $2 clang_gpu")
+	elif [[ $1 == "all" ]]; then
+		targets=("make-kernel-arm $2 cc_arm"
+			 "make-kernel-mips $2 cc_mips64"
+			 "make-kernel-ppc $2 cc_ppc64"
+			 "make-kernel-ppc $2 cc_e500mc"
+			 "make-kernel-riscv $2 cc_riscv"
+			 "make-kernel-s390 $2 cc_s390"
+			 "make-kernel $2 cc_x86")
+	elif [[ $1 == "kut"* ]]; then
+		targets=("make clean"
+			 "make -j$(get-nr-cpus)"
+			 "make clean"
+			 "make-clang make -j$(get-nr-cpus)")
+		cflags="-Werror"
+	elif [[ $1 == "tests-"* ]]; then
+		local test_arch=${1#"tests-"}
+		targets=("make-$test_arch make clean"
+			 "make-$test_arch make -j$(get-nr-cpus)"
+			 "make-clang make-$test_arch make clean"
+			 "make-clang make-$test_arch make -j$(get-nr-cpus)")
+		cflags="-Werror"
+	else
+		printf "Unknown target '$1'\n"
+		return 1
+	fi
+
+	if [[ $# -lt 3 ]]; then
+		start=$(git rev-parse HEAD)
+	else
+		start=$(git rev-parse --verify $3)
+		if [[ $? -ne 0 ]]; then
+			printf "Did not find $3 in git\n"
+			return 1
+		fi
+	fi
+	if [[ $# -lt 4 ]]; then
+		end=$start
+	elif [[ $(is-integer $4) ]]; then
+		end=$start
+		start=$(git rev-parse "$end~$(($4-1))")
+	else
+		end=$(git rev-parse --verify $4)
+		if [[ $? -ne 0 ]]; then
+			printf "Did not find $4 in git\n"
+			return 1
+		fi
+	fi
+
+	printf "start = $start, end = $end\n"
+
+	local commits=$(git log --pretty=oneline --decorate $end | head -$arbitrary | grep -B $arbitrary $start | tac | cut -f 1 -d ' ')
+	if [[ $? -ne 0 ]]; then
+		printf "Did not find $start in git log\n"
+		return 1
+	fi
+	commits=(${commits//:/ })
+
+	git branch | grep -wq autotest
+	if [[ $? -eq 0 ]]; then
+		git branch -D autotest
+	fi
+
+	git checkout -b autotest
+	if [[ $? -ne 0 ]]; then
+		printf "\n$REDFailed to checkout 'autotest' reset to commit ${cyan}$commit$NC\n\n"
+		return 1
+	fi
+
+	for commit in "${commits[@]}"; do
+		git reset --hard $commit
+
+		ret=$?
+		if [[ $ret -ne 0 ]]; then
+			printf "\n$REDFailed to reset to commit ${cyan}$commit$NC\n\n"
+			break
+		fi
+
+		for target in "${targets[@]}"; do
+			local dir=$(echo $target | rev | cut -f 1 -d ' ' | rev)
+			local outlog="$HOME/build/kernel/$dir/stdout.log"
+			local errlog="$HOME/build/kernel/$dir/stderr.log"
+			yes | EXTRA_CFLAGS="$cflags" $target > $outlog 2> $errlog &
+
+			pids+=($!)
+		done
+
+		for i in "${!pids[@]}"; do
+			target=${targets[$i]}
+			pid=${pids[$i]}
+
+			printf "Waiting for '$target', PID '$pid'\n"
+			wait $pid
+
+			ret=$?
+			if [[ $ret -ne 0 ]]; then
+				local dir=$(echo $target | rev | cut -f 1 -d ' ' | rev)
+				printf "\n${RED}Commit ${cyan}$commit${RED} failed to build with '$target'.${NOF}\n\n"
+				printf "less $HOME/build/kernel/$dir/stdout.log\n"
+				printf "less $HOME/build/kernel/$dir/stderr.log\n\n"
+				cat "$HOME/build/kernel/$dir/stderr.log"
+				printf "\n"
+				break
+			fi
+		done
+
+		if [[ $ret -ne 0 ]]; then
+			break
+		fi
+	done
+
+	git checkout $branch
+}
+do-make-kernel-range $@

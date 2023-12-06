@@ -15,10 +15,10 @@ echo "arch/x86/" >> .git/info/sparse-checkout
 echo "tools/arch/x86/" >> .git/info/sparse-checkout
 echo "tools/include/uapi/linux/kvm.h" >> .git/info/sparse-checkout
 for i in "${stubdirs[@]}"; do
-        if [[ $i == "arch/x86/crypto" ]]; then
-                continue
-        fi
-        echo "!$i" >> .git/info/sparse-checkout
+	if [[ $i == "arch/x86/crypto" ]]; then
+		continue
+	fi
+	echo "!$i" >> .git/info/sparse-checkout
 done
 echo "drivers/char/agp" >> .git/info/sparse-checkout
 echo "drivers/dma" >> .git/info/sparse-checkout
@@ -39,26 +39,26 @@ echo "Documentation/x86/*" >> .git/info/sparse-checkout
 git read-tree -mu HEAD
 
 for i in "${stubdirs[@]}"; do
-        if [[ $i == "drivers/oprofile" ||
-              $i == "drivers/lguest" ]]; then
-                continue
-        fi
-        mkdir -p $i
-        if [[ $i != arch*crypto ]]; then
-                touch $i/Makefile
-        fi
-        if [[ $i != "drivers/cdrom" &&
-              $i != "drivers/char/mwave" &&
-              $i != "drivers/char/xilinx_hwicap" &&
-              $i != "drivers/dio" &&
-              $i != "drivers/message" &&
-              $i != "drivers/nubus" &&
-              $i != "drivers/ps3" &&
-              $i != "drivers/s390" &&
-              $i != "drivers/sbus" &&
-              $i != "drivers/tc" ]]; then
-                touch $i/Kconfig
-        fi
+	if [[ $i == "drivers/oprofile" ||
+		  $i == "drivers/lguest" ]]; then
+		continue
+	fi
+	mkdir -p $i
+	if [[ $i != arch*crypto ]]; then
+		touch $i/Makefile
+	fi
+	if [[ $i != "drivers/cdrom" &&
+		  $i != "drivers/char/mwave" &&
+		  $i != "drivers/char/xilinx_hwicap" &&
+		  $i != "drivers/dio" &&
+		  $i != "drivers/message" &&
+		  $i != "drivers/nubus" &&
+		  $i != "drivers/ps3" &&
+		  $i != "drivers/s390" &&
+		  $i != "drivers/sbus" &&
+		  $i != "drivers/tc" ]]; then
+		touch $i/Kconfig
+	fi
 done
 
 # One off case for user-mode Linux

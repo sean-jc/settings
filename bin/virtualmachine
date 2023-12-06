@@ -5,28 +5,28 @@ export VM_PID=$$
 set -m
 
 function die() {
-    printf "%s\n" "$1"
-    kill -s TERM $VM_PID
+	printf "%s\n" "$1"
+	kill -s TERM $VM_PID
 }
 
 if [[ -z $img && -z $unittest ]]; then
-    die "Must specify the image name via: \$img"
+	die "Must specify the image name via: \$img"
 fi
 
 if [[ -z $qemu ]]; then
-    die "Must specify the qemu build via: \$qemu"
+	die "Must specify the qemu build via: \$qemu"
 fi
 
 if [[ -z $cpus ]]; then
-    die "Must specify the number of cpus via: \$cpus\n"
+	die "Must specify the number of cpus via: \$cpus\n"
 fi
 
 if [[ -n $iso && -n $kernel ]]; then
-    die "Cannot specify both \$iso and \$kernel\n"
+	die "Cannot specify both \$iso and \$kernel\n"
 fi
 
 if [[ -z $kernel && -n $append ]]; then
-    die "Cannot specify \$append without \$kernel\n"
+	die "Cannot specify \$append without \$kernel\n"
 fi
 
 probe_modules
@@ -35,249 +35,249 @@ qemu="$HOME/build/qemu/$qemu"
 qemu_bin=$(readlink -f $qemu)
 
 if [[ $os = "hyper-v" ]]; then
-    mac="00:16:3E:68:00:FF"
+	mac="00:16:3E:68:00:FF"
 else
-    mac=$(ifconfig | grep -A 4 br0 | grep -o 00:16:3e:68:00:..)
-    if [[ -n $mac ]]; then
-        mac="0x$(echo $mac | cut -f 6 -d :)"
-        mac=$((mac + 16))
-    elif [[ -n $i386 ]]; then
-        mac="0x80"
-    elif [[ $HOSTPOST = "purgatory" ]]; then
-        mac="0x40"
-    else
-        mac="0"
-    fi
-    mac=$(printf "00:16:3E:68:00:%02x" $((mac + $(ifconfig | grep -c -e "tap[0-9]"))))
+	mac=$(ifconfig | grep -A 4 br0 | grep -o 00:16:3e:68:00:..)
+	if [[ -n $mac ]]; then
+	mac="0x$(echo $mac | cut -f 6 -d :)"
+	mac=$((mac + 16))
+	elif [[ -n $i386 ]]; then
+	mac="0x80"
+	elif [[ $HOSTPOST = "purgatory" ]]; then
+	mac="0x40"
+	else
+	mac="0"
+	fi
+	mac=$(printf "00:16:3E:68:00:%02x" $((mac + $(ifconfig | grep -c -e "tap[0-9]"))))
 fi
 
 if [[ $os = "hyper-v" ]]; then
-    img=$HOME/images/qemu/hyper-v-2016-$img.img
+	img=$HOME/images/qemu/hyper-v-2016-$img.img
 elif [[ -n $mbr ]]; then
-    img=$HOME//images/qemu/bios/ubuntu-16.04-server-$img.img
+	img=$HOME//images/qemu/bios/ubuntu-16.04-server-$img.img
 elif [[ -n $hdd ]]; then
-    img=/hdd/images/qemu/ubuntu-18.04-server-$img.img
+	img=/hdd/images/qemu/ubuntu-18.04-server-$img.img
 else
-    img=$HOME/images/qemu/ubuntu-18.04-server-$img.img
+	img=$HOME/images/qemu/ubuntu-18.04-server-$img.img
 fi
 
 qemu="$qemu -name debug-threads=on"
 if [[ -n $gdb ]]; then
-    qemu="$qemu -s -S"
+	qemu="$qemu -s -S"
 fi
 if [[ -z $reboot ]]; then
-    qemu="$qemu -no-reboot"
+	qemu="$qemu -no-reboot"
 fi
 
 ifconfig -a | grep -q br0
 if [[ $? -eq 0 ]]; then
-    ifup=br0
+	ifup=br0
 else
-    ifconfig -a | grep -q tap0
-    if [[ $? -eq 0 ]]; then
-        ifup=tap0
-    fi
+	ifconfig -a | grep -q tap0
+	if [[ $? -eq 0 ]]; then
+	ifup=tap0
+	fi
 fi
 if [[ -z $ifup ]]; then
-    die "Cannot find br0 or tap0\n"
+	die "Cannot find br0 or tap0\n"
 fi
 ifup=$(which ifup_"$ifup")
 if [[ $? -ne 0 ]]; then
-        die "Cannot find ifup_$ifup script"
+	die "Cannot find ifup_$ifup script"
 fi
 
 if [[ -n $iommu ]]; then
-    iommu="-device virtio-iommu-pci"
+	iommu="-device virtio-iommu-pci"
 fi
 if [[ -n $iommu || -n $sev ]]; then
-    virtio_opt="disable-legacy=on,iommu_platform=on"
+	virtio_opt="disable-legacy=on,iommu_platform=on"
 elif [[ -n $i386 ]]; then
-    virtio_opt="disable-modern=on,disable-legacy=off,iommu_platform=off"
+	virtio_opt="disable-modern=on,disable-legacy=off,iommu_platform=off"
 else
-    virtio_opt="iommu_platform=off"
+	virtio_opt="iommu_platform=off"
 fi
 net="-device virtio-net-pci,netdev=net0,mac=$mac,$virtio_opt,romfile= -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
 
 maxmem=16G
 if [[ -n $epc ]]; then
-    maxmem=32G
+	maxmem=32G
 fi
 
 if [[ -n $mb ]]; then
-    mem="-m $mb""M"
+	mem="-m $mb""M"
 elif [[ -n $gb ]]; then
-    mem="-m $gb""G"
+	mem="-m $gb""G"
 elif [[ "$qemu_bin" =~ "i386" ]]; then
-    mem="-m 1G"
+	mem="-m 1G"
 else
-    total_mem=$(free -g | grep Mem: | tr -s ' ' | cut -f 2 -d ' ')
-    if [[ $total_mem -lt 5 ]]; then
-        printf "Not enough memory to start a VM\n"
-        exit 2
-    fi
-    if [[ $total_mem -lt 17 && $os = "hyper-v" ]]; then
-        printf "Not enough memory to start Hyper-V\n"
-        exit 2
-    fi
+	total_mem=$(free -g | grep Mem: | tr -s ' ' | cut -f 2 -d ' ')
+	if [[ $total_mem -lt 5 ]]; then
+	printf "Not enough memory to start a VM\n"
+	exit 2
+	fi
+	if [[ $total_mem -lt 17 && $os = "hyper-v" ]]; then
+	printf "Not enough memory to start Hyper-V\n"
+	exit 2
+	fi
 
-    if [[ $total_mem -gt 16 ]]; then
-        mem="4G"
-        memfd="12G"
-    elif [[ $total_mem -gt 8 ]]; then
-        mem="4G"
-        memfd="4G"
-    else
-        mem="2G"
-        memfd="2G"
-    fi
-    mem="-m $mem,slots=1,maxmem=$maxmem -object memory-backend-memfd,hugetlb=y,hugetlbsize=2M,id=mem1,size=$memfd -device pc-dimm,id=dimm1,memdev=mem1 "
+	if [[ $total_mem -gt 16 ]]; then
+	mem="4G"
+	memfd="12G"
+	elif [[ $total_mem -gt 8 ]]; then
+	mem="4G"
+	memfd="4G"
+	else
+	mem="2G"
+	memfd="2G"
+	fi
+	mem="-m $mem,slots=1,maxmem=$maxmem -object memory-backend-memfd,hugetlb=y,hugetlbsize=2M,id=mem1,size=$memfd -device pc-dimm,id=dimm1,memdev=mem1 "
 fi
 if [[ -n $epc ]]; then
-    id=2
-    for section in $epc; do
-        mem="$mem -object memory-backend-epc,id=mem$id,size=$section -sgx-epc id=epc$id,memdev=mem$id"
-        id=$((id+1))
-    done
+	id=2
+	for section in $epc; do
+	mem="$mem -object memory-backend-epc,id=mem$id,size=$section -sgx-epc id=epc$id,memdev=mem$id"
+	id=$((id+1))
+	done
 fi
 
 machine="-enable-kvm -smp $cpus,sockets=1 -machine q35,accel=kvm,pit=off,hpet=off"
 if [[ -n $mach ]]; then
-    machine="$machine,$mach"
+	machine="$machine,$mach"
 fi
 if [[ -n $td ]]; then
-    machine="$machine,kvm-type=tdx,kernel_irqchip=split,guest-memory-protection=tdx,pic=off -object tdx-guest,id=tdx,debug"
+	machine="$machine,kvm-type=tdx,kernel_irqchip=split,guest-memory-protection=tdx,pic=off -object tdx-guest,id=tdx,debug"
 else
-    machine="$machine,kernel_irqchip=on"
+	machine="$machine,kernel_irqchip=on"
 fi
 if [[ -n $sev ]]; then
-    machine="$machine,memory-encryption=sev -object sev-guest,id=sev,policy=0,cbitpos=47,reduced-phys-bits=1"
+	machine="$machine,memory-encryption=sev -object sev-guest,id=sev,policy=0,cbitpos=47,reduced-phys-bits=1"
 fi
 
 if [[ $os = "hyper-v" ]]; then
-    cpu="-cpu host,host-phys-bits,hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time,+vmx"
+	cpu="-cpu host,host-phys-bits,hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time,+vmx"
 else
-    cpu="-cpu host,host-phys-bits,+invtsc"
-    if [[ -z $migrate ]]; then
-        cpu="$cpu,migratable=no"
-    fi
-    if [[ $x2apic == "false" || $x2apic == "n" ]]; then
-        cpu="$cpu,-x2apic"
-    fi
-    if [[ "$qemu_bin" =~ "i386" ]]; then
-        cpu="$cpu,-lm"
-        bios="-bios $HOME/go/src/seabios.org/seabios/out/bios.bin"
-    elif [[ -z $mbr ]]; then
-        if [[ -n $sev ]]; then
-            bios="-drive if=pflash,format=raw,readonly,unit=0,file=$HOME/build/ovmf/OVMF_CODE$ovmf.fd"
-            bios="$bios -drive if=pflash,format=raw,unit=1,file=$HOME/build/ovmf/OVMF_VARS$ovmf.fd"
-        elif [[ -n $pflash ]]; then
-            bios="-drive if=pflash,format=raw,readonly,unit=0,file=$HOME/build/ovmf/OVMF$ovmf.fd"
-        elif [[ -n $td ]]; then
-            bios="-device loader,file=$HOME/build/ovmf/OVMFTD$ovmf.fd,id=fd0"
-        else
-            bios="-bios $HOME/build/ovmf/OVMF$ovmf.fd"
-        fi
-        if [[ -n $debug_con ]]; then
-            bios="$bios -debugcon file:debug.log -global isa-debugcon.iobase=0x402"
-        fi
-    fi
+	cpu="-cpu host,host-phys-bits,+invtsc"
+	if [[ -z $migrate ]]; then
+	cpu="$cpu,migratable=no"
+	fi
+	if [[ $x2apic == "false" || $x2apic == "n" ]]; then
+	cpu="$cpu,-x2apic"
+	fi
+	if [[ "$qemu_bin" =~ "i386" ]]; then
+	cpu="$cpu,-lm"
+	bios="-bios $HOME/go/src/seabios.org/seabios/out/bios.bin"
+	elif [[ -z $mbr ]]; then
+	if [[ -n $sev ]]; then
+		bios="-drive if=pflash,format=raw,readonly,unit=0,file=$HOME/build/ovmf/OVMF_CODE$ovmf.fd"
+		bios="$bios -drive if=pflash,format=raw,unit=1,file=$HOME/build/ovmf/OVMF_VARS$ovmf.fd"
+	elif [[ -n $pflash ]]; then
+		bios="-drive if=pflash,format=raw,readonly,unit=0,file=$HOME/build/ovmf/OVMF$ovmf.fd"
+	elif [[ -n $td ]]; then
+		bios="-device loader,file=$HOME/build/ovmf/OVMFTD$ovmf.fd,id=fd0"
+	else
+		bios="-bios $HOME/build/ovmf/OVMF$ovmf.fd"
+	fi
+	if [[ -n $debug_con ]]; then
+		bios="$bios -debugcon file:debug.log -global isa-debugcon.iobase=0x402"
+	fi
+	fi
 fi
 if [[ -n $cpuid ]]; then
-    cpu="$cpu,$cpuid"
+	cpu="$cpu,$cpuid"
 fi
 
 if [[ -n $vnc ]]; then
-    display="-vga std -display vnc=:$vnc"
+	display="-vga std -display vnc=:$vnc"
 else
-    display="-nographic"
-    if [[ -z $vga ]]; then
-        display="$display -vga none"
-    fi
-    if [[ -n $daemon ]]; then
-        display="$display -serial null -monitor null -parallel null"
-    elif [[ -z $serial ]]; then
-        display="$display -chardev stdio,id=mux,mux=on,signal=off -device virtio-serial,$virtio_opt,romfile= -device virtconsole,chardev=mux -serial chardev:mux -monitor chardev:mux"
-    fi
+	display="-nographic"
+	if [[ -z $vga ]]; then
+	display="$display -vga none"
+	fi
+	if [[ -n $daemon ]]; then
+	display="$display -serial null -monitor null -parallel null"
+	elif [[ -z $serial ]]; then
+	display="$display -chardev stdio,id=mux,mux=on,signal=off -device virtio-serial,$virtio_opt,romfile= -device virtconsole,chardev=mux -serial chardev:mux -monitor chardev:mux"
+	fi
 fi
 if [[ -n $daemon ]]; then
-    extra="-daemonize"
+	extra="-daemonize"
 fi
 
 if [[ -n $unittest ]]; then
-    os="-kernel $HOME/go/src/kernel.org/kvm-unit-tests/x86/$unittest.flat -device pc-testdev -device isa-debug-exit,iobase=0xf4,iosize=0x4 -device pci-testdev"
+	os="-kernel $HOME/go/src/kernel.org/kvm-unit-tests/x86/$unittest.flat -device pc-testdev -device isa-debug-exit,iobase=0xf4,iosize=0x4 -device pci-testdev"
 elif [[ $virtio == "false" || $virtio == "n" ]]; then
-    os="-hda $img"
-    append="root=/dev/sda1 rootfstype=ext4 $append"
+	os="-hda $img"
+	append="root=/dev/sda1 rootfstype=ext4 $append"
 else
-    os="-drive file=$img,if=none,id=drive -device virtio-blk-pci,drive=drive,id=virtblk,$virtio_opt"
-    append="root=/dev/vda1 rootfstype=ext4 $append"
+	os="-drive file=$img,if=none,id=drive -device virtio-blk-pci,drive=drive,id=virtblk,$virtio_opt"
+	append="root=/dev/vda1 rootfstype=ext4 $append"
 fi
 
 if [[ -n $iso ]]; then
-    os="$os -drive file=$iso,index=0,media=cdrom -boot d"
+	os="$os -drive file=$iso,index=0,media=cdrom -boot d"
 elif [[ -n $kernel ]]; then
-    append="quiet earlyprintk=ttyS0 net.ifnames=0 $append"
-    if [[ $status != "n" ]]; then
-        append="$append systemd.show_status=1"
-    fi
-    if [[ -z $serial ]]; then
-        append="console=hvc0 $append"
-    else
-        append="console=ttyS0 $append"
-    fi
-    if [[ -z $quiet ]]; then
-        append="$append ignore_loglevel"
-        if [[ -n $verbose ]]; then
-            append="$append systemd.journald.forward_to_console"
-        fi
-    fi
-    append="$append l1tf=off nohpet"
-    if [[ $x2apic == "false" || $x2apic == "n" ]]; then
-        append="$append noapic"
-    fi
-    os="$os -kernel $HOME/build/kernel/$kernel/arch/x86/boot/bzImage"
-    if [[ $modules != "false" && $modules != "n" ]]; then
-        os="$os -fsdev local,path=$HOME/build/kernel/$kernel/lib/modules,security_model=passthrough,id=plan9fs -device virtio-9p-pci,fsdev=plan9fs,mount_tag=kmodules,$virtio_opt"
-    fi
-    if [[ -n $init ]]; then
-        os="$os -initrd $HOME/build/initramfs/$init.cpio"
-    fi
+	append="quiet earlyprintk=ttyS0 net.ifnames=0 $append"
+	if [[ $status != "n" ]]; then
+	append="$append systemd.show_status=1"
+	fi
+	if [[ -z $serial ]]; then
+	append="console=hvc0 $append"
+	else
+	append="console=ttyS0 $append"
+	fi
+	if [[ -z $quiet ]]; then
+	append="$append ignore_loglevel"
+	if [[ -n $verbose ]]; then
+		append="$append systemd.journald.forward_to_console"
+	fi
+	fi
+	append="$append l1tf=off nohpet"
+	if [[ $x2apic == "false" || $x2apic == "n" ]]; then
+	append="$append noapic"
+	fi
+	os="$os -kernel $HOME/build/kernel/$kernel/arch/x86/boot/bzImage"
+	if [[ $modules != "false" && $modules != "n" ]]; then
+	os="$os -fsdev local,path=$HOME/build/kernel/$kernel/lib/modules,security_model=passthrough,id=plan9fs -device virtio-9p-pci,fsdev=plan9fs,mount_tag=kmodules,$virtio_opt"
+	fi
+	if [[ -n $init ]]; then
+	os="$os -initrd $HOME/build/initramfs/$init.cpio"
+	fi
 elif [[ -z $unittest ]]; then
-    os="$os -boot c"
+	os="$os -boot c"
 fi
 if [[ -n $iso1 ]]; then
-    os ="$os -drive file=$iso1,index=1,media=cdrom"
+	os ="$os -drive file=$iso1,index=1,media=cdrom"
 fi
 
 if [[ -n $migrate ]]; then
-    if [[ $migrate == "src" ]]; then
-        migrate=""
-    else
-        migrate="-incoming tcp:0:$migrate"
-    fi
+	if [[ $migrate == "src" ]]; then
+	migrate=""
+	else
+	migrate="-incoming tcp:0:$migrate"
+	fi
 fi
 
 if [[ -n $trace ]]; then
-    trace="strace"
+	trace="strace"
 else
-    trace="exec"
+	trace="exec"
 fi
 
 which gcontain
 if [[ $? -eq 0 ]]; then
-    gcontain enter /
+	gcontain enter /
 fi
 
 if [[ -n $kernel ]]; then
-    $trace $qemu $machine $cpu $bios $mem $display $net $iommu $os $extra -append "$append" $migrate &
+	$trace $qemu $machine $cpu $bios $mem $display $net $iommu $os $extra -append "$append" $migrate &
 else
-    $trace $qemu $machine $cpu $bios $mem $display $net $iommu $os $extra $migrate &
+	$trace $qemu $machine $cpu $bios $mem $display $net $iommu $os $extra $migrate &
 fi
 
 qemu_pid=$!
 
 if [[ $pin != "n" && $pin != "p" ]]; then
-    (sleep 2; pin_vcpus $qemu_pid) &
+	(sleep 2; pin_vcpus $qemu_pid) &
 fi
 
 fg 1

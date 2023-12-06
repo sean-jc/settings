@@ -1,0 +1,21 @@
+
+# apt and dpkg
+alias apt='sudo apt'
+alias ard='apt-cache rdepends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances --installed --recurse'
+alias ai='sudo apt install'
+alias ad='sudo apt update'
+alias ap='sudo apt purge'
+alias au='sudo apt upgrade'
+
+#
+function dpkg-query-size {
+	dpkg-query -Wf '${Installed-Size}\t${Package}\n'
+}
+alias dpq='dpkg-query-size'
+alias dpqs='dpq | sort -n'
+alias dg='dpq | grep'
+alias di='sudo dpkg -i'
+
+function dpkg-purge {
+	dpkg --list | grep "^rc" | cut -d " " -f 3 | xargs sudo dpkg --purge
+}

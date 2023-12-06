@@ -3,24 +3,24 @@
 # for examples
 HOSTPOST=${HOSTNAME#seanjc-}
 if [[ -z $SSH_CONNECTION && ! $HOSTPOST =~ purg- && ! $HOSTPOST =~ dev- && ! $HOSTPOST =~ velo- ]]; then
-    export HOSTDISPLAY=""
+	export HOSTDISPLAY=""
 else
-    if [[ $HOSTPOST == velociraptor ]]; then
-        export HOSTDISPLAY="@velo"
-    elif [[ $HOSTPOST == purgatory ]]; then
-        export HOSTDISPLAY="@purg"
-    elif [[ $HOSTPOST == glaptop ]]; then
-        export HOSTDISPLAY="@lap"
-    elif [[ $HOSTPOST =~ seanjc7.*.com ]]; then
-        export HOSTDISPLAY="@work"
-    elif [[ $HOSTPOST =~ seanjc.*.com ]]; then
-        export HOSTDISPLAY="@cloud"
-    elif [[ $HOSTPOST =~ zagreus.*.com ]]; then
-        export HOSTDISPLAY="@zag"
-    else
-        HOSTPOST=${HOSTPOST%.prod.google.com}
-        export HOSTDISPLAY="@$HOSTPOST"
-    fi
+	if [[ $HOSTPOST == velociraptor ]]; then
+	export HOSTDISPLAY="@velo"
+	elif [[ $HOSTPOST == purgatory ]]; then
+	export HOSTDISPLAY="@purg"
+	elif [[ $HOSTPOST == glaptop ]]; then
+	export HOSTDISPLAY="@lap"
+	elif [[ $HOSTPOST =~ seanjc7.*.com ]]; then
+	export HOSTDISPLAY="@work"
+	elif [[ $HOSTPOST =~ seanjc.*.com ]]; then
+	export HOSTDISPLAY="@cloud"
+	elif [[ $HOSTPOST =~ zagreus.*.com ]]; then
+	export HOSTDISPLAY="@zag"
+	else
+	HOSTPOST=${HOSTPOST%.prod.google.com}
+	export HOSTDISPLAY="@$HOSTPOST"
+	fi
 fi
 export HOSTPOST=${HOSTPOST#velociraptor-}
 export SETTINGS=$HOME/go/src/github.com/sean-jc/settings
@@ -29,7 +29,7 @@ export LSDT_CONFIG=$SETTINGS/.config/lsdt/config.yml
 # Define GOPATH
 export GOPATH=$HOME/go
 if [[ $(whoami) == "sean" ]]; then
-    export GO111MODULE=off
+	export GO111MODULE=off
 fi
 
 # For development of GO itself
@@ -37,7 +37,7 @@ export GOROOT_BOOTSTRAP=/usr/local/go
 
 # Add ~/bin, (repo)/bin, and GO bins to PATH
 if [[ $PATH != *"sean-jc/settings"* ]]; then
-    export PATH=$HOME/bin:$SETTINGS/bin:$HOME/go/bin:/usr/local/go/bin:$PATH
+	export PATH=$HOME/bin:$SETTINGS/bin:$HOME/go/bin:/usr/local/go/bin:$PATH
 fi
 
 # Require a revision when using make-kpkg to build .deb kernels
@@ -45,8 +45,8 @@ export DEBIAN_REVISION_MANDATORY=1
 
 # If not running interactively, don't do anything
 case $- in
-    *i*) ;;
-      *) return;;
+	*i*) ;;
+	  *) return;;
 esac
 
 # don't put duplicate lines or lines starting with space in the history.
@@ -83,12 +83,12 @@ shopt -s globstar
 
 # set variable identifying the chroot you work in (used in the prompt below)
 if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
+	debian_chroot=$(cat /etc/debian_chroot)
 fi
 
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
-    xterm-color|*-256color) color_prompt=yes;;
+	xterm-color|*-256color) color_prompt=yes;;
 esac
 
 # uncomment for a colored prompt, if the terminal has the capability; turned
@@ -97,69 +97,69 @@ esac
 #force_color_prompt=yes
 
 # if [ -n "$force_color_prompt" ]; then
-#     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+#	 if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
 # 	# We have color support; assume it's compliant with Ecma-48
 # 	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
 # 	# a case would tend to support setf rather than setaf.)
 # 	color_prompt=yes
-#     else
+#	 else
 # 	color_prompt=
-#     fi
+#	 fi
 # fi
 
 # if [ "$color_prompt" = yes ]; then
-#     PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+#	 PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 # else
-#     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+#	 PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 # fi
 # unset color_prompt force_color_prompt
 
 # If this is an xterm set the title to user@host:dir
 # case "$TERM" in
 # xterm*|rxvt*)
-#     PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-#     ;;
+#	 PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+#	 ;;
 # *)
-#     ;;
+#	 ;;
 # esac
 
 
 build_ps1() {
-    # black ='\e[0;30m'
-    # brown ='\e[0;33m'
-    # green='\e[0;32m'
-    # GREEN='\e[0;32m'
-    # red='\e[0;31m'
-    # RED='\e[1;31m'
-    # blue='\e[0;34m'
-    # BLUE='\e[1;34m'
-    # cyan='\e[0;36m'
-    # CYAN='\e[1;36m'
-    # white='\e[1;37m'
-    # none='\e[0m'
+	# black ='\e[0;30m'
+	# brown ='\e[0;33m'
+	# green='\e[0;32m'
+	# GREEN='\e[0;32m'
+	# red='\e[0;31m'
+	# RED='\e[1;31m'
+	# blue='\e[0;34m'
+	# BLUE='\e[1;34m'
+	# cyan='\e[0;36m'
+	# CYAN='\e[1;36m'
+	# white='\e[1;37m'
+	# none='\e[0m'
 
-    # Unicode cheracters ✔ 'HEAVY CHECK MARK' (U+2714) and ✘ 'HEAVY BALLOT X' (U+2718)
-    # [[ $SSH_TTY ]] && host="@$HOSTNAME"
-    if [[ $HOSTPOST != tbd ]]; then
-        if [ "$UID" = 0 ]; then
-            echo '\[\e[0;33m\]\t$HOSTDISPLAY`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;31m\]\w \[\e[0;31m\]# \[\e[0m\]'
-        else
-            echo '\[\e[0;33m\]\t$HOSTDISPLAY`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;36m\]\w \[\e[0;36m\]\$ \[\e[0m\]'
-        fi
-    else
-        if [ "$UID" = 0 ]; then
-            echo '\[\e[1;30m\]\t$HOSTDISPLAY`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;31m\]\w \[\e[0;31m\]# \[\e[0m\]'
-        else
-            echo '\[\e[1;30m\]\t$HOSTDISPLAY`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;36m\]\w \[\e[0;36m\]\$ \[\e[0m\]'
-        fi
-    fi
+	# Unicode cheracters ✔ 'HEAVY CHECK MARK' (U+2714) and ✘ 'HEAVY BALLOT X' (U+2718)
+	# [[ $SSH_TTY ]] && host="@$HOSTNAME"
+	if [[ $HOSTPOST != tbd ]]; then
+	if [ "$UID" = 0 ]; then
+		echo '\[\e[0;33m\]\t$HOSTDISPLAY`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;31m\]\w \[\e[0;31m\]# \[\e[0m\]'
+	else
+		echo '\[\e[0;33m\]\t$HOSTDISPLAY`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;36m\]\w \[\e[0;36m\]\$ \[\e[0m\]'
+	fi
+	else
+	if [ "$UID" = 0 ]; then
+		echo '\[\e[1;30m\]\t$HOSTDISPLAY`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;31m\]\w \[\e[0;31m\]# \[\e[0m\]'
+	else
+		echo '\[\e[1;30m\]\t$HOSTDISPLAY`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;36m\]\w \[\e[0;36m\]\$ \[\e[0m\]'
+	fi
+	fi
 }
 PS1=$(build_ps1)
 
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+	test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
 fi
 
 # colored GCC warnings and errors
@@ -179,13 +179,13 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
 if ! shopt -oq posix; then
-    if [ -f /usr/share/bash-completion/bash_completion ]; then
-        . /usr/share/bash-completion/bash_completion
-    elif [ -f /etc/bash_completion ]; then
-        . /etc/bash_completion
-    fi
+	if [ -f /usr/share/bash-completion/bash_completion ]; then
+	. /usr/share/bash-completion/bash_completion
+	elif [ -f /etc/bash_completion ]; then
+	. /etc/bash_completion
+	fi
 
-    # Enable tab complete of executables for sudo
-    complete -cf sudo
+	# Enable tab complete of executables for sudo
+	complete -cf sudo
 fi
 

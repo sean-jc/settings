@@ -1,0 +1,31 @@
+# alias dps='docker ps'
+# alias drm='dps -qa | xargs --no-run-if-empty docker rm'
+# alias dim='docker images'
+# alias drim='di --quiet --filter=dangling=true | xargs --no-run-if-empty docker rmi'
+# alias docker-gc='sudo docker-gc'
+# 
+# function docker-bash() {
+	# if [ $# -eq 0 ]
+	# then
+		# docker exec -it $(docker ps -ql) bash
+	# else
+		# docker exec -it $1 bash
+	# fi
+# }
+# alias dbash='docker-bash'
+# 
+# function docker-build() {
+	# docker build --build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy --build-arg no_proxy=$no_proxy -t $1 $2
+# }
+# alias dbuild='docker-build'
+# 
+# function docker-dev() {
+	# docker run --privileged --rm -ti -v `pwd`:/go/src/github.com/docker/docker -e https_proxy=$https_proxy -e http_proxy=$http_proxy -e no_proxy=$no_proxy docker-dev:$(git rev-parse --abbrev-ref HEAD) /bin/bash
+# }
+# alias ddev='docker-dev'
+# 
+# function docker-make() {
+	# BINDDIR=. DOCKER_BUILD_ARGS="--build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy --build-arg no_proxy=$no_proxy" make "$@"
+# }
+# alias dmake='docker-make'
+# 

@@ -1,0 +1,99 @@
+function psudo() {
+	printf "sudo %s\n" "$*"
+	sudo $@
+}
+
+function pushd() {
+	command pushd "$@" > /dev/null
+}
+
+function popd() {
+	command popd "$@" > /dev/null
+}
+
+function get-nr-cpus() {
+	grep -c '^processor' /proc/cpuinfo
+}
+alias cpus=get-nr-cpus
+
+function is-guest() {
+	grep -q hypervisor /proc/cpuinfo
+	if [[ $? -eq 0 ]]; then
+		echo "y"
+		return 0
+	fi
+
+	return 1
+}
+
+function is-integer() {
+	local re='^[0-9]+$'
+
+	if [[ $1 =~ $re ]] ; then
+		echo "y"
+		return 0
+	fi
+	return 1
+}
+
+# clear
+alias c='clear'
+alias cls='c;ls'
+alias cll='c;ll'
+
+# dmesg
+alias dm='sudo dmesg'
+alias dmc='sudo dmesg -c'
+
+# disk usage
+alias dus='df -hT'
+
+# find
+alias rfind='sudo find / -name 2> /dev/null'
+
+# grep
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+
+# ls
+alias ls='/usr/bin/ls -aF --color=always'
+alias lsl='/usr/bin/ls -1'
+alias ll='ls -lh'
+
+alias mkdir='mkdir -p'
+
+# ps
+alias ps='ps -a --forest -o user,pid,ppid,%cpu,%mem,vsz,rss,cmd'
+alias psm='ps -e | sort -nr -k 5 | head -10 | cut -c-$COLUMNS'
+alias psc='ps -e | sort -nr -k 4 | head -10 | cut -c-$COLUMNS'
+alias psg='ps -e | grep -v grep | grep -v -- --forest | expand | cut -c-$COLUMNS | grep -i -e VSZ -e'
+
+function ps-grep-kill() {
+	local response=y
+	local kps
+	local kp
+	kps=$(/bin/ps -e -o pid,user,cmd | grep -v grep | grep -v -- --forest | expand | cut -c-$COLUMNS | grep $1)
+
+	while read -r -u 3 kp; do
+		printf "Kill\n\t$kp?\n"
+		read -r -p "[Y/n] " response
+		response=${response,,}	# tolower
+		if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
+			kcmd="kill"
+			if [[ $kill == "true" ]]; then
+				kcmd="$kcmd -KILL"
+			fi
+			kcmd="$kcmd $(echo $kp | cut -f 1 -d ' ')"
+			if [[ $(echo $kp | cut -f 2 -d ' ') != "sean" ]]; then
+				kcmd="sudo $kcmd"
+			fi
+			$kcmd
+			if [[ $? -eq 0 ]]; then
+				printf "Killed $(echo $kp | cut -f 1 -d ' ')\n"
+			fi
+		fi
+	done 3<<< "$kps"
+}
+alias psk='ps-grep-kill'
+alias pskk='kill=true ps-grep-kill'

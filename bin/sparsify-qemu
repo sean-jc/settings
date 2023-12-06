@@ -6,75 +6,75 @@ git config core.sparseCheckout true
 echo "/*" > .git/info/sparse-checkout
 
 for i in "${qemuhw[@]}"; do
-        echo "!$i" >> .git/info/sparse-checkout
+	echo "!$i" >> .git/info/sparse-checkout
 done
 for i in "${qemutargets[@]}"; do
-        echo "!$i" >> .git/info/sparse-checkout
+	echo "!$i" >> .git/info/sparse-checkout
 done
 
 git read-tree -mu HEAD
 
 for i in "${qemuhw[@]}"; do
-        if [[ $i == "hw/xenpv" ]]; then
-                continue
-        fi
-        mkdir -p $i
+	if [[ $i == "hw/xenpv" ]]; then
+		continue
+	fi
+	mkdir -p $i
 
-        if [[ $i != "hw/xen" ]]; then
-                touch $i/Kconfig
-        fi
-        if [[ $i == "hw/s390x" ]]; then
-                echo "config S390_CCW_VIRTIO" > $i/Kconfig
-                echo "    bool" >> $i/Kconfig
-        elif [[ $i == "hw/ppc" ]]; then
-                echo "config POWERNV" > $i/Kconfig
-                echo "    bool" >> $i/Kconfig
-                echo "config PSERIES" >> $i/Kconfig
-                echo "    bool" >> $i/Kconfig
-        elif [[ $i == "hw/ssi" ]]; then
-                echo "config SSI" > $i/Kconfig
-                echo "    bool" >> $i/Kconfig
-        fi
+	if [[ $i != "hw/xen" ]]; then
+		touch $i/Kconfig
+	fi
+	if [[ $i == "hw/s390x" ]]; then
+		echo "config S390_CCW_VIRTIO" > $i/Kconfig
+		echo "	bool" >> $i/Kconfig
+	elif [[ $i == "hw/ppc" ]]; then
+		echo "config POWERNV" > $i/Kconfig
+		echo "	bool" >> $i/Kconfig
+		echo "config PSERIES" >> $i/Kconfig
+		echo "	bool" >> $i/Kconfig
+	elif [[ $i == "hw/ssi" ]]; then
+		echo "config SSI" > $i/Kconfig
+		echo "	bool" >> $i/Kconfig
+	fi
 
-        if [[ $i == "hw/adc" ||
-              $i == "hw/cris" ||
-              $i == "hw/lm32" ||
-              $i == "hw/m68k" ||
-              $i == "hw/microblaze" ||
-              $i == "hw/moxie" ||
-              $i == "hw/nios2" ||
-              $i == "hw/openrisc" ||
-              $i == "hw/pcmcia" ||
-              $i == "hw/semihosting" ||
-              $i == "hw/sh4" ||
-              $i == "hw/tricore" ||
-              $i == "hw/unicore32" ||
-              $i == "hw/xtensa" ]]; then
-                continue
-        fi
-        touch $i/trace-events
+	if [[ $i == "hw/adc" ||
+		  $i == "hw/cris" ||
+		  $i == "hw/lm32" ||
+		  $i == "hw/m68k" ||
+		  $i == "hw/microblaze" ||
+		  $i == "hw/moxie" ||
+		  $i == "hw/nios2" ||
+		  $i == "hw/openrisc" ||
+		  $i == "hw/pcmcia" ||
+		  $i == "hw/semihosting" ||
+		  $i == "hw/sh4" ||
+		  $i == "hw/tricore" ||
+		  $i == "hw/unicore32" ||
+		  $i == "hw/xtensa" ]]; then
+		continue
+	fi
+	touch $i/trace-events
 done
 
 for i in "${qemutargets[@]}"; do
-        if [[ $i == "target/alpha" ||
-              $i == "target/cris" ||
-              $i == "target/lm32" ||
-              $i == "target/m68k" ||
-              $i == "target/microblaze" ||
-              $i == "target/moxie" ||
-              $i == "target/nios2" ||
-              $i == "target/openrisc" ||
-              $i == "target/rx" ||
-              $i == "target/sh4" ||
-              $i == "target/tilegx" ||
-              $i == "target/tricore" ||
-              $i == "target/unicore32" ||
-              $i == "target/xtensa" ]]; then
-                continue
-        fi
+	if [[ $i == "target/alpha" ||
+		  $i == "target/cris" ||
+		  $i == "target/lm32" ||
+		  $i == "target/m68k" ||
+		  $i == "target/microblaze" ||
+		  $i == "target/moxie" ||
+		  $i == "target/nios2" ||
+		  $i == "target/openrisc" ||
+		  $i == "target/rx" ||
+		  $i == "target/sh4" ||
+		  $i == "target/tilegx" ||
+		  $i == "target/tricore" ||
+		  $i == "target/unicore32" ||
+		  $i == "target/xtensa" ]]; then
+		continue
+	fi
 
-        mkdir -p $i
-        touch $i/trace-events
+	mkdir -p $i
+	touch $i/trace-events
 done
 
 git read-tree -mu HEAD

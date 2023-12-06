@@ -1,0 +1,94 @@
+#!/bin/bash
+. $SETTINGS/bash/apt
+. $SETTINGS/bash/utils
+
+#
+function install-qemu-deps() {
+	ad
+	ai libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev libaio-dev libbrlapi-dev libbz2-dev libcap-dev libcap-ng-dev libcurl4-gnutls-dev libncurses5-dev libsnappy-dev libssh2-1-dev liblzo2-dev libsasl2-dev libvdeplug-dev
+
+	# Old
+	# libcurl3 libjpeg8-dev
+
+	# New
+	ai libcurl4 libjpeg9-dev
+
+}
+
+function configure-qemu() {
+	$HOME/go/src/github.com/qemu/qemu/configure --target-list=x86_64-softmmu --static \
+	--enable-virtfs \
+	--disable-guest-agent \
+	--disable-guest-agent-msi \
+	--disable-modules \
+	--disable-tcg \
+	--disable-sparse \
+	--disable-gnutls \
+	--disable-nettle \
+	--disable-gcrypt \
+	--disable-gtk \
+	--disable-vte \
+	--disable-curses \
+	--disable-vnc \
+	--disable-xen \
+	--disable-xen-pci-passthrough \
+	--disable-brlapi \
+	--disable-curl \
+	--disable-fdt \
+	--disable-hax \
+	--disable-rdma \
+	--disable-vde \
+	--disable-netmap \
+	--disable-spice \
+	--disable-rbd \
+	--disable-libnfs \
+	--disable-libxml2 \
+	--disable-smartcard \
+	--disable-libusb \
+	--disable-usb-redir \
+	--disable-glusterfs \
+	--disable-tpm \
+	--disable-libssh \
+	--disable-numa \
+	--disable-replication \
+	--disable-opengl \
+	--disable-virglrenderer \
+	--disable-xfsctl \
+	--disable-qom-cast-debug \
+	--disable-tools \
+	--disable-hvf \
+	--disable-whpx \
+	--disable-bochs \
+	--disable-cloop \
+	--disable-dmg \
+	--disable-qcow1 \
+	--disable-vdi \
+	--disable-vvfat \
+	--disable-qed \
+	--disable-parallels \
+	--disable-sheepdog \
+	--disable-crypto-afalg \
+	--disable-capstone \
+	--disable-debug-mutex \
+	--disable-blobs \
+	--audio-drv-list=
+}
+
+function qemu-copy-firmware() {
+	local build=$(pwd | rev | cut -d'/' -f1 | rev)
+	local dir="$HOME/Downloads/$build/pc-bios"
+
+	mkdir -p $dir
+
+	pushd $HOME/go/src/github.com/qemu/qemu
+	cp $(find . -name bios-256k.bin) $dir
+	cp $(find . -name bios.bin) $dir
+	cp -r $(find . -name keymaps) $dir
+	cp $(find . -name kvmvapic.bin) $dir
+	cp $(find . -name linuxboot.bin) $dir
+	cp $(find . -name linuxboot_dma.bin) $dir
+	cp $(find . -name multiboot.bin) $dir
+	cp $(find . -name multiboot_dma.bin) $dir
+	popd
+}
+alias pq='package-qemu'

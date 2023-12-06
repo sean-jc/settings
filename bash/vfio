@@ -1,0 +1,15 @@
+
+
+-device vfio-pci,host=01:00.0,bus=root.1,addr=00.0,multifunction=on,x-vga=on,romfile=$HOME/Asus.HD6850.1024.110616.rom
+
+00:01.0 VGA compatible controller [0300]: Device [1234:1111] (rev 02) (prog-if 00 [VGA controller])
+	Subsystem: Red Hat, Inc. Device [1af4:1100]
+	Flags: bus master, fast devsel, latency 0
+	Memory at 90000000 (32-bit, prefetchable) [size=16M]
+	Memory at 91015000 (32-bit, non-prefetchable) [size=4K]
+	Expansion ROM at 000c0000 [disabled] [size=128K]
+
+mp vfio
+echo Y > /sys/module/vfio_iommu_type1/parameters/allow_unsafe_interrupts
+mp vfio-pci
+echo 1234 1111 > /sys/bus/pci/drivers/vfio-pci/new_id

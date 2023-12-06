@@ -1,0 +1,64 @@
+function make-selftests() {
+	local arch_dir
+	local tests
+	local i
+	local selftest
+	local static=""
+	local ls
+
+	if [[ $# -lt 1 ]] || [[ $1 != "x86" && $1 != "clang" && $1 != "arm" ]]; then
+		printf "Must specify 'x86', 'clang' or 'arm' as first argument\n"
+		return 1
+	fi
+	 if [[ $# -lt 2 ]] || [[ $2 != "slf" && $2 != "nox" ]]; then
+		printf "Must specify 'slf' or 'nox' as second argument\n"
+		return 1
+	fi
+	if [[ $# -gt 3 ]]; then
+		printf "Max of 3 arguments supported\n"
+	fi
+	if [[ $# -gt 2 && $3 != "clean" ]]; then
+		printf "Can only specify 'clean' as third argument\n"
+		return 1
+	fi
+
+	pushd $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm
+	if [[ $# -gt 2 && $3 == "clean" ]]; then
+		git clean -fdx
+	fi
+
+	if [[ $(whoami) == "seanjc" ]]; then
+		static="-static"
+	fi
+
+	if [[ $1 == "arm" ]]; then
+		arch_dir="aarch64"
+	else
+		arch_dir="x86_64"
+	fi
+	ls=$(which ls)
+	tests=( $($ls -1 $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm/*.c $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm/$arch_dir/*.c) )
+
+	EXTRA_CFLAGS="$static -Werror -gdwarf-4" make-$1 make -j$(get-nr-cpus)
+	if [[ $? -eq 0 ]]; then
+		rm -f $HOME/build/selftests/*
+		for i in "${tests[@]}"; do
+			i="${i%.*}"
+			selftest=$(basename -- "$i")
+			if [[ -f $i ]]; then
+				cp $i $HOME/build/selftests/$selftest
+			fi
+		done
+	fi
+	popd
+}
+alias mt='make-selftests x86 slf'
+alias mtc='make-selftests x86 slf clean'
+alias jt='make-clang make-selftests x86 slf'
+alias jtc='make-clang make-selftests x86 slf clean'
+alias jtx='make-clang make-selftests x86 nox'
+alias jtxc='make-clang make-selftests x86 nox clean'
+alias mta='make-selftests arm nox'
+alias mtac='make-selftests arm nox clean'
+alias jta='make-clang make-selftests arm nox'
+alias jtac='make-clang make-selftests arm nox clean'

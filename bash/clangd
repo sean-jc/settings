@@ -1,0 +1,14 @@
+function gen-clangd-commands() {
+	local repo=$(pwd | rev | cut -d'/' -f1 | rev)
+
+	if [[ ! -f ./scripts/clang-tools/gen_compile_commands.py ]]; then
+		printf "Needs to be run from top-level directory of kernel repo\n"
+		return 1
+	fi
+	rm ./.vscode/compile_commands.json
+	if [[ $repo != "slf" ]]; then
+		./scripts/clang-tools/gen_compile_commands.py -d /home/seanjc/build/kernel/clangd_$repo -o ./.vscode/compile_commands.json
+	fi
+	# LLVM=1 make -C tools/testing/selftests/kvm -Bnwk | compiledb -n --build-dir ./tools/testing/selftests/kvm -o - >> ./.vscode/compile_commands.json
+}
+alias ccm='gen-clangd-commands'

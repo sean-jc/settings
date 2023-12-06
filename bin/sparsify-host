@@ -21,19 +21,19 @@ echo "arch/s390/crypto" >> .git/info/sparse-checkout
 echo "arch/sparce/crypto" >> .git/info/sparse-checkout
 
 for i in "${stubdirs[@]}"; do
-        if [[ $i != arch*crypto || $i == "arch/x86/crypto" ]]; then
-                continue
-        fi
-        echo "$i" >> .git/info/sparse-checkout
+	if [[ $i != arch*crypto || $i == "arch/x86/crypto" ]]; then
+		continue
+	fi
+	echo "$i" >> .git/info/sparse-checkout
 done
 
 git read-tree -mu HEAD
 
 for i in "${stubdirs[@]}"; do
-        if [[ $i != arch*crypto || $i == "arch/x86/crypto" ]]; then
-                continue
-        fi
-        touch $i/Kconfig
+	if [[ $i != arch*crypto || $i == "arch/x86/crypto" ]]; then
+		continue
+	fi
+	touch $i/Kconfig
 done
 
 # One off case for user-mode Linux

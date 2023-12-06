@@ -1,0 +1,71 @@
+. $SETTINGS/bash/apt
+
+function install-kernel-deps() {
+	ad
+	ai bison flex libelf-dev libssl-dev
+}
+
+function check-patch-head() {
+	local dir=$(pwd | rev | cut -d'/' -f1 | rev)
+	local nr
+
+	if [[ $# -eq 0 ]]; then
+		nr=1
+	else
+		nr=$1
+	fi
+
+	if [[ $dir == "qemu" ]]; then
+		./scripts/checkpatch.pl --branch HEAD~1..HEAD
+	else
+		./scripts/checkpatch.pl -g "HEAD~$nr"..HEAD --codespell --codespellfile=$SETTINGS/codespell/dictionary.txt
+	fi
+}
+alias cph='check-patch-head'
+
+function code-spell() {
+	codespell -D $SETTINGS/codespell/dictionary.txt
+}
+
+# Kernel grep and gdb commands
+alias gk='readelf -sW vmlinux | grep'
+alias gkk='readelf -sW arch/x86/kvm/kvm.ko | grep'
+alias gks='readelf -sW arch/x86/kvm/kvm-amd.ko | grep'
+alias gkv='readelf -sW arch/x86/kvm/kvm-intel.ko | grep'
+alias gq='readelf -sW ~/build/qemu/qemu | grep'
+
+function gdb-disassemble() {
+	if [[ $# -lt 2 ]]; then
+		printf "Must specify the target file (1) and function (2)\n"
+		return 1
+	fi
+	if [[ $# -gt 3 ]]; then
+		printf "Maximum of 3 arguments supported: file (1), function (2) and offset (3)\n"
+		return 2
+	fi
+
+	gdb -batch -ex "file $1" -ex "disassemble $2"
+	gdb -batch -ex "file $1" -ex "disassemble /r $2"
+	gdb -batch -ex "file $1" -ex "disassemble /m $2"
+	if [[ $# -eq 3 ]]; then
+		gdb -batch -ex "file $1" -ex "list *$2+$3"
+		printf "Offset $3 in $2 in decimal: %d\n" $3
+	fi
+}
+alias dis='gdb-disassemble'
+alias dk='gdb-disassemble vmlinux'
+alias dkk='gdb-disassemble arch/x86/kvm/kvm.ko'
+alias dks='gdb-disassemble arch/x86/kvm/kvm-amd.ko'
+alias dkv='gdb-disassemble arch/x86/kvm/kvm-intel.ko'
+alias dq='gdb-disassemble ~/build/qemu/qemu'
+
+function objdump-disassemble() {
+		objdump $1 $2 | less
+}
+alias od='objdump-disassemble -d'
+alias odd='objdump-disassemble -D'
+
+alias ok='od vmlinux'
+alias okk='od arch/x86/kvm/kvm.ko'
+alias oks='od arch/x86/kvm/kvm-amd.ko'
+alias okv='od arch/x86/kvm/kvm-intel.ko'

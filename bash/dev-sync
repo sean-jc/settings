@@ -1,0 +1,50 @@
+function dev-sync() {
+	if [[ $# -ne 2 ]]; then
+		printf "usage: dev-sync <host> <option>\n"
+		return 1
+	elif [[ $1 != "full" && $1 != "settings" && $1 != "binaries" && $1 != "kvm" && $1 != "tests" ]]; then
+		printf "usage: ds[,b,k,s,t] <target>\n"
+		return 1
+	fi
+
+	if [[ $1 == "full" ]]; then
+		ssh $2 "mkdir -p /data/local/seanjc/build/kernel/vm/arch/x86/boot; \
+				mkdir -p /data/local/seanjc/build/kernel/vm/lib/modules; \
+				mkdir -p /data/local/seanjc/build/kernel/pae/arch/x86/boot; \
+				mkdir -p /data/local/seanjc/build/kernel/pae/lib/modules; \
+				mkdir -p /data/local/seanjc/build/qemu; \
+				mkdir -p /data/local/seanjc/go/src/github.com/sean-jc; \
+				mkdir -p /data/local/seanjc/go/src/kernel.org; \
+				mkdir -p /data/local/seanjc/images/qemu"
+	fi
+	if [[ $1 == "full" || $1 == "settings" ]]; then
+		rsync --checksum ~/.bashrc $2:/data/local/seanjc
+		rsync --checksum ~/.inputrc $2:/data/local/seanjc
+		rsync --checksum ~/.vimrc $2:/data/local/seanjc
+		rsync --checksum --recursive --exclude='.git*' ~/go/src/github.com/sean-jc/settings $2:/data/local/seanjc/go/src/github.com/sean-jc
+		rsync --checksum ~/go/src/github.com/sean-jc/settings/git/.git-completion.bash $2:/data/local/seanjc/go/src/github.com/sean-jc/settings/git
+		ssh $2 "chmod +x /data/local/seanjc/go/src/github.com/sean-jc/settings/bin/timeout"
+	fi
+	if [[ $1 == "full" || $1 == "binaries" ]]; then
+		rsync --checksum --recursive --links ~/build/qemu/static-7.0 $2:/data/local/seanjc/build/qemu
+		rsync --checksum --recursive --links ~/build/ovmf $2:/data/local/seanjc/build
+		ssh $2 "rm -f /data/local/seanjc/build/qemu/qemu; ln -s /data/local/seanjc/build/qemu/static-7.0/x86_64-softmmu/qemu-system-x86_64 /data/local/seanjc/build/qemu/qemu"
+	fi
+	if [[ $1 == "full" || $1 == "tests" ]]; then
+		rsync --checksum --recursive --links ~/build/selftests $2:/data/local/seanjc/build
+		rsync --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kvm-unit-tests $2:/data/local/seanjc/go/src/kernel.org
+		rsync --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kut-32 $2:/data/local/seanjc/go/src/kernel.org
+		rsync --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kut-efi $2:/data/local/seanjc/go/src/kernel.org
+	fi
+	if [[ $1 == "full" || $1 == "kvm" ]]; then
+		rsync --checksum ~/build/kernel/vm/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/vm/arch/x86/boot
+		rsync --checksum --recursive ~/build/kernel/vm/lib/modules $2:/data/local/seanjc/build/kernel/vm/lib
+		rsync --checksum ~/build/kernel/pae/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/pae/arch/x86/boot
+		rsync --checksum --recursive ~/build/kernel/pae/lib/modules $2:/data/local/seanjc/build/kernel/pae/lib
+	fi
+}
+alias ds='dev-sync full'
+alias dsb='dev-sync binaries'
+alias dsk='dev-sync kvm'
+alias dss='dev-sync settings'
+alias dst='dev-sync tests'

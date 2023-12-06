@@ -1,0 +1,556 @@
+. $SETTINGS/bash/git-completion
+
+function git-diff() {
+	if [[ $# -eq 0 ]]; then
+		git diff $(git rev-parse --verify HEAD^) $(git rev-parse --verify HEAD)
+	elif [[ $# -eq 1 ]]; then
+		git diff $1^ $1
+	else
+		git diff --no-index $1 $2
+	fi
+}
+
+function git-diff-upstream() {
+	git diff $(git rev-parse --abbrev-ref HEAD) $(git rev-parse --abbrev-ref --symbolic-full-name @{upstream})
+}
+
+function git-diff-local() {
+	git diff $(git rev-parse --abbrev-ref --symbolic-full-name @{upstream}) $(git rev-parse --abbrev-ref HEAD)
+}
+
+function git-tree() {
+	if [ $# -eq 0 ]
+	then
+		git diff-tree --no-commit-id --name-only -r $(git rev-parse --verify HEAD)
+	else
+		git diff-tree --no-commit-id --name-only -r $1
+	fi
+}
+
+function git-blob() {
+	git rev-list --all |
+	while read commit; do
+		if git ls-tree -r $commit | grep -q $1; then
+			echo $commit
+		fi
+	done
+}
+
+function git-apply() {
+	if [ $# -eq 0 ]; then
+		git am -3 $HOME/patches/*.*
+	else
+		git am -3 $1/*.*
+	fi
+}
+
+function git-cherry-pick-branch() {
+	local commits
+	local arbitrary=1000
+	local start
+	local end
+
+	if [ $# -ne 2 ]; then
+		printf "Usage for cherry picking a branch: 'gpb <first commit> <last commit> (or <start> <nr commits>)'\n"
+		return 1
+	fi
+
+	if [[ $(is-integer $2) ]]; then
+		end=$1
+		start=$(git rev-parse "$end~$(($2-1))")
+	else
+		start=$1
+		end=$2
+	fi
+
+	git log --pretty=oneline --decorate $end | head -$arbitrary | grep -q $start
+	if [[ $? -ne 0 ]]; then
+		printf "Did not find $start in log from $end\n"
+		return 1
+	fi
+	git log --pretty=oneline --decorate $end | head -$arbitrary | grep -B $arbitrary $start
+	printf "\e[1;7;35mCherry pick these commits?"
+	read -r -p "[Y/n] " response
+	printf "\e[0m"
+	response=${response,,}	# tolower
+	if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
+		commits=$(glo $end | head -$arbitrary | grep -B $arbitrary $start | tac | cut -f 1 -d ' ' | xargs)
+		git cherry-pick $commits
+		return $?
+	fi
+	return 1
+}
+
+function git-cherry-pick-ref() {
+	git status | grep "currently cherry-picking commit" | grep -o -E "[0-9a-f]{12}\b"
+}
+
+function git-cherry-pick-log() {
+	git log -1 $(git-cherry-pick-ref)
+}
+
+function git-cherry-pick-show() {
+	git show $(git-cherry-pick-ref)
+}
+
+function git-push() {
+	local opts
+	local response=y
+	local branch=$(git rev-parse --abbrev-ref HEAD)
+	local remote
+	local upstream
+	if [[ $# -eq 1 && $1 != "force" ]]; then
+		remote=$1
+		upstream=$branch
+	else
+		remote=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} | cut -f 1 -d /)
+		if [[ $? -eq 0 ]]; then
+			 upstream=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} | cut -f 2- -d /)
+		else
+			printf "No remote configured or specified\n"
+			return 1
+		fi
+	fi
+
+	local exists=$(git ls-remote --heads $remote $upstream | wc -l)
+	if [[ $exists == "0" ]]; then
+		printf "\e[1;7;35mCreate and track remote branch $remote/$upstream? "
+		read -r -p "[Y/n] " response
+		printf "\e[0m"
+	elif [[ $exists != "1" ]]; then
+		printf "Found multiple ($exists) branches: $upstream\n"
+		return 1
+	elif [[ $1 == "force" ]]; then
+		opts="-f"
+		git status
+		printf "\e[1;7;35mForce push $branch to $remote/$upstream? "
+		read -r -p "[Y/n] " response
+		printf "\e[0m"
+	fi
+	response=${response,,}	# tolower
+	if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
+		git push $opts $remote $branch:$upstream
+		git branch --set-upstream-to=$remote/$upstream
+	fi
+}
+
+function git-archive-branch() {
+	if [[ $# -eq 2 && $1 != "-f" || $# -gt 2 ]]; then
+		printf "git-archive-branch [-f] <branch>\n"
+		return 1
+	fi
+
+	local branch
+	if [[ $# -eq 1 ]]; then
+		branch=$1
+	else
+		branch=$2
+	fi
+	local dir=${branch//\//.}
+	local repo=$(pwd | rev | cut -d'/' -f1 | rev)
+
+	if [[ $HOSTDISPLAY == "@cloud" || $HOSTDISPLAY == "@zagreus" ]]; then
+		printf "Archiving branches from remotes is not allowed\n"
+		return 1;
+	fi
+
+	if [[ $repo == "slf" || $repo == "nox" ]]; then
+		repo="linux"
+	fi
+
+	if [[ $# -eq 1  && ! -d "$HOME/outbox/$repo/$dir" ]]; then
+		printf "'$branch' is not archived at '$HOME/outbox/$repo/$dir'\n"
+		return 1
+	fi
+	git branch -D $branch
+	if [[ $? -eq 0 ]]; then
+		git push --delete o $branch
+	fi
+}
+
+function git-get() {
+	if [[ $# -eq 0 ]]; then
+		git show -s --pretty="%C(auto)   %D"
+	else
+		git checkout $@
+	fi
+}
+
+function git-get-branch() {
+	if [[ $# -eq 1 ]]; then
+		git checkout -b $1 o/$1
+	elif [[ $# -eq 2 ]]; then
+		git checkout -b $1 $2
+	else
+		printf "git-get-branch <branch> [remote]\n"
+		return 1
+	fi
+}
+
+function git-get-prefixed-branch() {
+	git checkout $1/$2
+}
+
+function git-url-patch() {
+	# lynx -dump -nonumbers -hiddenlinks=liston $1 | grep -e "^http.*00(0[1-9]|1[0-7])\.patch" | xargs -n 1 curl -s | git am
+	lynx -dump -nonumbers -hiddenlinks=liston $1 | grep -e "^http.*003[0-9].*\.patch" | xargs -n 1 curl -s | git am
+}
+
+function git-stash() {
+	if [[ $# -eq 2 ]]; then
+		git stash $1 stash@{$2}
+	else
+		git stash $1
+	fi
+}
+
+function git-update-subs() {
+	git submodule update --recursive --remote
+	git submodule update --recursive
+}
+
+function git-format-patch() {
+	local nr
+
+	if [[ $# -eq 0 ]]; then
+		nr=1
+	else
+		nr=$1
+	fi
+	git format-patch --base="HEAD~$nr" -M --minimal --patience -o ~/patches -$nr
+}
+
+function git-send-thank-you() {
+	git send-email --to="Sean Christopherson <seanjc@google.com>" --confirm=always ~/thanks/**/*.thanks
+
+	read -r -p "Delete thanks?: [y/N]" response
+
+	response=${response,,}	# tolower
+	if [[ $response =~ ^(yes|y)$ ]]; then
+		rm ~/thanks/**/*.thanks
+	fi
+}
+
+function git-merge-kvm-x86() {
+	local RED='\033[1;31m' # Bold Red
+	local NOF='\033[0m' # No Format
+
+	git fetch x --prune
+
+	local branches=$(git branch -r --list x/* | grep -v next | cut -f 2 -d '/')
+	local all="${branches[@]}"
+
+	for branch in $branches; do
+		if [[ $CTHULU == "n" ]]; then
+			git branch $branch x/$branch && git merge --no-ff --log $branch
+			if [[ $? -eq 0 ]]; then
+				continue
+			fi
+
+			printf "\n${RED}Pausing until conflicted merge is completed.${NOF}\n"
+			while [[ $(git status --porcelain=v1 2>/dev/null | wc -l) -ne 0 ]]; do
+				sleep .1
+			done
+		else
+			git branch $branch x/$branch
+		fi
+	done
+
+	if [[ $CTHULU != "n" ]]; then
+		git merge --no-ff --log $all
+	fi
+
+	for branch in $branches; do
+		git branch -D $branch
+	done
+}
+
+function git-tag-kvm-x86-next() {
+	local tag="kvm-x86-next-$(TZ=":America/Los_Angeles" date +%Y.%m.%d)"
+
+	git tag $tag && printf "Created tag '$tag'\n"
+}
+
+function git-push-kvm-x86() {
+	local branches=$(git branch --list q/* | cut -f 2 -d '/')
+
+	for branch in $branches; do
+		git branch -r | tr -d " " | grep -q -E "^x/$branch"
+		if [ $? -ne 0 ]; then
+			printf "$branch isn't a tracked branch in kvm-x86\n"
+			return 1
+		fi
+		printf "git push x q/$branch:$branch\n"
+		git push x q/$branch:$branch
+	done
+}
+
+function git-get-tag() {
+	local major=$(grep -E "^VERSION" Makefile | cut -f 3 -d ' ')
+	local minor=$(($(grep -E "^PATCHLEVEL" Makefile | cut -f 3 -d ' ')+1))
+
+	tag="kvm-x86-$1-$major.$minor"
+
+	git branch -r | tr -d " " | grep -q -E "^x/$1"
+	if [ $? -ne 0 ]; then
+		printf "$1 isn't a tracked branch\n"
+		return 1
+	fi
+
+	if [[ $FIXES == "y" ]]; then
+		minor=$(($(grep -E "^PATCHLEVEL" Makefile | cut -f 3 -d ' ')))
+		minor="$minor-fixes"
+	else
+		minor=$(($(grep -E "^PATCHLEVEL" Makefile | cut -f 3 -d ' ')+1))
+	fi
+
+	echo "kvm-x86-$1-$major.$minor"
+	return 0
+}
+
+function git-request-pull() {
+	local tag=$(git-get-tag $1)
+
+	if [[ $? -ne 0 ]]; then
+		return 1
+	fi
+
+	if [[ $# -ne 1 && $# -ne 2 ]]; then
+		printf "Usage: git-request-pull <target branch> [number of commits to omit]\n"
+		return 1
+	fi
+
+	git fetch x --prune
+	if [[ $# -eq 2 ]]; then
+		git checkout autopull && git reset --hard "x/$1~$2" && git tag -s $tag
+	else
+		git checkout autopull && git reset --hard x/$1 && git tag -s $tag
+	fi
+
+	if [[ $? -ne 0 ]]; then
+		return 1
+	fi
+
+	printf "\e[1;7;35mPush '$tag' to kvm-x86?"
+	read -r -p "[Y/n] " response
+	printf "\e[0m"
+	response=${response,,}	# tolower
+	if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
+		git push x $tag
+
+		printf "\e[1;7;35mGenerate $HOME/pulls/$1.mail?"
+		read -r -p "[Y/n] " response
+		printf "\e[0m"
+		response=${response,,}	# tolower
+		if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
+			printf "Subject: [GIT PULL] KVM: x86: $tag *** SUBJECT HERE ***\n\n*** BLURB HERE ***\n\n" > $HOME/pulls/$1.mail
+			git request-pull kvm/master https://github.com/kvm-x86/linux.git tags/$tag >> $HOME/pulls/$1.mail
+		fi
+	fi
+}
+
+function git-make-kut-tag() {
+	local tag="kvm-x86-$(TZ=":America/Los_Angeles" date +%Y.%m.%d)"
+
+	git fetch x --prune
+	git checkout autopull && git reset --hard x/next && git tag -s $tag && git push x $tag
+}
+
+function git-request-kut-pull() {
+	local tag="kvm-x86-$(TZ=":America/Los_Angeles" date +%Y.%m.%d)"
+
+	printf "Subject: [kvm-unit-tests GIT PULL] x86: *** SUBJECT HERE ***\n\n*** BLURB HERE ***\n\n" > $HOME/pulls/kut.mail
+	git request-pull u/master https://github.com/kvm-x86/kvm-unit-tests.git tags/$tag >> $HOME/pulls/kut.mail
+}
+
+function git-send-email() {
+	read -r -p "Send $1 to self: [Y/n]" response
+	response=${response,,}	# tolower
+	if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
+		git send-email --confirm=always --suppress-cc=all --reply-to="Sean Christopherson <seanjc@google.com>" --to="Sean Christopherson <seanjc@google.com>" $1
+	else
+		return 1
+	fi
+
+	read -r -p "Send $1 to lists: [Y/n]" response
+	response=${response,,}	# tolower
+	if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
+		if [[ $2 == "to_paolo" ]]; then
+			git send-email --confirm=always --suppress-cc=all --reply-to="Sean Christopherson <seanjc@google.com>" --to="Paolo Bonzini <pbonzini@redhat.com>" --cc=kvm@vger.kernel.org  --cc=linux-kernel@vger.kernel.org --cc="Sean Christopherson <seanjc@google.com>" $1
+		elif [[ $2 == "cc_paolo" ]]; then
+			git send-email --confirm=always --suppress-cc=all --reply-to="Sean Christopherson <seanjc@google.com>" --to="Sean Christopherson <seanjc@google.com>" --cc=kvm@vger.kernel.org  --cc=linux-kernel@vger.kernel.org --cc="Paolo Bonzini <pbonzini@redhat.com>" $1
+		else
+			git send-email --confirm=always --suppress-cc=all --reply-to="Sean Christopherson <seanjc@google.com>" --to="Sean Christopherson <seanjc@google.com>" --cc=kvm@vger.kernel.org  --cc=linux-kernel@vger.kernel.org $1
+		fi
+	fi
+}
+
+function git-send-pull-requests() {
+	local branches=$(git branch -r --list x/* | grep -v next | cut -f 2 -d '/')
+
+	if [[ $1 == "kut" ]]; then
+		branches="kut"
+	elif [[ ! -f $HOME/pulls/00-cover.mail ]]; then
+		printf "Dude, write a cover letter already\n"
+		return 1;
+	fi
+
+	for branch in $branches; do
+		if [[ ! -f $HOME/pulls/$branch.mail ]]; then
+			printf "Dude, generate a pull request for $branch\n"
+			return 1;
+		fi
+
+		grep -q -e "BLURB HERE" -e "SUBJECT HERE" $HOME/pulls/$branch.mail
+		if [ $? -eq 0 ]; then
+			printf "Edit the subject+blurb (%s) before sending!\n" "$HOME/pulls/$branch.mail"
+			return 1
+		fi
+	done
+
+	git-send-email "$HOME/pulls" to_paolo
+}
+
+function git-email-puck() {
+	local dir
+	local file
+
+	if [[ $# -gt 2 || $# -lt 1 ]]; then
+		printf "git-email-puck <a|n> [date]\n"
+		return 1
+	fi
+
+	if [[ $1 == "a" ]]; then
+		file="agenda.mail"
+	elif [[ $1 == "n" ]]; then
+		file="notes.mail"
+	else
+		printf "Specific 'a' (agenda) or 'n' (notes)\n"
+		return 1
+	fi
+
+	if [[ $# -lt 2 ]]; then
+		dir=$(basename $(pwd))
+	else
+		dir=$2
+	fi
+	dir="$HOME/puck/$dir"
+	if [[ ! -d $dir ]]; then
+		printf "$dir isn't a PUCK directory\n"
+	fi
+
+	git-send-email "$dir/$file" no_paolo
+}
+
+function git-email-lpc() {
+	if [[ $# -ne 1 ]]; then
+		printf "git-email-lpc <file>\n"
+		return 1
+	fi
+
+	git-send-email "$HOME/lpc/$1.mail" cc_paolo
+}
+
+
+# Add git completion to aliases
+__git_complete g	__git_main
+__git_complete ga	_git_add
+__git_complete gab	_git_branch
+__git_complete gb	_git_branch
+__git_complete ggb	_git_branch
+__git_complete gc	_git_commit
+__git_complete gd	_git_diff
+__git_complete gf	_git_fetch
+__git_complete gg	_git_checkout
+__git_complete gfp	_git_format_patch
+__git_complete gl	_git_log
+__git_complete glo	_git_log
+__git_complete gp	_git_cherry_pick
+__git_complete gpb	_git_log
+__git_complete gr	_git_reset
+__git_complete gi	_git_branch
+__git_complete gs	_git_log
+__git_complete gw	_git_show
+
+alias g='git'
+alias ga='git add'
+alias gab='git-archive-branch'
+alias gb='git branch'
+alias gc='git commit'
+alias gd='git-diff'
+alias gdd='git diff'
+alias gds='git diff --staged'
+alias gdu='git-diff-upstream'
+alias gdl='git-diff-local'
+alias gek='git-email kvm'
+alias ges='git-email stable'
+alias geu='git-email ku'
+alias gem='git-email mm'
+alias geq='git-email qemu'
+alias gep='git-email-puck'
+alias gel='git-email-lpc'
+alias gex='git-email x86'
+alias gf='git fetch'
+alias gfo='git fetch o'
+alias gfu='git fetch u'
+alias gfx='git fetch x'
+alias gfp='git-format-patch'
+alias gfk='nosend=1 git-email kvm'
+alias gft='git fetch --tags'
+alias gg='git-get'
+alias gga='git branch -r | tr -d " " | grep -v -E "^o/" | grep'
+alias ggb='git-get-branch'
+alias ggc='git-get-cc'
+alias ggd='gs | grep deleted: | cut -f 2 | tr -s " " | cut -f 2 -d " " | xargs git checkout'
+alias ggl='git branch | grep'
+alias ggo='git branch -r | tr -d " " | grep -E "^o/" | cut -f 2- -d "/" | grep'
+alias ggx='git branch -r --list x/* | grep -v next | cut -f 2 -d '/''
+alias gi='git rebase --interactive'
+alias gl='git log --decorate'
+alias glc='git log --pretty=oneline --decorate --author=christopherson'
+alias glg='git log --pretty=oneline --decorate --graph'
+alias glo='git log --pretty=oneline --decorate'
+alias gm="git status | grep modified | tr -d '\t' | tr -d ' ' | cut -f 2 -d :"
+alias gmc='git merge --continue'
+alias gmk='git-merge-kvm-x86'
+alias gmks='CTHULU=n git-merge-kvm-x86'
+alias gmr='git pull --rebase=false --no-ff'
+alias gmt='git-make-tag'
+alias gw="git show --pretty=fuller"
+alias gwo="git show -s --pretty='tformat:%h (\"%s\")'"
+alias gwp="git show -s --pretty='tformat:%h, \"%s\"'"
+alias gpa='git-apply'
+alias gpu='git-push'
+alias gpo='git-push o'
+alias gpf='git-push force'
+alias gp='git cherry-pick'
+alias gpb='git-cherry-pick-branch'
+alias gpc='git cherry-pick --continue'
+alias gpl='git-cherry-pick-log'
+alias gps='git-cherry-pick-show'
+alias gpk='git-push-kvm-x86'
+alias gr='git reset'
+alias grh='git reset HEAD'
+alias grhh='git reset HEAD --hard'
+alias grp='git-request-pull'
+alias grpf='FIXES=y git-request-pull'
+alias gru='git-request-kut-pull'
+alias grc='git rebase --continue'
+
+alias gu='git pull'
+alias gs='git status'
+alias gsa='git-stash apply'
+alias gsdd='git-stash drop'
+alias gsl='git-stash list'
+alias gso='git-stash show'
+alias gsop='git-stash "show -p"'
+alias gsp='git-stash pop'
+alias gsr='git-send-pull-requests'
+alias gss='git-stash save'
+alias gst='git-send-thank-you'
+alias gsu='git-send-pull-requests kut'
+alias gt='git-tree'
+alias gtc='git tag -l --contains'
+alias gtn='git-tag-kvm-x86-next'
+alias gus='git-update-subs'
+alias gv='git remote -vv'

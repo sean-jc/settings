@@ -1,0 +1,63 @@
+. $SETTINGS/bash/utils
+
+
+function system-info() {
+	printf "IP Address:\t	   $(ipa)\n"
+	printf "Kernel:\t\t	   $(uname -r)\n"
+}
+alias ii='system-info'
+
+function system-info-verbose() {
+	printf "IP Address:\t	   $(ipa)\n"
+	printf "Kernel:\t\t	   $(uname -r)\n"
+	printf "Date:\t\t	   $(date)\n"
+	printf "Uptime:\t\t	  $(uptime)\n"
+	lscpu | grep -v Architecture | grep -v "Byte Order" | grep -v op-mode | grep -v BogoMIPS | grep -v Virtualization | grep -v Flags | grep -v On-line
+}
+alias iv='system-info-verbose'
+
+function amixer-volume() {
+	if [[ $# -eq 0 ]]; then
+		amixer -D pulse sget Master
+	else
+		amixer -D pulse sset Master $(($1 * 65536 / 100))
+	fi
+}
+alias av='amixer-volume'
+alias btm='blueman-manager &'
+
+alias lg='lsmod | grep'
+alias mp='sudo modprobe'
+
+alias sbn='sudo reboot now'
+alias sbf='sudo reboot -f'
+
+function reboot-sysrq() {
+	echo 1 | sudo tee /proc/sys/kernel/sysrq > /dev/null
+	echo b | sudo tee /proc/sysrq-trigger > /dev/null
+}
+
+if [[ "$HOSTPOST" =~ ^[a-z]+-(vm|l2|l3|i386|i2|ii) ]]; then
+	alias sbr='reboot-sysrq'
+	alias ssn='sudo shutdown now'
+	alias ssf='sudo shutdown -f'
+fi
+
+# systemd
+alias sys='sudo systemctl'
+alias failed='sys list-units --state=failed'
+alias services='sys list-unit-files --type=service'
+
+function cpio-initramfs() {
+	if [[ $# -ne 2 ]]; then
+		printf "usage: cpr <input> <output>\n"
+		return 1
+	fi
+	echo lib/firmware/$1 | cpio -H newc -o > ~/build/initramfs/$2.cpio
+}
+alias cpr='cpio-initramfs'
+
+alias rdmsr='sudo rdmsr'
+alias wrmsr='sudo wrmsr'
+alias time='/usr/bin/time'
+alias ftime='time -f "REAL:\t\t%e\nSYSTEM\t\t%S\nUSER\t\t%U\nCPU:\t\t%P\nMAX_RSS:\t%M\nCTX_INV:\t%c\nCTX_VOL:\t%w\nIO_IN:\t\t%I\nIO_OUT:\t\t%O\nMAJ_PF:\t\t%F\nMIN_PF:\t\t%R\nSWAPS:\t\t%W"'

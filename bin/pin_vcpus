@@ -8,21 +8,21 @@ qemu_pid=$1
 nr_cpus=$(grep -c '^processor' /proc/cpuinfo)
 
 if [[ $nr_cpus -eq 1 ]]; then
-    exit 0
+	exit 0
 fi
 
 for dir in /proc/$qemu_pid/task/*; do
-    if [[ -d $dir ]]; then
-        grep -q KVM $dir/comm
-        if [[ $? -eq 0 ]]; then
-            qemu_vcpu=$(($(cat $dir/comm | cut -f 2 -d ' ' | cut -f 1 -d '/') + 1))
-            if [[ $qemu_vcpu -ge $nr_cpus ]]; then
-                qemu_vcpu=$(($nr_cpus-1))
-            fi
-            qemu_pcpu=$(($nr_cpus-$qemu_vcpu))
-            qemu_task=$(echo $dir | cut -f 2 -d ' ' | cut -f 5 -d '/')
-            printf "pinning vCPU $(($qemu_vcpu-1)) to pCPU $qemu_pcpu\n"
-            taskset -p -c $qemu_pcpu $qemu_task
-        fi
-    fi
+	if [[ -d $dir ]]; then
+	grep -q KVM $dir/comm
+	if [[ $? -eq 0 ]]; then
+		qemu_vcpu=$(($(cat $dir/comm | cut -f 2 -d ' ' | cut -f 1 -d '/') + 1))
+		if [[ $qemu_vcpu -ge $nr_cpus ]]; then
+		qemu_vcpu=$(($nr_cpus-1))
+		fi
+		qemu_pcpu=$(($nr_cpus-$qemu_vcpu))
+		qemu_task=$(echo $dir | cut -f 2 -d ' ' | cut -f 5 -d '/')
+		printf "pinning vCPU $(($qemu_vcpu-1)) to pCPU $qemu_pcpu\n"
+		taskset -p -c $qemu_pcpu $qemu_task
+	fi
+	fi
 done

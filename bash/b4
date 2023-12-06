@@ -1,0 +1,82 @@
+# b4 and other lore stuff
+function b4-am-apply() {
+	rm -f $HOME/patches/*
+	$HOME/go/src/kernel.org/b4/b4.sh am --no-cover -s -C -o $HOME/patches/ "$@" && git-apply
+}
+
+function b4-am() {
+	rm -f $HOME/patches/*
+	$HOME/go/src/kernel.org/b4/b4.sh am --no-cover -s -C -o $HOME/patches/ "$@"
+}
+
+function b4-mbox() {
+	$HOME/go/src/kernel.org/b4/b4.sh mbox -o $HOME/mail/ "$1"
+}
+
+function b4-mbox-mutt() {
+	local fname=$($HOME/go/src/kernel.org/b4/b4.sh mbox -o $HOME/mail/ "$1" 2>&1 | grep Saved | cut -f 2 -d ' ')
+
+	if [[ -z $fname ]]; then
+		$HOME/go/src/kernel.org/b4/b4.sh mbox -o $HOME/mail/ "$1"
+		return 1;
+	fi
+	sed -i -r 's/"([a-zA-Z0-9]+),+\s+([a-zA-Z0-9]+\s*[a-zA-Z0-9]*)"/\2 \1/' "$fname"
+	printf "Saved and Opening $fname\n"
+	mutt -f "$fname"
+}
+
+function b4-am-mbox() {
+	b4-mbox "${@: -1}"
+	b4-am-apply "$@"
+}
+
+function b4-ty() {
+	if [[ $# -ne 1 ]]; then
+		return 1
+	fi
+
+	local branch=$(git rev-parse --abbrev-ref HEAD | sed -e 's/^q/x/')
+	local dir=$(echo $branch | cut -f 2 -d '/')
+
+	git branch -r | tr -d " " | grep -q -E "^$branch"
+	if [[ $? -ne 0 || "x/$dir" != "$branch" ]]; then
+		printf "Switch to a tracked branch...\n"
+		return 1
+	fi
+	$HOME/go/src/kernel.org/b4/b4.sh ty -o $HOME/thanks/$dir -t $1
+}
+
+function b4-ty-fixup() {
+	local commits
+	local hash
+	local shortlog
+	local i=1
+
+	if [[ $# -ne 2 ]]; then
+		return 1
+	fi
+
+	commits=$(git log --oneline $1 | head -$2 | tac)
+	echo "$commits" | while IFS= read -r commit ; do
+		hash=$(echo $commit | cut -f 1 -d ' ')
+		shortlog=$(echo $commit | cut -f 2- -d ' ')
+		printf "[$i/$2] $shortlog\n	  https://github.com/kvm-x86/linux/commit/$hash\n"
+
+		i=$((i+1))
+	done
+}
+
+alias b4=$HOME/go/src/kernel.org/b4/b4.sh
+
+alias bb='b4-am-apply'
+alias bbl='b4-am-apply -t -l'
+alias bbn='b4-am'
+alias bm='b4-mbox'
+alias bmm='b4-mbox-mutt'
+alias bam='b4-am-mbox -t -l'
+alias ty='b4-ty'
+alias scy='scp -r ~/thanks/. z:~/thanks'
+alias sy='ll ~/thanks/**/*.thanks'
+alias tyf='b4-ty-fixup'
+alias yy='b4 ty -o $HOME/thanks -l'
+alias dy='b4 ty -o $HOME/thanks -d'

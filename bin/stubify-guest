@@ -3,9 +3,9 @@
 
 for i in "${stubdirs[@]}"
 do
-        if [[ $i == "Documentation" ]]; then
-                continue;
-        fi
-        mkdir -p ./$i
-        echo "!<arch>" > ./$i/built-in.o
+	if [[ $i == "Documentation" ]]; then
+		continue;
+	fi
+	mkdir -p ./$i
+	echo "!<arch>" > ./$i/built-in.o
 done

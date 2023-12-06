@@ -2,216 +2,216 @@
 shopt -s extglob
 
 function get-maintainers() {
-    local cmd=$1
-    local head=$2
-    local ml=$3
-    local opts=$4
-    local pre=$5
-    local maint
+	local cmd=$1
+	local head=$2
+	local ml=$3
+	local opts=$4
+	local pre=$5
+	local maint
 
-    if [[ $cmd == "to" ]]; then
-        opts="$opts --nol"
-    else
-        opts="$opts --nom"
-    fi
+	if [[ $cmd == "to" ]]; then
+	opts="$opts --nol"
+	else
+	opts="$opts --nom"
+	fi
 
-    if [[ $(basename $head) =~ ^${pre}0000- ]] ; then
-        maint=$(./scripts/get_maintainer.pl $opts $(dirname $head)/!(${pre}0000-cover-letter.patch) | tr '\n' ',')
-    else
-        maint=$(./scripts/get_maintainer.pl $opts $head | tr '\n' ',')
-    fi
-    if [[ $cmd == "cc" ]]; then
-        if [[ $ml != "ku" && $ml != "qemu" ]]; then
-            maint="$maint""linux-kernel@vger.kernel.org,"
-        fi
-        if [[ $(basename $head) =~ ^${pre}0000- ]] ; then
-            pfiles=$(ls -1 $(dirname $head)/!(${pre}0000-cover-letter.patch))
-        else
-            pfiles=$head
-        fi
-        maint="$maint$(echo $pfiles | xargs cat | grep -v stable@vger.kernel.org | grep -v lkp@intel.com | grep -e Cc: -e Acked-by -e Suggested-by -e Reported-by -e Tested-by -e Reported-and-tested-by -e Reviewed-by -e Signed-off-by | cut -d ' ' -f 2- | tr '\n' ',')"
-    fi
+	if [[ $(basename $head) =~ ^${pre}0000- ]] ; then
+	maint=$(./scripts/get_maintainer.pl $opts $(dirname $head)/!(${pre}0000-cover-letter.patch) | tr '\n' ',')
+	else
+	maint=$(./scripts/get_maintainer.pl $opts $head | tr '\n' ',')
+	fi
+	if [[ $cmd == "cc" ]]; then
+	if [[ $ml != "ku" && $ml != "qemu" ]]; then
+		maint="$maint""linux-kernel@vger.kernel.org,"
+	fi
+	if [[ $(basename $head) =~ ^${pre}0000- ]] ; then
+		pfiles=$(ls -1 $(dirname $head)/!(${pre}0000-cover-letter.patch))
+	else
+		pfiles=$head
+	fi
+	maint="$maint$(echo $pfiles | xargs cat | grep -v stable@vger.kernel.org | grep -v lkp@intel.com | grep -e Cc: -e Acked-by -e Suggested-by -e Reported-by -e Tested-by -e Reported-and-tested-by -e Reviewed-by -e Signed-off-by | cut -d ' ' -f 2- | tr '\n' ',')"
+	fi
 
-    maint=${maint%,};
-    maint=${maint/namit@vmware.com/nadav.amit@gmail.com}
-    maint=${maint/sean.j.christopherson@intel.com/seanjc@google.com}
-    echo $maint
+	maint=${maint%,};
+	maint=${maint/namit@vmware.com/nadav.amit@gmail.com}
+	maint=${maint/sean.j.christopherson@intel.com/seanjc@google.com}
+	echo $maint
 }
 
 branch=$(git rev-parse --abbrev-ref HEAD)
 dir=$(pwd | rev | cut -d'/' -f1 | rev)
 
 if [[ $# -lt 1 ]]; then
-    printf "Must specify the mailing list\n"
-    exit 1
+	printf "Must specify the mailing list\n"
+	exit 1
 fi
 ml=$1
 
 if [[ $# -lt 2 || $2 -lt 1 ]]; then
-    printf "Must specify the (non-zero) number of patches\n"
-    exit 1
+	printf "Must specify the (non-zero) number of patches\n"
+	exit 1
 fi
 nr=$2
 
 if [[ $# -lt 3 ]]; then
-    printf "Must specify the (non-zero) series version\n"
-    exit 1
+	printf "Must specify the (non-zero) series version\n"
+	exit 1
 fi
 ver=$3
 
 if [[ $# -gt 3 ]]; then
-    printf "usage: git-email list nr_patches version\n"
-    exit 1
+	printf "usage: git-email list nr_patches version\n"
+	exit 1
 fi
 
 depth=3
 if [[ -n $d ]]; then
-    depth=$d
+	depth=$d
 elif [[ $ml == "kvm" ]]; then
-    depth=1
+	depth=1
 fi
 
 dir="$HOME/outbox/$dir"
 if [[ ! -d $dir ]]; then
-    printf "$dir is not a known repository for patches\n"
-    exit 1
+	printf "$dir is not a known repository for patches\n"
+	exit 1
 fi
 
 branch=${branch//\//.}
 dir="$dir/$branch/v$ver"
 if [[ -n $redo ]]; then
-    if [[ ! -d $dir ]]; then
-        printf "$dir doesn't exists, no existing patch(es) to send\n"
-        exit 1
-    fi
+	if [[ ! -d $dir ]]; then
+	printf "$dir doesn't exists, no existing patch(es) to send\n"
+	exit 1
+	fi
 else
-    if [[ -d $dir ]]; then
-        if [[ -n $ovr ]]; then
-            rm -f $dir/*.patch
-        else
-            printf "$dir already exists, looks like you created this version already\n"
-            exit 1
-        fi
-    else
-        mkdir -p $dir
-    fi
+	if [[ -d $dir ]]; then
+	if [[ -n $ovr ]]; then
+		rm -f $dir/*.patch
+	else
+		printf "$dir already exists, looks like you created this version already\n"
+		exit 1
+	fi
+	else
+	mkdir -p $dir
+	fi
 
-    opt=""
-    if [[ $nr -gt 1 ]]; then
-        opt="--cover-letter"
-    fi
-    if [[ $ver != "1" ]]; then
-        opt="$opt -v $ver"
-    fi
-    if [[ -n $rfc ]]; then
-        opt="$opt --rfc"
-    fi
+	opt=""
+	if [[ $nr -gt 1 ]]; then
+	opt="--cover-letter"
+	fi
+	if [[ $ver != "1" ]]; then
+	opt="$opt -v $ver"
+	fi
+	if [[ -n $rfc ]]; then
+	opt="$opt --rfc"
+	fi
 
-    pre=""
-    if [[ $ml == "ku" ]]; then
-        pre="kvm-unit-tests "
-    fi
-    if [[ -n $resend ]]; then
-        pre="$pre""RESEND "
-    fi
-    if [[ -n $rfc ]]; then
-        pre="$pre""RFC "
-    fi
-    pre="$pre""PATCH""$post"
+	pre=""
+	if [[ $ml == "ku" ]]; then
+	pre="kvm-unit-tests "
+	fi
+	if [[ -n $resend ]]; then
+	pre="$pre""RESEND "
+	fi
+	if [[ -n $rfc ]]; then
+	pre="$pre""RFC "
+	fi
+	pre="$pre""PATCH""$post"
 
-    pre="--subject-prefix=\"$pre\""
+	pre="--subject-prefix=\"$pre\""
 
-    sh -c "git format-patch --base=HEAD~$nr -M --minimal --patience --from=\"Sean Christopherson <seanjc@google.com>\" $opt $pre -o $dir -$nr"
+	sh -c "git format-patch --base=HEAD~$nr -M --minimal --patience --from=\"Sean Christopherson <seanjc@google.com>\" $opt $pre -o $dir -$nr"
 
-    if [[ $dir =~ "qemu" ]]; then
-        ./scripts/checkpatch.pl --branch HEAD~$nr..HEAD
-    elif [ -f ./scripts/checkpatch.pl ]; then
-        ./scripts/checkpatch.pl -g HEAD-$nr --codespell --codespellfile=$SETTINGS/codespell/dictionary.txt
-    fi
+	if [[ $dir =~ "qemu" ]]; then
+	./scripts/checkpatch.pl --branch HEAD~$nr..HEAD
+	elif [ -f ./scripts/checkpatch.pl ]; then
+	./scripts/checkpatch.pl -g HEAD-$nr --codespell --codespellfile=$SETTINGS/codespell/dictionary.txt
+	fi
 fi
 
 if [[ -n $nosend ]]; then
-    exit 0
+	exit 0
 fi
 
 opt=""
 if [[ -n $reply ]]; then
-    opt="$opt --in-reply-to=$reply"
+	opt="$opt --in-reply-to=$reply"
 fi
 
 while true; do
-    printf "\n\n\e[1;7;35m--to=seanjc@google.com\n\e[0m"
-    read -r -p "Send email: [Y/n]" response
+	printf "\n\n\e[1;7;35m--to=seanjc@google.com\n\e[0m"
+	read -r -p "Send email: [Y/n]" response
 
-    response=${response,,}    # tolower
-    if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
-        if [[ $nr -gt 1 ]]; then
-            grep -q -e "BLURB HERE" -e "SUBJECT HERE" $dir/*0000-cover-letter.patch
-            if [ $? -eq 0 ]; then
-                printf "Edit the cover letter (%s) before sending!\n" "$dir/*0000-cover-letter.patch"
-                continue
-            fi
-        fi
-        git send-email --suppress-cc=all --confirm=always --to=seanjc@google.com --reply-to="Sean Christopherson <seanjc@google.com>" $opt $dir
-        break
-    else
-        exit 0
-    fi
+	response=${response,,}	# tolower
+	if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
+	if [[ $nr -gt 1 ]]; then
+		grep -q -e "BLURB HERE" -e "SUBJECT HERE" $dir/*0000-cover-letter.patch
+		if [ $? -eq 0 ]; then
+		printf "Edit the cover letter (%s) before sending!\n" "$dir/*0000-cover-letter.patch"
+		continue
+		fi
+	fi
+	git send-email --suppress-cc=all --confirm=always --to=seanjc@google.com --reply-to="Sean Christopherson <seanjc@google.com>" $opt $dir
+	break
+	else
+	exit 0
+	fi
 done
 
 if [[ $ver != "1" ]]; then
-    pre="v$ver-"
+	pre="v$ver-"
 else
-    pre=""
+	pre=""
 fi
 
 if [[ $nr -gt 1 ]]; then
-    head=$(ls -1 $dir/*0000-cover-letter.patch)
+	head=$(ls -1 $dir/*0000-cover-letter.patch)
 else
-    head=$(ls -1 $dir/*0001*)
+	head=$(ls -1 $dir/*0001*)
 fi
 
 gm_opts="--nogit --nogit-fallback --norolestats --nor --nofixes --pattern-depth=$depth"
 if [[ -n $nok ]]; then
-    gm_opts="$gm_opts --nokeywords"
+	gm_opts="$gm_opts --nokeywords"
 fi
 if [[ -z $to ]]; then
-    if [[ $ml == "stable" ]]; then
-        to="--to=\"stable@vger.kernel.org\" --to=\"Greg Kroah-Hartman <gregkh@linuxfoundation.org>\""
-    else
-        to=$(get-maintainers to $head $ml "$gm_opts" $pre)
-        if [[ -z $to ]]; then
-            printf "No --to found for %s\n" "get-maintainers to $head $ml $gm_opts $pre"
-            exit 1
-        fi
-        to="${to//\"/\\\"}"
-        to="${to//VMware,/VMwarecomma}"
-        to="--to=\"${to//,/\" \-\-to=\"}\""
-        to="${to//VMwarecomma/VMware,}"
-    fi
+	if [[ $ml == "stable" ]]; then
+	to="--to=\"stable@vger.kernel.org\" --to=\"Greg Kroah-Hartman <gregkh@linuxfoundation.org>\""
+	else
+	to=$(get-maintainers to $head $ml "$gm_opts" $pre)
+	if [[ -z $to ]]; then
+		printf "No --to found for %s\n" "get-maintainers to $head $ml $gm_opts $pre"
+		exit 1
+	fi
+	to="${to//\"/\\\"}"
+	to="${to//VMware,/VMwarecomma}"
+	to="--to=\"${to//,/\" \-\-to=\"}\""
+	to="${to//VMwarecomma/VMware,}"
+	fi
 fi
 
 if [[ -z $cc ]]; then
-    cc=$(get-maintainers cc $head $ml "$gm_opts" $pre)
-    if [[ -z $cc ]]; then
-        printf "No --cc found for %s\n" "get-maintainers cc $head $ml $gm_opts $pre"
-        exit 1
-    fi
-    if [[ $ml == "stable" ]]; then
-        cc2=$(get-maintainers to $head $ml "$gm_opts" $pre)
-        cc="$cc,$cc2"
-    fi
-    cc="${cc//\"/\\\"}"
-    cc="${cc//VMware,/VMwarecomma}"
-    cc="--cc=\"${cc//,/\" \-\-cc=\"}\""
-    cc="${cc//VMwarecomma/VMware,}"
+	cc=$(get-maintainers cc $head $ml "$gm_opts" $pre)
+	if [[ -z $cc ]]; then
+	printf "No --cc found for %s\n" "get-maintainers cc $head $ml $gm_opts $pre"
+	exit 1
+	fi
+	if [[ $ml == "stable" ]]; then
+	cc2=$(get-maintainers to $head $ml "$gm_opts" $pre)
+	cc="$cc,$cc2"
+	fi
+	cc="${cc//\"/\\\"}"
+	cc="${cc//VMware,/VMwarecomma}"
+	cc="--cc=\"${cc//,/\" \-\-cc=\"}\""
+	cc="${cc//VMwarecomma/VMware,}"
 fi
 bcc="--bcc=\"Sean Christopherson <seanjc@google.com>\""
 
 printf "\n\n\e[1;7;35m%s\n%s\n\e[0m" "$to" "$cc"
 read -r -p "Send email: [Y/n]" response
 
-response=${response,,}    # tolower
+response=${response,,}	# tolower
 if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
-    eval $(printf "%s\n" "git send-email --confirm=always --suppress-cc=all --reply-to=\"Sean Christopherson <seanjc@google.com>\" $to $bcc $cc $opt $dir")
+	eval $(printf "%s\n" "git send-email --confirm=always --suppress-cc=all --reply-to=\"Sean Christopherson <seanjc@google.com>\" $to $bcc $cc $opt $dir")
 fi
