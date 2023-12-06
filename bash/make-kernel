@@ -32,8 +32,8 @@ function make-kernel() {
 		return 0
 	fi
 
-	if [[ ! -d ~/build/kernel/$2 ]]; then
-		printf "Target build directory '~/build/kernel/$2' does not exist\n"
+	if [[ ! -d $HOME/build/kernel/$2 ]]; then
+		printf "Target build directory '$HOME/build/kernel/$2' does not exist\n"
 		return 4
 	elif [[ ! -d .git/info || ! -d kernel ]]; then
 		printf "Must run from a top-level Linux repository\n"
@@ -49,8 +49,8 @@ function make-kernel() {
 		return 4
 	fi
 
-	if [[ -d ~/build/kernel/$2/source ]]; then
-		local prev=$(readlink -f ~/build/kernel/$2/source)
+	if [[ -d $HOME/build/kernel/$2/source ]]; then
+		local prev=$(readlink -f $HOME/build/kernel/$2/source)
 		local curr=$(readlink -f $PWD)
 		if [[ $prev != $curr ]]; then
 			printf "Mismatch in build's previous source dir\n"
@@ -65,9 +65,9 @@ function make-kernel() {
 		local name="-$(git show -s --pretty='tformat:%h')-$(git rev-parse --abbrev-ref HEAD)-$2"
 
 		if [[ -z $ARCH ]]; then
-			make W=1 LOCALVERSION=$name O=~/build/kernel/$2 $EXTRAS -j$(get-nr-cpus)
+			make W=1 LOCALVERSION=$name O=$HOME/build/kernel/$2 $EXTRAS -j$(get-nr-cpus)
 		elif [[ $ARCH == arm64 || $ARCH == mips || $ARCH == powerpc || $ARCH == riscv || $ARCH == s390 ]]; then
-			make LOCALVERSION=$name O=~/build/kernel/$2 $EXTRAS -j$(get-nr-cpus)
+			make LOCALVERSION=$name O=$HOME/build/kernel/$2 $EXTRAS -j$(get-nr-cpus)
 		else
 			printf "Unknown ARCH '$ARCH'\n"
 			return 6
@@ -75,8 +75,8 @@ function make-kernel() {
 		
 		ret=$?
 		if [[ $ret -eq 0 ]]; then
-			rm -rf ~/build/kernel/$2/lib/modules/*
-			make O=~/build/kernel/$2 INSTALL_MOD_PATH=~/build/kernel/$2 modules_install
+			rm -rf $HOME/build/kernel/$2/lib/modules/*
+			make O=$HOME/build/kernel/$2 INSTALL_MOD_PATH=$HOME/build/kernel/$2 modules_install
 		fi
 	else
 		if [[ $1 == "htmldocs" ]]; then
@@ -91,7 +91,7 @@ function make-kernel() {
 			printf "Unsupported command '$1'\n"
 			return 7
 		fi
-		make O=~/build/kernel/$2 $1
+		make O=$HOME/build/kernel/$2 $1
 		ret=$?
 
 
@@ -232,14 +232,32 @@ alias mut='make-kernel-range kut ign'
 
 alias mkb='TARGET=bzImage make-kernel make'
 
+function generate-x86-configs() {
+        pushd $HOME/go/src/kernel.org/linux
+	mo vm
+
+	cp $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/vm.config
+	cp $HOME/build/kernel/vm/.config $HOME/build/kernel/clang/.config
+
+        ./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/all $SETTINGS/kconfigs/vm.config $SETTINGS/kconfigs/all.config
+	./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/pae $SETTINGS/kconfigs/vm.config $SETTINGS/kconfigs/pae.config
+        ./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/up  $SETTINGS/kconfigs/vm.config $SETTINGS/kconfigs/up.config
+
+	LLVM=1 ./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/clang_all $SETTINGS/kconfigs/vm.config $SETTINGS/kconfigs/all.config
+	LLVM=1 ./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/clang_pae $SETTINGS/kconfigs/vm.config $SETTINGS/kconfigs/pae.config
+        LLVM=1 ./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/clang_up  $SETTINGS/kconfigs/vm.config $SETTINGS/kconfigs/up.config
+        popd
+}
+alias xk='generate-x86-configs'
+
 function time-kernel() {
 	if [[ $# -ne 1 ]]; then
 		printf "Must specify the target kernel name\n"
 		return 1
 	fi
-	make O=~/build/kernel/$1 clean
+	make O=$HOME/build/kernel/$1 clean
 	sleep .25
-	ftime -o ~/build/kernel/$1/tk_time.log make -j$(get-nr-cpus) O=~/build/kernel/$1 > ~/build/kernel/$1/tk_build.log 2>&1
+	ftime -o $HOME/build/kernel/$1/tk_time.log make -j$(get-nr-cpus) O=$HOME/build/kernel/$1 > $HOME/build/kernel/$1/tk_build.log 2>&1
 }
 alias tik='time-kernel'
 
