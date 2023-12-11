@@ -139,6 +139,7 @@ function do-make-kernel-range() {
 			break
 		fi
 
+		pids=()
 		for target in "${targets[@]}"; do
 			local dir=$(echo $target | rev | cut -f 1 -d ' ' | rev)
 			local outlog="$HOME/build/kernel/$dir/stdout.log"
