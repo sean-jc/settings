@@ -29,6 +29,8 @@ alias rf='source ~/.bashrc'
 
 alias bash_usage='cut -f1 -d" " ~/.bash_history | sort | uniq -c | sort -nr | head -n 30'
 
+alias sk='sudo -sE'
+
 alias gcm='gcert -s -m kernel-development,corevirt-team-testing'
 
 alias mf='make -j$(get-nr-cpus)'
