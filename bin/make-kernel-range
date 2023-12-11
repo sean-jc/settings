@@ -117,15 +117,17 @@ function do-make-kernel-range() {
 	fi
 	commits=(${commits//:/ })
 
-	git branch | grep -wq autotest
-	if [[ $? -eq 0 ]]; then
-		git branch -D autotest
-	fi
+	if [[ $(git rev-parse --abbrev-ref HEAD) != "autotest" ]]; then
+		git branch | grep -wq autotest
+		if [[ $? -eq 0 ]]; then
+			git branch -D autotest
+		fi
 
-	git checkout -b autotest
-	if [[ $? -ne 0 ]]; then
-		printf "\n$REDFailed to checkout 'autotest' reset to commit ${cyan}$commit$NC\n\n"
-		return 1
+		git checkout -b autotest
+		if [[ $? -ne 0 ]]; then
+			printf "\n$REDFailed to checkout 'autotest' reset to commit ${cyan}$commit$NC\n\n"
+			return 1
+		fi
 	fi
 
 	for commit in "${commits[@]}"; do
