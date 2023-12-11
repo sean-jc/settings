@@ -287,9 +287,7 @@ function git-push-kvm-x86() {
 
 function git-get-tag() {
 	local major=$(grep -E "^VERSION" Makefile | cut -f 3 -d ' ')
-	local minor=$(($(grep -E "^PATCHLEVEL" Makefile | cut -f 3 -d ' ')+1))
-
-	tag="kvm-x86-$1-$major.$minor"
+	local minor=""
 
 	git branch -r | tr -d " " | grep -q -E "^x/$1"
 	if [ $? -ne 0 ]; then
@@ -299,7 +297,7 @@ function git-get-tag() {
 
 	if [[ $FIXES == "y" ]]; then
 		minor=$(($(grep -E "^PATCHLEVEL" Makefile | cut -f 3 -d ' ')))
-		minor="$minor-fixes"
+		minor="$minor-rcN"
 	else
 		minor=$(($(grep -E "^PATCHLEVEL" Makefile | cut -f 3 -d ' ')+1))
 	fi
@@ -309,12 +307,6 @@ function git-get-tag() {
 }
 
 function git-request-pull() {
-	local tag=$(git-get-tag $1)
-
-	if [[ $? -ne 0 ]]; then
-		return 1
-	fi
-
 	if [[ $# -ne 1 && $# -ne 2 ]]; then
 		printf "Usage: git-request-pull <target branch> [number of commits to omit]\n"
 		return 1
@@ -322,11 +314,22 @@ function git-request-pull() {
 
 	git fetch x --prune
 	if [[ $# -eq 2 ]]; then
-		git checkout autopull && git reset --hard "x/$1~$2" && git tag -s $tag
+		git checkout autopull && git reset --hard "x/$1~$2"
 	else
-		git checkout autopull && git reset --hard x/$1 && git tag -s $tag
+		git checkout autopull && git reset --hard x/$1
+	fi
+	if [[ $? -ne 0 ]]; then
+		return 1
 	fi
 
+	# Get the tag *after* checking out, as the VERSION or PATCHLEVEL may be
+	# affected by switching to a different branch.
+	local tag=$(git-get-tag $1)
+	if [[ $? -ne 0 ]]; then
+		return 1
+	fi
+
+	git tag -s $tag
 	if [[ $? -ne 0 ]]; then
 		return 1
 	fi
@@ -344,7 +347,11 @@ function git-request-pull() {
 		response=${response,,}	# tolower
 		if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
 			printf "Subject: [GIT PULL] KVM: x86: $tag *** SUBJECT HERE ***\n\n*** BLURB HERE ***\n\n" > $HOME/pulls/$1.mail
-			git request-pull kvm/master https://github.com/kvm-x86/linux.git tags/$tag >> $HOME/pulls/$1.mail
+			if [[ $FIXES == "y" ]]; then
+				git request-pull kvm/master https://github.com/kvm-x86/linux.git tags/$tag >> $HOME/pulls/$1.mail
+			else
+				git request-pull kvm/next https://github.com/kvm-x86/linux.git tags/$tag >> $HOME/pulls/$1.mail
+			fi
 		fi
 	fi
 }
