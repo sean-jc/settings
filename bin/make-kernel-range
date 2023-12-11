@@ -143,7 +143,10 @@ function do-make-kernel-range() {
 			local dir=$(echo $target | rev | cut -f 1 -d ' ' | rev)
 			local outlog="$HOME/build/kernel/$dir/stdout.log"
 			local errlog="$HOME/build/kernel/$dir/stderr.log"
-			yes | EXTRA_CFLAGS="$cflags" $target > $outlog 2> $errlog &
+			# Note, 'yes ""' simulates hitting 'ENTER'.  Actually
+			# answering 'y' is undesirable as it will hang if a
+			# non-boolean kconfig is encountered
+			yes "" | EXTRA_CFLAGS="$cflags" $target > $outlog 2> $errlog &
 
 			pids+=($!)
 		done
