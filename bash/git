@@ -383,11 +383,11 @@ function git-send-email() {
 	response=${response,,}	# tolower
 	if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
 		if [[ $2 == "to_paolo" ]]; then
-			git send-email --confirm=always --suppress-cc=all --reply-to="Sean Christopherson <seanjc@google.com>" --to="Paolo Bonzini <pbonzini@redhat.com>" --cc=kvm@vger.kernel.org  --cc=linux-kernel@vger.kernel.org --cc="Sean Christopherson <seanjc@google.com>" $1
+			git send-email --confirm=always --reply-to="Sean Christopherson <seanjc@google.com>" --to="Paolo Bonzini <pbonzini@redhat.com>" --cc=kvm@vger.kernel.org  --cc=linux-kernel@vger.kernel.org --cc="Sean Christopherson <seanjc@google.com>" $1
 		elif [[ $2 == "cc_paolo" ]]; then
-			git send-email --confirm=always --suppress-cc=all --reply-to="Sean Christopherson <seanjc@google.com>" --to="Sean Christopherson <seanjc@google.com>" --cc=kvm@vger.kernel.org  --cc=linux-kernel@vger.kernel.org --cc="Paolo Bonzini <pbonzini@redhat.com>" $1
+			git send-email --confirm=always --reply-to="Sean Christopherson <seanjc@google.com>" --to="Sean Christopherson <seanjc@google.com>" --cc=kvm@vger.kernel.org  --cc=linux-kernel@vger.kernel.org --cc="Paolo Bonzini <pbonzini@redhat.com>" $1
 		else
-			git send-email --confirm=always --suppress-cc=all --reply-to="Sean Christopherson <seanjc@google.com>" --to="Sean Christopherson <seanjc@google.com>" --cc=kvm@vger.kernel.org  --cc=linux-kernel@vger.kernel.org $1
+			git send-email --confirm=always --reply-to="Sean Christopherson <seanjc@google.com>" --to="Sean Christopherson <seanjc@google.com>" --cc=kvm@vger.kernel.org  --cc=linux-kernel@vger.kernel.org $1
 		fi
 	fi
 }
