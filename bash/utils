@@ -57,8 +57,8 @@ alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 
 # ls
-alias ls='/usr/bin/ls -aF --color=always'
-alias lsl='/usr/bin/ls -1'
+alias ls='/bin/ls -aF --color=always'
+alias lsl='/bin/ls -1'
 alias ll='ls -lh'
 
 alias mkdir='mkdir -p'
