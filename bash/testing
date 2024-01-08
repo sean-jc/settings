@@ -1,3 +1,5 @@
+. $SETTINGS/bash/modules
+
 function prep-kut32() {
 	# ./configure --erratatxt="" --disable-pretty-print-stacks --arch=i386 --processor=i386
 	probe-modules qemu
@@ -155,8 +157,8 @@ function run-memslot-test() {
 		printf "Usage for memslot test: 'rms [threads] [mem in gb]'\n"
 		return 2
 	fi
-	if [[ ! -f /sys/bus/pci/devices/0000:00:01.0/rom ]]; then
-		printf "No ROM at /sys/bus/pci/devices/0000:00:01.0, try vga=1\n"
+	if [[ ! -f /sys/bus/pci/devices/0000:00:02.0/rom ]]; then
+		printf "No ROM at /sys/bus/pci/devices/0000:00:02.0, try roms=1\n"
 		return 3
 	fi
 
@@ -167,6 +169,6 @@ function run-memslot-test() {
 		nr_gigabytes=$2
 	fi
 
-	$SETTINGS/bin/memslot_test -c $nr_threads -m $nr_gigabytes -e $SETTINGS/lib/memslot_test/rom.sh
+	$SETTINGS/bin/memslot_test -c $nr_threads -m $nr_gigabytes -e $SETTINGS/utils/memslot_test/rom.sh
 }
 alias rms='run-memslot-test'
