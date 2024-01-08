@@ -1,4 +1,6 @@
 #!/bin/bash
+. $SETTINGS/bash/modules
+
 trap "exit 1" TERM
 export VM_PID=$$
 
@@ -29,7 +31,7 @@ if [[ -z $kernel && -n $append ]]; then
 	die "Cannot specify \$append without \$kernel\n"
 fi
 
-probe_modules
+probe-modules $qemu
 
 qemu="$HOME/build/qemu/$qemu"
 qemu_bin=$(readlink -f $qemu)
@@ -158,28 +160,28 @@ if [[ $os = "hyper-v" ]]; then
 else
 	cpu="-cpu host,host-phys-bits,+invtsc"
 	if [[ -z $migrate ]]; then
-	cpu="$cpu,migratable=no"
+		cpu="$cpu,migratable=no"
 	fi
 	if [[ $x2apic == "false" || $x2apic == "n" ]]; then
-	cpu="$cpu,-x2apic"
+		cpu="$cpu,-x2apic"
 	fi
 	if [[ "$qemu_bin" =~ "i386" ]]; then
-	cpu="$cpu,-lm"
-	bios="-bios $HOME/go/src/seabios.org/seabios/out/bios.bin"
+		cpu="$cpu,-lm"
+		bios="-bios $HOME/go/src/seabios.org/seabios/out/bios.bin"
 	elif [[ -z $mbr ]]; then
-	if [[ -n $sev ]]; then
-		bios="-drive if=pflash,format=raw,readonly,unit=0,file=$HOME/build/ovmf/OVMF_CODE$ovmf.fd"
-		bios="$bios -drive if=pflash,format=raw,unit=1,file=$HOME/build/ovmf/OVMF_VARS$ovmf.fd"
-	elif [[ -n $pflash ]]; then
-		bios="-drive if=pflash,format=raw,readonly,unit=0,file=$HOME/build/ovmf/OVMF$ovmf.fd"
-	elif [[ -n $td ]]; then
-		bios="-device loader,file=$HOME/build/ovmf/OVMFTD$ovmf.fd,id=fd0"
-	else
-		bios="-bios $HOME/build/ovmf/OVMF$ovmf.fd"
-	fi
-	if [[ -n $debug_con ]]; then
-		bios="$bios -debugcon file:debug.log -global isa-debugcon.iobase=0x402"
-	fi
+		if [[ -n $sev ]]; then
+			bios="-drive if=pflash,format=raw,readonly,unit=0,file=$HOME/build/ovmf/OVMF_CODE$ovmf.fd"
+			bios="$bios -drive if=pflash,format=raw,unit=1,file=$HOME/build/ovmf/OVMF_VARS$ovmf.fd"
+		elif [[ -n $pflash ]]; then
+			bios="-drive if=pflash,format=raw,readonly,unit=0,file=$HOME/build/ovmf/OVMF$ovmf.fd"
+		elif [[ -n $td ]]; then
+			bios="-device loader,file=$HOME/build/ovmf/OVMFTD$ovmf.fd,id=fd0"
+		else
+			bios="-bios $HOME/build/ovmf/OVMF$ovmf.fd"
+		fi
+		if [[ -n $debug_con ]]; then
+			bios="$bios -debugcon file:debug.log -global isa-debugcon.iobase=0x402"
+		fi
 	fi
 fi
 if [[ -n $cpuid ]]; then
@@ -191,12 +193,12 @@ if [[ -n $vnc ]]; then
 else
 	display="-nographic"
 	if [[ -z $vga ]]; then
-	display="$display -vga none"
+		display="$display -vga none"
 	fi
 	if [[ -n $daemon ]]; then
-	display="$display -serial null -monitor null -parallel null"
+		display="$display -serial null -monitor null -parallel null"
 	elif [[ -z $serial ]]; then
-	display="$display -chardev stdio,id=mux,mux=on,signal=off -device virtio-serial,$virtio_opt,romfile= -device virtconsole,chardev=mux -serial chardev:mux -monitor chardev:mux"
+		display="$display -chardev stdio,id=mux,mux=on,signal=off -device virtio-serial,$virtio_opt,romfile= -device virtconsole,chardev=mux -serial chardev:mux -monitor chardev:mux"
 	fi
 fi
 if [[ -n $daemon ]]; then
