@@ -1,3 +1,4 @@
+. $SETTINGS/bash/utils
 
 function modprobe-kvm-all {
 	local nr_cpus=$(get-nr-cpus)
