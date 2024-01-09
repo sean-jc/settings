@@ -142,14 +142,26 @@ function do-make-kernel-range() {
 		pids=()
 		for target in "${targets[@]}"; do
 			local dir=$(echo $target | rev | cut -f 1 -d ' ' | rev)
-			local outlog="$HOME/build/kernel/$dir/stdout.log"
-			local errlog="$HOME/build/kernel/$dir/stderr.log"
-			# Note, 'yes ""' simulates hitting 'ENTER'.  Actually
-			# answering 'y' is undesirable as it will hang if a
-			# non-boolean kconfig is encountered
-			yes "" | EXTRA_CFLAGS="$cflags" $target > $outlog 2> $errlog &
 
-			pids+=($!)
+			if [[ $1 == "tests-"* ]]; then
+				printf "\n\n$target\n\n"
+				EXTRA_CFLAGS="$cflags" $target
+
+				ret=$?
+				if [[ $ret -ne 0 ]]; then
+					printf "\n${RED}Commit ${cyan}$commit${RED} failed to build with '$target'.${NOF}\n\n"
+					break
+				fi
+			else
+				local outlog="$HOME/build/kernel/$dir/stdout.log"
+				local errlog="$HOME/build/kernel/$dir/stderr.log"
+				# Note, 'yes ""' simulates hitting 'ENTER'.  Actually
+				# answering 'y' is undesirable as it will hang if a
+				# non-boolean kconfig is encountered
+				yes "" | EXTRA_CFLAGS="$cflags" $target > $outlog 2> $errlog &
+
+				pids+=($!)
+			fi
 		done
 
 		for i in "${!pids[@]}"; do
