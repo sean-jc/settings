@@ -31,7 +31,7 @@ alias bash_usage='cut -f1 -d" " ~/.bash_history | sort | uniq -c | sort -nr | he
 
 alias sk='sudo -sE'
 
-alias gcm='gcert -s -m kernel-development,corevirt-team-testing'
+alias gcm='gcert -s -m kernel-development --nossh_on_security_key && ssh-add $HOME/.ssh/id_rsa'
 
 alias mf='make -j$(get-nr-cpus)'
 
