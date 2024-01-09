@@ -98,7 +98,10 @@ elif [[ -n $i386 ]]; then
 else
 	virtio_opt="iommu_platform=off"
 fi
-net="-device virtio-net-pci,netdev=net0,mac=$mac,$virtio_opt,romfile= -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
+if [[ -z $roms ]]; then
+	virtio_opt="$virtio_opt,romfile="
+fi
+net="-device virtio-net-pci,netdev=net0,mac=$mac,$virtio_opt -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
 
 maxmem=16G
 if [[ -n $epc ]]; then
@@ -198,7 +201,7 @@ else
 	if [[ -n $daemon ]]; then
 		display="$display -serial null -monitor null -parallel null"
 	elif [[ -z $serial ]]; then
-		display="$display -chardev stdio,id=mux,mux=on,signal=off -device virtio-serial,$virtio_opt,romfile= -device virtconsole,chardev=mux -serial chardev:mux -monitor chardev:mux"
+		display="$display -chardev stdio,id=mux,mux=on,signal=off -device virtio-serial,$virtio_opt -device virtconsole,chardev=mux -serial chardev:mux -monitor chardev:mux"
 	fi
 fi
 if [[ -n $daemon ]]; then
