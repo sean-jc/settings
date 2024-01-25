@@ -10,10 +10,11 @@ function make-gbuild {
 	local name="-$(git show -s --pretty='tformat:%h')-$2"
 
 	if [[ $# -eq 2 ]]; then
-		gbuild ASSERTS=0 RELEASE=$name ARCH=$1
+		gbuild ASSERTS=0 RELEASE=$name ARCH=$1 $EXTRAS
 	else
-		gbuild ASSERTS=0 RELEASE=$name ARCH=$1 EXTRA_MODULES_VERSION=$3
+		gbuild ASSERTS=0 RELEASE=$name ARCH=$1 $EXTRAS EXTRA_MODULES_VERSION=$3
 	fi
 }
 alias mg='make-gbuild x86_64'
+alias mgn='EXTRAS="NOCONFIG=1" make-gbuild x86_64'
 alias mga='make-gbuild arm64'
