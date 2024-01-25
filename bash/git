@@ -127,6 +127,9 @@ function git-push() {
 		read -r -p "[Y/n] " response
 		printf "\e[0m"
 	fi
+	if [[ $remote == "s" ]]; then
+		opts="$opts -o push-justification=b/1484059"
+	fi
 	response=${response,,}	# tolower
 	if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
 		git push $opts $remote $branch:$upstream
