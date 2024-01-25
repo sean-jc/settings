@@ -11,6 +11,7 @@ echo "/*" >> .git/info/sparse-checkout
 echo "arch/.gitignore" >> .git/info/sparse-checkout
 echo "arch/Kconfig" >> .git/info/sparse-checkout
 echo "arch/arm64/" >> .git/info/sparse-checkout
+echo "arch/loongarch/" >> .git/info/sparse-checkout
 echo "arch/mips/" >> .git/info/sparse-checkout
 echo "arch/powerpc/" >> .git/info/sparse-checkout
 echo "arch/riscv/" >> .git/info/sparse-checkout
@@ -22,11 +23,12 @@ echo "tools/arch/arm64/" >> .git/info/sparse-checkout
 echo "tools/arch/s390x/" >> .git/info/sparse-checkout
 for i in "${stubdirs[@]}"; do
 	if [[ $i == "arch/arm64/crypto" ||
-		  $i == "arch/mips/crypto" ||
-		  $i == "arch/powerpc/crypto" ||
-		  $i == "arch/riscv/crypto" ||
-		  $i == "arch/s390/crypto" ||
-		  $i == "arch/x86/crypto" ]]; then
+	      $i == "arch/loongarch/crypto" ||
+	      $i == "arch/mips/crypto" ||
+	      $i == "arch/powerpc/crypto" ||
+	      $i == "arch/riscv/crypto" ||
+	      $i == "arch/s390/crypto" ||
+	      $i == "arch/x86/crypto" ]]; then
 		continue
 	fi
 	echo "!$i" >> .git/info/sparse-checkout
