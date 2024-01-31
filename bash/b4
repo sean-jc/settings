@@ -51,16 +51,24 @@ function b4-ty-fixup() {
 	local hash
 	local shortlog
 	local i=1
+	local last
+	local nr
 
-	if [[ $# -ne 2 ]]; then
+	if [[ $# -eq 1 ]]; then
+		last=HEAD
+		nr=$1
+	elif [[ $# -ne 2 ]]; then
 		return 1
+	else
+		last=$1
+		nr=$2
 	fi
 
-	commits=$(git log --oneline $1 | head -$2 | tac)
+	commits=$(git log --oneline $last | head -$nr | tac)
 	echo "$commits" | while IFS= read -r commit ; do
 		hash=$(echo $commit | cut -f 1 -d ' ')
 		shortlog=$(echo $commit | cut -f 2- -d ' ')
-		printf "[$i/$2] $shortlog\n	  https://github.com/kvm-x86/linux/commit/$hash\n"
+		printf "[$i/$nr] $shortlog\n      https://github.com/kvm-x86/linux/commit/$hash\n"
 
 		i=$((i+1))
 	done
