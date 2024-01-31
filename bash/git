@@ -102,6 +102,9 @@ function git-push() {
 	if [[ $# -eq 1 && $1 != "force" ]]; then
 		remote=$1
 		upstream=$branch
+		if [[ $1 == "x" ]]; then
+			upstream=$(echo $upstream | sed -e 's/^q\///')
+		fi
 	else
 		remote=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} | cut -f 1 -d /)
 		if [[ $? -eq 0 ]]; then
@@ -534,6 +537,7 @@ alias gpu='git-push'
 alias gpo='git-push o'
 alias gpf='git-push force'
 alias gps='git-push s'
+alias gpx='git-push x'
 alias gp='git cherry-pick'
 alias gpb='git-cherry-pick-branch'
 alias gpc='git cherry-pick --continue'
