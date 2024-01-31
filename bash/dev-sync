@@ -25,6 +25,10 @@ function dev-sync() {
 		rsync --checksum ~/go/src/github.com/sean-jc/settings/git/.git-completion.bash $2:/data/local/seanjc/go/src/github.com/sean-jc/settings/git
 		ssh $2 "chmod +x /data/local/seanjc/go/src/github.com/sean-jc/settings/bin/timeout"
 	fi
+	if [[ $1 == "kvm" ]]; then
+		printf "Not yet supported, need to figure out how to specify the target directory\n"
+		return 1
+	fi
 	if [[ $1 == "full" || $1 == "binaries" ]]; then
 		rsync --checksum --recursive --links ~/build/qemu/static-7.0 $2:/data/local/seanjc/build/qemu
 		rsync --checksum --recursive --links ~/build/ovmf $2:/data/local/seanjc/build
@@ -36,7 +40,7 @@ function dev-sync() {
 		rsync --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kut-32 $2:/data/local/seanjc/go/src/kernel.org
 		rsync --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kut-efi $2:/data/local/seanjc/go/src/kernel.org
 	fi
-	if [[ $1 == "full" || $1 == "kvm" ]]; then
+	if [[ $1 == "full" || $1 == "vm" ]]; then
 		rsync --checksum ~/build/kernel/vm/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/vm/arch/x86/boot
 		rsync --checksum --recursive ~/build/kernel/vm/lib/modules $2:/data/local/seanjc/build/kernel/vm/lib
 		rsync --checksum ~/build/kernel/pae/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/pae/arch/x86/boot
@@ -48,3 +52,4 @@ alias dsb='dev-sync binaries'
 alias dsk='dev-sync kvm'
 alias dss='dev-sync settings'
 alias dst='dev-sync tests'
+alias dsv='dev-sync vm'
