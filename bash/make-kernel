@@ -60,8 +60,6 @@ function make-kernel() {
 
 	local ret
 	if [[ $1 == "make" ]]; then
-		stubify-linux $2
-
 		local name="-$(git show -s --pretty='tformat:%h')-$(git rev-parse --abbrev-ref HEAD)-$2"
 
 		if [[ -z $ARCH ]]; then
