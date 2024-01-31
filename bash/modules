@@ -67,7 +67,7 @@ function probe-modules() {
 		fi
 	fi
 	lmod=$(lsmod | cut -f 1 -d ' ' | grep kvm_)
-	if [[ $? -eq 0 && $lmod != $kvm ]]; then
+	if [[ $? -eq 0 && $lmod != $kvm* ]]; then
 		psudo rmmod $lmod
 	fi
 	if [[ ! $(lsmod | cut -f 1 -d ' ' | grep kvm_) ]]; then
