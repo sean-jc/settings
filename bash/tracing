@@ -1,82 +1,82 @@
 alias bt='$SETTINGS/bin/bpftrace'
 
 function kvm-trace() {
-		if [[ $EUID != 0 ]]; then
-				printf "Must run 'kvm_trace' as root\n"
-				exit 1
-		fi
+	if [[ $EUID != 0 ]]; then
+		printf "Must run 'kvm_trace' as root\n"
+		exit 1
+	fi
 
-		if [[ $# -gt 1 ]]; then
-				printf "Only one param accepted by 'kvm_trace'\n"
-				exit 1
-		fi
+	if [[ $# -gt 1 ]]; then
+		printf "Only one param accepted by 'kvm_trace'\n"
+		exit 1
+	fi
 
-		echo 16384 > /sys/kernel/debug/tracing/buffer_size_kb
-		echo 1 > /sys/kernel/debug/tracing/tracing_on
+	echo 16384 > /sys/kernel/debug/tracing/buffer_size_kb
+	echo 1 > /sys/kernel/debug/tracing/tracing_on
 
-		cmd=$1
-		val=1
-		if [[ ${cmd:0:1} == "-" ]]; then
-				val=0
-				cmd="${1:1}"
-		fi
+	cmd=$1
+	val=1
+	if [[ ${cmd:0:1} == "-" ]]; then
+			val=0
+			cmd="${1:1}"
+	fi
 
-		if [[ $# -eq 0 ]]; then
-				echo 1 > /sys/kernel/debug/tracing/events/kvm/enable
-		elif [[ $cmd == "o" || $cmd == "off" ]]; then
-				echo 0 > /sys/kernel/debug/tracing/events/kvm/enable
-				echo 0 > /sys/kernel/debug/tracing/events/kvmmmu/enable
-		elif [[ $cmd == "a" || $cmd == "apicv" ]]; then
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_apicv_inhibit_changed/enable
-		elif [[ $cmd == "c" || $cmd == "cpuid" ]]; then
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_cpuid/enable
-		elif [[ $cmd == "em" || $cmd == "emulate" ]]; then
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_emulate_insn/enable
-		elif [[ $cmd == "em" || $cmd == "emulate" ]]; then
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_emulate_insn/enable
-		elif [[ $cmd == "ex" || $cmd == "exceptions" ]]; then
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_inj_exception/enable
-		elif [[ $cmd == "f" || $cmd == "fail" ]]; then
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_nested_vmenter_failed/enable
-		elif [[ $cmd == "h" || $cmd == "hypercall" ]]; then
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_hypercall/enable
-		elif [[ $cmd == "i" || $cmd == "irqs" ]]; then
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_apic_ipi/enable
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_inj_virq/enable
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_apic_accept_irq/enable
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_apicv_accept_irq/enable
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_avic_unaccelerated_access/enable
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_eoi/enable
-		elif [[ $cmd == "mmu" ]]; then
-				echo $val > /sys/kernel/debug/tracing/events/kvmmmu/enable
-		elif [[ $cmd == "mn" ]]; then
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_age_hva/enable
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_set_spte_hva/enable
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_test_age_hva/enable
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_unmap_hva_range/enable
-		elif [[ $cmd == "n" || $cmd == "nested" ]]; then
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_nested_intercepts/enable
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_nested_intr_vmexit/enable
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_nested_vmenter_failed/enable
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_nested_vmexit/enable
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_nested_vmexit_inject/enable
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_nested_vmenter/enable
-		elif [[ $cmd == "pf" || $cmd == "pagefaults" ]]; then
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_page_fault/enable
-		elif [[ $cmd == "q" || $cmd == "query" ]]; then
-				tail /sys/kernel/debug/tracing/events/kvm/**/enable | grep -B 1 1
-		elif [[ $cmd == "r" || $cmd == "msr" ]]; then
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_msr/enable
-		elif [[ $cmd == "u" || $cmd == "user" ]]; then
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_userspace_exit/enable
-		elif [[ $cmd == "v" || $cmd == "avic" ]]; then
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_avic_kick_vcpu_slowpath/enable
-		elif [[ $cmd == "x" || $cmd == "xfers" ]]; then
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_entry/enable
-				echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_exit/enable
-		else
-				printf "Unknown 'kvm_trace' shorthand '$cmd\n"
-		fi
+	if [[ $# -eq 0 ]]; then
+			echo 1 > /sys/kernel/debug/tracing/events/kvm/enable
+	elif [[ $cmd == "o" || $cmd == "off" ]]; then
+			echo 0 > /sys/kernel/debug/tracing/events/kvm/enable
+			echo 0 > /sys/kernel/debug/tracing/events/kvmmmu/enable
+	elif [[ $cmd == "a" || $cmd == "apicv" ]]; then
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_apicv_inhibit_changed/enable
+	elif [[ $cmd == "c" || $cmd == "cpuid" ]]; then
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_cpuid/enable
+	elif [[ $cmd == "em" || $cmd == "emulate" ]]; then
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_emulate_insn/enable
+	elif [[ $cmd == "em" || $cmd == "emulate" ]]; then
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_emulate_insn/enable
+	elif [[ $cmd == "ex" || $cmd == "exceptions" ]]; then
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_inj_exception/enable
+	elif [[ $cmd == "f" || $cmd == "fail" ]]; then
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_nested_vmenter_failed/enable
+	elif [[ $cmd == "h" || $cmd == "hypercall" ]]; then
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_hypercall/enable
+	elif [[ $cmd == "i" || $cmd == "irqs" ]]; then
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_apic_ipi/enable
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_inj_virq/enable
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_apic_accept_irq/enable
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_apicv_accept_irq/enable
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_avic_unaccelerated_access/enable
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_eoi/enable
+	elif [[ $cmd == "mmu" ]]; then
+			echo $val > /sys/kernel/debug/tracing/events/kvmmmu/enable
+	elif [[ $cmd == "mn" ]]; then
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_age_hva/enable
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_set_spte_hva/enable
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_test_age_hva/enable
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_unmap_hva_range/enable
+	elif [[ $cmd == "n" || $cmd == "nested" ]]; then
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_nested_intercepts/enable
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_nested_intr_vmexit/enable
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_nested_vmenter_failed/enable
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_nested_vmexit/enable
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_nested_vmexit_inject/enable
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_nested_vmenter/enable
+	elif [[ $cmd == "pf" || $cmd == "pagefaults" ]]; then
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_page_fault/enable
+	elif [[ $cmd == "q" || $cmd == "query" ]]; then
+			tail /sys/kernel/debug/tracing/events/kvm/**/enable | grep -B 1 1
+	elif [[ $cmd == "r" || $cmd == "msr" ]]; then
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_msr/enable
+	elif [[ $cmd == "u" || $cmd == "user" ]]; then
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_userspace_exit/enable
+	elif [[ $cmd == "v" || $cmd == "avic" ]]; then
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_avic_kick_vcpu_slowpath/enable
+	elif [[ $cmd == "x" || $cmd == "xfers" ]]; then
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_entry/enable
+			echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_exit/enable
+	else
+			printf "Unknown 'kvm_trace' shorthand '$cmd\n"
+	fi
 }
 alias kt='kvm-trace'
 alias lt='less /sys/kernel/debug/tracing/trace'
