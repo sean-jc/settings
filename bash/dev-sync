@@ -9,13 +9,14 @@ function dev-sync() {
 
 	if [[ $1 == "full" ]]; then
 		ssh $2 "mkdir -p /data/local/seanjc/build/kernel/vm/arch/x86/boot; \
-				mkdir -p /data/local/seanjc/build/kernel/vm/lib/modules; \
-				mkdir -p /data/local/seanjc/build/kernel/pae/arch/x86/boot; \
-				mkdir -p /data/local/seanjc/build/kernel/pae/lib/modules; \
-				mkdir -p /data/local/seanjc/build/qemu; \
-				mkdir -p /data/local/seanjc/go/src/github.com/sean-jc; \
-				mkdir -p /data/local/seanjc/go/src/kernel.org; \
-				mkdir -p /data/local/seanjc/images/qemu"
+			mkdir -p /data/local/seanjc/build/kernel/vm/lib/modules; \
+			mkdir -p /data/local/seanjc/build/kernel/pae/arch/x86/boot; \
+			mkdir -p /data/local/seanjc/build/kernel/pae/lib/modules; \
+			mkdir -p /data/local/seanjc/build/qemu; \
+			mkdir -p /data/local/seanjc/go/src/github.com/sean-jc; \
+			mkdir -p /data/local/seanjc/go/src/kernel.org; \
+			mkdir -p /data/local/seanjc/images/qemu; \
+			mkdir -p /data/local/seanjc/logs;"
 	fi
 	if [[ $1 == "full" || $1 == "settings" ]]; then
 		rsync --checksum ~/.bashrc $2:/data/local/seanjc

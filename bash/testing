@@ -109,33 +109,113 @@ function modprobe-kvm-loop {
 	done
 }
 
+function run-one-selftest() {
+	local GREEN='\e[0;32m' # Bold Green
+	local BROWN='\e[1;33m'  # Bold Brown
+	local BLUE='\e[1;34m'  # Bold Blue
+	local cyan='\033[0;36m' # Cyan
+	local NOF='\033[0m' # No Format
+
+	local __stdout
+	local __stderr
+	local test=$1
+	local log=$2
+
+	if [[ $i == "max_guest_memory_test" && $(is-guest) ]]; then
+		ret=4
+	else
+		catch __stdout __stderr $HOME/build/selftests/$i
+		ret=$?
+	fi
+
+	if [[ $ret -eq 0 ]]; then
+		printf "${GREEN}PASSED ${cyan}$i${NOF}\n" >> $log
+	elif [[ $ret -eq 4 ]]; then
+		printf "${BROWN}SKIPPED ${cyan}$i${NOF}\n" >> $log
+	elif [[ $ret -eq 139 ]]; then
+		printf "${RED}SEGFAULT ${cyan}$i${NOF}\n" >> $log
+	else
+		printf "${RED}FAILED ${cyan}$i${RED} : ret ='$ret'${NOF}\n" >> $log
+		printf "$__stdout\n" >> $log
+		printf "$__stderr\n" >> $log
+	fi
+	return $ret
+}
+
+function run-selftests-parallelized() {
+	local RED='\033[1;31m' # Bold Red
+	local GREEN='\e[0;32m' # Bold Green
+	local BROWN='\e[1;33m'  # Bold Brown
+	local BLUE='\e[1;34m'  # Bold Blue
+	local cyan='\033[0;36m' # Cyan
+	local NOF='\033[0m' # No Format
+
+	local tests=( $(/bin/ls -1 $HOME/build/selftests) )
+	local ret
+	local i
+
+	probe-modules qemu
+
+	local pids=()
+	for i in "${tests[@]}"; do
+		run-one-selftest $i "$HOME/logs/$i.$1.log" &
+		pids+=($!)
+	done
+
+	for i in "${!pids[@]}"; do
+		local test=${tests[$i]}
+		local pid=${pids[$i]}
+
+		printf "Waiting for '$test', PID '$pid'\n"
+		wait $pid 2>/dev/null
+
+		ret=$?
+		if [[ $ret -ne 0 ]]; then
+			cat "$HOME/logs/$test.$1.log"
+		fi
+	done
+
+}
+
 function really-run-all-tests() {
-	printf "\n\nRunning selftests with $1\n"
-	run-selftests
+	local GREEN='\e[0;32m' # Bold Green
+	local NOF='\033[0m' # No Format
 
-	printf "\n\nRunning KUT with $1\n"
+	printf "\n\n${GREEN}Running selftests with $1${NOF}\n"
+	run-selftests-parallelized $@ 2>/dev/null
+
+	printf "\n\n${GREEN}Running KUT with $1${NOF}\n"
 	cd ~/go/src/kernel.org/kvm-unit-tests
-	QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v
-	QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v -g nodefault
+	QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut.$1.log"
+	#QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus) -g nodefault
+	grep FAIL "$HOME/logs/kut.$1.log"
 
-	printf "\n\nRunning KUT EFI with $1\n"
+	printf "\n\nRunning KUT EFI with $1${NOF}\n"
 	cd ~/go/src/kernel.org/kut-efi
-	QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v
-	QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v -g nodefault
+	QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-efi.$1.log"
+	grep FAIL "$HOME/logs/kut-efi.$1.log"
+	#QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus) -g nodefault
 
-	printf "\n\nRunning KUT-32 with $1\n"
+	printf "\n\nRunning KUT-32 with $1${NOF}\n"
 	cd ~/go/src/kernel.org/kut-32
-	QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v
-	QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -v -g nodefault
+	QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-32.$1.log"
+	grep FAIL "$HOME/logs/kut-32.$1.log"
+	# QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus) -g nodefault
 }
 function run-all-tests() {
 	local paging_param
 
+	which gcontain
+	if [[ $? -eq 0 ]]; then
+		gcontain enter /
+	fi
+
+	rm -f $HOME/logs/*.log
 	echo 0 | psudo tee /proc/sys/kernel/nmi_watchdog > /dev/null
 
 	rmmod-kvm kvm
 	probe-modules qemu
-	really-run-all-tests "TDP enabled"
+	really-run-all-tests tdp_enabled
 
 	rmmod-kvm
 	grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
@@ -144,7 +224,7 @@ function run-all-tests() {
 	else
 		psudo modprobe kvm_intel ept=0
 	fi
-	really-run-all-tests "TDP disabled"
+	really-run-all-tests tdp_disabled
 }
 alias ra='run-all-tests'
 
