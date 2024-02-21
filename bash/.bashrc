@@ -6,20 +6,20 @@ if [[ -z $SSH_CONNECTION && ! $HOSTPOST =~ purg- && ! $HOSTPOST =~ dev- && ! $HO
 	export HOSTDISPLAY=""
 else
 	if [[ $HOSTPOST == velociraptor ]]; then
-	export HOSTDISPLAY="@velo"
+		export HOSTDISPLAY="@velo"
 	elif [[ $HOSTPOST == purgatory ]]; then
-	export HOSTDISPLAY="@purg"
+		export HOSTDISPLAY="@purg"
 	elif [[ $HOSTPOST == glaptop ]]; then
-	export HOSTDISPLAY="@lap"
+		export HOSTDISPLAY="@lap"
 	elif [[ $HOSTPOST =~ seanjc7.*.com ]]; then
-	export HOSTDISPLAY="@work"
+		export HOSTDISPLAY="@work"
 	elif [[ $HOSTPOST =~ seanjc.*.com ]]; then
-	export HOSTDISPLAY="@cloud"
+		export HOSTDISPLAY="@cloud"
 	elif [[ $HOSTPOST =~ zagreus.*.com ]]; then
-	export HOSTDISPLAY="@zag"
+		export HOSTDISPLAY="@zag"
 	else
-	HOSTPOST=${HOSTPOST%.prod.google.com}
-	export HOSTDISPLAY="@$HOSTPOST"
+		HOSTPOST=${HOSTPOST%.prod.google.com}
+		export HOSTDISPLAY="@$HOSTPOST"
 	fi
 fi
 export HOSTPOST=${HOSTPOST#velociraptor-}
@@ -34,6 +34,10 @@ fi
 
 # For development of GO itself
 export GOROOT_BOOTSTRAP=/usr/local/go
+
+if [[ -d "/usr/local/iotools" ]]; then
+	PATH=$PATH:/usr/local/iotools
+fi
 
 # Add ~/bin, (repo)/bin, and GO bins to PATH
 if [[ $PATH != *"sean-jc/settings"* ]]; then
