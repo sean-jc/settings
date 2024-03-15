@@ -2,7 +2,7 @@ function dev-sync() {
 	if [[ $# -ne 2 ]]; then
 		printf "usage: dev-sync <host> <option>\n"
 		return 1
-	elif [[ $1 != "full" && $1 != "settings" && $1 != "binaries" && $1 != "kvm" && $1 != "tests" ]]; then
+	elif [[ $1 != "full" && $1 != "settings" && $1 != "binaries" && $1 != "kvm" && $1 != "tests" && $1 != "vm" ]]; then
 		printf "usage: ds[,b,k,s,t] <target>\n"
 		return 1
 	fi
