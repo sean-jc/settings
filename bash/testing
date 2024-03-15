@@ -174,8 +174,8 @@ function run-selftests-parallelized() {
 			cat "$HOME/logs/$test.$1.log"
 		fi
 	done
-
 }
+alias rp='run-selftests-parallelized current 2>/dev/null'
 
 function really-run-all-tests() {
 	local GREEN='\e[0;32m' # Bold Green
