@@ -109,14 +109,12 @@ else
 
 	pre=""
 	if [[ $ml == "ku" ]]; then
-	pre="kvm-unit-tests "
+		pre="kvm-unit-tests "
 	fi
 	if [[ -n $resend ]]; then
-	pre="$pre""RESEND "
+		pre="$pre""RESEND "
 	fi
-	if [[ -n $rfc ]]; then
-	pre="$pre""RFC "
-	fi
+
 	pre="$pre""PATCH""$post"
 
 	pre="--subject-prefix=\"$pre\""
@@ -177,9 +175,9 @@ if [[ -n $nok ]]; then
 fi
 if [[ -z $to ]]; then
 	if [[ $ml == "stable" ]]; then
-	to="--to=\"stable@vger.kernel.org\" --to=\"Greg Kroah-Hartman <gregkh@linuxfoundation.org>\""
+		to="--to=\"stable@vger.kernel.org\" --to=\"Greg Kroah-Hartman <gregkh@linuxfoundation.org>\""
 	else
-	to=$(get-maintainers to $head $ml "$gm_opts" $pre)
+		to=$(get-maintainers to $head $ml "$gm_opts" $pre)
 	if [[ -z $to ]]; then
 		printf "No --to found for %s\n" "get-maintainers to $head $ml $gm_opts $pre"
 		exit 1
@@ -194,12 +192,12 @@ fi
 if [[ -z $cc ]]; then
 	cc=$(get-maintainers cc $head $ml "$gm_opts" $pre)
 	if [[ -z $cc ]]; then
-	printf "No --cc found for %s\n" "get-maintainers cc $head $ml $gm_opts $pre"
-	exit 1
+		printf "No --cc found for %s\n" "get-maintainers cc $head $ml $gm_opts $pre"
+		exit 1
 	fi
 	if [[ $ml == "stable" ]]; then
-	cc2=$(get-maintainers to $head $ml "$gm_opts" $pre)
-	cc="$cc,$cc2"
+		cc2=$(get-maintainers to $head $ml "$gm_opts" $pre)
+		cc="$cc,$cc2"
 	fi
 	cc="${cc//\"/\\\"}"
 	cc="${cc//VMware,/VMwarecomma}"
