@@ -223,18 +223,18 @@ if [[ -n $iso ]]; then
 elif [[ -n $kernel ]]; then
 	append="quiet earlyprintk=ttyS0 net.ifnames=0 $append"
 	if [[ $status != "n" ]]; then
-	append="$append systemd.show_status=1"
+		append="$append systemd.show_status=1"
 	fi
 	if [[ -z $serial ]]; then
-	append="console=hvc0 $append"
+		append="console=hvc0 $append"
 	else
-	append="console=ttyS0 $append"
+		append="console=ttyS0 $append"
 	fi
 	if [[ -z $quiet ]]; then
-	append="$append ignore_loglevel"
-	if [[ -n $verbose ]]; then
-		append="$append systemd.journald.forward_to_console"
-	fi
+		append="$append ignore_loglevel"
+		if [[ -n $verbose ]]; then
+			append="$append systemd.journald.forward_to_console"
+		fi
 	fi
 	append="$append l1tf=off nohpet"
 	if [[ $x2apic == "false" || $x2apic == "n" ]]; then
