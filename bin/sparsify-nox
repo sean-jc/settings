@@ -16,4 +16,13 @@ include_early+=(
 	tools/arch/s390/
 )
 
+include_late+=(
+	drivers/amba
+	drivers/bus
+	drivers/irqchip
+	drivers/of
+	drivers/power
+	drivers/s390
+)
+
 sparsify-kernel
