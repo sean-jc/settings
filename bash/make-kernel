@@ -241,11 +241,13 @@ function generate-x86-configs() {
 	./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/pae $SETTINGS/kconfigs/vm.config $SETTINGS/kconfigs/pae.config
 	./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/up  $SETTINGS/kconfigs/vm.config $SETTINGS/kconfigs/up.config
 	./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/gpu  $SETTINGS/kconfigs/vm.config $SETTINGS/kconfigs/gpu.config
+	./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/nok  $SETTINGS/kconfigs/vm.config $SETTINGS/kconfigs/no_kvm.config
 
 	LLVM=1 ./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/clang_all $SETTINGS/kconfigs/vm.config $SETTINGS/kconfigs/all.config
 	LLVM=1 ./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/clang_pae $SETTINGS/kconfigs/vm.config $SETTINGS/kconfigs/pae.config
 	LLVM=1 ./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/clang_up  $SETTINGS/kconfigs/vm.config $SETTINGS/kconfigs/up.config
 	LLVM=1 ./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/clang_gpu $SETTINGS/kconfigs/vm.config $SETTINGS/kconfigs/gpu.config
+	LLVM=1 ./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/clang_nok $SETTINGS/kconfigs/vm.config $SETTINGS/kconfigs/no_kvm.config
 	popd
 }
 alias xk='generate-x86-configs'
