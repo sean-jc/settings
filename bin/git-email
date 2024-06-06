@@ -16,20 +16,20 @@ function get-maintainers() {
 	fi
 
 	if [[ $(basename $head) =~ ^${pre}0000- ]] ; then
-	maint=$(./scripts/get_maintainer.pl $opts $(dirname $head)/!(${pre}0000-cover-letter.patch) | tr '\n' ',')
+		maint=$(./scripts/get_maintainer.pl $opts $(dirname $head)/!(${pre}0000-cover-letter.patch) | tr '\n' ',')
 	else
-	maint=$(./scripts/get_maintainer.pl $opts $head | tr '\n' ',')
+		maint=$(./scripts/get_maintainer.pl $opts $head | tr '\n' ',')
 	fi
 	if [[ $cmd == "cc" ]]; then
-	if [[ $ml != "ku" && $ml != "qemu" ]]; then
-		maint="$maint""linux-kernel@vger.kernel.org,"
-	fi
+		if [[ $ml != "ku" && $ml != "qemu" ]]; then
+			maint="$maint""linux-kernel@vger.kernel.org,"
+		fi
 	if [[ $(basename $head) =~ ^${pre}0000- ]] ; then
 		pfiles=$(ls -1 $(dirname $head)/!(${pre}0000-cover-letter.patch))
 	else
 		pfiles=$head
 	fi
-	maint="$maint$(echo $pfiles | xargs cat | grep -v stable@vger.kernel.org | grep -v lkp@intel.com | grep -e Cc: -e Acked-by -e Suggested-by -e Reported-by -e Tested-by -e Reported-and-tested-by -e Reviewed-by -e Signed-off-by | cut -d ' ' -f 2- | tr '\n' ',')"
+		maint="$maint$(echo $pfiles | xargs cat | grep -v stable@vger.kernel.org | grep -v lkp@intel.com | grep -e Cc: -e Acked-by -e Suggested-by -e Reported-by -e Tested-by -e Reported-and-tested-by -e Reviewed-by -e Signed-off-by | cut -d ' ' -f 2- | tr '\n' ',')"
 	fi
 
 	maint=${maint%,};
