@@ -26,6 +26,8 @@ export HOSTPOST=${HOSTPOST#velociraptor-}
 export SETTINGS=$HOME/go/src/github.com/sean-jc/settings
 export LSDT_CONFIG=$SETTINGS/.config/lsdt/config.yml
 
+export TOOLCHAINS=$HOME/toolchains/gcc-14.1.0-nolibc
+
 # Define GOPATH
 export GOPATH=$HOME/go
 if [[ $(whoami) == "sean" ]]; then

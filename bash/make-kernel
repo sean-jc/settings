@@ -1,6 +1,6 @@
 . $SETTINGS/bash/utils
 
-function make-kernel() {
+function do-make-kernel() {
 	if [[ $# -lt 1 ]]; then
 		printf "Must specify the command\n"
 		return 1
@@ -64,11 +64,8 @@ function make-kernel() {
 
 		if [[ -z $ARCH ]]; then
 			make W=1 LOCALVERSION=$name O=$HOME/build/kernel/$2 $EXTRAS -j$(get-nr-cpus)
-		elif [[ $ARCH == arm64 || $ARCH == mips || $ARCH == powerpc || $ARCH == riscv || $ARCH == s390 ]]; then
-			make LOCALVERSION=$name O=$HOME/build/kernel/$2 $EXTRAS -j$(get-nr-cpus)
 		else
-			printf "Unknown ARCH '$ARCH'\n"
-			return 6
+			make LOCALVERSION=$name O=$HOME/build/kernel/$2 $EXTRAS -j$(get-nr-cpus)
 		fi
 		
 		ret=$?
@@ -81,23 +78,24 @@ function make-kernel() {
 			printf "'htmldocs' isn't supported for sparse trees\n"
 			return 6
 		fi
-		if [[ $1 != "defconfig" &&
-			  $1 != "oldconfig" &&
-			  $1 != "menuconfig" &&
-			  $1 != "localmodconfig" &&
-			  $1 != "clean" ]]; then
-			printf "Unsupported command '$1'\n"
-			return 7
-		fi
 		make O=$HOME/build/kernel/$2 $1
 		ret=$?
-
-
 # /usr/bin/python3 /usr/bin/sphinx-build -j128 -b html -c /usr/local/google/home/seanjc/go/src/kernel.org/linux/Documentation -d /usr/local/google/home/seanjc/build/kernel/docs/Documentation/output/.doctrees -D version=6.2.0-rc3 -D release= -D kerneldoc_srctree=/usr/local/google/home/seanjc/go/src/kernel.org/linux -D kerneldoc_bin=/usr/local/google/home/seanjc/go/src/kernel.org/linux/scripts/kernel-doc -q /usr/local/google/home/seanjc/go/src/kernel.org/linux/Documentation /usr/local/google/home/seanjc/build/kernel/docs/Documentation/output
-
 	fi
 
 	return $ret
+}
+
+function make-kernel() {
+	if [[ -n $ARCH && -z $CROSS_COMPILE ]]; then
+		if [[ -z $CC_ARCH ]]; then
+			printf "Must define 'CROSS_COMPILE' or 'CC_ARCH'\n"
+			return 1
+		fi
+		CROSS_COMPILE=$TOOLCHAINS/$CC_ARCH-linux/bin/$CC_ARCH-linux- do-make-kernel $@
+	else
+		do-make-kernel $@
+	fi
 }
 
 function make-x86() {
@@ -107,27 +105,35 @@ function make-clang() {
 	LLVM=1 $@
 }
 function make-arm() {
-	ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- $@
+	# ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- $@
+	ARCH=arm64 CC_ARCH=aarch64 $@
 }
 alias ma='make-arm make'
 alias ja='make-clang make-arm make'
 alias mah='make-arm make headers_install'
 
 function make-mips() {
-	ARCH=mips CROSS_COMPILE=mips64-linux-gnuabi64- $@
+	# ARCH=mips CROSS_COMPILE=mips64-linux-gnuabi64- $@
+	ARCH=mips CC_ARCH=mips64 $@
 }
 function make-ppc() {
-	ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- $@
+	# ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- $@
+	ARCH=powerpc CC_ARCH=powerpc64 $@
 }
 function make-riscv() {
-	ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- $@
+	# ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- $@
+	ARCH=riscv CC_ARCH=riscv64 $@
+}
+function make-loong() {
+	ARCH=loongarch CC_ARCH=loongarch64 $@
 }
 alias mr='make-riscv make'
 alias jr='make-clang make-riscv make'
 alias mrh='make-riscv make headers_install'
 
 function make-s390() {
-	ARCH=s390 CROSS_COMPILE=s390x-linux-gnu- $@
+	# ARCH=s390 CROSS_COMPILE=s390x-linux-gnu- $@
+	ARCH=s390 CC_ARCH=s390 $@
 }
 alias ms='make-s390 make'
 alias js='make-clang make-s390 make'
@@ -163,6 +169,15 @@ alias amd='make-kernel-arm defconfig cc_arm'
 alias ame='make-kernel-arm clean cc_arm'
 alias amm='make-kernel-arm menuconfig cc_arm'
 alias amo='make-kernel-arm oldconfig cc_arm'
+
+function make-kernel-loong() {
+	make-loong make-kernel $@
+}
+alias lmc='make-kernel-loong make cc_loong'
+alias lmd='make-kernel-loong defconfig cc_loong'
+alias lme='make-kernel-loong clean cc_loong'
+alias lmm='make-kernel-loong menuconfig cc_loong'
+alias lmo='make-kernel-loong oldconfig cc_loong'
 
 function make-kernel-mips() {
 	make-mips make-kernel $@
