@@ -79,10 +79,12 @@ include_late=(
 	Documentation/admin-guide/cgroup-v2.rst
 	Documentation/admin-guide/kernel-parameters.txt
 	Documentation/admin-guide/serial-console.rst
+	Documentation/arch/x86/*
 	Documentation/process/*
 	Documentation/virtual/*
 	Documentation/virt/*
-	Documentation/x86/*
+	Documentation/*.txt
+	tools/objtool/Documentation
 	Kconfig
 	Kconfig.*
 	Makefile
