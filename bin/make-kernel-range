@@ -62,6 +62,7 @@ function do-make-kernel-range() {
 			 "make-kernel-clang $2 clang_gpu")
 	elif [[ $1 == "all" ]]; then
 		targets=("make-kernel-arm $2 cc_arm"
+			 "make-kernel-loong $2 cc_loong"
 			 "make-kernel-mips $2 cc_mips64"
 			 "make-kernel-ppc $2 cc_ppc64"
 			 "make-kernel-ppc $2 cc_e500mc"
