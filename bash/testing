@@ -170,6 +170,7 @@ function run-selftests-parallelized() {
 		wait $pid 2>/dev/null
 
 		ret=$?
+		#if [[ $ret -ne 0 || egrep -q "FAILED|SKIPPED" "$HOME/logs/$test.$1.log" ]]; then
 		if [[ $ret -ne 0 ]]; then
 			cat "$HOME/logs/$test.$1.log"
 		fi
@@ -220,11 +221,40 @@ function run-all-tests() {
 	rmmod-kvm
 	grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
 	if [[ $? -eq 0 ]]; then
-		psudo modprobe kvm_amd npt=0
+		psudo modprobe kvm_amd npt=0 avic=1
+		really-run-all-tests npt_disabled
+
+		if [[ $(grep -q Y /sys/module/kvm_intel/parameters/avic) -eq 0 ]]; then
+			rmmod-kvm
+			psudo modprobe kvm_amd enable_avic=0
+			really-run-all-tests avic_disabled
+		fi
 	else
+		rmmod-kvm
+		psudo modprobe kvm_intel eptad=0
+		really-run-all-tests eptad_disabled
+
 		psudo modprobe kvm_intel ept=0
+		really-run-all-tests ept_disabled
+
+		rmmod-kvm
+		psudo modprobe kvm_intel unrestricted_guest=0
+		really-run-all-tests urg_disabled
+
+		if [[ $(grep -q Y /sys/module/kvm_intel/parameters/enable_ipiv) -eq 0 ]]; then
+			rmmod-kvm
+			psudo modprobe kvm_intel enable_ipiv=0
+			really-run-all-tests ipiv_disabled
+		fi
+
+		if [[ $(grep -q Y /sys/module/kvm_intel/parameters/enable_apicv) -eq 0 ]]; then
+			rmmod-kvm
+			psudo modprobe kvm_intel enable_apicv=0
+			really-run-all-tests apicv_disabled
+		fi
 	fi
-	really-run-all-tests tdp_disabled
+
+	egrep "FAIL|FAILED" ~/logs/*.log
 }
 alias ra='run-all-tests'
 
