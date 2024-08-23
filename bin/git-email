@@ -10,9 +10,9 @@ function get-maintainers() {
 	local maint
 
 	if [[ $cmd == "to" ]]; then
-	opts="$opts --nol"
+		opts="$opts --nol"
 	else
-	opts="$opts --nom"
+		opts="$opts --nom"
 	fi
 
 	if [[ $(basename $head) =~ ^${pre}0000- ]] ; then
