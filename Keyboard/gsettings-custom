@@ -1,6 +1,42 @@
 #!/bin/bash
 gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/']"
 
+# Static, hidden crap that prevents custom bindings.
+#org.gnome.settings-daemon.plugins.media-keys play-static ['XF86AudioPlay', '<Ctrl>XF86AudioPlay']
+#org.gnome.settings-daemon.plugins.media-keys next-static ['XF86AudioNext', '<Ctrl>XF86AudioNext']
+#org.gnome.settings-daemon.plugins.media-keys previous-static ['XF86AudioPrev', '<Ctrl>XF86AudioPrev']
+#org.gnome.settings-daemon.plugins.media-keys rotate-video-lock-static ['<Super>o', 'XF86RotationLockToggle']
+#org.gnome.settings-daemon.plugins.media-keys rotate-video-lock-static ['<Super>o', 'XF86RotationLockToggle']
+# org.gnome.settings-daemon.plugins.media-keys volume-down-precise-static ['<Shift>XF86AudioLowerVolume', '<Ctrl><Shift>XF86AudioLowerVolume']
+# org.gnome.settings-daemon.plugins.media-keys volume-down-quiet-static ['<Alt>XF86AudioLowerVolume', '<Alt><Ctrl>XF86AudioLowerVolume']
+# org.gnome.settings-daemon.plugins.media-keys volume-down-static ['XF86AudioLowerVolume', '<Ctrl>XF86AudioLowerVolume']
+# org.gnome.settings-daemon.plugins.media-keys volume-up-precise-static ['<Shift>XF86AudioRaiseVolume', '<Ctrl><Shift>XF86AudioRaiseVolume']
+# org.gnome.settings-daemon.plugins.media-keys volume-up-quiet-static ['<Alt>XF86AudioRaiseVolume', '<Alt><Ctrl>XF86AudioRaiseVolume']
+# org.gnome.settings-daemon.plugins.media-keys volume-up-static ['XF86AudioRaiseVolume', '<Ctrl>XF86AudioRaiseVolume']
+# org.gnome.settings-daemon.plugins.media-keys volume-down-precise-static ['<Shift>XF86AudioLowerVolume', '<Ctrl><Shift>XF86AudioLowerVolume']
+# org.gnome.settings-daemon.plugins.media-keys volume-down-quiet-static ['<Alt>XF86AudioLowerVolume', '<Alt><Ctrl>XF86AudioLowerVolume']
+# org.gnome.settings-daemon.plugins.media-keys volume-down-static ['XF86AudioLowerVolume', '<Ctrl>XF86AudioLowerVolume']
+# org.gnome.settings-daemon.plugins.media-keys volume-up-precise-static ['<Shift>XF86AudioRaiseVolume', '<Ctrl><Shift>XF86AudioRaiseVolume']
+# org.gnome.settings-daemon.plugins.media-keys volume-up-quiet-static ['<Alt>XF86AudioRaiseVolume', '<Alt><Ctrl>XF86AudioRaiseVolume']
+# org.gnome.settings-daemon.plugins.media-keys volume-up-static ['XF86AudioRaiseVolume', '<Ctrl>XF86AudioRaiseVolume']
+gettings set org.gnome.settings-daemon.plugins.media-keys play-static []
+gettings set org.gnome.settings-daemon.plugins.media-keys next-static []
+gettings set org.gnome.settings-daemon.plugins.media-keys previous-static []
+gettings set org.gnome.settings-daemon.plugins.media-keys rotate-video-lock-static []
+gettings set org.gnome.settings-daemon.plugins.media-keys rotate-video-lock-static []
+gsettings set org.gnome.settings-daemon.plugins.media-keys volume-down-precise-static []
+gsettings set org.gnome.settings-daemon.plugins.media-keys volume-down-quiet-static []
+gsettings set org.gnome.settings-daemon.plugins.media-keys volume-down-static []
+gsettings set org.gnome.settings-daemon.plugins.media-keys volume-up-precise-static []
+gsettings set org.gnome.settings-daemon.plugins.media-keys volume-up-quiet-static []
+gsettings set org.gnome.settings-daemon.plugins.media-keys volume-up-static []
+gsettings set org.gnome.settings-daemon.plugins.media-keys volume-down-precise-static []
+gsettings set org.gnome.settings-daemon.plugins.media-keys volume-down-quiet-static []
+gsettings set org.gnome.settings-daemon.plugins.media-keys volume-down-static []
+gsettings set org.gnome.settings-daemon.plugins.media-keys volume-up-precise-static []
+gsettings set org.gnome.settings-daemon.plugins.media-keys volume-up-quiet-static []
+gsettings set org.gnome.settings-daemon.plugins.media-keys volume-up-static []
+
 # System Suspend
 gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding "<Primary><Alt>Delete"
 gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command "system suspend -i"
@@ -20,3 +56,28 @@ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/or
 gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/ binding "<Alt>F10"
 gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/ command "cmus-remote -r"
 gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/ name "cmus Previous"
+
+# workspaces
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-1 "['<Control>1']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-2 "['<Control>2']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-3 "['<Control>3']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-4 "['<Control>4']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-5 "['<Control>5']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-6 "['<Control>6']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-7 "['<Control>7']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-8 "['<Control>8']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-9 "['<Control>9']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-10 "['<Control>Escape']"
+
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-1 "['<Shift><Control>1']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-2 "['<Shift><Control>2']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-3 "['<Shift><Control>3']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-4 "['<Shift><Control>4']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-5 "['<Shift><Control>5']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-6 "['<Shift><Control>6']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-7 "['<Shift><Control>7']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-8 "['<Shift><Control>8']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-9 "['<Shift><Control>9']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-10 "['<Shift><Control>Escape']"
+
+gsettings set org.gnome.settings-daemon.plugins.media-keys screensaver "['<Super>o']"
