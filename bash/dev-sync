@@ -16,7 +16,8 @@ function dev-sync() {
 			mkdir -p /data/local/seanjc/go/src/github.com/sean-jc; \
 			mkdir -p /data/local/seanjc/go/src/kernel.org; \
 			mkdir -p /data/local/seanjc/images/qemu; \
-			mkdir -p /data/local/seanjc/logs;"
+			mkdir -p /data/local/seanjc/logs; \
+			mkdir -p /root/.ssh/sockets"
 	fi
 	if [[ $1 == "full" || $1 == "settings" ]]; then
 		rsync --checksum ~/.bashrc $2:/data/local/seanjc
