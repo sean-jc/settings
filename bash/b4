@@ -76,7 +76,7 @@ function b4-ty-fixup() {
 
 alias b4=$HOME/go/src/kernel.org/b4/b4.sh
 
-alias bb='b4-am-apply'
+alias bb='b4-am-apply -t'
 alias bbl='b4-am-apply -t -l'
 alias bbn='b4-am'
 alias bm='b4-mbox'
