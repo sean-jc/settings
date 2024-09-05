@@ -1,0 +1,23 @@
+# mount -t tmpfs swap tmpfs
+# mkdir -p /data/local/seanjc/tmpfs/tmp/__vm__
+# export TMPDIR=/data/local/seanjc/tmpfs/tmp
+
+function kokonut-kvm() {
+	kokonut test --machine_families=$1 --kernel pkgs/LATEST.tar.xz //kvm/... //gvisor/...
+}
+alias koki='kokonut-kvm izumi'
+alias kokd='kokonut-kvm indus'
+alias koka='kokonut-kvm arcadia'
+
+function kokonut-boot-test() {
+	local host
+
+	host=$(grep -A1 "Host $1" ~/.ssh/config | grep HostName | tr -s " " | cut -f 3 -d " ")
+	if [[ -z $host ]]; then
+		printf "no match for host=$1\n"
+		return 1
+	fi
+
+	kokonut test --test_machines=$host //kvm:LinuxBootTests:cloud_vmm_testing_boot_test_seabios
+}
+alias kdb='kokonut-boot-test'
