@@ -1,6 +1,6 @@
 . $SETTINGS/bash/utils
 
-function do-make-kernel() {
+function make-kernel() {
 	if [[ $# -lt 1 ]]; then
 		printf "Must specify the command\n"
 		return 1
@@ -86,15 +86,19 @@ function do-make-kernel() {
 	return $ret
 }
 
-function make-kernel() {
-	if [[ -n $ARCH && -z $CROSS_COMPILE ]]; then
-		if [[ -z $CC_ARCH ]]; then
-			printf "Must define 'CROSS_COMPILE' or 'CC_ARCH'\n"
-			return 1
-		fi
-		CROSS_COMPILE=$TOOLCHAINS/$CC_ARCH-linux/bin/$CC_ARCH-linux- do-make-kernel $@
+function cc-make() {
+	if [[ -z $CC_ARCH ]]; then
+		printf "Must define 'CC_ARCH'\n"
+		return 1
+	fi
+	if [[ $1 == "make-kernel" ]]; then
+		CROSS_COMPILE=$TOOLCHAINS/$CC_ARCH-linux/bin/$CC_ARCH-linux- $@
 	else
-		do-make-kernel $@
+		if [[ $CC_ARCH == "s390" ]]; then
+			CROSS_COMPILE=s390x-linux-gnu- $@
+		else
+			CROSS_COMPILE=$CC_ARCH-linux-gnu- $@
+		fi
 	fi
 }
 
@@ -105,40 +109,34 @@ function make-clang() {
 	LLVM=1 $@
 }
 function make-arm() {
-	# ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- $@
-	ARCH=arm64 CC_ARCH=aarch64 $@
+	ARCH=arm64 CC_ARCH=aarch64 cc-make $@
+}
+function make-mips() {
+	ARCH=mips CC_ARCH=mips64 cc-make $@
+}
+function make-ppc() {
+	ARCH=powerpc CC_ARCH=powerpc64 cc-make $@
+}
+function make-riscv() {
+	ARCH=riscv CC_ARCH=riscv64 cc-make $@
+}
+function make-loong() {
+	ARCH=loongarch CC_ARCH=loongarch64 cc-make $@
+}
+function make-s390() {
+	ARCH=s390 CC_ARCH=s390 cc-make $@
 }
 alias ma='make-arm make'
 alias ja='make-clang make-arm make'
 alias mah='make-arm make headers_install'
 
-function make-mips() {
-	# ARCH=mips CROSS_COMPILE=mips64-linux-gnuabi64- $@
-	ARCH=mips CC_ARCH=mips64 $@
-}
-function make-ppc() {
-	# ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- $@
-	ARCH=powerpc CC_ARCH=powerpc64 $@
-}
-function make-riscv() {
-	# ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- $@
-	ARCH=riscv CC_ARCH=riscv64 $@
-}
-function make-loong() {
-	ARCH=loongarch CC_ARCH=loongarch64 $@
-}
 alias mr='make-riscv make'
 alias jr='make-clang make-riscv make'
 alias mrh='make-riscv make headers_install'
 
-function make-s390() {
-	# ARCH=s390 CROSS_COMPILE=s390x-linux-gnu- $@
-	ARCH=s390 CC_ARCH=s390 $@
-}
 alias ms='make-s390 make'
 alias js='make-clang make-s390 make'
 alias msh='make-s390 make headers_install'
-
 
 # Make Custom kernel
 alias mc='make-kernel make'
