@@ -103,47 +103,37 @@ if [[ -z $roms ]]; then
 fi
 net="-device virtio-net-pci,netdev=net0,mac=$mac,$virtio_opt -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
 
-maxmem=16G
+slots=0
+if [[ -n $fd ]]; then
+	slots=$((slots+1))
+	mem="-object memory-backend-memfd,hugetlb=n,id=mem$slots,size=$fd""G -device pc-dimm,id=dimm$slots,memdev=mem$slots"
+fi
+if [[ -n $m2 ]]; then
+	slots=$((slots+1))
+	mem="$mem -object memory-backend-memfd,hugetlb=y,hugetlbsize=2M,id=mem$slots,size=$m2""G -device pc-dimm,id=dimm$slots,memdev=mem$slots"
+fi
+if [[ -n $m1 ]]; then
+	slots=$((slots+1))
+	mem="$mem -object memory-backend-memfd,hugetlb=y,hugetlbsize=1G,id=mem$slots,size=$m1""G -device pc-dimm,id=dimm$slots,memdev=mem$slots"
+fi
 if [[ -n $epc ]]; then
-	maxmem=32G
+	for section in $epc; do
+		slots=$((slots+1))
+		mem="$mem -object memory-backend-epc,id=mem$slots,size=$section -sgx-epc id=epc$slots,memdev=mem$slots"
+	done
 fi
 
 if [[ -n $mb ]]; then
-	mem="-m $mb""M"
+	boot_mem="$mb""M"
 elif [[ -n $gb ]]; then
-	mem="-m $gb""G"
-elif [[ "$qemu_bin" =~ "i386" ]]; then
-	mem="-m 1G"
+	boot_mem="$gb""G"
+elif [[ "$qemu_bin" =~ "i386" || -n $fd || -n $m2 || -n $m1 ]]; then
+	boot_mem="1G"
 else
-	total_mem=$(free -g | grep Mem: | tr -s ' ' | cut -f 2 -d ' ')
-	if [[ $total_mem -lt 5 ]]; then
-	printf "Not enough memory to start a VM\n"
-	exit 2
-	fi
-	if [[ $total_mem -lt 17 && $os = "hyper-v" ]]; then
-	printf "Not enough memory to start Hyper-V\n"
-	exit 2
-	fi
-
-	if [[ $total_mem -gt 16 ]]; then
-	mem="4G"
-	memfd="12G"
-	elif [[ $total_mem -gt 8 ]]; then
-	mem="4G"
-	memfd="4G"
-	else
-	mem="2G"
-	memfd="2G"
-	fi
-	mem="-m $mem,slots=1,maxmem=$maxmem -object memory-backend-memfd,hugetlb=y,hugetlbsize=2M,id=mem1,size=$memfd -device pc-dimm,id=dimm1,memdev=mem1 "
+	boot_mem="3G"
 fi
-if [[ -n $epc ]]; then
-	id=2
-	for section in $epc; do
-	mem="$mem -object memory-backend-epc,id=mem$id,size=$section -sgx-epc id=epc$id,memdev=mem$id"
-	id=$((id+1))
-	done
-fi
+mem="-m $boot_mem,slots=$slots,maxmem=256G $mem"
+echo "$mem"
 
 machine="-enable-kvm -smp $cpus,sockets=1 -machine q35,accel=kvm,pit=off,hpet=off"
 if [[ -n $mach ]]; then
