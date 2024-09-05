@@ -50,13 +50,15 @@ function do-make-kernel-range() {
 			 "make-kernel-clang $2 clang")
 	elif [[ $1 == "x86" ]]; then
 		targets=("make-kernel $2 vm"
+			 "make-kernel $2 all"
 			 "make-kernel $2 pae"
 			 "make-kernel $2 up"
-			 "make-kernel $2 all"
+			 "make-kernel $2 nok"
 			 "make-kernel-clang $2 clang"
 			 "make-kernel-clang $2 clang_all"
 			 "make-kernel-clang $2 clang_pae"
-			 "make-kernel-clang $2 clang_up")
+			 "make-kernel-clang $2 clang_up"
+			 "make-kernel-clang $2 clang_nok")
 	elif [[ $1 == "gpu" ]]; then
 		targets=("make-kernel $2 gpu"
 			 "make-kernel-clang $2 clang_gpu")
