@@ -8,7 +8,7 @@ function modprobe-kvm-all {
 }
 alias mpka='modprobe-kvm-all'
 
-function modprobe-kvm-raw() {
+function modprobe-kvm-vendor-raw() {
 	grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
 	if [[ $? -eq 0 ]]; then
 		kvm=kvm_amd
@@ -18,7 +18,7 @@ function modprobe-kvm-raw() {
 	psudo modprobe $kvm $@
 }
 
-function modprobe-kvm() {
+function modprobe-kvm-vendor() {
 	grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
 	if [[ $? -eq 0 ]]; then
 		kvm="kvm_amd avic=1 nested=1"
@@ -28,9 +28,10 @@ function modprobe-kvm() {
 	psudo modprobe $kvm $@
 }
 
+
 alias mpkk='psudo modprobe kvm force_emulation_prefix=2'
-alias mpk='mpkk && modprobe-kvm'
-alias mpkr='modprobe-kvm-raw'
+alias mpk='mpkk && modprobe-kvm-vendor'
+alias mpkr='modprobe-kvm-vendor-raw'
 
 function rmmod-kvm() {
 	grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
