@@ -618,6 +618,7 @@ alias ggo='git branch -r | tr -d " " | grep -E "^o/" | cut -f 2- -d "/" | grep'
 alias ggx='git branch -r --list x/* | grep -v next | cut -f 2 -d '/''
 alias gi='git rebase --interactive'
 alias gl='git log --decorate'
+alias glb='git log --decorate --format=format:%B'
 alias glc='git log --pretty=oneline --decorate --author=christopherson'
 alias glg='git log --pretty=oneline --decorate --graph'
 alias glo='git log --pretty=oneline --decorate'
@@ -627,7 +628,8 @@ alias gmk='git-merge-kvm-x86'
 alias gmks='CTHULU=n git-merge-kvm-x86'
 alias gmr='git pull --rebase=false --no-ff'
 alias gmt='git-make-tag'
-alias gw="git show --pretty=fuller"
+alias gw='git show --pretty=fuller'
+alias gwb='git show --pretty=fuller --format=format:%B'
 alias gwo="git show -s --pretty='tformat:%h (\"%s\")'"
 alias gwp="git show -s --pretty='tformat:%h, \"%s\"'"
 alias gpa='git-apply'
