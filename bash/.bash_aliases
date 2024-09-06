@@ -11,6 +11,7 @@
 . $SETTINGS/bash/gnome
 . $SETTINGS/bash/go
 . $SETTINGS/bash/kernel
+. $SETTINGS/bash/kokonut
 . $SETTINGS/bash/make-boot
 . $SETTINGS/bash/make-gbuild
 . $SETTINGS/bash/make-kernel
