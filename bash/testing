@@ -191,17 +191,19 @@ function really-run-all-tests() {
 	#QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus) -g nodefault
 	grep FAIL "$HOME/logs/kut.$1.log"
 
-	printf "\n\nRunning KUT EFI with $1${NOF}\n"
-	cd ~/go/src/kernel.org/kut-efi
-	QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-efi.$1.log"
-	grep FAIL "$HOME/logs/kut-efi.$1.log"
-	#QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus) -g nodefault
+	if [[ $RUN_KVM_TESTS != "short" ]]; then
+		printf "\n\nRunning KUT EFI with $1${NOF}\n"
+		cd ~/go/src/kernel.org/kut-efi
+		QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-efi.$1.log"
+		grep FAIL "$HOME/logs/kut-efi.$1.log"
+		#QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus) -g nodefault
 
-	printf "\n\nRunning KUT-32 with $1${NOF}\n"
-	cd ~/go/src/kernel.org/kut-32
-	QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-32.$1.log"
-	grep FAIL "$HOME/logs/kut-32.$1.log"
-	# QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus) -g nodefault
+		printf "\n\nRunning KUT-32 with $1${NOF}\n"
+		cd ~/go/src/kernel.org/kut-32
+		QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-32.$1.log"
+		grep FAIL "$HOME/logs/kut-32.$1.log"
+		# QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus) -g nodefault
+	fi
 }
 function run-all-tests() {
 	local paging_param
@@ -218,45 +220,48 @@ function run-all-tests() {
 	probe-modules qemu
 	really-run-all-tests tdp_enabled
 
-	rmmod-kvm
-	grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
-	if [[ $? -eq 0 ]]; then
-		psudo modprobe kvm_amd npt=0 avic=1
-		really-run-all-tests npt_disabled
-
-		if [[ $(grep -q Y /sys/module/kvm_intel/parameters/avic) -eq 0 ]]; then
-			rmmod-kvm
-			psudo modprobe kvm_amd enable_avic=0
-			really-run-all-tests avic_disabled
-		fi
-	else
+	if [[ $RUN_KVM_TESTS != "short" ]]; then
 		rmmod-kvm
-		psudo modprobe kvm_intel eptad=0
-		really-run-all-tests eptad_disabled
+		grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
+		if [[ $? -eq 0 ]]; then
+			psudo modprobe kvm_amd npt=0 avic=1
+			really-run-all-tests npt_disabled
 
-		psudo modprobe kvm_intel ept=0
-		really-run-all-tests ept_disabled
-
-		rmmod-kvm
-		psudo modprobe kvm_intel unrestricted_guest=0
-		really-run-all-tests urg_disabled
-
-		if [[ $(grep -q Y /sys/module/kvm_intel/parameters/enable_ipiv) -eq 0 ]]; then
+			if [[ $(grep -q Y /sys/module/kvm_intel/parameters/avic) -eq 0 ]]; then
+				rmmod-kvm
+				psudo modprobe kvm_amd enable_avic=0
+				really-run-all-tests avic_disabled
+			fi
+		else
 			rmmod-kvm
-			psudo modprobe kvm_intel enable_ipiv=0
-			really-run-all-tests ipiv_disabled
-		fi
+			psudo modprobe kvm_intel eptad=0
+			really-run-all-tests eptad_disabled
 
-		if [[ $(grep -q Y /sys/module/kvm_intel/parameters/enable_apicv) -eq 0 ]]; then
+			psudo modprobe kvm_intel ept=0
+			really-run-all-tests ept_disabled
+
 			rmmod-kvm
-			psudo modprobe kvm_intel enable_apicv=0
-			really-run-all-tests apicv_disabled
+			psudo modprobe kvm_intel unrestricted_guest=0
+			really-run-all-tests urg_disabled
+
+			if [[ $(grep -q Y /sys/module/kvm_intel/parameters/enable_ipiv) -eq 0 ]]; then
+				rmmod-kvm
+				psudo modprobe kvm_intel enable_ipiv=0
+				really-run-all-tests ipiv_disabled
+			fi
+
+			if [[ $(grep -q Y /sys/module/kvm_intel/parameters/enable_apicv) -eq 0 ]]; then
+				rmmod-kvm
+				psudo modprobe kvm_intel enable_apicv=0
+				really-run-all-tests apicv_disabled
+			fi
 		fi
 	fi
 
 	egrep "FAIL|FAILED" ~/logs/*.log
 }
 alias ra='run-all-tests'
+alias rs='RUN_KVM_TESTS=short run-all-tests'
 
 function run-memslot-test() {
 	if [[ $(id -u) -ne 0 ]]; then
