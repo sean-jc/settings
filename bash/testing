@@ -220,13 +220,20 @@ function run-all-tests() {
 	probe-modules qemu
 	really-run-all-tests tdp_enabled
 
-	if [[ $RUN_KVM_TESTS != "short" ]]; then
+	grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
+	if [[ $? -eq 0 ]]; then
 		rmmod-kvm
+		psudo modprobe kvm_amd npt=0 avic=1
+		really-run-all-tests npt_disabled
+	else
+		rmmod-kvm
+		psudo modprobe kvm_intel ept=0
+		really-run-all-tests ept_disabled
+	fi
+
+	if [[ $RUN_KVM_TESTS != "short" ]]; then
 		grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
 		if [[ $? -eq 0 ]]; then
-			psudo modprobe kvm_amd npt=0 avic=1
-			really-run-all-tests npt_disabled
-
 			if [[ $(grep -q Y /sys/module/kvm_intel/parameters/avic) -eq 0 ]]; then
 				rmmod-kvm
 				psudo modprobe kvm_amd enable_avic=0
@@ -236,9 +243,6 @@ function run-all-tests() {
 			rmmod-kvm
 			psudo modprobe kvm_intel eptad=0
 			really-run-all-tests eptad_disabled
-
-			psudo modprobe kvm_intel ept=0
-			really-run-all-tests ept_disabled
 
 			rmmod-kvm
 			psudo modprobe kvm_intel unrestricted_guest=0
