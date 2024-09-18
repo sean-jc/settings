@@ -178,6 +178,11 @@ function run-selftests-parallelized() {
 }
 alias rp='run-selftests-parallelized current 2>/dev/null'
 
+function run-kut-parallelized() {
+	QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut.$1.log"
+}
+alias rkp='run-kut-parallelized current 2>/dev/null'
+
 function really-run-all-tests() {
 	local GREEN='\e[0;32m' # Bold Green
 	local NOF='\033[0m' # No Format
