@@ -36,14 +36,6 @@ function git-blob() {
 	done
 }
 
-function git-apply() {
-	if [ $# -eq 0 ]; then
-		git am -3 $HOME/patches/*.*
-	else
-		git am -3 $1/*.*
-	fi
-}
-
 function git-fixup-backport-metadata() {
 	local commit=$1
 	local version
@@ -632,7 +624,7 @@ alias gw='git show --pretty=fuller'
 alias gwb='git show --pretty=fuller --format=format:%B'
 alias gwo="git show -s --pretty='tformat:%h (\"%s\")'"
 alias gwp="git show -s --pretty='tformat:%h, \"%s\"'"
-alias gpa='git-apply'
+alias gpa='git am -3 $HOME/patches/*.*'
 alias gpu='git-push'
 alias gpo='git-push o'
 alias gpf='git-push force'

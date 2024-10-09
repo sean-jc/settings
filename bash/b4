@@ -1,7 +1,7 @@
 # b4 and other lore stuff
 function b4-am-apply() {
 	rm -f $HOME/patches/*
-	$HOME/go/src/kernel.org/b4/b4.sh am --no-cover -s -C -o $HOME/patches/ "$@" && git-apply
+	$HOME/go/src/kernel.org/b4/b4.sh am --no-cover -s -C -o $HOME/patches/ "$@" && git am -3 $HOME/patches/*.*
 }
 
 function b4-am() {
