@@ -107,6 +107,10 @@ if [[ $? -ne 0 ]]; then
 fi
 net="-device virtio-net-pci,netdev=net0,mac=$mac,$virtio_opt -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
 
+if [[ -n $vfio ]]; then
+	net="$net -device vfio-pci,host=$vfio"
+fi
+
 slots=0
 if [[ -n $fd ]]; then
 	slots=$((slots+1))
