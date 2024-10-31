@@ -5,7 +5,7 @@ function gen-clangd-commands() {
 		printf "Needs to be run from top-level directory of kernel repo\n"
 		return 1
 	fi
-	if [[ ! -d ~/build/kernel/clangd_$repo ]]; then
+	if [[ $repo != "slf" && ! -d ~/build/kernel/clangd_$repo ]]; then
 		printf "Target build directory '~/build/kernel/clangd_$repo doesn't exist\n"
 		return 1
 	fi
@@ -14,7 +14,34 @@ function gen-clangd-commands() {
 	rm -f ./.vscode/compile_commands.json
 	if [[ $repo != "slf" ]]; then
 		./scripts/clang-tools/gen_compile_commands.py -d ~/build/kernel/clangd_$repo -o ./.vscode/compile_commands.json
+		return 0
 	fi
-	LLVM=1 make -C tools/testing/selftests/kvm -Bnwk | ~/bin/python3/bin/compiledb -n --build-dir ./tools/testing/selftests/kvm -o ./.vscode/compile_commands.json
+
+	local cmd
+
+	echo "[" >> ./.vscode/compile_commands.json
+	while read -r cmd; do
+		local file
+
+		echo "$cmd" | grep -q -E "^make:"
+		if [[ $? -eq 0 ]]; then
+			continue
+		fi
+
+		file=$(echo $cmd | grep -oP '(?<=\-c\s)\S+')
+		if [[ $? -ne 0 ]]; then
+			continue
+		fi
+
+		echo " {" >> ./.vscode/compile_commands.json
+		echo "  \"command\": \"$cmd\"," >> ./.vscode/compile_commands.json
+		echo "  \"directory\": \"/home/seanjc/go/src/kernel.org/slf/tools/testing/selftests/kvm\"," >> ./.vscode/compile_commands.json
+		echo "  \"file\": \"/home/seanjc/go/src/kernel.org/slf/tools/testing/selftests/kvm/$file\""  >> ./.vscode/compile_commands.json
+		echo " }," >> ./.vscode/compile_commands.json
+	done <<< $(LLVM=1 make -C tools/testing/selftests/kvm -Bnwk)
+
+	# Strip the last comma, JSON doesn't allow trailing commas
+	sed -i '$ s/.$//' .vscode/compile_commands.json
+	echo "]" >>./.vscode/compile_commands.json
 }
 alias ccm='gen-clangd-commands'
