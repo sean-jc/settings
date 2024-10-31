@@ -41,14 +41,14 @@ if [[ $os = "hyper-v" ]]; then
 else
 	mac=$(ifconfig | grep -A 4 br0 | grep -o 00:16:3e:68:00:..)
 	if [[ -n $mac ]]; then
-	mac="0x$(echo $mac | cut -f 6 -d :)"
-	mac=$((mac + 16))
+		mac="0x$(echo $mac | cut -f 6 -d :)"
+		mac=$((mac + 16))
 	elif [[ -n $i386 ]]; then
-	mac="0x80"
+		mac="0x80"
 	elif [[ $HOSTPOST = "purgatory" ]]; then
-	mac="0x40"
+		mac="0x40"
 	else
-	mac="0"
+		mac="0"
 	fi
 	mac=$(printf "00:16:3E:68:00:%02x" $((mac + $(ifconfig | grep -c -e "tap[0-9]"))))
 fi
@@ -71,25 +71,12 @@ if [[ -z $reboot ]]; then
 	qemu="$qemu -no-reboot"
 fi
 
-ifconfig -a | grep -q br0
-if [[ $? -eq 0 ]]; then
-	ifup=br0
-else
-	ifconfig -a | grep -q tap0
-	if [[ $? -eq 0 ]]; then
-	ifup=tap0
-	fi
-fi
-if [[ -z $ifup ]]; then
-	die "Cannot find br0 or tap0\n"
-fi
-ifup=$(which ifup_"$ifup")
-if [[ $? -ne 0 ]]; then
-	die "Cannot find ifup_$ifup script"
-fi
-
-if [[ -n $iommu ]]; then
+if [[ $iommu = "v" ]]; then
 	iommu="-device virtio-iommu-pci"
+elif [[ $iommu = "a" ]]; then
+	iommu="-device amd-iommu"
+elif [[ $iommu = "i" ]]; then
+	iommu="-device intel-iommu"
 fi
 if [[ -n $iommu || -n $sev ]]; then
 	virtio_opt="disable-legacy=on,iommu_platform=on"
@@ -100,6 +87,23 @@ else
 fi
 if [[ -z $roms ]]; then
 	virtio_opt="$virtio_opt,romfile="
+fi
+
+ifconfig -a | grep -q br0
+if [[ $? -eq 0 ]]; then
+	ifup=br0
+else
+	ifconfig -a | grep -q tap0
+	if [[ $? -eq 0 ]]; then
+		ifup=tap0
+	fi
+fi
+if [[ -z $ifup ]]; then
+	die "Cannot find br0 or tap0\n"
+fi
+ifup=$(which ifup_"$ifup")
+if [[ $? -ne 0 ]]; then
+	die "Cannot find ifup_$ifup script"
 fi
 net="-device virtio-net-pci,netdev=net0,mac=$mac,$virtio_opt -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
 
