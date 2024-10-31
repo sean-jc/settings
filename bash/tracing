@@ -27,6 +27,7 @@ function kvm-trace() {
 		echo 0 > /sys/kernel/debug/tracing/events/kvm/enable
 		echo 0 > /sys/kernel/debug/tracing/events/kvmmmu/enable
 	elif [[ $cmd == "a" || $cmd == "apicv" ]]; then
+		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_apic/enable
 		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_apicv_inhibit_changed/enable
 	elif [[ $cmd == "c" || $cmd == "cpuid" ]]; then
 		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_cpuid/enable
@@ -63,6 +64,8 @@ function kvm-trace() {
 		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_nested_vmenter/enable
 	elif [[ $cmd == "pf" || $cmd == "pagefaults" ]]; then
 		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_page_fault/enable
+	elif [[ $cmd == "pi" ]]; then
+		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_pi_irte_update/enable
 	elif [[ $cmd == "q" || $cmd == "query" ]]; then
 		tail /sys/kernel/debug/tracing/events/kvm/**/enable | grep -B 1 1
 	elif [[ $cmd == "r" || $cmd == "msr" ]]; then
