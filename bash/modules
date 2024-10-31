@@ -8,42 +8,54 @@ function modprobe-kvm-all {
 }
 alias mpka='modprobe-kvm-all'
 
-function modprobe-kvm-vendor-raw() {
-	grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
-	if [[ $? -eq 0 ]]; then
-		kvm=kvm_amd
+function get-kvm() {
+	if is-amd; then
+		printf "kvm_amd"
 	else
-		kvm=kvm_intel
+		printf "kvm_intel"
 	fi
-	psudo modprobe $kvm $@
 }
 
 function modprobe-kvm-vendor() {
-	grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
-	if [[ $? -eq 0 ]]; then
-		kvm="kvm_amd avic=1 nested=1"
-	else
-		kvm=kvm_intel
+	local params
+	if is-amd; then
+		params="avic=1 nested=1"
 	fi
-	psudo modprobe $kvm $@
+	psudo modprobe $(get-kvm) $params $@
 }
-
 
 alias mpkk='psudo modprobe kvm force_emulation_prefix=2'
 alias mpk='mpkk && modprobe-kvm-vendor'
-alias mpkr='modprobe-kvm-vendor-raw'
+alias mpkr='psudo modprobe $(get-kvm)'
 
-function rmmod-kvm() {
-	grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
-	if [[ $? -eq 0 ]]; then
-		kvm=kvm_amd
-	else
-		kvm=kvm_intel
+function set-fep() {
+	if [[ $(cat /sys/module/kvm/parameters/force_emulation_prefix) != "$1" ]]; then
+		echo $1 | psudo tee -a /sys/module/kvm/parameters/force_emulation_prefix > /dev/null
 	fi
-	psudo rmmod $kvm $@
 }
-alias rmk='rmmod-kvm'
-alias rmkk='rmmod-kvm kvm'
+alias fep='set-fep'
+
+function rmmod-safe() {
+	while lsmod | grep -q $1 ; do
+		if psudo rmmod $1; then
+			break
+		fi
+		echo "Failed to unload $1.ko, sleeping and retrying"
+		sleep 1
+	done
+
+}
+alias rmk='rmmod-safe $(get-kvm)'
+alias rmkk='rmk && rmmod-safe kvm'
+
+function reload-kvm() {
+	if [[ $# -eq 2 ]]; then
+		rmkk
+	else
+		rmk
+	fi
+	mpkr $1
+}
 
 function config-priv-file() {
 	local perm=660
@@ -73,12 +85,9 @@ function probe-modules() {
 	if [[ $# -eq 2 ]]; then
 		kvm=$2
 	else
-		grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
-		if [[ $? -eq 0 ]]; then
-				kvm=kvm_amd
-				kvm_params="avic=1"
-		else
-				kvm=kvm_intel
+		kvm=$(get-kvm)
+		if is-amd; then
+			kvm_params="avic=1"
 		fi
 	fi
 	lmod=$(lsmod | cut -f 1 -d ' ' | grep kvm_)
@@ -92,9 +101,7 @@ function probe-modules() {
 		psudo modprobe vhost_net
 	fi
 
-	if [[ $(cat /sys/module/kvm/parameters/force_emulation_prefix) != "1" ]]; then
-		echo 1 | psudo tee -a /sys/module/kvm/parameters/force_emulation_prefix > /dev/null
-	fi
+	fep 2
 
 	if [[ ! -c /dev/vhost-net ]];then
 		udevadm test /devices/virtual/misc/vhost-net

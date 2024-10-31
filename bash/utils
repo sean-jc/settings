@@ -36,6 +36,10 @@ function is-integer() {
 	return 1
 }
 
+function is-amd() {
+	grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
+}
+
 # clear
 alias c='clear'
 alias cls='c;ls'
