@@ -109,6 +109,13 @@ function modprobe-kvm-loop {
 	done
 }
 
+function gcontain-enter() {
+	which gcontain
+	if [[ $? -eq 0 ]]; then
+		gcontain enter /
+	fi
+}
+
 function run-one-selftest() {
 	local GREEN='\e[0;32m' # Bold Green
 	local BROWN='\e[1;33m'  # Bold Brown
@@ -176,12 +183,22 @@ function run-selftests-parallelized() {
 		fi
 	done
 }
-alias rp='run-selftests-parallelized current 2>/dev/null'
+
+function run-selftests-parallelized-current() {
+	rm -f $HOME/logs/*.current.log
+
+	gcontain-enter
+	run-selftests-parallelized current 2>/dev/null
+}
+alias rp='run-selftests-parallelized-current'
 
 function run-kut-parallelized() {
-	QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut.$1.log"
+	gcontain-enter
+
+	cd ~/go/src/kernel.org/kvm-unit-tests
+	QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus)
 }
-alias rkp='run-kut-parallelized current 2>/dev/null'
+alias rkp='run-kut-parallelized'
 
 function really-run-all-tests() {
 	local GREEN='\e[0;32m' # Bold Green
@@ -213,10 +230,7 @@ function really-run-all-tests() {
 function run-all-tests() {
 	local paging_param
 
-	which gcontain
-	if [[ $? -eq 0 ]]; then
-		gcontain enter /
-	fi
+	gcontain-enter
 
 	rm -f $HOME/logs/*.log
 	echo 0 | psudo tee /proc/sys/kernel/nmi_watchdog > /dev/null
