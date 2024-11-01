@@ -89,23 +89,25 @@ if [[ -z $roms ]]; then
 	virtio_opt="$virtio_opt,romfile="
 fi
 
-ifconfig -a | grep -q br0
-if [[ $? -eq 0 ]]; then
-	ifup=br0
-else
-	ifconfig -a | grep -q tap0
+if [[ $vnet != "n" ]]; then
+	ifconfig -a | grep -q br0
 	if [[ $? -eq 0 ]]; then
-		ifup=tap0
+		ifup=br0
+	else
+		ifconfig -a | grep -q tap0
+		if [[ $? -eq 0 ]]; then
+			ifup=tap0
+		fi
 	fi
+	if [[ -z $ifup ]]; then
+		die "Cannot find br0 or tap0\n"
+	fi
+	ifup=$(which ifup_"$ifup")
+	if [[ $? -ne 0 ]]; then
+		die "Cannot find ifup_$ifup script"
+	fi
+	net="-device virtio-net-pci,netdev=net0,mac=$mac,$virtio_opt -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
 fi
-if [[ -z $ifup ]]; then
-	die "Cannot find br0 or tap0\n"
-fi
-ifup=$(which ifup_"$ifup")
-if [[ $? -ne 0 ]]; then
-	die "Cannot find ifup_$ifup script"
-fi
-net="-device virtio-net-pci,netdev=net0,mac=$mac,$virtio_opt -netdev tap,id=net0,script=$ifup,downscript=no,vhost=on"
 
 if [[ -n $vfio ]]; then
 	net="$net -device vfio-pci,host=$vfio"
