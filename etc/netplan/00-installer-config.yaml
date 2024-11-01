@@ -1,11 +1,23 @@
 network:
   version: 2
+  renderer: networkd
+  wifis:
+    wlp0s20f3:
+      dhcp4: true
+      dhcp6: true
+      access-points:
+        "name":
+          password: "password"
   ethernets:
-    eno1:
+    enp4s0:
       dhcp4: false
       dhcp6: false
   bridges:
     br0:
-      interfaces: [ eno1 ]
-      dhcp4: true
+      interfaces: [ enp4s0 ]
+      dhcp4: false
       dhcp6: false
+      addresses: [192.168.1.40/24]
+      gateway4: 192.168.1.1
+      nameservers:
+        addresses: [192.168.1.1]
