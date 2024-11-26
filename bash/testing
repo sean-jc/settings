@@ -1,23 +1,26 @@
 . $SETTINGS/bash/modules
 
+function prep-kvm-unit-tests() {
+	probe-modules qemu
+	export unittest_log_dir=~/logs/$1/$(date +%Y.%m.%d.%H.%M)
+	cd ~/go/src/kernel.org/$1
+}
+
 function prep-kut32() {
 	# ./configure --erratatxt="" --disable-pretty-print-stacks --arch=i386 --processor=i386
-	probe-modules qemu
-	cd ~/go/src/kernel.org/kut-32
+	prep-kvm-unit-tests kut-32
 	return 0
 }
 
 function prep-kut() {
 	# ./configure --erratatxt="" --disable-pretty-print-stacks
-	probe-modules qemu
-	cd ~/go/src/kernel.org/kvm-unit-tests
+	prep-kvm-unit-tests kut
 	return 0
 }
 
 function prep-kut-efi() {
 	# ./configure --erratatxt="" --disable-pretty-print-stacks --enable-efi
-	probe-modules qemu
-	cd ~/go/src/kernel.org/kut-efi
+	prep-kvm-unit-tests kut-efi
 	return 0
 }
 
@@ -195,7 +198,7 @@ alias rp='run-selftests-parallelized-current'
 function run-kut-parallelized() {
 	gcontain-enter
 
-	cd ~/go/src/kernel.org/kvm-unit-tests
+	cd ~/go/src/kernel.org/kut
 	QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus)
 }
 alias rkp='run-kut-parallelized'
@@ -208,7 +211,7 @@ function really-run-all-tests() {
 	run-selftests-parallelized $@ 2>/dev/null
 
 	printf "\n\n${GREEN}Running KUT with $1${NOF}\n"
-	cd ~/go/src/kernel.org/kvm-unit-tests
+	cd ~/go/src/kernel.org/kut
 	QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut.$1.log"
 	#QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus) -g nodefault
 	grep FAIL "$HOME/logs/kut.$1.log"

@@ -31,7 +31,7 @@ if [[ -z $kernel && -n $append ]]; then
 	die "Cannot specify \$append without \$kernel\n"
 fi
 
-probe-modules $qemu
+probe-modules $qemu y
 
 qemu="$HOME/build/qemu/$qemu"
 qemu_bin=$(readlink -f $qemu)
@@ -39,16 +39,16 @@ qemu_bin=$(readlink -f $qemu)
 if [[ $os = "hyper-v" ]]; then
 	mac="00:16:3E:68:00:FF"
 else
-	mac=$(ifconfig | grep -A 4 br0 | grep -o 00:16:3e:68:00:..)
-	if [[ -n $mac ]]; then
-		mac="0x$(echo $mac | cut -f 6 -d :)"
-		mac=$((mac + 16))
-	elif [[ -n $i386 ]]; then
+	if [[ -n $i386 ]]; then
 		mac="0x80"
 	elif [[ $HOSTPOST = "purgatory" ]]; then
 		mac="0x40"
 	else
 		mac="0"
+	fi
+	hmac=$(ifconfig | grep -A 4 br0 | grep -o 00:16:3e:68:00:$mac)
+	if [[ -n $hmac ]]; then
+		mac=$((mac + 16))
 	fi
 	mac=$(printf "00:16:3E:68:00:%02x" $((mac + $(ifconfig | grep -c -e "tap[0-9]"))))
 fi
@@ -209,7 +209,7 @@ if [[ -n $daemon ]]; then
 fi
 
 if [[ -n $unittest ]]; then
-	os="-kernel $HOME/go/src/kernel.org/kvm-unit-tests/x86/$unittest.flat -device pc-testdev -device isa-debug-exit,iobase=0xf4,iosize=0x4 -device pci-testdev"
+	os="-kernel $HOME/go/src/kernel.org/kut/x86/$unittest.flat -device pc-testdev -device isa-debug-exit,iobase=0xf4,iosize=0x4 -device pci-testdev"
 elif [[ $virtio == "false" || $virtio == "n" ]]; then
 	os="-hda $img"
 	append="root=/dev/sda1 rootfstype=ext4 $append"
@@ -238,14 +238,18 @@ elif [[ -n $kernel ]]; then
 	fi
 	append="$append l1tf=off nohpet"
 	if [[ $x2apic == "false" || $x2apic == "n" ]]; then
-	append="$append noapic"
+		append="$append noapic"
 	fi
 	os="$os -kernel $HOME/build/kernel/$kernel/arch/x86/boot/bzImage"
 	if [[ $modules != "false" && $modules != "n" ]]; then
-	os="$os -fsdev local,path=$HOME/build/kernel/$kernel/lib/modules,security_model=passthrough,id=plan9fs -device virtio-9p-pci,fsdev=plan9fs,mount_tag=kmodules,$virtio_opt"
+		os="$os -fsdev local,path=$HOME/build/kernel/$kernel/lib/modules,security_model=passthrough,id=p9_modules -device virtio-9p-pci,fsdev=p9_modules,mount_tag=kmodules,$virtio_opt"
+	fi
+	if [[ $assets != "n" ]]; then
+		os="$os -fsdev local,path=$HOME/build,security_model=passthrough,id=p9_build -device virtio-9p-pci,fsdev=p9_build,mount_tag=p9_build,$virtio_opt"
+		os="$os -fsdev local,path=$HOME/go,security_model=passthrough,id=p9_go -device virtio-9p-pci,fsdev=p9_go,mount_tag=p9_go,$virtio_opt"
 	fi
 	if [[ -n $init ]]; then
-	os="$os -initrd $HOME/build/initramfs/$init.cpio"
+		os="$os -initrd $HOME/build/initramfs/$init.cpio"
 	fi
 elif [[ -z $unittest ]]; then
 	os="$os -boot c"

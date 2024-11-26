@@ -76,20 +76,18 @@ function config-priv-file() {
 
 function probe-modules() {
 	if [[ $# -ne 1 && $# -ne 2 ]]; then
-		printf "USAGE: probe-modules <qemu> [kvm]\n"
+		printf "USAGE: probe-modules <qemu> [setcaps]\n"
 		return 1
 	fi
 
 	kvm_params=""
 	qemu=$1
-	if [[ $# -eq 2 ]]; then
-		kvm=$2
-	else
-		kvm=$(get-kvm)
-		if is-amd; then
-			kvm_params="avic=1"
-		fi
+
+	kvm=$(get-kvm)
+	if is-amd; then
+		kvm_params="avic=1"
 	fi
+
 	lmod=$(lsmod | cut -f 1 -d ' ' | grep kvm_)
 	if [[ $? -eq 0 && $lmod != $kvm* ]]; then
 		psudo rmmod $lmod
@@ -101,7 +99,7 @@ function probe-modules() {
 		psudo modprobe vhost_net
 	fi
 
-	fep 2
+	set-fep 2
 
 	if [[ ! -c /dev/vhost-net ]];then
 		udevadm test /devices/virtual/misc/vhost-net
@@ -118,7 +116,7 @@ function probe-modules() {
 		fi
 	fi
 
-	if [[ $EUID != 0 ]]; then
+	if [[ $# -eq 2 && $EUID != 0 ]]; then
 		config-priv-file /bin/ip 750
 		config-priv-file /dev/kvm
 		config-priv-file /dev/vhost-net
@@ -127,12 +125,12 @@ function probe-modules() {
 			config-priv-file /dev/sgx/provision
 		fi
 
-		qemu_bin=$(readlink -f /home/sean/build/qemu/$qemu)
 		ip_bin=/bin/ip
 		if [[ -f /home/sean/bin/ip ]]; then
 			ip_bin=/home/sean/bin/ip
 		fi
 
+		qemu_bin=$(readlink -f /home/sean/build/qemu/$qemu)
 		if [[ -z $(getcap $qemu_bin | grep cap_net_admin) ]]; then
 			psudo setcap cap_net_admin=+ep $qemu_bin
 		fi

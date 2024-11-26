@@ -28,7 +28,8 @@ function dev-sync() {
 		rsync -z --checksum ~/go/src/github.com/sean-jc/settings/.ssh/dev_config $2:/root/.ssh/config
 		rsync -z --checksum --recursive --exclude='.git*' ~/go/src/github.com/sean-jc/settings $2:/data/local/seanjc/go/src/github.com/sean-jc
 		rsync -z --checksum ~/go/src/github.com/sean-jc/settings/git/.git-completion.bash $2:/data/local/seanjc/go/src/github.com/sean-jc/settings/git
-		ssh $2 "chmod +x /data/local/seanjc/go/src/github.com/sean-jc/settings/bin/timeout"
+		ssh $2 "chmod +x /data/local/seanjc/go/src/github.com/sean-jc/settings/bin/timeout; \
+			chmod -R g=u,g-w,o=u,o-w /data/local/seanjc/go"
 	fi
 	if [[ $1 == "kvm" ]]; then
 		printf "Not yet supported, need to figure out how to specify the target directory\n"
@@ -37,13 +38,18 @@ function dev-sync() {
 	if [[ $1 == "full" || $1 == "binaries" ]]; then
 		rsync -z --checksum --recursive --links ~/build/qemu/static-7.0 $2:/data/local/seanjc/build/qemu
 		rsync -z --checksum --recursive --links ~/build/ovmf $2:/data/local/seanjc/build
-		ssh $2 "rm -f /data/local/seanjc/build/qemu/qemu; ln -s /data/local/seanjc/build/qemu/static-7.0/x86_64-softmmu/qemu-system-x86_64 /data/local/seanjc/build/qemu/qemu"
+		ssh $2 "rm -f /data/local/seanjc/build/qemu/qemu; \
+			cd /data/local/seanjc/build/qemu; \
+			ln -s ./static-7.0/x86_64-softmmu/qemu-system-x86_64 qemu; \
+			chmod -R g=u,g-w,o=u,o-w /data/local/seanjc/build"
 	fi
 	if [[ $1 == "full" || $1 == "tests" ]]; then
 		rsync -z --checksum --recursive --links ~/build/selftests $2:/data/local/seanjc/build
-		rsync -z --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kvm-unit-tests $2:/data/local/seanjc/go/src/kernel.org
+		rsync -z --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kut $2:/data/local/seanjc/go/src/kernel.org
 		rsync -z --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kut-32 $2:/data/local/seanjc/go/src/kernel.org
 		rsync -z --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kut-efi $2:/data/local/seanjc/go/src/kernel.org
+		ssh $2 "chmod -R g=u,g-w,o=u,o-w /data/local/seanjc/build; \
+			chmod -R g=u,g-w,o=u,o-w /data/local/seanjc/go"
 	fi
 	if [[ $1 == "full" || $1 == "vm" ]]; then
 		rsync -z --checksum ~/build/kernel/vm/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/vm/arch/x86/boot
