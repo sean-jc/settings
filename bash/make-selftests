@@ -10,8 +10,8 @@ function make-selftests() {
 		printf "Must specify 'x86', 'clang' or 'arm' as first argument\n"
 		return 1
 	fi
-	 if [[ $# -lt 2 ]] || [[ $2 != "slf" && $2 != "nox" ]]; then
-		printf "Must specify 'slf' or 'nox' as second argument\n"
+	if [[ $# -lt 2 ]] || [[ ! -d "$HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm" ]]; then
+		printf "Must specify kernel directory as second argument\n"
 		return 1
 	fi
 	if [[ $# -gt 3 ]]; then
@@ -54,8 +54,12 @@ function make-selftests() {
 }
 alias mt='make-selftests x86 slf'
 alias mtc='make-selftests x86 slf clean'
+alias mti='make-selftests x86 tinux'
+alias mtic='make-selftests x86 tinux clean'
 alias jt='make-clang make-selftests x86 slf'
 alias jtc='make-clang make-selftests x86 slf clean'
+alias jt='make-clang make-selftests x86 tinux'
+alias jtc='make-clang make-selftests x86 tinux clean'
 alias jtx='make-clang make-selftests x86 nox'
 alias jtxc='make-clang make-selftests x86 nox clean'
 alias mta='make-selftests arm nox'
