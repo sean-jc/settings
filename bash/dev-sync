@@ -12,6 +12,8 @@ function dev-sync() {
 			mkdir -p /data/local/seanjc/build/kernel/vm/lib/modules; \
 			mkdir -p /data/local/seanjc/build/kernel/pae/arch/x86/boot; \
 			mkdir -p /data/local/seanjc/build/kernel/pae/lib/modules; \
+			mkdir -p /data/local/seanjc/build/kernel/ti/arch/x86/boot; \
+			mkdir -p /data/local/seanjc/build/kernel/ti/lib/modules; \
 			mkdir -p /data/local/seanjc/build/qemu; \
 			mkdir -p /data/local/seanjc/go/src/github.com/sean-jc; \
 			mkdir -p /data/local/seanjc/go/src/kernel.org; \
@@ -20,12 +22,12 @@ function dev-sync() {
 			mkdir -p /root/.ssh/sockets"
 	fi
 	if [[ $1 == "full" || $1 == "settings" ]]; then
-		rsync --checksum ~/.bashrc $2:/data/local/seanjc
-		rsync --checksum ~/.inputrc $2:/data/local/seanjc
-		rsync --checksum ~/.vimrc $2:/data/local/seanjc
-		rsync --checksum ~/go/src/github.com/sean-jc/settings/.ssh/dev_config $2:/root/.ssh/config
-		rsync --checksum --recursive --exclude='.git*' ~/go/src/github.com/sean-jc/settings $2:/data/local/seanjc/go/src/github.com/sean-jc
-		rsync --checksum ~/go/src/github.com/sean-jc/settings/git/.git-completion.bash $2:/data/local/seanjc/go/src/github.com/sean-jc/settings/git
+		rsync -z --checksum ~/.bashrc $2:/data/local/seanjc
+		rsync -z --checksum ~/.inputrc $2:/data/local/seanjc
+		rsync -z --checksum ~/.vimrc $2:/data/local/seanjc
+		rsync -z --checksum ~/go/src/github.com/sean-jc/settings/.ssh/dev_config $2:/root/.ssh/config
+		rsync -z --checksum --recursive --exclude='.git*' ~/go/src/github.com/sean-jc/settings $2:/data/local/seanjc/go/src/github.com/sean-jc
+		rsync -z --checksum ~/go/src/github.com/sean-jc/settings/git/.git-completion.bash $2:/data/local/seanjc/go/src/github.com/sean-jc/settings/git
 		ssh $2 "chmod +x /data/local/seanjc/go/src/github.com/sean-jc/settings/bin/timeout"
 	fi
 	if [[ $1 == "kvm" ]]; then
@@ -33,21 +35,23 @@ function dev-sync() {
 		return 1
 	fi
 	if [[ $1 == "full" || $1 == "binaries" ]]; then
-		rsync --checksum --recursive --links ~/build/qemu/static-7.0 $2:/data/local/seanjc/build/qemu
-		rsync --checksum --recursive --links ~/build/ovmf $2:/data/local/seanjc/build
+		rsync -z --checksum --recursive --links ~/build/qemu/static-7.0 $2:/data/local/seanjc/build/qemu
+		rsync -z --checksum --recursive --links ~/build/ovmf $2:/data/local/seanjc/build
 		ssh $2 "rm -f /data/local/seanjc/build/qemu/qemu; ln -s /data/local/seanjc/build/qemu/static-7.0/x86_64-softmmu/qemu-system-x86_64 /data/local/seanjc/build/qemu/qemu"
 	fi
 	if [[ $1 == "full" || $1 == "tests" ]]; then
-		rsync --checksum --recursive --links ~/build/selftests $2:/data/local/seanjc/build
-		rsync --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kvm-unit-tests $2:/data/local/seanjc/go/src/kernel.org
-		rsync --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kut-32 $2:/data/local/seanjc/go/src/kernel.org
-		rsync --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kut-efi $2:/data/local/seanjc/go/src/kernel.org
+		rsync -z --checksum --recursive --links ~/build/selftests $2:/data/local/seanjc/build
+		rsync -z --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kvm-unit-tests $2:/data/local/seanjc/go/src/kernel.org
+		rsync -z --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kut-32 $2:/data/local/seanjc/go/src/kernel.org
+		rsync -z --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kut-efi $2:/data/local/seanjc/go/src/kernel.org
 	fi
 	if [[ $1 == "full" || $1 == "vm" ]]; then
-		rsync --checksum ~/build/kernel/vm/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/vm/arch/x86/boot
-		rsync --checksum --recursive ~/build/kernel/vm/lib/modules $2:/data/local/seanjc/build/kernel/vm/lib
-		rsync --checksum ~/build/kernel/pae/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/pae/arch/x86/boot
-		rsync --checksum --recursive ~/build/kernel/pae/lib/modules $2:/data/local/seanjc/build/kernel/pae/lib
+		rsync -z --checksum ~/build/kernel/vm/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/vm/arch/x86/boot
+		rsync -z --checksum --recursive ~/build/kernel/vm/lib/modules $2:/data/local/seanjc/build/kernel/vm/lib
+		rsync -z --checksum ~/build/kernel/pae/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/pae/arch/x86/boot
+		rsync -z --checksum --recursive ~/build/kernel/pae/lib/modules $2:/data/local/seanjc/build/kernel/pae/lib
+		rsync -z --checksum ~/build/kernel/ti/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/ti/arch/x86/boot
+		rsync -z --checksum --recursive ~/build/kernel/ti/lib/modules $2:/data/local/seanjc/build/kernel/ti/lib
 	fi
 }
 alias ds='dev-sync full'
