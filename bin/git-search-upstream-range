@@ -1,0 +1,4 @@
+git log --pretty=oneline "v$1".."v$2" | grep -q $3
+if [[ $? -eq 0 ]]; then
+        echo "$2"
+fi

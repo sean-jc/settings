@@ -1,4 +1,5 @@
 . $SETTINGS/bash/apt
+. $SETTINGS/bash/backports
 . $SETTINGS/bash/b4
 . $SETTINGS/bash/catch
 . $SETTINGS/bash/clangd

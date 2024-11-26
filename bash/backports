@@ -1,0 +1,148 @@
+. $SETTINGS/bash/git
+
+function git-find-upstream-version() {
+	parallel -- "git-search-upstream-range 6.6 6.7 $1" \
+		    "git-search-upstream-range 6.7 6.8 $1" \
+		    "git-search-upstream-range 6.8 6.9 $1" \
+		    "git-search-upstream-range 6.9 6.10 $1" \
+		    "git-search-upstream-range 6.10 6.11 $1" \
+		    "git-search-upstream-range 6.11 6.12 $1"
+}
+
+function git-fixup-backport-metadata() {
+	local commit=$1
+	local version
+	local tags
+	local bug=$2
+	# Trim git's trailing newline
+	local changelog=$(git show -s --format=%B HEAD | tac | sed -e '/./,$!d' | tac)
+	local changeid
+
+	version=$(git-find-upstream-version $commit)
+
+	changeid=$(echo "$changelog" | tail -1 | grep -e "^Change-Id")
+	if [[ $? -eq 0 ]]; then
+		changelog=$(echo "$changelog" | head -n -1)
+	fi
+
+	echo $changelog | head -1 | grep -q -e "UPSTREAM:" -e "BACKPORT:"
+	if [[ $? -ne 0 ]]; then
+		if [[ $# -eq 3 ]]; then
+			changelog="$3: $changelog"
+		else
+			changelog="UPSTREAM: $changelog"
+		fi
+	fi
+
+	git commit --amend -m \
+"$changelog
+
+Effort: kvm/backports
+Google-Bug-Id: b/$bug
+Upstream-$version-SHA1: $commit
+
+$changeid
+"
+	return 0
+}
+
+function git-cherry-pick-range() {
+	local start
+	local end
+
+	if [[ $# -ne 1 && $# -ne 2 ]]; then
+		printf "Usage for cherry picking a branch: 'gpb <first commit> <last commit> (or <start> <nr commits>)'\n"
+		return 1
+	fi
+
+	if [[ $# -eq 1 ]]; then
+		start=$1
+		end=$1
+	elif [[ $(is-integer $2) ]]; then
+		end=$1
+		start=$(git rev-parse "$end~$(($2-1))")
+	else
+		start=$1
+		end=$2
+	fi
+
+	git rev-list --pretty=oneline $start^..$end | tac
+	printf "\e[1;7;35m$GIT_CHERRY_PICK_CMD these commits?"
+	read -r -p "[Y/n] " response
+	printf "\e[0m"
+	response=${response,,}	# tolower
+	if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
+		git cherry-pick $(git rev-list $start^..$end | tac | xargs)
+		return $?
+	fi
+	return 1
+}
+
+function git-backport-range() {
+	local start
+	local end
+	local bug
+
+	if [[ $# -ne 3 ]]; then
+		printf "Usage for backporting: 'gpb <first commit> <last commit> (or <start> <nr commits>) <bug #>'\n"
+		return 1
+	fi
+
+	if [[ $(is-integer $2) ]]; then
+		end=$1
+		start=$(git rev-parse "$end~$(($2-1))")
+	else
+		start=$1
+		end=$2
+	fi
+	bug=$3
+
+	git rev-list --pretty=oneline $start^..$end | tac
+	printf "\e[1;7;35mBackport these commits?"
+	read -r -p "[Y/n] " response
+	printf "\e[0m"
+	response=${response,,}	# tolower
+	if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
+		local commits=$(git rev-list $start^..$end | tac | xargs)
+		local commit
+		local version
+		local tags
+
+		for commit in $commits; do
+			git cherry-pick $commit
+			if [[ $? -ne 0 ]]; then
+				printf "\n${RED}Pausing until conflicted cherry-pick is completed.${NOF}\n"
+				while [[ $(git status --porcelain=v1 2>/dev/null | wc -l) -ne 0 ]]; do
+					sleep .1
+				done
+			fi
+			printf "\e[1;7;35mFixup metadata?"
+			read -r -p "[Y/n] " response
+			printf "\e[0m"
+			response=${response,,}	# tolower
+			if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
+				git-fixup-backport-metadata $commit $bug
+				if [[ $? -ne 0 ]]; then
+					return 1
+				fi
+			fi
+		done
+		return 0
+	fi
+	return 1
+}
+
+function git-backport-ff() {
+	local commit=$1
+
+	git cherry-pick $commit
+	if [[ $? -ne 0 ]]; then
+		printf "\n${RED}Pausing until conflicted cherry-pick is completed.${NOF}\n"
+		while [[ $(git status --porcelain=v1 2>/dev/null | wc -l) -ne 0 ]]; do
+			sleep .1
+		done
+		git-fixup-backport-metadata $commit 377885844 BACKPORT
+	else
+		git-fixup-backport-metadata $commit 377885844 UPSTREAM
+	fi
+}
