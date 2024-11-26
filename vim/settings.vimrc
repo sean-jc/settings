@@ -38,7 +38,7 @@ endif
 " confusing.
 set nrformats-=octal
 
-syntax on
+silent! syntax on
 
 " Enable file type detection.
 " Use the default filetype settings, so that mail gets 'tw' set to 72,
