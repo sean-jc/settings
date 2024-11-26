@@ -40,13 +40,10 @@ function git-cherry-pick-ref() {
 	git status | grep "currently cherry-picking commit" | grep -o -E "[0-9a-f]{12}\b"
 }
 
-function git-cherry-pick-log() {
-	git log -1 $(git-cherry-pick-ref)
+function git-cherry-pick-show-oneline() {
+	git show -s --pretty="tformat:%h ('%s')" $(git-cherry-pick-ref)
 }
 
-function git-cherry-pick-show() {
-	git show $(git-cherry-pick-ref)
-}
 
 function git-push() {
 	local opts
@@ -524,8 +521,9 @@ alias gp='git cherry-pick'
 alias gpb='git-cherry-pick-range'
 alias gbp='git-backport-range'
 alias gpc='git cherry-pick --continue'
-alias gpl='git-cherry-pick-log'
-alias gpw='git-cherry-pick-show'
+alias gpl='git log -1 $(git-cherry-pick-ref)'
+alias gpw='git show $(git-cherry-pick-ref)'
+alias gpwo="git-cherry-pick-show-oneline"
 alias gpk='git-push-kvm-x86'
 alias gr='git reset'
 alias grh='git reset HEAD'
@@ -534,7 +532,6 @@ alias grp='git-request-pull'
 alias grpf='FIXES=y git-request-pull'
 alias gru='git-request-kut-pull'
 alias grc='git rebase --continue'
-
 alias gu='git pull'
 alias gs='git status'
 alias gsa='git-stash apply'
