@@ -22,6 +22,25 @@ function make-selftests() {
 		return 1
 	fi
 
+	if [[ $1 == "arm" ]]; then
+		arch_dir="arm64"
+	else
+		arch_dir="x86"
+	fi
+
+	# Check for the old directories.
+	if [[ ! -d $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm/arch_dir ]]; then
+		if [[ $1 == "arm" ]]; then
+			arch_dir="aarch64"
+		else
+			arch_dir="x86_64"
+		fi
+		if [[ ! -d $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm/$arch_dir ]]; then
+			printf "Invalid arch '$arch_dir'?\n"
+			return 1
+		fi
+	fi
+
 	pushd $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm
 	if [[ $# -gt 2 && $3 == "clean" ]]; then
 		git clean -fdx
@@ -31,11 +50,6 @@ function make-selftests() {
 		static="-static"
 	fi
 
-	if [[ $1 == "arm" ]]; then
-		arch_dir="aarch64"
-	else
-		arch_dir="x86_64"
-	fi
 	ls=$(which ls)
 	tests=( $($ls -1 $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm/*.c $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm/$arch_dir/*.c) )
 
@@ -58,8 +72,8 @@ alias mti='make-selftests x86 tinux'
 alias mtic='make-selftests x86 tinux clean'
 alias jt='make-clang make-selftests x86 slf'
 alias jtc='make-clang make-selftests x86 slf clean'
-alias jt='make-clang make-selftests x86 tinux'
-alias jtc='make-clang make-selftests x86 tinux clean'
+alias jti='make-clang make-selftests x86 tinux'
+alias jtic='make-clang make-selftests x86 tinux clean'
 alias jtx='make-clang make-selftests x86 nox'
 alias jtxc='make-clang make-selftests x86 nox clean'
 alias mta='make-selftests arm nox'
