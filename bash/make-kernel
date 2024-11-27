@@ -241,6 +241,21 @@ alias mkt='make-kernel-range tests-x86 ign'
 alias mat='make-kernel-range tests-arm ign'
 alias mrt='make-kernel-range tests-riscv ign'
 alias mst='make-kernel-range tests-s390 ign'
+
+function make-multiple-selftests() {
+	local test_archs=("arm"
+			  "riscv"
+			  "s390")
+
+	for test_arch in "${test_archs[@]}"; do
+		pushd ../../../..
+		make-$test_arch make headers_install
+		popd
+
+		make-kernel-range tests-$test_arch ign $@
+	done
+}
+alias mmt='make-multiple-selftests'
 alias mut='make-kernel-range kut ign'
 
 alias mkb='TARGET=bzImage make-kernel make'
