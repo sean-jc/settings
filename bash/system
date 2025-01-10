@@ -44,6 +44,12 @@ if [[ "$HOSTPOST" =~ ^[a-z]+-(vm|l2|l3|i386|i2|ii) ]]; then
 	alias ssf='sudo shutdown -f'
 fi
 
+function disable-usb-autosuspend() {
+	echo -1 | sudo tee /sys/bus/usb/devices/usb3/power/autosuspend > /dev/null
+	echo -1 | sudo tee /sys/bus/usb/devices/usb4/power/autosuspend > /dev/null
+}
+alias dua='disable-usb-autosuspend'
+
 # systemd
 alias sys='sudo systemctl'
 alias failed='sys list-units --state=failed'
