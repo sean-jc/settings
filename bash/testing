@@ -240,13 +240,17 @@ function run-all-tests() {
 
 	probe-modules qemu
 
-	reload-kvm
+	if is-amd; then
+		reload-kvm "avic=1 nested=1"
+	else
+		reload-kvm
+	fi
 	really-run-all-tests tdp_enabled
 
 	fep 2
 
 	if is-amd; then
-		reload-kvm "npt=0 avic=1"
+		reload-kvm "npt=0 avic=1 nested=1"
 		really-run-all-tests npt_disabled
 	else
 		reload-kvm "ept=0"
@@ -256,8 +260,8 @@ function run-all-tests() {
 	if [[ $RUN_KVM_TESTS != "short" ]]; then
 		grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
 		if [[ $? -eq 0 ]]; then
-			if [[ $(grep -q Y /sys/module/kvm_intel/parameters/avic) -eq 0 ]]; then
-				reload-kvm "enable_avic=0"
+			if [[ $(grep -q Y /sys/module/kvm_enable/parameters/avic) -eq 0 ]]; then
+				reload-kvm "avic=0 nested=1"
 				really-run-all-tests avic_disabled
 			fi
 		else
