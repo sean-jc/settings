@@ -73,6 +73,11 @@ function make-kernel() {
 			rm -rf $HOME/build/kernel/$2/lib/modules/*
 			make O=$HOME/build/kernel/$2 INSTALL_MOD_PATH=$HOME/build/kernel/$2 modules_install
 		fi
+	elif [[ $1 == "clean" ]]; then
+		mv $HOME/build/kernel/$2 $HOME/build/kernel/__rm_$2
+		mkdir $HOME/build/kernel/$2
+		cp $HOME/build/kernel/__rm_$2/.config $HOME/build/kernel/$2
+		rm -rf $HOME/build/kernel/__rm_$2
 	else
 		if [[ $1 == "htmldocs" ]]; then
 			printf "'htmldocs' isn't supported for sparse trees\n"
