@@ -29,7 +29,7 @@ function make-selftests() {
 	fi
 
 	# Check for the old directories.
-	if [[ ! -d $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm/arch_dir ]]; then
+	if [[ ! -d $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm/$arch_dir ]]; then
 		if [[ $1 == "arm" ]]; then
 			arch_dir="aarch64"
 		else
