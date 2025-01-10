@@ -190,6 +190,9 @@ fi
 if [[ -n $cpuid ]]; then
 	cpu="$cpu,$cpuid"
 fi
+if [[ -n $hlt && $hlt != "n" ]]; then
+	cpu="$cpu -overcommit cpu-pm=on"
+fi
 
 if [[ -n $vnc ]]; then
 	display="-vga std -display vnc=:$vnc"
