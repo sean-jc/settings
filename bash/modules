@@ -86,6 +86,21 @@ function probe-modules() {
 	kvm=$(get-kvm)
 	if is-amd; then
 		kvm_params="avic=1"
+
+		if [[ -f /sys/module/kvm_amd/parameters/sev ]]; then
+			grep -q Y /sys/module/kvm_amd/parameters/sev
+			if [[ $? -eq 0 && ! -c /dev/sev ]]; then
+				udevadm test /devices/virtual/misc/sev
+				if [[ ! -c /dev/sev ]]; then
+					ln -s /mnt/devtmpfs/sev /dev/sev
+				fi
+
+				lmod=$(lsmod | cut -f 1 -d ' ' | grep ccp)
+				if [[ $? -eq 0 ]]; then
+					psudo modprobe ccp init_ex_path=/var/google/persistent/bios/psp_nv_data psp_init_on_probe=1
+				fi
+			fi
+		fi
 	fi
 
 	lmod=$(lsmod | cut -f 1 -d ' ' | grep kvm_)
@@ -103,17 +118,6 @@ function probe-modules() {
 
 	if [[ ! -c /dev/vhost-net ]];then
 		udevadm test /devices/virtual/misc/vhost-net
-	fi
-	if [[ -n $sev && ! -c /dev/sev ]]; then
-		udevadm test /devices/virtual/misc/sev
-		if [[ ! -c /dev/sev ]]; then
-			ln -s /mnt/devtmpfs/sev /dev/sev
-		fi
-
-		lmod=$(lsmod | cut -f 1 -d ' ' | grep ccp)
-		if [[ $? -eq 0 ]]; then
-			psudo modprobe ccp init_ex_path=/var/google/persistent/bios/psp_nv_data psp_init_on_probe=1
-		fi
 	fi
 
 	if [[ $# -eq 2 && $EUID != 0 ]]; then
