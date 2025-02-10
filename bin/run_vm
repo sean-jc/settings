@@ -11,19 +11,6 @@ if [[ $# -gt 3 ]]; then
 	exit 1
 fi
 
-# Allow up to 64gb worth of on-demand hugeTLB 2MiB pages.
-if [[ $(cat /proc/sys/vm/nr_overcommit_hugepages) != "32768" ]]; then
-	echo 32768 | sudo tee /proc/sys/vm/nr_overcommit_hugepages
-fi
-if [[ -d /sys/devices/system/node/node0 ]]; then
-	if [[ $(cat /sys/devices/system/node/node0/hugepages/hugepages-1048576kB/nr_hugepages) != "8" ]]; then
-		echo 8 > /sys/devices/system/node/node0/hugepages/hugepages-1048576kB/nr_hugepages
-	fi
-	if [[ $(cat /sys/devices/system/node/node0/hugepages/hugepages-hugepages-2048kB/nr_hugepages) != "4096" ]]; then
-		echo 4096 > /sys/devices/system/node/node0/hugepages/hugepages-2048kB/nr_hugepages
-	fi
-fi
-
 maxcpus=$(grep -c '^processor' /proc/cpuinfo)
 if [[ -z $cpus ]]; then
 	cpus=$maxcpus
