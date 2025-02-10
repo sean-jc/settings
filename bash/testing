@@ -146,9 +146,9 @@ function run-one-selftest() {
 		printf "${RED}SEGFAULT ${cyan}$i${NOF}\n" >> $log
 	else
 		printf "${RED}FAILED ${cyan}$i${RED} : ret ='$ret'${NOF}\n" >> $log
-		printf "$__stdout\n" >> $log
-		printf "$__stderr\n" >> $log
 	fi
+	printf "$__stdout\n" >> $log
+	printf "$__stderr\n" >> $log
 	return $ret
 }
 
@@ -180,9 +180,16 @@ function run-selftests-parallelized() {
 		wait $pid 2>/dev/null
 
 		ret=$?
-		#if [[ $ret -ne 0 || egrep -q "FAILED|SKIPPED" "$HOME/logs/$test.$1.log" ]]; then
 		if [[ $ret -ne 0 ]]; then
-			cat "$HOME/logs/$test.$1.log"
+			if [[ $ret -eq 4 ]]; then
+				printf "${BROWN}SKIPPED ${cyan}$test${NOF} "
+				sed -n -e 's/^.*Requirement not met//p' "$HOME/logs/$test.$1.log"
+			elif [[ $ret -eq 139 ]]; then
+				printf "${RED}SEGFAULT ${cyan}$test${NOF}\n"
+			else
+				printf "${RED}FAILED ${cyan}$test${RED} : ret ='$ret'${NOF}\n"
+				cat "$HOME/logs/$test.$1.log"
+			fi
 		fi
 	done
 }
