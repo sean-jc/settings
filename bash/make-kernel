@@ -280,6 +280,7 @@ function generate-x86-configs() {
 	./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/gpu $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/gpu.config
 	./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/san $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/sanitizers.config
 	./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/nok $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/no_kvm.config
+	./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/nov $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/no_pv.config
 
 	LLVM=1 ./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/clang_all $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/all.config
 	LLVM=1 ./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/clang_pae $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/pae.config
@@ -287,6 +288,7 @@ function generate-x86-configs() {
 	LLVM=1 ./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/clang_gpu $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/gpu.config
 	LLVM=1 ./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/clang_san $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/sanitizers.config
 	LLVM=1 ./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/clang_nok $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/no_kvm.config
+	LLVM=1 ./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/clang_nov $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/no_pv.config
 	popd
 }
 alias xk='generate-x86-configs'
