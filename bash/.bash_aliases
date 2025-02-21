@@ -36,6 +36,7 @@ alias sk='sudo -sE'
 alias gcm='gcert -s -m kernel-development --nossh_on_security_key && ssh-add $HOME/.ssh/id_rsa'
 
 alias mf='make -j$(get-nr-cpus)'
+alias mfc='make clean && make -j$(get-nr-cpus)'
 
 function curl-time()
 {
