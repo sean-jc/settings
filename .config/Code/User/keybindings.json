@@ -8,9 +8,9 @@
     { "key": "ctrl+alt+o",            "command": "workbench.action.files.openFile" },
     { "key": "ctrl+shift+o",          "command": "workbench.action.files.openFolder" },
     { "key": "ctrl+d",                "command": "editor.action.goToDeclaration", "when": "editorTextFocus" },
-    { "key": "ctrl+p",                "command": "workbench.action.showAllEditors" },
+    // { "key": "ctrl+p",                "command": "workbench.action.showAllEditors" },
+    { "key": "ctrl+p",                "command": "copyRelativeFilePath" },
     { "key": "ctrl+i",                "command": "workbench.action.switchWindow" },
-    { "key": "ctrl+u",                "command": "workbench.action.keepEditor" },
 
     { "key": "shift+delete",          "command": "editor.action.deleteLines", "when": "editorTextFocus" },
 
@@ -22,5 +22,16 @@
     { "key": "ctrl+shift+s",          "command": "workbench.action.files.saveAll" },       
     { "key": "ctrl+;",                "command": "workbench.action.closeAllEditors" },
 
-    { "key": "ctrl+.",                "command": "cursorColumnSelectPageUp", "when": "editorTextFocus" }
+    { "key": "ctrl+u",                "command": "clangd.restart" },
+
+    {
+        "key": "ctrl+.",
+        "command": "cursorColumnSelectPageUp",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+.",
+        "command": "-editor.action.quickFix",
+        "when": "editorHasCodeActionsProvider && editorTextFocus && !editorReadonly"
+    },
 ]

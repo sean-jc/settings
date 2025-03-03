@@ -1,23 +1,22 @@
 // Place your settings in this file to overwrite the default settings
 {
-    "breadcrumbs.enabled": false,
     "diffEditor.ignoreTrimWhitespace": false,
 
     "editor.fontFamily": "'Noto Mono', 'Fira Mono'",
-    "editor.fontSize": 15.5,
+    "editor.fontLigatures": false,
     "editor.tabSize": 8,
-    "editor.renderIndentGuides": false,
     "editor.dragAndDrop": false,
     "editor.minimap.enabled": true,
 
     "files.eol": "\n",  // The default end of line character.
     "git.enabled": false,
 
+    "telemetry.telemetryLevel": "off",
+
     "window.menuBarVisibility": "toggle",
     "window.newWindowDimensions": "maximized",
     "window.openFilesInNewWindow": "default",
     "window.restoreWindows": "all",
-    "window.zoomLevel": 0,
 
     "workbench.colorTheme": "Monokai Dark Soda",
     "workbench.colorCustomizations": {
@@ -32,7 +31,6 @@
     "files.associations": {
         "*.arc": "c",
     },
-    "C_Cpp.intelliSenseEngine": "Tag Parser",
 
     "files.exclude": {
         "**/.vscode":true,
@@ -41,6 +39,7 @@
         "**/.hg": true,
         "**/.DS_Store": true,
         "**/*.a": true,
+        "**/*.d": true,
         "**/*.o": true,
         "**/*.so": true,
         "**/debian": true,
@@ -70,6 +69,34 @@
     },
     "search.searchOnType": false,
     "typescript.check.npmIsInstalled": false,
-    "workbench.activityBar.visible": false,
-    "workbench.statusBar.visible": true
+    "workbench.statusBar.visible": true,
+
+    "C_Cpp.vcFormat.indent.gotoLabels": "leftmostColumn",
+    "C_Cpp.default.intelliSenseMode": "gcc-x64",
+    "C_Cpp.exclusionPolicy": "checkFilesAndFolders",
+    "C_Cpp.debugShortcut": false,
+    "C_Cpp.loggingLevel": "None",
+    "C_Cpp.errorSquiggles": "Disabled",
+    "C_Cpp.dimInactiveRegions": false,
+
+    "clangd.onConfigChanged": "restart",
+    "clangd.arguments": [
+        "--enable-config",
+        "--clang-tidy",
+        "--compile-commands-dir=${workspaceFolder}/.vscode/",
+        "--background-index",
+        "--completion-style=detailed",
+        "--function-arg-placeholders=0",
+        "--header-insertion=never",
+        "--pch-storage=memory",
+        "--pretty",
+        "-j=12",
+        "--log=verbose"
+    ],
+    "clangd.checkUpdates": false,
+    "extensions.ignoreRecommendations": true,
+    "editor.fontSize": 12,
+    "window.zoomLevel": 2,
+    "workbench.activityBar.location": "hidden",
+    "editor.guides.indentation": false,
 }
