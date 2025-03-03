@@ -298,8 +298,6 @@ function time-kernel() {
 		printf "Must specify the target kernel name\n"
 		return 1
 	fi
-	make O=$HOME/build/kernel/$1 clean
-	sleep .25
 	ftime -o $HOME/build/kernel/$1/tk_time.log make -j$(get-nr-cpus) O=$HOME/build/kernel/$1 > $HOME/build/kernel/$1/tk_build.log 2>&1
 }
 alias tik='time-kernel'
