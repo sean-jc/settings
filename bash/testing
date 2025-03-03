@@ -1,6 +1,15 @@
 . $SETTINGS/bash/modules
 
+function gcontain-enter() {
+	which gcontain
+	if [[ $? -eq 0 ]]; then
+		gcontain enter /
+	fi
+}
+
 function prep-kvm-unit-tests() {
+	gcontain-enter
+
 	probe-modules qemu
 	export unittest_log_dir=~/logs/$1/$(date +%Y.%m.%d.%H.%M)
 	cd ~/go/src/kernel.org/$1
@@ -24,14 +33,33 @@ function prep-kut-efi() {
 	return 0
 }
 
-alias rkt='prep-kut && QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd'
-alias rku='rkt ./run_tests.sh -v'
-alias rkt32='prep-kut32 && QEMU=~/build/qemu/qemu'
-alias rku32='rkt32 ./run_tests.sh -v'
-alias rkte='prep-kut-efi && QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd'
-alias rkue='rkte ./run_tests.sh -v'
-alias rkv='rkt TESTNAME=vmx TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cpu host,+vmx -append'
-alias rkc='rkt TESTNAME=vmx_controls TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cpu host,+vmx -m 2560 -append vmx_controls_test'
+function run-kut() {
+	ACCEL="kvm,kernel_irqchip=$1" QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd "${@:2}"
+}
+
+alias rks='prep-kut && run-kut split'
+alias rkas='rks ./run_tests.sh -v'
+alias rka='rkas -j$(get-nr-cpus)'
+
+alias rkt='prep-kut && run-kut on'
+alias rkus='rkt ./run_tests.sh -v'
+alias rku='rkus -j$(get-nr-cpus)'
+
+alias rks32='prep-kut32 && run-kut split'
+alias rkas32='rks32 ./run_tests.sh -v'
+alias rka32='rkas32 -j$(get-nr-cpus)'
+
+alias rkt32='prep-kut32 && run-kut on'
+alias rkus32='rkt32 ./run_tests.sh -v'
+alias rku32='rkus32 -j$(get-nr-cpus)'
+
+alias rkse='prep-kut-efi && rku-kut split'
+alias rkase='rkse ./run_tests.sh -v'
+alias rkae='rkase -j$(get-nr-cpus)'
+
+alias rkte='prep-kut-efi && run-kut on'
+alias rkuse='rkte ./run_tests.sh -v'
+alias rkue='rkuse -j$(get-nr-cpus)'
 
 function run-selftests() {
 	local RED='\033[1;31m' # Bold Red
@@ -110,13 +138,6 @@ function modprobe-kvm-loop {
 		psudo rmmod kvm_intel
 		psudo rmmod kvm_amd
 	done
-}
-
-function gcontain-enter() {
-	which gcontain
-	if [[ $? -eq 0 ]]; then
-		gcontain enter /
-	fi
 }
 
 function run-one-selftest() {
@@ -202,14 +223,6 @@ function run-selftests-parallelized-current() {
 }
 alias rp='run-selftests-parallelized-current'
 
-function run-kut-parallelized() {
-	gcontain-enter
-
-	cd ~/go/src/kernel.org/kut
-	QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus)
-}
-alias rkp='run-kut-parallelized'
-
 function really-run-all-tests() {
 	local GREEN='\e[0;32m' # Bold Green
 	local NOF='\033[0m' # No Format
@@ -217,24 +230,27 @@ function really-run-all-tests() {
 	printf "\n\n${GREEN}Running selftests with $1${NOF}\n"
 	run-selftests-parallelized $@ 2>/dev/null
 
-	printf "\n\n${GREEN}Running KUT with $1${NOF}\n"
+	printf "\n\n${GREEN}Running KUT with split IRQCHIP and $1${NOF}\n"
 	cd ~/go/src/kernel.org/kut
-	QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut.$1.log"
-	#QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus) -g nodefault
-	grep FAIL "$HOME/logs/kut.$1.log"
+	run-kut split ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-split.$1.log"
+	grep FAIL "$HOME/logs/kut-split.$1.log"
 
-	if [[ $RUN_KVM_TESTS != "short" ]]; then
+	if [[ $RUN_KVM_TESTS != "supershort" ]]; then
+		printf "\n\n${GREEN}Running KUT with in-kernel IRQCHIP and $1${NOF}\n"
+		cd ~/go/src/kernel.org/kut
+		run-kut on ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut.$1.log"
+		# run-kut on ./run_tests.sh -j$(get-nr-cpus) -g nodefault > "$HOME/logs/kut.$1.log"
+		grep FAIL "$HOME/logs/kut.$1.log"
+
 		printf "\n\nRunning KUT EFI with $1${NOF}\n"
 		cd ~/go/src/kernel.org/kut-efi
-		QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-efi.$1.log"
+		run-kut on ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-efi.$1.log"
 		grep FAIL "$HOME/logs/kut-efi.$1.log"
-		#QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus) -g nodefault
 
 		printf "\n\nRunning KUT-32 with $1${NOF}\n"
 		cd ~/go/src/kernel.org/kut-32
-		QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-32.$1.log"
+		run-kut on ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-32.$1.log"
 		grep FAIL "$HOME/logs/kut-32.$1.log"
-		# QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd ./run_tests.sh -j$(get-nr-cpus) -g nodefault
 	fi
 }
 function run-all-tests() {
@@ -264,7 +280,7 @@ function run-all-tests() {
 		really-run-all-tests ept_disabled
 	fi
 
-	if [[ $RUN_KVM_TESTS != "short" ]]; then
+	if [[ $RUN_KVM_TESTS == "all" ]]; then
 		grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
 		if [[ $? -eq 0 ]]; then
 			if [[ $(grep -q Y /sys/module/kvm_enable/parameters/avic) -eq 0 ]]; then
@@ -292,8 +308,9 @@ function run-all-tests() {
 
 	egrep "FAIL|FAILED" ~/logs/*.log
 }
-alias ra='run-all-tests'
+alias ra='RUN_KVM_TESTS=all run-all-tests'
 alias rs='RUN_KVM_TESTS=short run-all-tests'
+alias rss='RUN_KVM_TESTS=supershort run-all-tests'
 
 function run-memslot-test() {
 	if [[ $(id -u) -ne 0 ]]; then
