@@ -36,11 +36,11 @@ function dev-sync() {
 		return 1
 	fi
 	if [[ $1 == "full" || $1 == "binaries" ]]; then
-		rsync -z --checksum --recursive --links ~/build/qemu/static-7.0 $2:/data/local/seanjc/build/qemu
+		rsync -z --checksum --recursive --links ~/build/qemu/static-8.0.3 $2:/data/local/seanjc/build/qemu
 		rsync -z --checksum --recursive --links ~/build/ovmf $2:/data/local/seanjc/build
 		ssh $2 "rm -f /data/local/seanjc/build/qemu/qemu; \
 			cd /data/local/seanjc/build/qemu; \
-			ln -s ./static-7.0/x86_64-softmmu/qemu-system-x86_64 qemu; \
+			ln -s ./static-8.0.3/x86_64-softmmu/qemu-system-x86_64 qemu; \
 			chmod -R g=u,g-w,o=u,o-w /data/local/seanjc/build"
 	fi
 	if [[ $1 == "full" || $1 == "tests" ]]; then
