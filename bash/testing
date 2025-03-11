@@ -232,24 +232,24 @@ function really-run-all-tests() {
 
 	printf "\n\n${GREEN}Running KUT with split IRQCHIP and $1${NOF}\n"
 	cd ~/go/src/kernel.org/kut
-	run-kut split ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-split.$1.log"
+	unittest_log_dir=$HOME/logs/kut-split.$1.logs run-kut split ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-split.$1.log"
 	grep FAIL "$HOME/logs/kut-split.$1.log"
 
 	if [[ $RUN_KVM_TESTS != "supershort" ]]; then
 		printf "\n\n${GREEN}Running KUT with in-kernel IRQCHIP and $1${NOF}\n"
 		cd ~/go/src/kernel.org/kut
-		run-kut on ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut.$1.log"
+		unittest_log_dir=$HOME/logs/kut.$1.logs run-kut on ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut.$1.log"
 		# run-kut on ./run_tests.sh -j$(get-nr-cpus) -g nodefault > "$HOME/logs/kut.$1.log"
 		grep FAIL "$HOME/logs/kut.$1.log"
 
 		printf "\n\nRunning KUT EFI with $1${NOF}\n"
 		cd ~/go/src/kernel.org/kut-efi
-		run-kut on ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-efi.$1.log"
+		unittest_log_dir=$HOME/logs/kut-efi.$1.logs run-kut on ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-efi.$1.log"
 		grep FAIL "$HOME/logs/kut-efi.$1.log"
 
 		printf "\n\nRunning KUT-32 with $1${NOF}\n"
 		cd ~/go/src/kernel.org/kut-32
-		run-kut on ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-32.$1.log"
+		unittest_log_dir=$HOME/logs/kut-32.$1.logs run-kut on ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-32.$1.log"
 		grep FAIL "$HOME/logs/kut-32.$1.log"
 	fi
 }
