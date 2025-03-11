@@ -5,6 +5,7 @@
 . $SETTINGS/bash/clangd
 . $SETTINGS/bash/debug
 . $SETTINGS/bash/dev-sync
+. $SETTINGS/bash/devrez
 . $SETTINGS/bash/dirs
 . $SETTINGS/bash/docker
 . $SETTINGS/bash/git

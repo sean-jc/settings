@@ -1,0 +1,34 @@
+. $SETTINGS/bash/utils
+
+function do-host-thing() {
+	if [[ $# -ne 1 ]]; then
+		printf "usage: kj <host>\n"
+		return 1
+	fi
+
+	host=$(grep -A1 "Host $1" ~/.ssh/config | grep HostName | tr -s " " | cut -f 3 -d " ")
+
+	if [[ -z $host ]]; then
+		printf "no match for host=$1\n"
+		return 1
+	fi
+	if [[ $HOST_ACTION == "megapede" ]]; then
+		echo $host
+		megapede console $host
+	elif [[ $HOST_ACTION == "konjurer" || $HOST_ACTION == "kexec" ]]; then
+		host=$(echo $host | cut -f 1 -d .)
+
+		if [[ $HOST_ACTION == "kexec" ]]; then
+			opt="-kexec"
+		fi
+		/google/data/ro/projects/platforms/prodkernel/konjurer/konjurer -wait=false \
+		-client=ssh --ssh_direct=true -append_cmdline="ignore_loglevel" $opt\
+		kernel=pkgs/LATEST.tar.xz -hosts="$host"
+	else
+	printf "unknown action '$HOST_ACTION'\n"
+	return 1
+	fi
+}
+alias ke='HOST_ACTION=kexec do-host-thing'
+alias kj='HOST_ACTION=konjurer do-host-thing'
+alias mega='HOST_ACTION=megapede do-host-thing'
