@@ -39,16 +39,15 @@ qemu_bin=$(readlink -f $qemu)
 if [[ $os = "hyper-v" ]]; then
 	mac="00:16:3E:68:00:FF"
 else
-	if [[ -n $i386 ]]; then
+	mac=$(ifconfig | grep -A 4 br0 | grep -o 00:16:3e:68:00:[0-9a-f][0-9a-f] | cut -f 6 -d :)
+	if [[ -n $mac ]]; then
+		mac=$(("0x$mac" + 16))
+	elif [[ -n $i386 ]]; then
 		mac="0x80"
 	elif [[ $HOSTPOST = "purgatory" ]]; then
 		mac="0x40"
 	else
 		mac="0"
-	fi
-	hmac=$(ifconfig | grep -A 4 br0 | grep -o 00:16:3e:68:00:$mac)
-	if [[ -n $hmac ]]; then
-		mac=$((mac + 16))
 	fi
 	mac=$(printf "00:16:3E:68:00:%02x" $((mac + $(ifconfig | grep -c -e "tap[0-9]"))))
 fi
