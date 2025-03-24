@@ -11,10 +11,8 @@ else
 		export HOSTDISPLAY="@purg"
 	elif [[ $HOSTPOST == glaptop ]]; then
 		export HOSTDISPLAY="@lap"
-	elif [[ $HOSTPOST =~ seanjc7.*.com ]]; then
-		export HOSTDISPLAY="@work"
-	elif [[ $HOSTPOST =~ seanjc.*.com ]]; then
-		export HOSTDISPLAY="@cloud"
+	elif [[ $HOSTPOST == seanjc9162524 ]]; then
+		export HOSTDISPLAY="@x1"
 	elif [[ $HOSTPOST =~ zagreus.*.com ]]; then
 		export HOSTDISPLAY="@zag"
 	else

@@ -2,15 +2,13 @@
 dir=$(pwd)
 if [[ $# -eq 1 ]]; then
 	target=$1
-elif [[ $HOSTPOST == "glaptop" || $HOSTDISPLAY == "cloud" ]]; then
-	target="w"
-elif [[ $HOSTDISPLAY == "work" ]]; then
-	target="c"
+elif [[ $HOSTPOST == "glaptop" || $HOSTPOST == "seanjc9162524" ]]; then
+	target="z"
 else
-	printf "Must specify the target, no default for $HOSTNAME\n"
+	printf "Must specify the target\n"
 	exit 1
 fi
-if [[ $HOSTPOST == "glaptop" ]]; then
+if [[ $HOSTPOST == "glaptop" || $HOSTPOST == "seanjc9162524" ]]; then
 	dir="${dir/\/home\/seanjc/\~}"
 fi
 git reset --hard HEAD
