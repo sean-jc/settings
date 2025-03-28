@@ -25,6 +25,7 @@ export SETTINGS=$HOME/go/src/github.com/sean-jc/settings
 export LSDT_CONFIG=$SETTINGS/.config/lsdt/config.yml
 
 export TOOLCHAINS=$HOME/toolchains/gcc-14.1.0-nolibc
+export P4DIFF='git diff --no-index'
 
 # Define GOPATH
 export GOPATH=$HOME/go
