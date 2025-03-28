@@ -27,6 +27,7 @@ function modprobe-kvm-vendor() {
 alias mpkk='psudo modprobe kvm force_emulation_prefix=2'
 alias mpk='mpkk && modprobe-kvm-vendor'
 alias mpkr='psudo modprobe $(get-kvm)'
+alias mpi='psudo modprobe vfio_pci'
 
 function set-fep() {
 	if [[ $(cat /sys/module/kvm/parameters/force_emulation_prefix) != "$1" ]]; then
@@ -47,6 +48,11 @@ function rmmod-safe() {
 }
 alias rmk='rmmod-safe $(get-kvm)'
 alias rmkk='rmk && rmmod-safe kvm'
+
+alias rmi='rmmod-safe vfio_pci && rmmod-safe vfio_iommu_type1 && rmmod-safe vfio_pci_core && rmmod vfio'
+alias rma='rmv && rmkk && rmmod-safe irqbypass'
+
+alias bindi="mpi && echo 1ae0 0050 > /sys/bus/pci/drivers/vfio-pci/new_id"
 
 function reload-kvm() {
 	if [[ $# -eq 2 ]]; then
