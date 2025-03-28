@@ -28,9 +28,13 @@ function kvm-trace() {
 	elif [[ $cmd == "o" || $cmd == "off" ]]; then
 		echo 0 > /sys/kernel/debug/tracing/events/kvm/enable
 		echo 0 > /sys/kernel/debug/tracing/events/kvmmmu/enable
-	elif [[ $cmd == "a" || $cmd == "apicv" ]]; then
-		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_apic/enable
+	elif [[ $cmd == "ai" || $cmd == "apicv_irqs" ]]; then
+		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_apicv_accept_irq/enable
 		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_apicv_inhibit_changed/enable
+	elif [[ $cmd == "aa" || $cmd == "apicv_accesses" ]]; then
+		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_apic/enable
+		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_avic_unaccelerated_access/enable
+		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_eoi/enable
 	elif [[ $cmd == "c" || $cmd == "cpuid" ]]; then
 		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_cpuid/enable
 	elif [[ $cmd == "em" || $cmd == "emulate" ]]; then
@@ -44,12 +48,10 @@ function kvm-trace() {
 	elif [[ $cmd == "h" || $cmd == "hypercall" ]]; then
 		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_hypercall/enable
 	elif [[ $cmd == "i" || $cmd == "irqs" ]]; then
-		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_apic_ipi/enable
 		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_inj_virq/enable
 		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_apic_accept_irq/enable
-		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_apicv_accept_irq/enable
-		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_avic_unaccelerated_access/enable
-		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_eoi/enable
+	elif [[ $cmd == "ipi" ]]; then
+		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_apic_ipi/enable
 	elif [[ $cmd == "mmu" ]]; then
 		echo $val > /sys/kernel/debug/tracing/events/kvmmmu/enable
 	elif [[ $cmd == "mn" ]]; then
@@ -57,6 +59,8 @@ function kvm-trace() {
 		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_set_spte_hva/enable
 		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_test_age_hva/enable
 		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_unmap_hva_range/enable
+	elif [[ $cmd == "msi" ]]; then
+		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_msi_set_irq/enable
 	elif [[ $cmd == "n" || $cmd == "nested" ]]; then
 		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_nested_intercepts/enable
 		echo $val > /sys/kernel/debug/tracing/events/kvm/kvm_nested_intr_vmexit/enable
