@@ -11,7 +11,9 @@ function kvm-trace() {
 		return 1
 	fi
 
-	echo 16384 > /sys/kernel/debug/tracing/buffer_size_kb
+	if [[ $(cat /sys/kernel/debug/tracing/buffer_size_kb) -lt 16384 ]]; then
+		echo 16384 > /sys/kernel/debug/tracing/buffer_size_kb
+	fi
 	echo 1 > /sys/kernel/debug/tracing/tracing_on
 
 	cmd=$1
