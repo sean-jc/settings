@@ -18,14 +18,16 @@ function kokonut-kvm() {
 }
 alias kki='kokonut-kvm izumi'
 alias kkd='kokonut-kvm indus'
-alias kka='kokonut-kvm arcadia'
+alias kka='kokonut-kvm astoria'
+alias kkc='kokonut-kvm arcadia'
 
 function kokonut-kvm-gvisor() {
 	kokonut test --machine_families=$1 --kernel pkgs/LATEST.tar.xz //kvm/... //gvisor/...
 }
 alias kkig='kokonut-kvm-gvisor izumi'
 alias kkdg='kokonut-kvm-gvisor indus'
-alias kkag='kokonut-kvm-gvisor arcadia'
+alias kkag='kokonut-kvm-gvisor astoria'
+alias kksg='kokonut-kvm-gvisor arcadia'
 
 function kokonut-boot-test() {
 	local host
