@@ -32,8 +32,17 @@ function dev-sync() {
 			chmod -R g=u,g-w,o=u,o-w /data/local/seanjc/go"
 	fi
 	if [[ $1 == "kvm" ]]; then
-		printf "Not yet supported, need to figure out how to specify the target directory\n"
-		return 1
+		kname=$(ssh $2 "uname -r")
+
+		rsync -z --checksum arch/x86/kvm/kvm-amd.ko             $2:/lib/modules/$kname/kernel/arch/x86/kvm/kvm-amd.ko
+		rsync -z --checksum arch/x86/kvm/kvm-intel.ko           $2:/lib/modules/$kname/kernel/arch/x86/kvm/kvm-intel.ko
+		rsync -z --checksum arch/x86/kvm/kvm.ko                 $2:/lib/modules/$kname/kernel/arch/x86/kvm/kvm.ko
+		rsync -z --checksum drivers/vfio/pci/vfio-pci-core.ko   $2:/lib/modules/$kname/kernel/drivers/vfio/pci/vfio-pci-core.ko
+		rsync -z --checksum drivers/vfio/pci/vfio-pci.ko        $2:/lib/modules/$kname/kernel/drivers/vfio/pci/vfio-pci.ko
+		rsync -z --checksum drivers/vfio/vfio_iommu_type1.ko    $2:/lib/modules/$kname/kernel/drivers/vfio/vfio_iommu_type1.ko
+		rsync -z --checksum drivers/vfio/vfio.ko                $2:/lib/modules/$kname/kernel/drivers/vfio/vfio.ko
+		rsync -z --checksum virt/lib/irqbypass.ko               $2:/lib/modules/$kname/kernel/virt/lib/irqbypass.ko
+		return 0;
 	fi
 	if [[ $1 == "full" || $1 == "binaries" ]]; then
 		rsync -z --checksum --recursive --links ~/build/qemu/static-8.0.3 $2:/data/local/seanjc/build/qemu
