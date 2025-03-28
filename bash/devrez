@@ -6,7 +6,7 @@ function do-host-thing() {
 		return 1
 	fi
 
-	host=$(grep -A1 "Host $1" ~/.ssh/config | grep HostName | tr -s " " | cut -f 3 -d " ")
+	host=$(grep -A1 -w "Host $1" ~/.ssh/config | grep HostName | tr -s " " | cut -f 3 -d " ")
 
 	if [[ -z $host ]]; then
 		printf "no match for host=$1\n"
@@ -15,20 +15,22 @@ function do-host-thing() {
 	if [[ $HOST_ACTION == "megapede" ]]; then
 		echo $host
 		megapede console $host
-	elif [[ $HOST_ACTION == "konjurer" || $HOST_ACTION == "kexec" ]]; then
+	elif [[ $HOST_ACTION == "konjurer" || $HOST_ACTION == "kexec" || $HOST_ACTION == "kirqs" ]]; then
 		host=$(echo $host | cut -f 1 -d .)
-
 		if [[ $HOST_ACTION == "kexec" ]]; then
-			opt="-kexec"
+			/google/data/ro/projects/platforms/prodkernel/konjurer/konjurer -wait=false -client=ssh --ssh_direct=true -append_cmdline="ignore_loglevel" -fastkexec -hosts="$host" -kernel=pkgs/LATEST.tar.xz
+		elif [[ $HOST_ACTION == "kirqs" ]]; then
+			/google/data/ro/projects/platforms/prodkernel/konjurer/konjurer -wait=false -client=ssh --ssh_direct=true -append_cmdline="ignore_loglevel intremap=posted_msi" -hosts="$host" -kernel=pkgs/LATEST.tar.xz
+		else
+			/google/data/ro/projects/platforms/prodkernel/konjurer/konjurer -wait=false -client=ssh --ssh_direct=true -append_cmdline="ignore_loglevel" -hosts="$host" -kernel=pkgs/LATEST.tar.xz
 		fi
-		/google/data/ro/projects/platforms/prodkernel/konjurer/konjurer -wait=false \
-		-client=ssh --ssh_direct=true -append_cmdline="ignore_loglevel" $opt\
-		kernel=pkgs/LATEST.tar.xz -hosts="$host"
 	else
-	printf "unknown action '$HOST_ACTION'\n"
-	return 1
+		printf "unknown action '$HOST_ACTION'\n"
+		return 1
 	fi
 }
 alias ke='HOST_ACTION=kexec do-host-thing'
+alias ki='HOST_ACTION=kirqs do-host-thing'
 alias kj='HOST_ACTION=konjurer do-host-thing'
 alias mega='HOST_ACTION=megapede do-host-thing'
+alias msv='/google/bin/releases/msv-sre/clis/msv'
