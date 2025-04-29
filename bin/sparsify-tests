@@ -70,6 +70,8 @@ echo "tools/testing/selftests/kselftest_module.h" >> .git/info/sparse-checkout
 echo "tools/testing/selftests/lib.mk" >> .git/info/sparse-checkout
 echo "tools/testing/selftests/Makefile" >> .git/info/sparse-checkout
 echo "tools/testing/selftests/run_kselftest.sh" >> .git/info/sparse-checkout
+echo "tools/testing/selftests/cgroup" >> .git/info/sparse-checkout
+echo "tools/testing/selftests/clone3" >> .git/info/sparse-checkout
 echo "tools/testing/selftests/kvm" >> .git/info/sparse-checkout
 echo "tools/testing/selftests/rseq" >> .git/info/sparse-checkout
 echo "Documentation/admin-guide/cgroup-v2.rst" >> .git/info/sparse-checkout
