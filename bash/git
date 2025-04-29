@@ -143,7 +143,7 @@ function git-get-branch() {
 	if [[ $# -eq 1 ]]; then
 		git checkout -b $1 o/$1
 	elif [[ $# -eq 2 ]]; then
-		git checkout -b $1 $2
+		git checkout -b $2 $1/$2
 	else
 		printf "git-get-branch <branch> [remote]\n"
 		return 1
@@ -499,6 +499,7 @@ alias ggc='git-get-cc'
 alias ggd='gs | grep deleted: | cut -f 2 | tr -s " " | cut -f 2 -d " " | xargs git checkout'
 alias ggl='git branch | grep'
 alias ggo='git branch -r | tr -d " " | grep -E "^o/" | cut -f 2- -d "/" | grep'
+alias ggs='git-get-branch s'
 alias ggx='git branch -r --list x/* | grep -v next | cut -f 2 -d '/''
 alias gi='git rebase --interactive'
 alias gl='git log --decorate'
