@@ -12,4 +12,4 @@ if [[ $HOSTPOST == "glaptop" || $HOSTPOST == "seanjc9162524" ]]; then
 	dir="${dir/\/home\/seanjc/\~}"
 fi
 git reset --hard HEAD
-ssh $target "cd $dir ; git diff --no-prefix" | patch -p0
+ssh $target "cd $dir ; git diff --no-prefix" | patch -p0 -r /dev/null --no-backup-if-mismatch
