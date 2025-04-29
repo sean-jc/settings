@@ -44,7 +44,6 @@ function git-cherry-pick-show-oneline() {
 	git show -s --pretty="tformat:%h ('%s')" $(git-cherry-pick-ref)
 }
 
-
 function git-push() {
 	local opts
 	local response=y
@@ -120,10 +119,16 @@ function git-archive-branch() {
 		printf "'$branch' is not archived at '$HOME/outbox/$repo/$dir'\n"
 		return 1
 	fi
-	git branch -D $branch
+
+	git show-ref --quiet refs/heads/$branch
 	if [[ $? -eq 0 ]]; then
-		git push --delete o $branch
+		git branch -D $branch
+		if [[ $? -ne 0 ]]; then
+			printf "Couldn't delete '$branch'?\n"
+			return 1;
+		fi
 	fi
+	git push --delete o $branch
 }
 
 function git-get() {
