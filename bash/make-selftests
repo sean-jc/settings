@@ -5,19 +5,21 @@ function make-selftests() {
 	local selftest
 	local static=""
 	local ls
+	local source=$HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm
+	local output=$HOME/build/selftests/$3
 
-	if [[ $# -lt 1 ]] || [[ $1 != "x86" && $1 != "clang" && $1 != "arm" ]]; then
-		printf "Must specify 'x86', 'clang' or 'arm' as first argument\n"
-		return 1
-	fi
-	if [[ $# -lt 2 ]] || [[ ! -d "$HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm" ]]; then
+	if [[ $# -lt 2 ]] || [[ ! -d $source ]]; then
 		printf "Must specify kernel directory as second argument\n"
 		return 1
 	fi
-	if [[ $# -gt 3 ]]; then
-		printf "Max of 3 arguments supported\n"
+	if [[ $# -lt 3 ]] || [[ ! -d $output ]]; then
+		printf "Must specify output directory as third argument\n"
+		return 1
 	fi
-	if [[ $# -gt 2 && $3 != "clean" ]]; then
+	if [[ $# -lt 3 ||$# -gt 4 ]]; then
+		printf "Min of 3, max of 4 arguments supported\n"
+	fi
+	if [[ $# -gt 3 && $4 != "clean" ]]; then
 		printf "Can only specify 'clean' as third argument\n"
 		return 1
 	fi
@@ -25,58 +27,83 @@ function make-selftests() {
 	if [[ $1 == "arm" ]]; then
 		arch_dir="arm64"
 	else
-		arch_dir="x86"
+		arch_dir=$1
 	fi
 
 	# Check for the old directories.
-	if [[ ! -d $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm/$arch_dir ]]; then
-		if [[ $1 == "arm" ]]; then
-			arch_dir="aarch64"
-		else
+	if [[ ! -d $source/$arch_dir ]]; then
+		if [[ $1 == "x86" ]]; then
 			arch_dir="x86_64"
+		elif [[ $1 == "arm" ]]; then
+			arch_dir="aarch64"
+		elif [[ $1 == "s390" ]]; then
+			arch_dir="s390x"
 		fi
-		if [[ ! -d $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm/$arch_dir ]]; then
+		if [[ ! -d $source/$arch_dir ]]; then
 			printf "Invalid arch '$arch_dir'?\n"
 			return 1
 		fi
 	fi
 
-	pushd $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm
-	if [[ $# -gt 2 && $3 == "clean" ]]; then
-		git clean -fdx
+	pushd $HOME/go/src/kernel.org/$2
+	make-$1 make O=$output headers_install
+
+	cd $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm
+	if [[ $# -gt 3 && $4 == "clean" ]]; then
+		make-$1 make OUTPUT=$output clean -j128
 	fi
 
-	if [[ $(whoami) == "seanjc" ]]; then
+	# Statically linking on s390 fails due to duplicate memset/memcmp
+	# definitions.  s390 is only ever compile-tested only, i.e. statically
+	# linking isn't necessary, so just paper over the problem.
+	if [[ $(whoami) == "seanjc" && $1 != "s390" ]]; then
 		static="-static"
 	fi
 
 	ls=$(which ls)
-	tests=( $($ls -1 $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm/*.c $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm/$arch_dir/*.c) )
+	tests=( $($ls -1 $source/*.c $source/$arch_dir/*.c) )
 
-	EXTRA_CFLAGS="$static -Werror -gdwarf-4" make-$1 make -j$(get-nr-cpus)
-	if [[ $? -eq 0 ]]; then
-		rm -f $HOME/build/selftests/*
+	KHDR_INCLUDES="-isystem $output/usr/include" EXTRA_CFLAGS="$static -Werror -gdwarf-4" make-$1 make OUTPUT=$output -j$(get-nr-cpus)
+	local ret=$?
+	if [[ $ret -eq 0 ]]; then
+		rm -f $output/bin/*
 		for i in "${tests[@]}"; do
 			i="${i%.*}"
 			selftest=$(basename -- "$i")
 			if [[ -f $i ]]; then
-				cp $i $HOME/build/selftests/$selftest
+				cp $i $output/bin/*/$selftest
 			fi
 		done
 	fi
 	popd
+	return $ret
 }
-alias mt='make-selftests x86 slf'
-alias mtc='make-selftests x86 slf clean'
-alias mti='make-selftests x86 tinux'
-alias mtic='make-selftests x86 tinux clean'
-alias jt='make-clang make-selftests x86 slf'
-alias jtc='make-clang make-selftests x86 slf clean'
-alias jti='make-clang make-selftests x86 tinux'
-alias jtic='make-clang make-selftests x86 tinux clean'
-alias jtx='make-clang make-selftests x86 nox'
-alias jtxc='make-clang make-selftests x86 nox clean'
-alias mta='make-selftests arm nox'
-alias mtac='make-selftests arm nox clean'
-alias jta='make-clang make-selftests arm nox'
-alias jtac='make-clang make-selftests arm nox clean'
+
+alias mt='make-selftests   x86 slf x86'
+alias mtc='make-selftests  x86 slf x86 clean'
+alias mti='make-selftests  x86 tinux ti'
+alias mtic='make-selftests x86 tinux ti clean'
+
+alias jt='make-clang   make-selftests x86 slf c'
+alias jtc='make-clang  make-selftests x86 slf c clean'
+alias jti='make-clang  make-selftests x86 tinux ti_c'
+alias jtic='make-clang make-selftests x86 tinux ti_c clean'
+
+# alias mtx='make-clang  make-selftests x86 nox'
+# alias mtxc='make-clang make-selftests x86 nox clean'
+# alias jtx='make-clang  make-selftests x86 nox'
+# alias jtxc='make-clang make-selftests x86 nox clean'
+alias mta='make-selftests  arm nox arm'
+alias mtac='make-selftests arm nox arm clean'
+alias jta='make-clang make-selftests arm nox arm_c'
+alias jtac='make-clang make-selftests arm nox arm_c clean'
+
+alias mts='make-selftests  s390 nox s390'
+alias mtsc='make-selftests s390 nox s390 clean'
+alias jts='make-clang make-selftests s390 nox s390_c'
+alias jtsc='make-clang make-selftests s390 nox s390_c clean'
+
+alias mtr='make-selftests  riscv nox riscv'
+alias mtrc='make-selftests riscv nox riscv clean'
+alias jtr='make-clang make-selftests riscv nox riscv_c'
+alias jtrc='make-clang make-selftests riscv nox riscv_c clean'

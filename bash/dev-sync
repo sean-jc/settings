@@ -15,6 +15,8 @@ function dev-sync() {
 			mkdir -p /data/local/seanjc/build/kernel/ti/arch/x86/boot; \
 			mkdir -p /data/local/seanjc/build/kernel/ti/lib/modules; \
 			mkdir -p /data/local/seanjc/build/qemu; \
+			mkdir -p /data/local/seanjc/build/selftests/x86; \
+			mkdir -p /data/local/seanjc/build/selftests/arm; \
 			mkdir -p /data/local/seanjc/go/src/github.com/sean-jc; \
 			mkdir -p /data/local/seanjc/go/src/kernel.org; \
 			mkdir -p /data/local/seanjc/images/qemu; \
@@ -53,7 +55,8 @@ function dev-sync() {
 			chmod -R g=u,g-w,o=u,o-w /data/local/seanjc/build"
 	fi
 	if [[ $1 == "full" || $1 == "tests" ]]; then
-		rsync -z --checksum --recursive --links ~/build/selftests $2:/data/local/seanjc/build
+		rsync -z --checksum --recursive --links ~/build/selftests/x86/bin $2:/data/local/seanjc/build/selftest/x86
+		rsync -z --checksum --recursive --links ~/build/selftests/arm/bin $2:/data/local/seanjc/build/selftest/arm
 		rsync -z --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kut $2:/data/local/seanjc/go/src/kernel.org
 		rsync -z --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kut-32 $2:/data/local/seanjc/go/src/kernel.org
 		rsync -z --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kut-efi $2:/data/local/seanjc/go/src/kernel.org
