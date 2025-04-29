@@ -150,8 +150,10 @@ if [[ -n $mach ]]; then
 fi
 if [[ -n $td ]]; then
 	machine="$machine,kvm-type=tdx,kernel_irqchip=split,guest-memory-protection=tdx,pic=off -object tdx-guest,id=tdx,debug"
-else
+elif [[ -n $ioapic ]]; then
 	machine="$machine,kernel_irqchip=on"
+else
+	machine="$machine,kernel_irqchip=split"
 fi
 if [[ -n $sev ]]; then
 	machine="$machine,memory-encryption=sev -object sev-guest,id=sev,policy=0,cbitpos=47,reduced-phys-bits=1"
