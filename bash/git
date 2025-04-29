@@ -133,7 +133,7 @@ function git-archive-branch() {
 
 function git-get() {
 	if [[ $# -eq 0 ]]; then
-		git show -s --pretty="%C(auto)   %D"
+		git show -s --pretty="%C(auto)   %(decorate:separator= => )"
 	else
 		git checkout $@
 	fi
