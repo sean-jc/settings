@@ -60,7 +60,7 @@ alias dkv='gdb-disassemble arch/x86/kvm/kvm-intel.ko'
 alias dq='gdb-disassemble ~/build/qemu/qemu'
 
 function objdump-disassemble() {
-		objdump -M x86_64 $1 $2 | less
+		objdump -M x86_64 $@ | less
 }
 alias od='objdump-disassemble -d'
 alias odd='objdump-disassemble -D'
