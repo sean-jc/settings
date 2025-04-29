@@ -2,27 +2,27 @@
 . $SETTINGS/bin/sparsify-common
 
 include_early+=(
-	arch/arm64/
-	arch/loongarch/
-	arch/mips/
-	arch/powerpc/
-	arch/riscv/
-	arch/s390/
-	arch/x86/
-	drivers/perf/
-	tools/arch/x86/
-	tools/arch/arm64/
-	tools/arch/riscv/
-	tools/arch/s390/
+	"arch/arm64/"
+	"arch/loongarch/"
+	"arch/mips/"
+	"arch/powerpc/"
+	"arch/riscv/"
+	"arch/s390/"
+	"arch/x86/"
+	"drivers/perf/"
+	"tools/arch/x86/"
+	"tools/arch/arm64/"
+	"tools/arch/riscv/"
+	"tools/arch/s390/"
 )
 
 include_late+=(
-	drivers/amba
-	drivers/bus
-	drivers/irqchip
-	drivers/of
-	drivers/power
-	drivers/s390
+	"drivers/amba"
+	"drivers/bus"
+	"drivers/irqchip"
+	"drivers/of"
+	"drivers/power"
+	"drivers/s390"
 )
 
 sparsify-kernel

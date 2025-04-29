@@ -2,13 +2,13 @@
 . $SETTINGS/bin/sparsify-common
 
 include_late+=(
-	drivers/char/agp
-	drivers/dma
-	drivers/dma-bug
-	drivers/firmware
-	drivers/gpu
-	drivers/i2c
-	drivers/video
+	"drivers/char/agp"
+	"drivers/dma"
+	"drivers/dma-buf"
+	"drivers/firmware"
+	"drivers/gpu"
+	"drivers/i2c"
+	"drivers/video"
 )
 
 sparsify-kernel
