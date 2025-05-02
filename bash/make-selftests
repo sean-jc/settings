@@ -63,7 +63,7 @@ function make-selftests() {
 	ls=$(which ls)
 	tests=( $($ls -1 $source/*.c $source/$arch_dir/*.c) )
 
-	KHDR_INCLUDES="-isystem $output/usr/include" EXTRA_CFLAGS="$static -Werror -gdwarf-4" make-$1 make OUTPUT=$output -j$(get-nr-cpus)
+	KHDR_INCLUDES="-isystem $output/usr/include" EXTRA_CFLAGS="$static -Werror -gdwarf-4" make-$1 make INSTALL_HDR_PATH="$output/usr" OUTPUT=$output -j$(get-nr-cpus)
 	local ret=$?
 	if [[ $ret -eq 0 ]]; then
 		rm -f $output/bin/*
