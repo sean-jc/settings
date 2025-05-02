@@ -61,6 +61,25 @@ alias rkte='prep-kut-efi && run-kut on'
 alias rkuse='rkte ./run_tests.sh -v'
 alias rkue='rkuse -j$(get-nr-cpus)'
 
+function get-selftests-filtered() {
+	/bin/ls -dl $1 | grep -E "^\-rwxr" | tr -s ' ' | cut -f 9 -d ' '
+}
+
+function get-selftests() {
+	local arch=$(uname -m)
+	if [[ $arch == "x86_64" ]]; then
+		arch="x86"
+	elif [[ $arch == "aarch64" ]]; then
+		arch="arm"
+	else
+		printf "Unhandled tests architecture %s\n" $arch
+		exit 1
+	fi
+
+	get-selftests-filtered "$HOME/build/selftests/$arch/*"
+	get-selftests-filtered "$HOME/build/selftests/$arch/$arch/*"
+}
+
 function run-selftests() {
 	local RED='\033[1;31m' # Bold Red
 	local GREEN='\e[0;32m' # Bold Green
@@ -68,33 +87,34 @@ function run-selftests() {
 	local BLUE='\e[1;34m'  # Bold Blue
 	local cyan='\033[0;36m' # Cyan
 	local NOF='\033[0m' # No Format
-	local tests=( $(/bin/ls -1 $HOME/build/selftests) )
+	local tests=( $(get-selftests) )
 	local ret
 	local i
 
 	probe-modules qemu
 
 	for i in "${tests[@]}"; do
+		local test=$(basename "$i")
 		local __stdout
 		local __stderr
 
-		printf "Running $i\n"
+		printf "Running $test\n"
 
-		if [[ $i == "max_guest_memory_test" && $(is-guest) ]]; then
+		if [[ $test == "mmu_stress_test" && $(is-guest) ]]; then
 			ret=4
 		else
-			catch __stdout __stderr $HOME/build/selftests/$i
+			catch __stdout __stderr $i
 			ret=$?
 		fi
 
 		if [[ $ret -eq 0 ]]; then
-			printf "${GREEN}PASSED ${cyan}$i${NOF}\n"
+			printf "${GREEN}PASSED ${cyan}$test${NOF}\n"
 		elif [[ $ret -eq 4 ]]; then
-			printf "${BROWN}SKIPPED ${cyan}$i${NOF}\n"
+			printf "${BROWN}SKIPPED ${cyan}$test${NOF}\n"
 		elif [[ $ret -eq 139 ]]; then
-			printf "${RED}SEGFAULT ${cyan}$i${NOF}\n"
+			printf "${RED}SEGFAULT ${cyan}$test${NOF}\n"
 		else
-			printf "${RED}FAILED ${cyan}$i${RED} : ret ='$ret'${NOF}\n"
+			printf "${RED}FAILED ${cyan}$test${RED} : ret ='$ret'${NOF}\n"
 			printf "$__stdout\n"
 			printf "$__stderr\n"
 		fi
@@ -146,27 +166,26 @@ function run-one-selftest() {
 	local BLUE='\e[1;34m'  # Bold Blue
 	local cyan='\033[0;36m' # Cyan
 	local NOF='\033[0m' # No Format
-
 	local __stdout
 	local __stderr
-	local test=$1
+	local test=$(basename $1)
 	local log=$2
 
-	if [[ $i == "max_guest_memory_test" && $(is-guest) ]]; then
+	if [[ $test == "mmu_stress_test" && $(is-guest) ]]; then
 		ret=4
 	else
-		catch __stdout __stderr $HOME/build/selftests/$i
+		catch __stdout __stderr $1
 		ret=$?
 	fi
 
 	if [[ $ret -eq 0 ]]; then
-		printf "${GREEN}PASSED ${cyan}$i${NOF}\n" >> $log
+		printf "${GREEN}PASSED ${cyan}$test${NOF}\n" >> $log
 	elif [[ $ret -eq 4 ]]; then
-		printf "${BROWN}SKIPPED ${cyan}$i${NOF}\n" >> $log
+		printf "${BROWN}SKIPPED ${cyan}$test${NOF}\n" >> $log
 	elif [[ $ret -eq 139 ]]; then
-		printf "${RED}SEGFAULT ${cyan}$i${NOF}\n" >> $log
+		printf "${RED}SEGFAULT ${cyan}$test${NOF}\n" >> $log
 	else
-		printf "${RED}FAILED ${cyan}$i${RED} : ret ='$ret'${NOF}\n" >> $log
+		printf "${RED}FAILED ${cyan}$test${RED} : ret ='$ret'${NOF}\n" >> $log
 	fi
 	printf "$__stdout\n" >> $log
 	printf "$__stderr\n" >> $log
@@ -180,8 +199,7 @@ function run-selftests-parallelized() {
 	local BLUE='\e[1;34m'  # Bold Blue
 	local cyan='\033[0;36m' # Cyan
 	local NOF='\033[0m' # No Format
-
-	local tests=( $(/bin/ls -1 $HOME/build/selftests) )
+	local tests=( $(get-selftests) )
 	local ret
 	local i
 
@@ -189,12 +207,13 @@ function run-selftests-parallelized() {
 
 	local pids=()
 	for i in "${tests[@]}"; do
-		run-one-selftest $i "$HOME/logs/$i.$1.log" &
+		local test=$(basename $i)
+		run-one-selftest $i "$HOME/logs/$test.$1.log" &
 		pids+=($!)
 	done
 
 	for i in "${!pids[@]}"; do
-		local test=${tests[$i]}
+		local test=$(basename ${tests[$i]})
 		local pid=${pids[$i]}
 
 		printf "Waiting for '$test', PID '$pid'\n"

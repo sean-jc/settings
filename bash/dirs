@@ -30,7 +30,7 @@ alias uu='cd ~/go/src/kernel.org/gpu'
 alias bi='cd ~/build'
 alias kn='cd ~/build/kernel'
 alias qe='cd ~/build/qemu'
-alias tt='cd ~/build/selftests'
+alias tt='cd ~/build/selftests/x86'
 alias iq='cd ~/images/qemu'
 
 # Direct navigation to outbox directories (posted patches)

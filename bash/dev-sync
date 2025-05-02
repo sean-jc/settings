@@ -2,9 +2,19 @@ function dev-sync() {
 	if [[ $# -ne 2 ]]; then
 		printf "usage: dev-sync <host> <option>\n"
 		return 1
-	elif [[ $1 != "full" && $1 != "settings" && $1 != "binaries" && $1 != "kvm" && $1 != "tests" && $1 != "vm" ]]; then
+	elif [[ $1 != "full" && $1 != "settings" && $1 != "binaries" && $1 != "kvm" && $1 != "kut" && $1 != "tests" && $1 != "vm" ]]; then
 		printf "usage: ds[,b,k,s,t] <target>\n"
 		return 1
+	fi
+
+	local arch=$(ssh $2 "uname -m")
+	if [[ $arch == x86_64 ]]; then
+		arch=x86
+	elif [[ $arch == aarch64 ]]; then
+		arch=arm
+	else
+		printf "Unhandled tests architecture %s\n" $arch
+		return 1;
 	fi
 
 	if [[ $1 == "full" ]]; then
@@ -15,8 +25,8 @@ function dev-sync() {
 			mkdir -p /data/local/seanjc/build/kernel/ti/arch/x86/boot; \
 			mkdir -p /data/local/seanjc/build/kernel/ti/lib/modules; \
 			mkdir -p /data/local/seanjc/build/qemu; \
-			mkdir -p /data/local/seanjc/build/selftests/x86; \
-			mkdir -p /data/local/seanjc/build/selftests/arm; \
+			mkdir -p /data/local/seanjc/build/selftests/x86/x86; \
+			mkdir -p /data/local/seanjc/build/selftests/arm/arm64; \
 			mkdir -p /data/local/seanjc/go/src/github.com/sean-jc; \
 			mkdir -p /data/local/seanjc/go/src/kernel.org; \
 			mkdir -p /data/local/seanjc/images/qemu; \
@@ -34,29 +44,46 @@ function dev-sync() {
 			chmod -R g=u,g-w,o=u,o-w /data/local/seanjc/go"
 	fi
 	if [[ $1 == "kvm" ]]; then
-		kname=$(ssh $2 "uname -r")
+		if [[ $arch == x86 ]]; then
+			local kname=$(ssh $2 "uname -r")
 
-		rsync -z --checksum arch/x86/kvm/kvm-amd.ko             $2:/lib/modules/$kname/kernel/arch/x86/kvm/kvm-amd.ko
-		rsync -z --checksum arch/x86/kvm/kvm-intel.ko           $2:/lib/modules/$kname/kernel/arch/x86/kvm/kvm-intel.ko
-		rsync -z --checksum arch/x86/kvm/kvm.ko                 $2:/lib/modules/$kname/kernel/arch/x86/kvm/kvm.ko
-		rsync -z --checksum drivers/vfio/pci/vfio-pci-core.ko   $2:/lib/modules/$kname/kernel/drivers/vfio/pci/vfio-pci-core.ko
-		rsync -z --checksum drivers/vfio/pci/vfio-pci.ko        $2:/lib/modules/$kname/kernel/drivers/vfio/pci/vfio-pci.ko
-		rsync -z --checksum drivers/vfio/vfio_iommu_type1.ko    $2:/lib/modules/$kname/kernel/drivers/vfio/vfio_iommu_type1.ko
-		rsync -z --checksum drivers/vfio/vfio.ko                $2:/lib/modules/$kname/kernel/drivers/vfio/vfio.ko
-		rsync -z --checksum virt/lib/irqbypass.ko               $2:/lib/modules/$kname/kernel/virt/lib/irqbypass.ko
-		return 0;
+			rsync -z --checksum arch/x86/kvm/kvm-amd.ko             $2:/lib/modules/$kname/kernel/arch/x86/kvm/kvm-amd.ko
+			rsync -z --checksum arch/x86/kvm/kvm-intel.ko           $2:/lib/modules/$kname/kernel/arch/x86/kvm/kvm-intel.ko
+			rsync -z --checksum arch/x86/kvm/kvm.ko                 $2:/lib/modules/$kname/kernel/arch/x86/kvm/kvm.ko
+			rsync -z --checksum drivers/vfio/pci/vfio-pci-core.ko   $2:/lib/modules/$kname/kernel/drivers/vfio/pci/vfio-pci-core.ko
+			rsync -z --checksum drivers/vfio/pci/vfio-pci.ko        $2:/lib/modules/$kname/kernel/drivers/vfio/pci/vfio-pci.ko
+			rsync -z --checksum drivers/vfio/vfio_iommu_type1.ko    $2:/lib/modules/$kname/kernel/drivers/vfio/vfio_iommu_type1.ko
+			rsync -z --checksum drivers/vfio/vfio.ko                $2:/lib/modules/$kname/kernel/drivers/vfio/vfio.ko
+			rsync -z --checksum virt/lib/irqbypass.ko               $2:/lib/modules/$kname/kernel/virt/lib/irqbypass.ko
+			return 0;
+		fi
+		return 1;
 	fi
 	if [[ $1 == "full" || $1 == "binaries" ]]; then
-		rsync -z --checksum --recursive --links ~/build/qemu/static-8.0.3 $2:/data/local/seanjc/build/qemu
-		rsync -z --checksum --recursive --links ~/build/ovmf $2:/data/local/seanjc/build
-		ssh $2 "rm -f /data/local/seanjc/build/qemu/qemu; \
-			cd /data/local/seanjc/build/qemu; \
-			ln -s ./static-8.0.3/x86_64-softmmu/qemu-system-x86_64 qemu; \
-			chmod -R g=u,g-w,o=u,o-w /data/local/seanjc/build"
+		if [[ $arch == x86 ]]; then
+			rsync -z --checksum --recursive --links ~/build/qemu/static-8.0.3 $2:/data/local/seanjc/build/qemu
+			rsync -z --checksum --recursive --links ~/build/ovmf $2:/data/local/seanjc/build
+			ssh $2 "rm -f /data/local/seanjc/build/qemu/qemu; \
+				cd /data/local/seanjc/build/qemu; \
+				ln -s ./static-8.0.3/x86_64-softmmu/qemu-system-x86_64 qemu; \
+				chmod -R g=u,g-w,o=u,o-w /data/local/seanjc/build"
+		fi
 	fi
 	if [[ $1 == "full" || $1 == "tests" ]]; then
-		rsync -z --checksum --recursive --links ~/build/selftests/x86/bin $2:/data/local/seanjc/build/selftest/x86
-		rsync -z --checksum --recursive --links ~/build/selftests/arm/bin $2:/data/local/seanjc/build/selftest/arm
+		if [[ $arch == x86 ]]; then
+			sdir=slf
+			adir=x86
+		else
+			sdir=nox
+			adir=arm64
+		fi
+
+		rsync -z --checksum --links --exclude='*.d' --exclude='*.o' ~/build/selftests/$arch/* $2:/data/local/seanjc/build/selftests/$arch
+		rsync -z --checksum --links --exclude='*.d' --exclude='*.o' ~/build/selftests/$arch/$adir/* $2:/data/local/seanjc/build/selftests/$arch/$adir
+		rsync -z --checksum --recursive --links ~/go/src/kernel.org/$sdir/tools/testing/selftests/kvm/testcases $2:/data/local/seanjc/build/selftests/$arch
+		rsync -z --checksum --recursive --links ~/go/src/kernel.org/$sdir/tools/testing/selftests/kvm/runner $2:/data/local/seanjc/build/selftests/$arch
+	fi
+	if [[ $1 == "full" || $1 == "kut" ]]; then
 		rsync -z --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kut $2:/data/local/seanjc/go/src/kernel.org
 		rsync -z --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kut-32 $2:/data/local/seanjc/go/src/kernel.org
 		rsync -z --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kut-efi $2:/data/local/seanjc/go/src/kernel.org
@@ -64,12 +91,14 @@ function dev-sync() {
 			chmod -R g=u,g-w,o=u,o-w /data/local/seanjc/go"
 	fi
 	if [[ $1 == "full" || $1 == "vm" ]]; then
-		rsync -z --checksum ~/build/kernel/vm/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/vm/arch/x86/boot
-		rsync -z --checksum --recursive ~/build/kernel/vm/lib/modules $2:/data/local/seanjc/build/kernel/vm/lib
-		rsync -z --checksum ~/build/kernel/pae/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/pae/arch/x86/boot
-		rsync -z --checksum --recursive ~/build/kernel/pae/lib/modules $2:/data/local/seanjc/build/kernel/pae/lib
-		rsync -z --checksum ~/build/kernel/ti/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/ti/arch/x86/boot
-		rsync -z --checksum --recursive ~/build/kernel/ti/lib/modules $2:/data/local/seanjc/build/kernel/ti/lib
+		if [[ $arch == x86 ]]; then
+			rsync -z --checksum ~/build/kernel/vm/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/vm/arch/x86/boot
+			rsync -z --checksum --recursive ~/build/kernel/vm/lib/modules $2:/data/local/seanjc/build/kernel/vm/lib
+			rsync -z --checksum ~/build/kernel/pae/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/pae/arch/x86/boot
+			rsync -z --checksum --recursive ~/build/kernel/pae/lib/modules $2:/data/local/seanjc/build/kernel/pae/lib
+			rsync -z --checksum ~/build/kernel/ti/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/ti/arch/x86/boot
+			rsync -z --checksum --recursive ~/build/kernel/ti/lib/modules $2:/data/local/seanjc/build/kernel/ti/lib
+		fi
 	fi
 }
 alias ds='dev-sync full'
@@ -77,4 +106,5 @@ alias dsb='dev-sync binaries'
 alias dsk='dev-sync kvm'
 alias dss='dev-sync settings'
 alias dst='dev-sync tests'
+alias dsu='dev-sync kut'
 alias dsv='dev-sync vm'

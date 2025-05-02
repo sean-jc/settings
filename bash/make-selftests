@@ -65,16 +65,6 @@ function make-selftests() {
 
 	KHDR_INCLUDES="-isystem $output/usr/include" EXTRA_CFLAGS="$static -Werror -gdwarf-4" make-$1 make INSTALL_HDR_PATH="$output/usr" OUTPUT=$output -j$(get-nr-cpus)
 	local ret=$?
-	if [[ $ret -eq 0 ]]; then
-		rm -f $output/bin/*
-		for i in "${tests[@]}"; do
-			i="${i%.*}"
-			selftest=$(basename -- "$i")
-			if [[ -f $i ]]; then
-				cp $i $output/bin/*/$selftest
-			fi
-		done
-	fi
 	popd
 	return $ret
 }
