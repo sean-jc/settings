@@ -3,7 +3,7 @@ function dev-sync() {
 		printf "usage: dev-sync <host> <option>\n"
 		return 1
 	elif [[ $1 != "full" && $1 != "settings" && $1 != "binaries" && $1 != "kvm" && $1 != "kut" && $1 != "tests" && $1 != "vm" ]]; then
-		printf "usage: ds[,b,k,s,t] <target>\n"
+		printf "usage: ds[,b,k,s,t,u,v] <target>\n"
 		return 1
 	fi
 
@@ -18,7 +18,9 @@ function dev-sync() {
 	fi
 
 	if [[ $1 == "full" ]]; then
-		ssh $2 "mkdir -p /data/local/seanjc/build/kernel/vm/arch/x86/boot; \
+		ssh $2 "mkdir -p /data/local/seanjc/build/kernel/lock/arch/x86/boot; \
+			mkdir -p /data/local/seanjc/build/kernel/lock/lib/modules; \
+			mkdir -p /data/local/seanjc/build/kernel/vm/arch/x86/boot; \
 			mkdir -p /data/local/seanjc/build/kernel/vm/lib/modules; \
 			mkdir -p /data/local/seanjc/build/kernel/pae/arch/x86/boot; \
 			mkdir -p /data/local/seanjc/build/kernel/pae/lib/modules; \
@@ -92,6 +94,8 @@ function dev-sync() {
 	fi
 	if [[ $1 == "full" || $1 == "vm" ]]; then
 		if [[ $arch == x86 ]]; then
+			rsync -z --checksum ~/build/kernel/lock/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/lock/arch/x86/boot
+			rsync -z --checksum --recursive ~/build/kernel/lock/lib/modules $2:/data/local/seanjc/build/kernel/lock/lib
 			rsync -z --checksum ~/build/kernel/vm/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/vm/arch/x86/boot
 			rsync -z --checksum --recursive ~/build/kernel/vm/lib/modules $2:/data/local/seanjc/build/kernel/vm/lib
 			rsync -z --checksum ~/build/kernel/pae/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/pae/arch/x86/boot
