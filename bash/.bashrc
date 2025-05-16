@@ -42,7 +42,7 @@ fi
 
 # Add ~/bin, (repo)/bin, and GO bins to PATH
 if [[ $PATH != *"sean-jc/settings"* ]]; then
-	export PATH=$HOME/bin:$SETTINGS/bin:$HOME/go/bin:/usr/local/go/bin:$PATH
+	export PATH=$HOME/bin:$HOME/bin/bpftrace:$SETTINGS/bin:$HOME/go/bin:/usr/local/go/bin:$PATH
 fi
 
 # Require a revision when using make-kpkg to build .deb kernels

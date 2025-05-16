@@ -1,4 +1,4 @@
-alias bt='$SETTINGS/bin/bpftrace'
+alias bt='$HOME/bin/bpftrace/bpftrace'
 
 function kvm-trace() {
 	if [[ $EUID != 0 ]]; then
