@@ -36,6 +36,8 @@ alias sk='sudo -sE'
 
 alias gcm='gcert -s -m kernel-development --nossh_on_security_key && ssh-add $HOME/.ssh/id_local'
 
+alias r=reup
+alias k=kapwing
 alias mf='make -j$(get-nr-cpus)'
 alias mfc='make clean && make -j$(get-nr-cpus)'
 
