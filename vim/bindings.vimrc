@@ -11,6 +11,7 @@ imap <C-p>h Cc: James Houghton <jthoughton@google.com>
 imap <C-p>j Cc: Jim Mattson <jmattson@google.com>
 imap <C-p>k Cc: kvm@vger.kernel.org
 imap <C-p>m Cc: Maxim Levitsky <mlevitsk@redhat.com>
+imap <C-p>n No functional change intended.
 imap <C-p>o Cc: Oliver Upton <oliver.upton@linux.dev>
 imap <C-p>p Cc: Paolo Bonzini <pbonzini@redhat.com>
 imap <C-p>s Cc: stable@vger.kernel.org
