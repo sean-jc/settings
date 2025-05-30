@@ -1,0 +1,44 @@
+. $SETTINGS/bash/utils
+
+function make-kut() {
+	local dir=$HOME/build/kut/$1
+
+	if [[ $# -lt 1 ]] || [[ ! -d $dir ]]; then
+		printf "Must specify kut directory as first argument\n"
+		return 1
+	fi
+	if [[ $# -gt 1 && $2 != "clean" ]]; then
+		printf "Can only specify 'clean' as second argument\n"
+		return 1
+	fi
+
+	pushd $dir
+
+	if [[ $# -gt 1 && $2 == "clean" ]]; then
+		make clean -j$(get-nr-cpus)
+	fi
+	make -j$(get-nr-cpus)
+	local ret=$?
+	popd
+
+	return $ret
+}
+
+alias mb='make-kut x86'
+alias mbe='make-kut x86 clean'
+alias mx='make-kut x86 && make-kut i386 && make-kut efi'
+alias mxe='make-kut x86 clean && make-kut i386 clean && make-kut efi clean'
+alias mua='mx && make-kut arm && make-kut riscv && make-kut s390'
+alias muae='mxe && make-kut arm clean && make-kut riscv clean && make-kut s390 clean'
+
+alias mxr='make-kernel-range kut-x86 ign'
+alias mar='make-kernel-range kut-all ign'
+
+function configure-kut() {
+	cd $HOME/build/kut/arm   && $HOME/go/src/kernel.org/kut/configure --erratatxt= --disable-pretty-print-stacks --arch=aarch64 --cross-prefix=aarch64-linux-gnu-
+	cd $HOME/build/kut/efi   && $HOME/go/src/kernel.org/kut/configure --erratatxt= --disable-pretty-print-stacks --enable-efi
+	cd $HOME/build/kut/i386  && $HOME/go/src/kernel.org/kut/configure --erratatxt= --disable-pretty-print-stacks --arch=i386 --processor=i386
+	cd $HOME/build/kut/riscv && $HOME/go/src/kernel.org/kut/configure --erratatxt= --disable-pretty-print-stacks --arch=riscv64 --cross-prefix=riscv64-linux-gnu-
+	cd $HOME/build/kut/s390  && $HOME/go/src/kernel.org/kut/configure --erratatxt= --disable-pretty-print-stacks --arch=s390x --cross-prefix=s390x-linux-gnu-
+	cd $HOME/build/kut/x86   && $HOME/go/src/kernel.org/kut/configure --erratatxt= --disable-pretty-print-stacks
+}

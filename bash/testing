@@ -12,25 +12,19 @@ function prep-kvm-unit-tests() {
 
 	probe-modules qemu
 	export unittest_log_dir=~/logs/$1/$(date +%Y.%m.%d.%H.%M)
-	cd ~/go/src/kernel.org/$1
+	cd ~/build/kut/$1
 }
 
 function prep-kut32() {
-	# ./configure --erratatxt="" --disable-pretty-print-stacks --arch=i386 --processor=i386
-	prep-kvm-unit-tests kut-32
-	return 0
+	prep-kvm-unit-tests i386
 }
 
 function prep-kut() {
-	# ./configure --erratatxt="" --disable-pretty-print-stacks
-	prep-kvm-unit-tests kut
-	return 0
+	prep-kvm-unit-tests x86
 }
 
 function prep-kut-efi() {
-	# ./configure --erratatxt="" --disable-pretty-print-stacks --enable-efi
-	prep-kvm-unit-tests kut-efi
-	return 0
+	prep-kvm-unit-tests efi
 }
 
 function run-kut() {
@@ -250,26 +244,26 @@ function really-run-all-tests() {
 	run-selftests-parallelized $@ 2>/dev/null
 
 	printf "\n\n${GREEN}Running KUT with split IRQCHIP and $1${NOF}\n"
-	cd ~/go/src/kernel.org/kut
+	cd $HOME/build/kut/x86
 	unittest_log_dir=$HOME/logs/kut-split.$1.logs run-kut split ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-split.$1.log"
 	grep FAIL "$HOME/logs/kut-split.$1.log"
 
 	if [[ $RUN_KVM_TESTS != "supershort" ]]; then
 		printf "\n\n${GREEN}Running KUT with in-kernel IRQCHIP and $1${NOF}\n"
-		cd ~/go/src/kernel.org/kut
+		cd $HOME/build/kut/x86
 		unittest_log_dir=$HOME/logs/kut.$1.logs run-kut on ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut.$1.log"
 		# run-kut on ./run_tests.sh -j$(get-nr-cpus) -g nodefault > "$HOME/logs/kut.$1.log"
 		grep FAIL "$HOME/logs/kut.$1.log"
 
 		printf "\n\nRunning KUT EFI with $1${NOF}\n"
-		cd ~/go/src/kernel.org/kut-efi
+		cd $HOME/build/kut/efi
 		unittest_log_dir=$HOME/logs/kut-efi.$1.logs run-kut on ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-efi.$1.log"
 		grep FAIL "$HOME/logs/kut-efi.$1.log"
 
-		printf "\n\nRunning KUT-32 with $1${NOF}\n"
-		cd ~/go/src/kernel.org/kut-32
-		unittest_log_dir=$HOME/logs/kut-32.$1.logs run-kut on ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-32.$1.log"
-		grep FAIL "$HOME/logs/kut-32.$1.log"
+		printf "\n\nRunning KUT-i386 with $1${NOF}\n"
+		cd $HOME/build/kut/i386
+		unittest_log_dir=$HOME/logs/kut-i386.$1.logs run-kut on ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-i386.$1.log"
+		grep FAIL "$HOME/logs/kut-i386.$1.log"
 	fi
 }
 function run-all-tests() {

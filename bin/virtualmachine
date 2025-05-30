@@ -213,7 +213,7 @@ if [[ -n $daemon ]]; then
 fi
 
 if [[ -n $unittest ]]; then
-	os="-kernel $HOME/go/src/kernel.org/kut/x86/$unittest.flat -device pc-testdev -device isa-debug-exit,iobase=0xf4,iosize=0x4 -device pci-testdev"
+	os="-kernel $HOME/build/kut/x86/x86/$unittest.flat -device pc-testdev -device isa-debug-exit,iobase=0xf4,iosize=0x4 -device pci-testdev"
 elif [[ $virtio == "false" || $virtio == "n" ]]; then
 	os="-hda $img"
 	append="root=/dev/sda1 rootfstype=ext4 $append"

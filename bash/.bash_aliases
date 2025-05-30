@@ -17,6 +17,7 @@
 . $SETTINGS/bash/make-boot
 . $SETTINGS/bash/make-gbuild
 . $SETTINGS/bash/make-kernel
+. $SETTINGS/bash/make-kut
 . $SETTINGS/bash/make-selftests
 . $SETTINGS/bash/modules
 . $SETTINGS/bash/moo

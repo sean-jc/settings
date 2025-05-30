@@ -247,7 +247,6 @@ alias mkti='make-kernel-range ti make'
 alias mktic='make-kernel-range ti make clean'
 alias mkt='make-kernel-range tests-x86 ign'
 alias mat='make-kernel-range tests-all ign'
-alias mut='make-kernel-range kut ign'
 
 alias mkb='TARGET=bzImage make-kernel make'
 

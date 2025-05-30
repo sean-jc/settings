@@ -1,6 +1,7 @@
 #!/bin/bash
 . $SETTINGS/bash/utils
 . $SETTINGS/bash/make-kernel
+. $SETTINGS/bash/make-kut
 . $SETTINGS/bash/make-selftests
 
 declare -a pids=()
@@ -76,12 +77,17 @@ function do-make-kernel-range() {
 			 "make-kernel-riscv $2 cc_riscv"
 			 "make-kernel-s390 $2 cc_s390"
 			 "make-kernel $2 cc_x86")
-	elif [[ $1 == "kut"* ]]; then
-		targets=("make clean"
-			 "make -j$(get-nr-cpus)"
-			 "make clean"
-			 "make-clang make -j$(get-nr-cpus)")
-		cflags="-Werror"
+	elif [[ $1 == "kut-x86" ]]; then
+		targets=("make-kut x86 clean"
+			 "make-kut i386 clean"
+			 "make-kut efi clean")
+	elif [[ $1 == "kut-all" ]]; then
+		targets=("make-kut x86 clean"
+			 "make-kut i386 clean"
+			 "make-kut efi clean"
+			 "make-kut arm clean"
+			 "make-kut riscv clean"
+			 "make-kut s390 clean")
 	elif [[ $1 == "tests-x86" ]]; then
 		targets=("make-selftests x86 slf x86 clean"
 			 "make-clang make-selftests x86 slf c clean")
@@ -162,6 +168,10 @@ function do-make-kernel-range() {
 				dir=$(echo $target | rev | cut -f 2 -d ' ' | rev)
 				outlog="$HOME/build/selftests/$dir/stdout.log"
 				errlog="$HOME/build/selftests/$dir/stderr.log"
+			elif [[ $1 == "kut-"* ]]; then
+				dir=$(echo $target | cut -f 2 -d ' ')
+				outlog="$HOME/build/kut/$dir/stdout.log"
+				errlog="$HOME/build/kut/$dir/stderr.log"
 			else
 				dir=$(echo $target | rev | cut -f 1 -d ' ' | rev)
 				outlog="$HOME/build/kernel/$dir/stdout.log"
@@ -193,6 +203,10 @@ function do-make-kernel-range() {
 					dir=$(echo $target | rev | cut -f 2 -d ' ' | rev)
 					outlog="$HOME/build/selftests/$dir/stdout.log"
 					errlog="$HOME/build/selftests/$dir/stderr.log"
+				elif [[ $1 == "kut-"* ]]; then
+					dir=$(echo $target | cut -f 2 -d ' ')
+					outlog="$HOME/build/kut/$dir/stdout.log"
+					errlog="$HOME/build/kut/$dir/stderr.log"
 				else
 					dir=$(echo $target | rev | cut -f 1 -d ' ' | rev)
 					outlog="$HOME/build/kernel/$dir/stdout.log"
