@@ -17,60 +17,83 @@ function install-qemu-deps() {
 
 function configure-qemu() {
 	$HOME/go/src/github.com/qemu/qemu/configure --target-list=x86_64-softmmu --static \
+	--without-default-features \
+	--enable-attr \
+	--enable-kvm \
+	--enable-malloc-trim \
+	--enable-membarrier \
+	--enable-multiprocess \
+	--enable-qcow1 \
 	--enable-virtfs \
+	--enable-vhost-kernel \
+	--enable-vhost-net \
+	--enable-vhost-user \
+	--enable-vnc \
+	--enable-vvfat \
+	--enable-werror \
+	--enable-zstd \
+	--firmwarepath=pc-bios \
+	--disable-alsa \
+	--disable-auth-pam \
+	--disable-bochs \
+	--disable-brlapi \
+	--disable-capstone \
+	--disable-cloop \
+	--disable-coreaudio \
+	--disable-crypto-afalg \
+	--disable-curl \
+	--disable-curses \
+	--disable-debug-mutex \
+	--disable-dmg \
+	--disable-docs \
+	--disable-dsound \
+	--disable-fdt \
+	--disable-fuzzing \
+	--disable-gettext \
+	--disable-glusterfs \
+	--disable-gnutls \
 	--disable-guest-agent \
 	--disable-guest-agent-msi \
-	--disable-modules \
-	--disable-tcg \
-	--disable-sparse \
-	--disable-gnutls \
-	--disable-nettle \
 	--disable-gcrypt \
 	--disable-gtk \
-	--disable-vte \
-	--disable-curses \
+	--disable-hvf \
+	--disable-jack \
+	--disable-install-blobs \
+	--disable-libnfs \
+	--disable-libusb \
+	--disable-libssh \
+	--disable-modules \
+	--disable-netmap \
+	--disable-nettle \
+	--disable-numa \
+	--disable-opengl \
+	--disable-oss \
+	--disable-pa \
+	--disable-parallels \
+	--disable-qed \
+	--disable-qga-vss \
+	--disable-qom-cast-debug \
+	--disable-rbd \
+	--disable-rdma \
+	--disable-replication \
+	--disable-sdl \
+	--disable-selinux \
+	--disable-smartcard \
+	--disable-sparse \
+	--disable-spice \
+	--disable-tcg \
+	--disable-tools \
+	--disable-tpm \
+	--disable-usb-redir \
+	--disable-vde \
+	--disable-vdi \
+	--disable-virglrenderer \
 	--disable-vnc \
+	--disable-vnc-sasl \
+	--disable-vte \
 	--disable-xen \
 	--disable-xen-pci-passthrough \
-	--disable-brlapi \
-	--disable-curl \
-	--disable-fdt \
-	--disable-hax \
-	--disable-rdma \
-	--disable-vde \
-	--disable-netmap \
-	--disable-spice \
-	--disable-rbd \
-	--disable-libnfs \
-	--disable-libxml2 \
-	--disable-smartcard \
-	--disable-libusb \
-	--disable-usb-redir \
-	--disable-glusterfs \
-	--disable-tpm \
-	--disable-libssh \
-	--disable-numa \
-	--disable-replication \
-	--disable-opengl \
-	--disable-virglrenderer \
-	--disable-xfsctl \
-	--disable-qom-cast-debug \
-	--disable-tools \
-	--disable-hvf \
 	--disable-whpx \
-	--disable-bochs \
-	--disable-cloop \
-	--disable-dmg \
-	--disable-qcow1 \
-	--disable-vdi \
-	--disable-vvfat \
-	--disable-qed \
-	--disable-parallels \
-	--disable-sheepdog \
-	--disable-crypto-afalg \
-	--disable-capstone \
-	--disable-debug-mutex \
-	--disable-blobs \
 	--audio-drv-list=
 }
 
