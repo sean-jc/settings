@@ -53,7 +53,7 @@ else
 fi
 
 if [[ $os = "hyper-v" ]]; then
-	img=$HOME/images/qemu/hyper-v-2016-$img.img
+	img=$HOME/images/qemu/$img.img
 elif [[ -n $mbr ]]; then
 	img=$HOME//images/qemu/bios/ubuntu-16.04-server-$img.img
 elif [[ -n $hdd ]]; then
@@ -161,6 +161,7 @@ fi
 
 if [[ $os = "hyper-v" ]]; then
 	cpu="-cpu host,host-phys-bits,hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time,+vmx"
+	bios="-bios $HOME/build/ovmf/OVMF$ovmf.fd"
 else
 	cpu="-cpu host,host-phys-bits,+invtsc"
 	if [[ -z $migrate ]]; then
@@ -217,6 +218,8 @@ if [[ -n $unittest ]]; then
 elif [[ $virtio == "false" || $virtio == "n" ]]; then
 	os="-hda $img"
 	append="root=/dev/sda1 rootfstype=ext4 $append"
+elif [[ $os = "hyper-v" ]]; then
+	os="-drive file=$img,if=ide,id=drive"
 else
 	os="-drive file=$img,if=none,id=drive -device virtio-blk-pci,drive=drive,id=virtblk,$virtio_opt"
 	append="root=/dev/vda1 rootfstype=ext4 $append"
