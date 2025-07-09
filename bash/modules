@@ -31,6 +31,7 @@ alias mpi='psudo modprobe vfio_pci'
 
 function set-fep() {
 	if [[ $(cat /sys/module/kvm/parameters/force_emulation_prefix) != "$1" ]]; then
+		printf "Changing FEP to '%u'\n" $1
 		echo $1 | psudo tee -a /sys/module/kvm/parameters/force_emulation_prefix > /dev/null
 	fi
 }
@@ -133,7 +134,11 @@ function probe-modules() {
 		psudo modprobe vhost_net
 	fi
 
-	set-fep 2
+	if [[ -n $NO_FEP ]]; then
+		set-fep 0
+	else
+		set-fep 2
+	fi
 
 	if [[ ! -c /dev/vhost-net ]];then
 		udevadm test /devices/virtual/misc/vhost-net
