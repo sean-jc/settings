@@ -383,12 +383,17 @@ function git-send-pull-requests() {
 
 	if [[ $1 == "kut" ]]; then
 		branches="kut"
+	elif [[ $1 == "fixes" ]]; then
+		branches="fixes"
 	elif [[ ! -f $HOME/pulls/00-cover.mail ]]; then
 		printf "Dude, write a cover letter already\n"
 		return 1;
 	fi
 
 	for branch in $branches; do
+		if [[ $branch == "fixes" ]]; then
+			continue
+		fi
 		if [[ ! -f $HOME/pulls/$branch.mail ]]; then
 			printf "Dude, generate a pull request for $branch\n"
 			return 1;
@@ -548,6 +553,7 @@ alias gso='git-stash show'
 alias gsop='git-stash "show -p"'
 alias gsp='git-stash pop'
 alias gsr='git-send-pull-requests'
+alias gsrf='git-send-pull-requests fixes'
 alias gss='git-stash save'
 alias gst='git-send-thank-you'
 alias gsu='git-send-pull-requests kut'
