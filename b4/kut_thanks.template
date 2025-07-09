@@ -1,0 +1,10 @@
+On ${sentdate}, ${fromname} wrote:
+${quote}
+
+# b4.thanks-treename in .git/config => ${treename}
+Applied to ${treename} ${branch}, thanks!
+
+${summary}
+
+--
+https://github.com/kvm-x86/kvm-unit-tests/tree/next
