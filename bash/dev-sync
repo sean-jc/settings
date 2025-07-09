@@ -1,4 +1,9 @@
 function dev-sync() {
+	local kuts=("x86"
+		    "i386"
+		    "efi")
+	local k
+
 	if [[ $# -ne 2 ]]; then
 		printf "usage: dev-sync <host> <option>\n"
 		return 1
@@ -33,9 +38,6 @@ function dev-sync() {
 			mkdir -p /data/local/seanjc/go/src/kernel.org; \
 			mkdir -p /data/local/seanjc/images/qemu; \
 			mkdir -p /data/local/seanjc/build/kut; \
-			mkdir -p /data/local/seanjc/logs/kut; \
-			mkdir -p /data/local/seanjc/logs/kut-i386; \
-			mkdir -p /data/local/seanjc/logs/kut-efi; \
 			mkdir -p /root/.ssh/sockets"
 	fi
 	if [[ $1 == "full" || $1 == "settings" ]]; then
@@ -90,9 +92,11 @@ function dev-sync() {
 		rsync -z --checksum --recursive --links ~/go/src/kernel.org/$sdir/tools/testing/selftests/kvm/runner $2:/data/local/seanjc/build/selftests/$arch
 	fi
 	if [[ $1 == "full" || $1 == "kut" ]]; then
-		rsync -z --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/build/kut/x86 $2:/data/local/seanjc/build/kut
-		rsync -z --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/build/kut/i386 $2:/data/local/seanjc/build/kut
-		rsync -z --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/build/kut/efi $2:/data/local/seanjc/build/kut
+		rsync -z --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kut $2:/data/local/seanjc/go/src/kernel.org
+		for k in ${kuts[@]}; do
+			rsync -z --checksum --recursive --exclude='logs*' ~/build/kut/$k $2:/data/local/seanjc/build/kut
+		done
+
 		ssh $2 "chmod -R g=u,g-w,o=u,o-w /data/local/seanjc/build; \
 			chmod -R g=u,g-w,o=u,o-w /data/local/seanjc/go"
 	fi
@@ -107,6 +111,26 @@ function dev-sync() {
 			rsync -z --checksum ~/build/kernel/ti/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/ti/arch/x86/boot
 			rsync -z --checksum --recursive ~/build/kernel/ti/lib/modules $2:/data/local/seanjc/build/kernel/ti/lib
 		fi
+	fi
+	if [[ $1 == "full" ]]; then
+		for k in ${kuts[@]}; do
+			ssh $2 "cd /data/local/seanjc/build/kut/$k; \
+				ln -sf ../../../../go/src/kernel.org/kut/lib/x86/asm lib \
+				ln -sf ../../../../go/src/kernel.org/kut/x86/run x86; \
+				ln -sf ../../../../go/src/kernel.org/kut/x86/unittests.cfg x86; \
+				ln -sf ../../../go/src/kernel.org/kut/run_tests.sh; \
+				ln -sf ../../../go/src/kernel.org/kut/scripts; \
+				mkdir -p ../../../logs/kut/$k"
+
+			if [[ "$k" == "efi" ]]; then
+				ssh $2 "cd /data/local/seanjc/build/kut/$k; \
+					ln -sf ../../../go/src/kernel.org/kut/x86/efi/run x86-run; \
+					ln -sf ../../../../../go/src/kernel.org/kut/x86/efi/run x86/efi/run"
+			else
+				ssh $2 "cd /data/local/seanjc/build/kut/$k; \
+					ln -sf ../../../go/src/kernel.org/kut/x86/run x86-run"
+			fi
+		done
 	fi
 }
 alias ds='dev-sync full'

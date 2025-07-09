@@ -11,7 +11,7 @@ function prep-kvm-unit-tests() {
 	gcontain-enter
 
 	probe-modules qemu
-	export unittest_log_dir=~/logs/$1/$(date +%Y.%m.%d.%H.%M)
+	export unittest_log_dir=~/logs/kut/$1/$(date +%Y.%m.%d.%H.%M)
 	cd ~/build/kut/$1
 }
 
