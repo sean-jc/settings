@@ -112,7 +112,12 @@ function make-x86() {
 	$@
 }
 function make-clang() {
-	LLVM=1 $@
+	which -s clang
+	if [[ $? -eq 0 ]]; then
+		LLVM=1 $@
+	else
+		LLVM=-19 $@
+	fi
 }
 function make-arm() {
 	ARCH=arm64 CC_ARCH=aarch64 cc-make $@
