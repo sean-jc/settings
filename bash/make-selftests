@@ -59,6 +59,7 @@ function make-selftests() {
 	if [[ $(whoami) == "seanjc" && $1 != "s390" ]]; then
 		static="-static"
 	fi
+	static="-static"
 
 	ls=$(which ls)
 	tests=( $($ls -1 $source/*.c $source/$arch_dir/*.c) )

@@ -175,7 +175,7 @@ if [[ -n $nok ]]; then
 fi
 if [[ -z $to ]]; then
 	if [[ $ml == "stable" ]]; then
-		to="--to=\"stable@vger.kernel.org\" --to=\"Greg Kroah-Hartman <gregkh@linuxfoundation.org>\""
+		to="--to=\"stable@vger.kernel.org\" --to=\"Greg Kroah-Hartman <gregkh@linuxfoundation.org>\" --to=\"Sasha Levin <sashal@kernel.org>\""
 	else
 		to=$(get-maintainers to $head $ml "$gm_opts" $pre)
 	if [[ -z $to ]]; then

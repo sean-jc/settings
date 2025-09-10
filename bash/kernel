@@ -18,7 +18,7 @@ function check-patch-head() {
 	if [[ $dir == "qemu" ]]; then
 		./scripts/checkpatch.pl --branch HEAD~1..HEAD
 	else
-		./scripts/checkpatch.pl -g "HEAD~$nr"..HEAD --codespell --codespellfile=$SETTINGS/codespell/dictionary.txt
+		./scripts/checkpatch.pl -g "HEAD~$nr"..HEAD --codespell --codespellfile=$SETTINGS/codespell/dictionary.txt --no-tree
 	fi
 }
 alias cph='check-patch-head'

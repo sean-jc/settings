@@ -276,14 +276,25 @@ function run-all-tests() {
 
 	probe-modules qemu
 
+	if [[ $# -gt 0 ]]; then
+		local params=$1
+		if is-amd; then
+			params="$params " "avic=1 nested=1"
+		fi
+
+		reload-kvm $params
+
+		really-run-all-tests $2
+		egrep "FAIL|FAILED" ~/logs/*.log
+		return $?
+	fi
+
 	if is-amd; then
 		reload-kvm "avic=1 nested=1"
 	else
 		reload-kvm
 	fi
 	really-run-all-tests tdp_enabled
-
-	fep 2
 
 	if is-amd; then
 		reload-kvm "npt=0 avic=1 nested=1"
@@ -324,6 +335,9 @@ function run-all-tests() {
 alias ra='RUN_KVM_TESTS=all run-all-tests'
 alias rs='RUN_KVM_TESTS=short run-all-tests'
 alias rss='RUN_KVM_TESTS=supershort run-all-tests'
+alias rsm='RUN_KVM_TESTS=supershort run-all-tests enable_mediated_pmu=Y mediated_pmu'
+alias rssm='RUN_KVM_TESTS=supershort run-all-tests enable_mediated_pmu=Y mediated_pmu'
+
 
 function run-memslot-test() {
 	if [[ $(id -u) -ne 0 ]]; then

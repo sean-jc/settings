@@ -48,6 +48,16 @@ function curl-time()
 }
 alias curlt='curl-time'
 
+# temporary workaround
+alias vscode='code --enable-features=UseOzonePlatform --ozone-platform=wayland &'
+
+function meld-si-ti() {
+	meld sinux/$1 tinux/$1
+}
+function meld-ti-si() {
+	meld tinux/$1 sinux/$1
+}
+alias mi='meld-ti-si'
 
 # offlineimap
 alias oi='offlineimap -f "INBOX"'

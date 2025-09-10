@@ -2,9 +2,19 @@ function dev-sync() {
 	local kuts=("x86"
 		    "i386"
 		    "efi")
+	local kernels=("all"
+		       "lock"
+		       "vm"
+		       "pae"
+		       "ti")
 	local k
 
-	if [[ $# -ne 2 ]]; then
+	if [[ $# -eq 3 && $1 == "vm" ]]; then
+		if [[ $3 != all && $3 != lock && $3 != vm && $3 != pae && $3 != ti ]]; then
+			printf "usage: ds <target> [all,lock,vm,pae,ti]\n"
+			return 1
+		fi
+	elif [[ $# -ne 2 ]]; then
 		printf "usage: dev-sync <host> <option>\n"
 		return 1
 	elif [[ $1 != "full" && $1 != "settings" && $1 != "binaries" && $1 != "kvm" && $1 != "kut" && $1 != "tests" && $1 != "vm" ]]; then
@@ -23,15 +33,7 @@ function dev-sync() {
 	fi
 
 	if [[ $1 == "full" ]]; then
-		ssh $2 "mkdir -p /data/local/seanjc/build/kernel/lock/arch/x86/boot; \
-			mkdir -p /data/local/seanjc/build/kernel/lock/lib/modules; \
-			mkdir -p /data/local/seanjc/build/kernel/vm/arch/x86/boot; \
-			mkdir -p /data/local/seanjc/build/kernel/vm/lib/modules; \
-			mkdir -p /data/local/seanjc/build/kernel/pae/arch/x86/boot; \
-			mkdir -p /data/local/seanjc/build/kernel/pae/lib/modules; \
-			mkdir -p /data/local/seanjc/build/kernel/ti/arch/x86/boot; \
-			mkdir -p /data/local/seanjc/build/kernel/ti/lib/modules; \
-			mkdir -p /data/local/seanjc/build/qemu/static-10.0.0; \
+		ssh $2 "mkdir -p /data/local/seanjc/build/qemu/static-10.0.0; \
 			mkdir -p /data/local/seanjc/build/selftests/x86/x86; \
 			mkdir -p /data/local/seanjc/build/selftests/arm/arm64; \
 			mkdir -p /data/local/seanjc/go/src/github.com/sean-jc; \
@@ -39,6 +41,11 @@ function dev-sync() {
 			mkdir -p /data/local/seanjc/images/qemu; \
 			mkdir -p /data/local/seanjc/build/kut; \
 			mkdir -p /root/.ssh/sockets"
+
+		for k in ${kernels[@]}; do
+			ssh $2 "mkdir -p /data/local/seanjc/build/kernel/$k/arch/x86/boot; \
+				mkdir -p /data/local/seanjc/build/kernel/$k/lib/modules;"
+		done
 	fi
 	if [[ $1 == "full" || $1 == "settings" ]]; then
 		rsync -z --checksum ~/.bashrc $2:/data/local/seanjc
@@ -100,17 +107,14 @@ function dev-sync() {
 		ssh $2 "chmod -R g=u,g-w,o=u,o-w /data/local/seanjc/build; \
 			chmod -R g=u,g-w,o=u,o-w /data/local/seanjc/go"
 	fi
-	if [[ $1 == "full" || $1 == "vm" ]]; then
-		if [[ $arch == x86 ]]; then
-			rsync -z --checksum ~/build/kernel/lock/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/lock/arch/x86/boot
-			rsync -z --checksum --recursive ~/build/kernel/lock/lib/modules $2:/data/local/seanjc/build/kernel/lock/lib
-			rsync -z --checksum ~/build/kernel/vm/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/vm/arch/x86/boot
-			rsync -z --checksum --recursive ~/build/kernel/vm/lib/modules $2:/data/local/seanjc/build/kernel/vm/lib
-			rsync -z --checksum ~/build/kernel/pae/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/pae/arch/x86/boot
-			rsync -z --checksum --recursive ~/build/kernel/pae/lib/modules $2:/data/local/seanjc/build/kernel/pae/lib
-			rsync -z --checksum ~/build/kernel/ti/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/ti/arch/x86/boot
-			rsync -z --checksum --recursive ~/build/kernel/ti/lib/modules $2:/data/local/seanjc/build/kernel/ti/lib
+	if [[ $arch == x86 && ($1 == "full" || $1 == "vm") ]]; then
+		if [[ $# -eq 3 ]]; then
+			kernels=($3)
 		fi
+		for k in ${kernels[@]}; do
+			rsync -z --checksum ~/build/kernel/$k/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/$k/arch/x86/boot
+			rsync -z --checksum --recursive ~/build/kernel/$k/lib/modules $2:/data/local/seanjc/build/kernel/$k/lib
+		done
 	fi
 	if [[ $1 == "full" ]]; then
 		for k in ${kuts[@]}; do

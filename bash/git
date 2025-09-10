@@ -172,6 +172,15 @@ function git-update-subs() {
 	git submodule update --recursive
 }
 
+function git-set-upstream() {
+	local up=$1
+	if [[ $# -eq 0 ]]; then
+		up="o/$(git rev-parse --abbrev-ref HEAD)"
+	fi
+
+	git branch --set-upstream-to=$up
+}
+
 function git-format-patch() {
 	local nr
 
@@ -283,7 +292,7 @@ function git-get-tag() {
 
 	if [[ $FIXES == "y" ]]; then
 		minor=$(($(grep -E "^PATCHLEVEL" Makefile | cut -f 3 -d ' ')))
-		minor="$minor-rcN"
+		minor="$minor-rc7"
 	else
 		minor=$(($(grep -E "^PATCHLEVEL" Makefile | cut -f 3 -d ' ')+1))
 	fi
@@ -548,17 +557,18 @@ alias gs='git status'
 alias gsa='git-stash apply'
 alias gse='git-send-email'
 alias gsdd='git-stash drop'
+alias gsk='git-send-pull-requests kut'
 alias gsl='git-stash list'
-alias gso='git-stash show'
-alias gsop='git-stash "show -p"'
+alias gso='git-stash "show -p"'
 alias gsp='git-stash pop'
 alias gsr='git-send-pull-requests'
 alias gsrf='git-send-pull-requests fixes'
 alias gss='git-stash save'
 alias gst='git-send-thank-you'
-alias gsu='git-send-pull-requests kut'
+alias gsu='git-set-upstream'
 alias gt='git-tree'
 alias gtc='git tag -l --contains'
 alias gtn='git-tag-kvm-x86-next'
 alias gus='git-update-subs'
+alias guu='git branch --unset-upstream'
 alias gv='git remote -vv'

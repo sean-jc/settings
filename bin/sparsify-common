@@ -49,6 +49,7 @@ include_late=(
 	"drivers/hte"
 	"drivers/hv"
 	"drivers/hwtracing"
+	"drivers/irqchip/irq-msi-lib.c"
 	"drivers/i3c"
 	"drivers/input"
 	"drivers/interconnect"
