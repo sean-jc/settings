@@ -10,14 +10,6 @@ function git-diff() {
 	fi
 }
 
-function git-diff-upstream() {
-	git diff $(git rev-parse --abbrev-ref HEAD) $(git rev-parse --abbrev-ref --symbolic-full-name @{upstream})
-}
-
-function git-diff-local() {
-	git diff $(git rev-parse --abbrev-ref --symbolic-full-name @{upstream}) $(git rev-parse --abbrev-ref HEAD)
-}
-
 function git-tree() {
 	if [ $# -eq 0 ]
 	then
@@ -487,8 +479,10 @@ alias gcx='git-check-kvm-x86'
 alias gd='git-diff'
 alias gdd='git diff'
 alias gds='git diff --staged'
-alias gdu='git-diff-upstream'
-alias gdl='git-diff-local'
+alias gdu='git diff $(git rev-parse --abbrev-ref HEAD) $(git rev-parse --abbrev-ref --symbolic-full-name @{upstream})'
+alias gdus='git diff --stat $(git rev-parse --abbrev-ref HEAD) $(git rev-parse --abbrev-ref --symbolic-full-name @{upstream})'
+alias gdl='git diff $(git rev-parse --abbrev-ref --symbolic-full-name @{upstream}) $(git rev-parse --abbrev-ref HEAD)'
+alias gdls='git diff --stat $(git rev-parse --abbrev-ref --symbolic-full-name @{upstream}) $(git rev-parse --abbrev-ref HEAD)'
 alias ge='git reflog'
 alias geg='git reflog | grep'
 alias gek='git-email kvm'
