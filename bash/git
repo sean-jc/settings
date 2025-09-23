@@ -19,6 +19,10 @@ function git-tree() {
 	fi
 }
 
+function git-xfer() {
+	git diff | git -C $1 apply
+}
+
 function git-blob() {
 	git rev-list --all |
 	while read commit; do
@@ -574,3 +578,7 @@ alias gtn='git-tag-kvm-x86-next'
 alias gus='git-update-subs'
 alias guu='git branch --unset-upstream'
 alias gv='git remote -vv'
+alias gx='git-xfer'
+alias gxh='git-xfer $HOME/go/src/kernel.org/host'
+alias gxl='git-xfer $HOME/go/src/kernel.org/linux'
+alias gxn='git-xfer $HOME/go/src/kernel.org/nox'
