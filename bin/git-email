@@ -29,7 +29,14 @@ function get-maintainers() {
 	else
 		pfiles=$head
 	fi
-		maint="$maint$(echo $pfiles | xargs cat | grep -v stable@vger.kernel.org | grep -v lkp@intel.com | grep -e Cc: -e Acked-by -e Suggested-by -e Reported-by -e Tested-by -e Reported-and-tested-by -e Reviewed-by -e Signed-off-by | cut -d ' ' -f 2- | tr '\n' ',')"
+		maint="$maint$(echo $pfiles | xargs cat |		\
+			       grep -v stable@vger.kernel.org |		\
+			       grep -v lkp@intel.com |			\
+			       grep -v weijiang.yang@intel.com |	\
+			       grep -v yongwei.ma@intel.com |		\
+			       grep -v dongsheng.x.zhang@intel.com |	\
+			       grep -e Cc: -e Acked-by -e Suggested-by -e Reported-by -e Tested-by -e Reported-and-tested-by -e Reviewed-by -e Signed-off-by | \
+			       cut -d ' ' -f 2- | tr '\n' ',')"
 	fi
 
 	maint=${maint%,};
