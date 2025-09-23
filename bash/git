@@ -272,9 +272,10 @@ function git-push-kvm-x86() {
 	done
 }
 
-function git-get-tag() {
-	local major=$(grep -E "^VERSION" Makefile | cut -f 3 -d ' ')
+function git-get-pull-tag() {
+	local major=""
 	local minor=""
+	local extra=""
 
 	git branch -r | tr -d " " | grep -q -E "^x/$1"
 	if [ $? -ne 0 ]; then
@@ -282,14 +283,23 @@ function git-get-tag() {
 		return 1
 	fi
 
+	git fetch u
+
+	major=$(grep -E "^VERSION" <(git show u/master:Makefile) | cut -f 3 -d ' ')
 	if [[ $FIXES == "y" ]]; then
-		minor=$(($(grep -E "^PATCHLEVEL" Makefile | cut -f 3 -d ' ')))
-		minor="$minor-rc7"
+		minor=$(grep -E "^PATCHLEVEL" <(git show u/master:Makefile) | cut -f 3 -d ' ')
+		extra=$(grep -E "^EXTRAVERSION" <(git show u/master:Makefile) | cut -f 3 -d ' ')
+		if [[ "$extra" =~ ^\-rc[0-9] ]]; then
+			extra="-rc$(($(echo "$extra" | cut -b 4)+1))"
+		else
+			printf "No upstream -rcN for fixes, extra = $extra\n"
+			return 1
+		fi
 	else
-		minor=$(($(grep -E "^PATCHLEVEL" Makefile | cut -f 3 -d ' ')+1))
+		minor=$(($(grep -E "^PATCHLEVEL" <(git show u/master:Makefile) | cut -f 3 -d ' ')+1))
 	fi
 
-	echo "kvm-x86-$1-$major.$minor"
+	echo "kvm-x86-$1-$major.$minor$extra"
 	return 0
 }
 
@@ -309,9 +319,7 @@ function git-request-pull() {
 		return 1
 	fi
 
-	# Get the tag *after* checking out, as the VERSION or PATCHLEVEL may be
-	# affected by switching to a different branch.
-	local tag=$(git-get-tag $1)
+	local tag=$(git-get-pull-tag $1)
 	if [[ $? -ne 0 ]]; then
 		return 1
 	fi
