@@ -156,7 +156,10 @@ else
 	machine="$machine,kernel_irqchip=split"
 fi
 if [[ -n $sev ]]; then
-	machine="$machine,memory-encryption=sev -object sev-guest,id=sev,policy=0,cbitpos=47,reduced-phys-bits=1"
+	machine="$machine,memory-encryption=sev -object sev-guest,id=sev,policy=0,cbitpos=51,reduced-phys-bits=1"
+fi
+if [[ -n $es ]]; then
+	machine="$machine,memory-encryption=sev -object sev-guest,id=sev,policy=4,cbitpos=51,reduced-phys-bits=1"
 fi
 
 if [[ $os = "hyper-v" ]]; then
@@ -174,7 +177,7 @@ else
 		cpu="$cpu,-lm"
 		bios="-bios $HOME/go/src/seabios.org/seabios/out/bios.bin"
 	elif [[ -z $mbr ]]; then
-		if [[ -n $sev ]]; then
+		if [[ -n $sev || -n $es ]]; then
 			bios="-drive if=pflash,format=raw,readonly,unit=0,file=$HOME/build/ovmf/OVMF_CODE$ovmf.fd"
 			bios="$bios -drive if=pflash,format=raw,unit=1,file=$HOME/build/ovmf/OVMF_VARS$ovmf.fd"
 		elif [[ -n $pflash ]]; then
