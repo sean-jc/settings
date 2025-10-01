@@ -58,6 +58,7 @@ echo "/*" >> .git/info/sparse-checkout
 echo "arch/.gitignore" >> .git/info/sparse-checkout
 echo "arch/Kconfig" >> .git/info/sparse-checkout
 echo "arch/x86/" >> .git/info/sparse-checkout
+echo "mm/gup_test.h" >> .git/info/sparse-checkout
 echo "tools/arch/x86/" >> .git/info/sparse-checkout
 echo "tools/include/uapi/linux/kvm.h" >> .git/info/sparse-checkout
 echo "tools/testing/selftests/gen_kselftest_tar.sh" >> .git/info/sparse-checkout
