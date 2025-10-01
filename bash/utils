@@ -47,6 +47,7 @@ function is-dev-vm() {
 	return 1
 }
 
+alias ee='exit'
 
 # clear
 alias c='clear'
