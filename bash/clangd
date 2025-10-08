@@ -5,15 +5,15 @@ function gen-clangd-commands() {
 		printf "Needs to be run from top-level directory of kernel repo\n"
 		return 1
 	fi
-	if [[ $repo != "slf" && ! -d ~/build/kernel/clangd_$repo ]]; then
-		printf "Target build directory '~/build/kernel/clangd_$repo doesn't exist\n"
+	if [[ $repo != "slf" && ! -d $HOME/build/kernel/clangd_$repo ]]; then
+		printf "Target build directory '$HOME/build/kernel/clangd_$repo doesn't exist\n"
 		return 1
 	fi
 
 	mkdir .vscode
 	rm -f ./.vscode/compile_commands.json
 	if [[ $repo != "slf" ]]; then
-		./scripts/clang-tools/gen_compile_commands.py -d ~/build/kernel/clangd_$repo -o ./.vscode/compile_commands.json
+		./scripts/clang-tools/gen_compile_commands.py -d $HOME/build/kernel/clangd_$repo -o ./.vscode/compile_commands.json
 		return 0
 	fi
 
@@ -35,8 +35,8 @@ function gen-clangd-commands() {
 
 		echo " {" >> ./.vscode/compile_commands.json
 		echo "  \"command\": \"$cmd\"," >> ./.vscode/compile_commands.json
-		echo "  \"directory\": \"/home/seanjc/go/src/kernel.org/slf/tools/testing/selftests/kvm\"," >> ./.vscode/compile_commands.json
-		echo "  \"file\": \"/home/seanjc/go/src/kernel.org/slf/tools/testing/selftests/kvm/$file\""  >> ./.vscode/compile_commands.json
+		echo "  \"directory\": \"$HOME/go/src/kernel.org/slf/tools/testing/selftests/kvm\"," >> ./.vscode/compile_commands.json
+		echo "  \"file\": \"$HOME/go/src/kernel.org/slf/tools/testing/selftests/kvm/$file\""  >> ./.vscode/compile_commands.json
 		echo " }," >> ./.vscode/compile_commands.json
 	done <<< $(LLVM=1 make -C tools/testing/selftests/kvm -Bnwk)
 
