@@ -24,19 +24,20 @@ function get-maintainers() {
 		if [[ $ml != "ku" && $ml != "qemu" ]]; then
 			maint="$maint""linux-kernel@vger.kernel.org,"
 		fi
-	if [[ $(basename $head) =~ ^${pre}0000- ]] ; then
-		pfiles=$(ls -1 $(dirname $head)/!(${pre}0000-cover-letter.patch))
-	else
-		pfiles=$head
-	fi
-		maint="$maint$(echo $pfiles | xargs cat |		\
-			       grep -v stable@vger.kernel.org |		\
-			       grep -v lkp@intel.com |			\
-			       grep -v weijiang.yang@intel.com |	\
-			       grep -v yongwei.ma@intel.com |		\
-			       grep -v dongsheng.x.zhang@intel.com |	\
-			       grep -e Cc: -e Acked-by -e Suggested-by -e Reported-by -e Tested-by -e Reported-and-tested-by -e Reviewed-by -e Signed-off-by | \
-			       cut -d ' ' -f 2- | tr '\n' ',')"
+		if [[ $(basename $head) =~ ^${pre}0000- ]] ; then
+			pfiles=$(ls -1 $(dirname $head)/!(${pre}0000-cover-letter.patch))
+		else
+			pfiles=$head
+		fi
+			maint="$maint$(echo $pfiles | xargs cat |		\
+				       grep -v stable@vger.kernel.org |		\
+				       grep -v lkp@intel.com |			\
+				       grep -v weijiang.yang@intel.com |	\
+				       grep -v yongwei.ma@intel.com |		\
+				       grep -v dongsheng.x.zhang@intel.com |	\
+				       grep -v yi.z.zhang@linux.intel.com |	\
+				       grep -e Cc: -e Acked-by -e Suggested-by -e Reported-by -e Tested-by -e Reported-and-tested-by -e Reviewed-by -e Signed-off-by | \
+				       cut -d ' ' -f 2- | tr '\n' ',')"
 	fi
 
 	maint=${maint%,};
