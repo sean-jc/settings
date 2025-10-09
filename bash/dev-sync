@@ -144,3 +144,10 @@ alias dss='dev-sync settings'
 alias dst='dev-sync tests'
 alias dsu='dev-sync kut'
 alias dsv='dev-sync vm'
+
+function copy-images-qemu() {
+	scp $HOME/images/qemu/ubuntu-22.04-server-kvm.img $1:/data/local/seanjc/images/qemu/ && \
+	ssh $1 "cp /data/local/seanjc/images/qemu/ubuntu-22.04-server-kvm.img \
+		   /data/local/seanjc/images/qemu/ubuntu-22.04-server-k2.img"
+}
+alias ciq='copy-images-qemu'

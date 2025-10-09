@@ -1,18 +1,55 @@
-alias mountbase='sudo mount -o loop,offset=210763776 ~/images/qemu/ubuntu-18.04-server-base.raw ~/images/qemu/mnt'
-alias mountk2='sudo mount -o loop,offset=210763776 ~/images/qemu/ubuntu-18.04-server-k2.raw ~/images/qemu/mnt'
 alias mounti386='sudo mount -o loop,offset=1048576 ~/images/qemu/ubuntu-18.04-server-i386.raw ~/images/qemu/mnt'
-alias mountvm='sudo mount -o loop,offset=210763776 ~/images/qemu/ubuntu-18.04-server-kvm.raw ~/images/qemu/mnt'
+alias mountvm='sudo mount -o loop,offset=210763776 ~/images/qemu/ubuntu-22.04-server-kvm.raw ~/images/qemu/mnt'
 
-alias virtd='daemon=y run_vm'
-alias vm='run_vm qemu kvm'
-alias vme='run_vm emulator kvm'
-alias vmm='modules=n vm'
-alias vm32='ovmf=32 vm'
-alias ivm='i386=y run_vm qemu i386'
-alias tvm='trace=1 run_vm qemu kvm'
-alias vmd='daemon=y run_vm qemu kvm'
+function run-default-vm() {
+	local img="kvm"
+
+	if [[ $HOSTPOST =~ ^[a-z]+-vm ]]; then
+		img="k2"
+	elif [[ $HOSTPOST =~ ^[a-z]+-l2 ]]; then
+		img="k3"
+	fi
+
+	if [[ -f $HOME/images/qemu/ubuntu-22.04-server-$img.img ]]; then
+		img="ubuntu-22.04-server-$img"
+	elif [[ -f $HOME/images/qemu/ubuntu-20.04-server-$img.img ]]; then
+		img="ubuntu-20.04-server-$img"
+	else
+		img="ubuntu-18.04-server-$img"
+	fi
+
+	run_vm qemu $img $@
+}
+alias vm='run-default-vm'
+alias mvm='modules=n vm'
+alias vmd='daemon=y vm'
 alias vm2='v2_cgroup=memory vm'
-alias vb='mbr=y run_vm bios kvm'
+alias vm32='ovmf=32 vm'
+alias dvm='gdb -x $SETTINGS/bin/debug_vm'
+alias tvm='trace=1 vm'
+
+function run-default-i386-vm() {
+	local img="i386"
+
+	if [[ $HOSTPOST =~ ^[a-z]+-(vm|i386) ]]; then
+		img="i2"
+	elif [[ $HOSTPOST =~ ^[a-z]+-(l2|i2) ]]; then
+		img="i3"
+	fi
+
+	if [[ -f $HOME/images/qemu/ubuntu-22.04-server-$img.img ]]; then
+		img="ubuntu-22.04-server-$img"
+	elif [[ -f $HOME/images/qemu/ubuntu-20.04-server-$img.img ]]; then
+		img="ubuntu-20.04-server-$img"
+	else
+		img="ubuntu-18.04-server-$img"
+	fi
+
+	run_vm qemu $img $@
+}
+alias ivm='i386=y run-default-i386-vm'
+alias mivm='modules=n ivm'
+# alias vb='mbr=y run_vm bios kvm'
 
 function vm-mig-src {
 	gb=32 modules=n cpus=16 cpuid="-invtsc" vm vm
@@ -22,20 +59,18 @@ function vm-mig-dst {
 }
 
 # SGX, i.e. expose EPC
-alias vbd='daemon=y mbr=y run_vm bios kvm'
-alias vmi='epc=64M,prealloc run_vm sgx kvm'
-alias vmo='epc=128M,prealloc,reclaim run_vm sgx kvm'
-alias vms='epc="16M,prealloc 16M,prealloc 16M 16M 16M 12M" run_vm sgx kvm'
-alias vmsd='daemon=y vms'
-alias vepc='v2_cgroup=sgx_epc vms'
+# alias vbd='daemon=y mbr=y run_vm bios kvm'
+# alias vmi='epc=64M,prealloc vm'
+# alias vmo='epc=128M,prealloc,reclaim vm'
+# alias vms='epc="16M,prealloc 16M,prealloc 16M 16M 16M 12M" vm'
+# alias vmsd='daemon=y vms'
+# alias vepc='v2_cgroup=sgx_epc vms'
 
-alias hyv='run_vm qemu hyv'
-alias vuefi='run_vm qemu uefi'
 # alias vuefi='qemu=qemu img=uefi display=vnc iso=~/images/ubuntu/ubuntu-16.04.3-desktop-amd64.iso virtualmachine'
 alias vanilla='virtio=false run_vm qemu'
 
 # Get the PID of the VM.  Obviously expects a single VM to be running...
-alias vp='psg build/qemu | grep sean | tr -s " " | cut -f 2 -d " "'
+alias vpid='psg build/qemu | grep sean | tr -s " " | cut -f 2 -d " "'
 
 function vm-stats() {
 	local pid=$(vp)
@@ -69,34 +104,12 @@ function vm-stats() {
 	mb=$($HOME/bin/get_smaps $pid | grep -e AnonHugePages | awk '{ if($2>4) print $0} ' | awk -F ":" '{print $2}' | awk '{Total+=$1/1024} END {print Total}')
 	printf "AnonHugePages:\t%8.1f MB\n" $mb
 }
-alias vs='vm-stats'
-alias vss='vm-stats true'
+alias vms='vm-stats'
+alias vmss='vm-stats true'
 
-alias ssl='ssh -6 sean@fe80::216:3eff:fe68:00%tap1'
-alias ssl1='ssh -6 sean@fe80::216:3eff:fe68:00%tap1'
-alias ssl2='ssh -6 sean@fe80::216:3eff:fe68:10%tap1'
-alias ssl3='ssh -6 sean@fe80::216:3eff:fe68:20%tap1'
-alias ssi='ssh -6 sean@fe80::216:3eff:fe68:80%tap1'
-alias ssi1='ssh -6 sean@fe80::216:3eff:fe68:80%tap1'
-alias ssi2='ssh -6 sean@fe80::216:3eff:fe68:90%tap1'
-alias ssi3='ssh -6 sean@fe80::216:3eff:fe68:a0%tap1'
 
-function scp-to {
-	scp -6 $1 sean@[fe80::216:3eff:fe68:0%tap1]:$2
-}
-alias scr='scp-to'
+# alias hv='os=hyper-v run_vm qemu'
+# alias hvd='os=hyper-v display=vnc run_vm qemu'
+# alias hvi='os=hyper-v display=vnc iso1=~/images/hyper-v/virtio-win-0.1.126.iso run_vm qemu'
+# alias hvnew='os=hyper-v display=vnc iso=~images/hyper-v/hyper-v-2016.iso iso1=~/images/hyper-v/virtio-win-0.1.126.iso run_vm qemu'
 
-function scp-from {
-	scp -6 sean@[fe80::216:3eff:fe68:0%tap1]:$2 $1
-}
-alias scl='scp-from'
-
-alias dvm='gdb -x $SETTINGS/bin/debug_vm'
-
-alias hv='os=hyper-v run_vm qemu'
-alias hvd='os=hyper-v display=vnc run_vm qemu'
-alias hvi='os=hyper-v display=vnc iso1=~/images/hyper-v/virtio-win-0.1.126.iso run_vm qemu'
-alias hvnew='os=hyper-v display=vnc iso=~images/hyper-v/hyper-v-2016.iso iso1=~/images/hyper-v/virtio-win-0.1.126.iso run_vm qemu'
-
-alias mvm='modules=false run_vm qemu kvm'
-alias mivm='modules=false i386=y run_vm qemu i386'

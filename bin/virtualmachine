@@ -52,14 +52,10 @@ else
 	mac=$(printf "00:16:3E:68:00:%02x" $((mac + $(ifconfig | grep -c -e "tap[0-9]"))))
 fi
 
-if [[ $os = "hyper-v" ]]; then
-	img=$HOME/images/qemu/$img.img
-elif [[ -n $mbr ]]; then
-	img=$HOME//images/qemu/bios/ubuntu-16.04-server-$img.img
-elif [[ -n $hdd ]]; then
-	img=/hdd/images/qemu/ubuntu-18.04-server-$img.img
+if [[ -n $mbr ]]; then
+	img=$HOME/images/qemu/bios/$img.img
 else
-	img=$HOME/images/qemu/ubuntu-18.04-server-$img.img
+	img=$HOME/images/qemu/$img.img
 fi
 
 qemu="$qemu -name debug-threads=on"
@@ -250,13 +246,31 @@ elif [[ -n $kernel ]]; then
 	if [[ $x2apic == "false" || $x2apic == "n" ]]; then
 		append="$append noapic"
 	fi
+
+	# Generate a unique, but deterministic, machine-id when running nested
+	# on devrez, as the source image is identical for L1 and L2, and the
+	# machine-id needs to be unique as the MAC for br0 will be derived from
+	# the machine-id.
+	if [[ $HOSTNAME == "dev-vm" ]]; then
+		machine_id=$(sha1sum /etc/machine-id | cut -c -32)
+		append="$append systemd.hostname=dev-l2 systemd.machine_id=$machine_id"
+	fi
+
 	os="$os -kernel $HOME/build/kernel/$kernel/arch/x86/boot/bzImage"
 	if [[ $modules != "false" && $modules != "n" ]]; then
 		os="$os -fsdev local,path=$HOME/build/kernel/$kernel/lib/modules,security_model=passthrough,id=p9_modules -device virtio-9p-pci,fsdev=p9_modules,mount_tag=kmodules,$virtio_opt"
 	fi
 	if [[ $assets != "n" ]]; then
-		os="$os -fsdev local,path=$HOME/build,security_model=passthrough,id=p9_build -device virtio-9p-pci,fsdev=p9_build,mount_tag=p9_build,$virtio_opt"
-		os="$os -fsdev local,path=$HOME/go,security_model=passthrough,id=p9_go -device virtio-9p-pci,fsdev=p9_go,mount_tag=p9_go,$virtio_opt"
+		# p9_images /home/sean/images 9p rw,relatime,access=client,trans=virtio,nofail 0 0
+		os="$os -fsdev local,path=$HOME/images,security_model=passthrough,id=p9_images -device virtio-9p-pci,fsdev=p9_images,mount_tag=p9_images,$virtio_opt"
+
+		# Wired up in the guest's /etc/fstab as:
+		# p9_build /home/sean/build 9p ro,relatime,access=client,trans=virtio,nofail 0 0
+		# p9_go /home/sean/go 9p ro,relatime,access=client,trans=virtio,nofail 0 0
+		if [[ ($(whoami) != "sean" || $HOSTNAME == "dev-vm") ]]; then
+			os="$os -fsdev local,path=$HOME/build,security_model=passthrough,id=p9_build -device virtio-9p-pci,fsdev=p9_build,mount_tag=p9_build,$virtio_opt"
+			os="$os -fsdev local,path=$HOME/go,security_model=passthrough,id=p9_go -device virtio-9p-pci,fsdev=p9_go,mount_tag=p9_go,$virtio_opt"
+		fi
 	fi
 	if [[ -n $init ]]; then
 		os="$os -initrd $HOME/build/initramfs/$init.cpio"
