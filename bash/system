@@ -50,6 +50,44 @@ function disable-usb-autosuspend() {
 }
 alias dua='disable-usb-autosuspend'
 
+function tar-xz-compress() {
+	local src=$1
+	local dst=$2
+
+	if [[ $# -ne 1 && $# -ne 2 ]]; then
+		printf "usage: lz <source> [dest]\n"
+		return 1;
+	fi
+
+	if [[ ! -f $src && ! -d $src ]]; then
+		printf "Input '$src' is neither a directory nor a file.\n"
+		return 1;
+	fi
+
+	if [[ $# -lt 2 ]]; then
+		dst="$src.xz"
+	fi
+
+	if [[ -d $dst || -f $dst ]]; then
+		printf "Output '$dst' already exists.\n"
+		return 1;
+	fi
+	if [[ -d "$src.xz" || -f "$src.xz" ]]; then
+		printf "Intermediate output '$src.xz' already exists.\n"
+		return 1;
+	fi
+
+	if [[ -f $src ]]; then
+		xz -zkv $src
+		if [[ $dst != "$src.xz" && $? -eq 0 ]]; then
+			mv $src.xz $dst
+		fi
+	else
+		tar cf - $src | xz -zcv > $dst
+	fi
+}
+alias lz='tar-xz-compress'
+
 # systemd
 alias sys='sudo systemctl'
 alias failed='sys list-units --state=failed'
