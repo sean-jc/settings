@@ -1,0 +1,11 @@
+network:
+  version: 2
+  ethernets:
+    eth0:
+      dhcp4: false
+      dhcp6: false
+  bridges:
+    br0:
+      interfaces: [ eth0 ]
+      dhcp4: false
+      dhcp6: false
