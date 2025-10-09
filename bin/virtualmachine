@@ -296,7 +296,7 @@ fi
 qemu_pid=$!
 
 if [[ $pin != "n" && $pin != "p" ]]; then
-	(sleep 2; pin_vcpus $qemu_pid) &
+	(sleep 2; pin_vcpus $qemu_pid $cpus) &
 fi
 
 fg 1

@@ -1,28 +1,61 @@
 #!/bin/bash
 
-if [[ $# -ne 1 ]]; then
-   printf "Must provide QEMU pid\n"
+if [[ $# -ne 2 ]]; then
+   printf "Must provide QEMU pid and number of vCPUs\n"
+   return 1
 fi
 
 qemu_pid=$1
+nr_vcpus=$2
 nr_cpus=$(grep -c '^processor' /proc/cpuinfo)
 
 if [[ $nr_cpus -eq 1 ]]; then
 	exit 0
 fi
 
+if [[ $nr_vcpus -lt $nr_cpus ]]; then
+	first_cpu=$((nr_cpus-nr_vcpus))
+else
+	first_cpu=0
+fi
+if (( first_cpu+nr_vcpus <= nr_cpus )); then
+	last_cpu=$((first_cpu+nr_vcpus-1))
+else
+	last_cpu=$((nr_cpus-1))
+fi
+
+vcpu_mask=$(( (2 ** nr_vcpus) - 1 ))
+printf "Pinning vCPUs 0-$((nr_vcpus-1)) to pCPUs $first_cpu-$last_cpu, mask = %x, PID=$qemu_pid\n" $vcpu_mask
+
 for dir in /proc/$qemu_pid/task/*; do
 	if [[ -d $dir ]]; then
-	grep -q KVM $dir/comm
-	if [[ $? -eq 0 ]]; then
-		qemu_vcpu=$(($(cat $dir/comm | cut -f 2 -d ' ' | cut -f 1 -d '/') + 1))
-		if [[ $qemu_vcpu -ge $nr_cpus ]]; then
-		qemu_vcpu=$(($nr_cpus-1))
+		grep -q KVM $dir/comm
+		if [[ $? -eq 0 ]]; then
+			qemu_vcpu=$(cat $dir/comm | cut -f 2 -d ' ' | cut -f 1 -d '/')
+			if [[ $qemu_vcpu -lt $nr_cpus ]]; then
+				qemu_pcpu=$(($first_cpu+$qemu_vcpu))
+			else
+				qemu_pcpu=$(($nr_cpus-1))
+			fi
+			qemu_task=$(echo $dir | cut -f 2 -d ' ' | cut -f 5 -d '/')
+			if [[ -n $verbose ]]; then
+				taskset -p -c $qemu_pcpu $qemu_task
+			else
+				taskset -p -c $qemu_pcpu $qemu_task > /dev/null
+			fi
+			if [[ $? -ne 0 ]]; then
+				printf "*** ERROR *** Failed to pin vCPU $qemu_vcpu to pCPU $qemu_pcpu\n"
+			elif [[ -n $verbose ]]; then
+				printf "Pinned vCPU $(($qemu_vcpu)) to pCPU $qemu_pcpu\n"
+			fi
+
+			vcpu_mask=$(( vcpu_mask & ~(2 ** qemu_vcpu) ))
 		fi
-		qemu_pcpu=$(($nr_cpus-$qemu_vcpu))
-		qemu_task=$(echo $dir | cut -f 2 -d ' ' | cut -f 5 -d '/')
-		printf "pinning vCPU $(($qemu_vcpu-1)) to pCPU $qemu_pcpu\n"
-		taskset -p -c $qemu_pcpu $qemu_task
-	fi
 	fi
 done
+
+if (( vcpu_mask != 0 )); then
+	printf "*** ERROR *** Didn't find vCPU tasks for pinning, mask = %x\n" $vcpu_mask
+else
+	printf "Pinned vCPUs 0-$((nr_vcpus-1)) to pCPUs $first_cpu-$last_cpu, PID=$qemu_pid\n"
+fi
