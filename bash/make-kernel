@@ -39,13 +39,13 @@ function make-kernel() {
 		printf "Must run from a top-level Linux repository\n"
 		return 4
 	elif [[ ! -f .git/info/sparse-checkout ]]; then
-		printf "Remote build without sparse directory\n"
+		printf "Out-of-tree build without sparse directory\n"
 		return 4
 	elif [[ -f REPORTING-BUGS ]]; then
-		printf "Remote build with probable host directory (detected REPORTING-BUGS)\n"
+		printf "Out-of-tree build with probable host directory (detected REPORTING-BUGS)\n"
 		return 4
 	elif [[ -f .config ]]; then
-		printf "Remote build with local config\n"
+		printf "Out-of-tree build with local config\n"
 		return 4
 	fi
 
