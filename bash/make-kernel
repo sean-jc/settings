@@ -263,29 +263,36 @@ alias mat='make-kernel-range tests-all ign'
 alias mkb='TARGET=bzImage make-kernel make'
 
 function generate-x86-configs() {
+	if [[ $HOSTDISPLAY != "@zag" ]]; then
+		printf "Must run on cloudtop\n"
+		return 1
+	fi
+
 	pushd $HOME/go/src/kernel.org/linux
 	mo vm
 
-	if [[ $HOSTDISPLAY == "@zag" ]]; then
-		cp $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/vm.config
-	fi
-	cp $HOME/build/kernel/vm/.config $HOME/build/kernel/clang/.config
+	cp $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/vm.config
 
 	./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/all $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/all.config
 	./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/pae $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/pae.config
 	./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/up  $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/up.config
 	./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/gpu $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/gpu.config
-	./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/san $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/sanitizers.config
 	./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/nok $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/no_kvm.config
 	./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/nov $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/no_pv.config
 
-	LLVM=1 ./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/clang_all $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/all.config
-	LLVM=1 ./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/clang_pae $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/pae.config
-	LLVM=1 ./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/clang_up  $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/up.config
-	LLVM=1 ./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/clang_gpu $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/gpu.config
-	LLVM=1 ./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/clang_san $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/sanitizers.config
-	LLVM=1 ./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/clang_nok $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/no_kvm.config
-	LLVM=1 ./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/clang_nov $HOME/build/kernel/vm/.config $SETTINGS/kconfigs/no_pv.config
+	./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/lock $HOME/build/kernel/all/.config $SETTINGS/kconfigs/lockdep.config
+	./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/miti $HOME/build/kernel/all/.config $SETTINGS/kconfigs/mitigations.config
+	./scripts/kconfig/merge_config.sh -O $HOME/build/kernel/sani $HOME/build/kernel/all/.config $SETTINGS/kconfigs/sanitizers.config
+
+	cp $HOME/build/kernel/vm/.config   $HOME/build/kernel/clang/.config
+	cp $HOME/build/kernel/all/.config  $HOME/build/kernel/clang_all/.config
+	cp $HOME/build/kernel/pae/.config  $HOME/build/kernel/clang_pae/.config
+	cp $HOME/build/kernel/up/.config   $HOME/build/kernel/clang_up/.config
+	cp $HOME/build/kernel/gpu/.config  $HOME/build/kernel/clang_gpu/.config
+	cp $HOME/build/kernel/nok/.config  $HOME/build/kernel/clang_nok/.config
+	cp $HOME/build/kernel/nov/.config  $HOME/build/kernel/clang_nov/.config
+	cp $HOME/build/kernel/sani/.config $HOME/build/kernel/clang_sani/.config
+	cp $HOME/build/kernel/miti/.config $HOME/build/kernel/clang_miti/.config
 	popd
 }
 alias xk='generate-x86-configs'
