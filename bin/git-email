@@ -177,10 +177,7 @@ else
 	head=$(ls -1 $dir/*0001*)
 fi
 
-gm_opts="--nogit --nogit-fallback --norolestats --nor --nofixes --pattern-depth=$depth"
-if [[ -n $nok ]]; then
-	gm_opts="$gm_opts --nokeywords"
-fi
+gm_opts="--nogit --nogit-fallback --norolestats --nor --nofixes --nokeywords --pattern-depth=$depth"
 if [[ -z $to ]]; then
 	if [[ $ml == "stable" ]]; then
 		to="--to=\"stable@vger.kernel.org\" --to=\"Greg Kroah-Hartman <gregkh@linuxfoundation.org>\" --to=\"Sasha Levin <sashal@kernel.org>\""
