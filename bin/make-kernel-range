@@ -19,8 +19,11 @@ function do-make-kernel-range() {
 	local cyan='\033[0;36m' # Cyan
 	local NOF='\033[0m' # No Format
 	local arbitrary=1000
+	local nr_targets
 	local cflags=""
 	local targets
+	local nr_jobs
+	local nr_cpus
 	local branch
 	local start
 	local end
@@ -107,6 +110,10 @@ function do-make-kernel-range() {
 		return 1
 	fi
 
+	nr_cpus=$(get-nr-cpus)
+	nr_targets=${#targets[@]}
+	nr_jobs=$((nr_cpus / nr_targets))
+
 	if [[ $# -lt 3 ]]; then
 		start=$(git rev-parse HEAD)
 	else
@@ -187,7 +194,7 @@ function do-make-kernel-range() {
 				# Note, 'yes ""' simulates hitting 'ENTER'.  Actually
 				# answering 'y' is undesirable as it will hang if a
 				# non-boolean kconfig is encountered
-				yes "" | EXTRA_CFLAGS="$cflags" $target > $outlog 2> $errlog &
+				yes "" | EXTRA_CFLAGS="$cflags" NR_JOBS="$nr_jobs" $target > $outlog 2> $errlog &
 				pids+=($!)
 			fi
 		done
