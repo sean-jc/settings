@@ -4,15 +4,17 @@ function dev-sync() {
 		    "efi")
 	local kernels=("all"
 		       "lock"
+		       "miti"
 		       "vm"
 		       "pae"
 		       "ti")
 	local k
 
 	if [[ $# -eq 3 && $1 == "vm" ]]; then
-		if [[ $3 != all && $3 != lock && $3 != vm && $3 != pae && $3 != ti ]]; then
-			printf "usage: ds <target> [all,lock,vm,pae,ti]\n"
+		if [[ ! " ${kernels[*]} " =~ ${3} ]]; then
+			printf "usage: ds <target> [${kernels[*]}]\n"
 			return 1
+
 		fi
 	elif [[ $# -ne 2 ]]; then
 		printf "usage: dev-sync <host> <option>\n"
