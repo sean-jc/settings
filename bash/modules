@@ -20,6 +20,8 @@ function modprobe-kvm-vendor() {
 	local params
 	if is-amd; then
 		params="avic=1 nested=1"
+	else
+		params="warn_on_missed_cc=1"
 	fi
 	psudo modprobe $(get-kvm) $params $@
 }
