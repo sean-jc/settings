@@ -61,12 +61,19 @@ function make-kernel() {
 	local ret
 	if [[ $1 == "make" ]]; then
 		local name="-$(git show -s --pretty='tformat:%h')-$(git rev-parse --abbrev-ref HEAD)-$2"
+		local nr_jobs
+
+		if [[ -z $NR_JOBS ]]; then
+			nr_jobs=$(get-nr-cpus)
+		else
+			nr_jobs=$NR_JOBS
+		fi
 
 		name="${name//\//_}"
 		if [[ -z $ARCH ]]; then
-			make W=1 LOCALVERSION=$name O=$HOME/build/kernel/$2 $EXTRAS -j$(get-nr-cpus)
+			make W=1 LOCALVERSION=$name O=$HOME/build/kernel/$2 $EXTRAS -j$nr_jobs
 		else
-			make LOCALVERSION=$name O=$HOME/build/kernel/$2 $EXTRAS -j$(get-nr-cpus)
+			make LOCALVERSION=$name O=$HOME/build/kernel/$2 $EXTRAS -j$nr_jobs
 		fi
 		
 		ret=$?
