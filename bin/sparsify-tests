@@ -58,6 +58,9 @@ echo "/*" >> .git/info/sparse-checkout
 echo "arch/.gitignore" >> .git/info/sparse-checkout
 echo "arch/Kconfig" >> .git/info/sparse-checkout
 echo "arch/x86/" >> .git/info/sparse-checkout
+echo "drivers/dma/idxd/registers.h" >> .git/info/sparse-checkout
+echo "drivers/dma/ioat/hw.h" >> .git/info/sparse-checkout
+echo "drivers/dma/ioat/registers.h" >> .git/info/sparse-checkout
 echo "mm/gup_test.h" >> .git/info/sparse-checkout
 echo "tools/arch/x86/" >> .git/info/sparse-checkout
 echo "tools/include/uapi/linux/kvm.h" >> .git/info/sparse-checkout
@@ -75,6 +78,7 @@ echo "tools/testing/selftests/cgroup" >> .git/info/sparse-checkout
 echo "tools/testing/selftests/clone3" >> .git/info/sparse-checkout
 echo "tools/testing/selftests/kvm" >> .git/info/sparse-checkout
 echo "tools/testing/selftests/rseq" >> .git/info/sparse-checkout
+echo "tools/testing/selftests/vfio" >> .git/info/sparse-checkout
 echo "Documentation/admin-guide/cgroup-v2.rst" >> .git/info/sparse-checkout
 echo "Documentation/admin-guide/kernel-parameters.txt" >> .git/info/sparse-checkout
 echo "Documentation/admin-guide/serial-console.rst" >> .git/info/sparse-checkout
