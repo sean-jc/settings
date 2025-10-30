@@ -59,12 +59,14 @@ function do-make-kernel-range() {
 			 "make-kernel $2 up"
 			 "make-kernel $2 nok"
 			 "make-kernel $2 nov"
+			 "make-kernel $2 miti"
 			 "make-kernel-clang $2 clang"
 			 "make-kernel-clang $2 clang_all"
 			 "make-kernel-clang $2 clang_pae"
 			 "make-kernel-clang $2 clang_up"
 			 "make-kernel-clang $2 clang_nok"
-			 "make-kernel-clang $2 clang_nov")
+			 "make-kernel-clang $2 clang_nov"
+			 "make-kernel-clang $2 clang_miti")
 	elif [[ $1 == "gpu" ]]; then
 		targets=("make-kernel $2 gpu"
 			 "make-kernel-clang $2 clang_gpu")
