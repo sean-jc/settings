@@ -99,6 +99,8 @@ function dev-sync() {
 		rsync -z --checksum --links --exclude='*.d' --exclude='*.o' ~/build/selftests/$arch/$adir/* $2:/data/local/seanjc/build/selftests/$arch/$adir
 		rsync -z --checksum --recursive --links ~/go/src/kernel.org/$sdir/tools/testing/selftests/kvm/testcases $2:/data/local/seanjc/build/selftests/$arch
 		rsync -z --checksum --recursive --links ~/go/src/kernel.org/$sdir/tools/testing/selftests/kvm/runner $2:/data/local/seanjc/build/selftests/$arch
+
+		ssh $2 "chmod -R g=u,g-w,o=u,o-w /data/local/seanjc/build"
 	fi
 	if [[ $1 == "full" || $1 == "kut" ]]; then
 		rsync -z --checksum --recursive --links --exclude='.git*' --exclude='logs*' ~/go/src/kernel.org/kut $2:/data/local/seanjc/go/src/kernel.org
