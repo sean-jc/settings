@@ -51,7 +51,7 @@ function do-make-kernel-range() {
 		targets=("make-kernel $2 vm"
 			 "make-kernel-clang $2 clang")
 	elif [[ $1 == "ti" ]]; then
-		targets=("make-kernel $2 ti")
+		targets=("make-kernel-clang $2 ti")
 	elif [[ $1 == "x86" ]]; then
 		targets=("make-kernel $2 vm"
 			 "make-kernel $2 all"
