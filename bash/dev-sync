@@ -120,6 +120,7 @@ function dev-sync() {
 		fi
 		for k in ${kernels[@]}; do
 			rsync -z --checksum ~/build/kernel/$k/arch/x86/boot/bzImage $2:/data/local/seanjc/build/kernel/$k/arch/x86/boot
+			ssh $2 "rm -rf /data/local/seanjc/build/kernel/$2/lib/modules/*"
 			rsync -z --checksum --recursive ~/build/kernel/$k/lib/modules $2:/data/local/seanjc/build/kernel/$k/lib
 		done
 	fi
