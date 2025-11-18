@@ -148,7 +148,7 @@ function git-backport-ff() {
 			while [[ $(git status --porcelain=v1 2>/dev/null | wc -l) -ne 0 ]]; do
 				sleep .1
 			done
-			git-fixup-backport-metadata $commit 273353688 BACKPORT
+			git-fixup-backport-metadata $commit 273353688 "BACKPORT: UPSTREAM"
 		fi
 	else
 		git-fixup-backport-metadata $commit 273353688 UPSTREAM
