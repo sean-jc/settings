@@ -154,3 +154,30 @@ function git-backport-ff() {
 		git-fixup-backport-metadata $commit 273353688 UPSTREAM
 	fi
 }
+
+function git-cherrypick-prod() {
+	local commit=$1
+
+	git cherry-pick $commit
+	if [[ $? -ne 0 ]]; then
+		printf "\n${RED}Pausing until conflicted cherry-pick is completed.${NOF}\n"
+		while [[ $(git status --porcelain=v1 2>/dev/null | wc -l) -ne 0 ]]; do
+			sleep .1
+		done
+	fi
+
+	# Trim git's trailing newline
+	local changelog=$(git show -s --format=%B HEAD | tac | sed -e '/./,$!d' | tac)
+
+	echo "$changelog" | tail -1 | grep -e "^Change-Id"
+	if [[ $? -eq 0 ]]; then
+		changelog=$(echo "$changelog" | head -n -1)
+	fi
+
+	git commit --amend -m \
+"$changelog
+Origin-14xx-SHA1: $commit
+
+"
+	return 0
+}
