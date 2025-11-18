@@ -7,51 +7,46 @@ function gcontain-enter() {
 	fi
 }
 
-function prep-kvm-unit-tests() {
-	gcontain-enter
-
-	probe-modules qemu
-	export unittest_log_dir=~/logs/kut/$1/$(date +%Y.%m.%d.%H.%M)
-	cd ~/build/kut/$1
-}
-
-function prep-kut32() {
-	prep-kvm-unit-tests i386
-}
-
-function prep-kut() {
-	prep-kvm-unit-tests x86
-}
-
-function prep-kut-efi() {
-	prep-kvm-unit-tests efi
+function run-kut-raw() {
+	cd $HOME/build/kut/$1
+	ACCEL="kvm,kernel_irqchip=$2" QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd "${@:3}"
 }
 
 function run-kut() {
-	ACCEL="kvm,kernel_irqchip=$1" QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd "${@:2}"
+	gcontain-enter
+
+	probe-modules qemu
+	export unittest_log_dir=$HOME/logs/kut/$1/$(date +%Y.%m.%d.%H.%M)
+	mkdir $unittest_log_dir
+	rm -f $HOME/logs/kut/$1/last
+	ln -s $unittest_log_dir $HOME/logs/kut/$1/last
+
+	run-kut-raw "$@"
+
+	cd -P $HOME/logs/kut/$1/last
 }
 
-alias rks='prep-kut && run-kut split'
+alias rks='run-kut x86 split'
 alias rkas='rks ./run_tests.sh -v'
 alias rka='rkas -j$(get-nr-cpus)'
 
-alias rkt='prep-kut && run-kut on'
+alias rkt='run-kut x86 on'
 alias rkus='rkt ./run_tests.sh -v'
 alias rku='rkus -j$(get-nr-cpus)'
 
-alias rks32='prep-kut32 && run-kut split'
+alias rks32='run-kut i386 split'
 alias rkas32='rks32 ./run_tests.sh -v'
 alias rka32='rkas32 -j$(get-nr-cpus)'
 
-alias rkt32='prep-kut32 && run-kut on'
+alias rkt32='run-kut i386 on'
 alias rkus32='rkt32 ./run_tests.sh -v'
 alias rku32='rkus32 -j$(get-nr-cpus)'
 
-alias rkse='prep-kut-efi && rku-kut split'
+alias rkse='run-kut efi split'
 alias rkase='rkse ./run_tests.sh -v'
 alias rkae='rkase -j$(get-nr-cpus)'
 
-alias rkte='prep-kut-efi && run-kut on'
+alias rkte='run-kut efi on'
 alias rkuse='rkte ./run_tests.sh -v'
 alias rkue='rkuse -j$(get-nr-cpus)'
 
@@ -244,25 +239,20 @@ function really-run-all-tests() {
 	run-selftests-parallelized $@ 2>/dev/null
 
 	printf "\n\n${GREEN}Running KUT with split IRQCHIP and $1${NOF}\n"
-	cd $HOME/build/kut/x86
-	unittest_log_dir=$HOME/logs/kut-split.$1.logs run-kut split ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-split.$1.log"
+	unittest_log_dir=$HOME/logs/kut-split.$1.logs run-kut-raw x86 split ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-split.$1.log"
 	grep FAIL "$HOME/logs/kut-split.$1.log"
 
 	if [[ $RUN_KVM_TESTS != "supershort" ]]; then
 		printf "\n\n${GREEN}Running KUT with in-kernel IRQCHIP and $1${NOF}\n"
-		cd $HOME/build/kut/x86
-		unittest_log_dir=$HOME/logs/kut.$1.logs run-kut on ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut.$1.log"
-		# run-kut on ./run_tests.sh -j$(get-nr-cpus) -g nodefault > "$HOME/logs/kut.$1.log"
+		unittest_log_dir=$HOME/logs/kut.$1.logs run-kut-raw x86 on ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut.$1.log"
 		grep FAIL "$HOME/logs/kut.$1.log"
 
 		printf "\n\nRunning KUT EFI with $1${NOF}\n"
-		cd $HOME/build/kut/efi
-		unittest_log_dir=$HOME/logs/kut-efi.$1.logs run-kut on ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-efi.$1.log"
+		unittest_log_dir=$HOME/logs/kut-efi.$1.logs run-kut-raw efi on ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-efi.$1.log"
 		grep FAIL "$HOME/logs/kut-efi.$1.log"
 
 		printf "\n\nRunning KUT-i386 with $1${NOF}\n"
-		cd $HOME/build/kut/i386
-		unittest_log_dir=$HOME/logs/kut-i386.$1.logs run-kut on ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-i386.$1.log"
+		unittest_log_dir=$HOME/logs/kut-i386.$1.logs run-kut-raw i386 on ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-i386.$1.log"
 		grep FAIL "$HOME/logs/kut-i386.$1.log"
 	fi
 }
