@@ -87,6 +87,7 @@ alias mkdir='mkdir -p'
 
 # ps
 alias ps='ps -a --forest -o user,pid,ppid,%cpu,%mem,vsz,rss,cmd'
+alias psa='ps -A --forest -o user,pid,ppid,%cpu,%mem,vsz,rss,cmd'
 alias psm='ps -e | sort -nr -k 5 | head -10 | cut -c-$COLUMNS'
 alias psc='ps -e | sort -nr -k 4 | head -10 | cut -c-$COLUMNS'
 alias psg='ps -e | grep -v grep | grep -v -- --forest | expand | cut -c-$COLUMNS | grep -i -e VSZ -e'
