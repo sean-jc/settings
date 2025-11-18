@@ -35,10 +35,10 @@ alias mxr='make-kernel-range kut-x86 ign'
 alias mar='make-kernel-range kut-all ign'
 
 function configure-kut() {
-	cd $HOME/build/kut/arm   && $HOME/go/src/kernel.org/kut/configure --erratatxt= --disable-pretty-print-stacks --arch=aarch64 --cross-prefix=aarch64-linux-gnu-
-	cd $HOME/build/kut/efi   && $HOME/go/src/kernel.org/kut/configure --erratatxt= --disable-pretty-print-stacks --enable-efi
-	cd $HOME/build/kut/i386  && $HOME/go/src/kernel.org/kut/configure --erratatxt= --disable-pretty-print-stacks --arch=i386 --processor=i386
-	cd $HOME/build/kut/riscv && $HOME/go/src/kernel.org/kut/configure --erratatxt= --disable-pretty-print-stacks --arch=riscv64 --cross-prefix=riscv64-linux-gnu-
-	cd $HOME/build/kut/s390  && $HOME/go/src/kernel.org/kut/configure --erratatxt= --disable-pretty-print-stacks --arch=s390x --cross-prefix=s390x-linux-gnu-
-	cd $HOME/build/kut/x86   && $HOME/go/src/kernel.org/kut/configure --erratatxt= --disable-pretty-print-stacks
+	cd $HOME/build/kut/arm   && $HOME/go/src/kernel.org/kut/configure --erratatxt= --cflags="-gdwarf-4" --arch=aarch64 --cross-prefix=aarch64-linux-gnu-
+	cd $HOME/build/kut/efi   && $HOME/go/src/kernel.org/kut/configure --erratatxt= --cflags="-gdwarf-4" --enable-efi
+	cd $HOME/build/kut/i386  && $HOME/go/src/kernel.org/kut/configure --erratatxt= --cflags="-gdwarf-4" --arch=i386 --processor=i386
+	cd $HOME/build/kut/riscv && $HOME/go/src/kernel.org/kut/configure --erratatxt= --cflags="-gdwarf-4" --arch=riscv64 --cross-prefix=riscv64-linux-gnu-
+	cd $HOME/build/kut/s390  && $HOME/go/src/kernel.org/kut/configure --erratatxt= --cflags="-gdwarf-4" --arch=s390x --cross-prefix=s390x-linux-gnu-
+	cd $HOME/build/kut/x86   && $HOME/go/src/kernel.org/kut/configure --erratatxt= --cflags="-gdwarf-4"
 }
