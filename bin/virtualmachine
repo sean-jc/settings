@@ -260,15 +260,17 @@ elif [[ -n $kernel ]]; then
 	if [[ $modules != "false" && $modules != "n" ]]; then
 		os="$os -fsdev local,path=$HOME/build/kernel/$kernel/lib/modules,security_model=passthrough,id=p9_modules -device virtio-9p-pci,fsdev=p9_modules,mount_tag=kmodules,$virtio_opt"
 	fi
-	if [[ $assets != "n" && ($(whoami) != "sean" || $HOSTNAME == "dev-vm") ]]; then
+	if [[ $assets != "n" ]]; then
 		# p9_images /home/sean/images 9p rw,relatime,access=client,trans=virtio,nofail 0 0
 		os="$os -fsdev local,path=$HOME/images,security_model=passthrough,id=p9_images -device virtio-9p-pci,fsdev=p9_images,mount_tag=p9_images,$virtio_opt"
 
-		# Wired up in the guest's /etc/fstab as:
-		# p9_build /home/sean/build 9p ro,relatime,access=client,trans=virtio,nofail 0 0
-		# p9_go /home/sean/go 9p ro,relatime,access=client,trans=virtio,nofail 0 0
-		os="$os -fsdev local,path=$HOME/build,security_model=passthrough,id=p9_build -device virtio-9p-pci,fsdev=p9_build,mount_tag=p9_build,$virtio_opt"
-		os="$os -fsdev local,path=$HOME/go,security_model=passthrough,id=p9_go -device virtio-9p-pci,fsdev=p9_go,mount_tag=p9_go,$virtio_opt"
+		if [[ $(whoami) != "sean" || $HOSTNAME == "dev-vm" ]]; then
+			# Wired up in the guest's /etc/fstab as:
+			# p9_build /home/sean/build 9p ro,relatime,access=client,trans=virtio,nofail 0 0
+			# p9_go /home/sean/go 9p ro,relatime,access=client,trans=virtio,nofail 0 0
+			os="$os -fsdev local,path=$HOME/build,security_model=passthrough,id=p9_build -device virtio-9p-pci,fsdev=p9_build,mount_tag=p9_build,$virtio_opt"
+			os="$os -fsdev local,path=$HOME/go,security_model=passthrough,id=p9_go -device virtio-9p-pci,fsdev=p9_go,mount_tag=p9_go,$virtio_opt"
+		fi
 	fi
 	if [[ -n $init ]]; then
 		os="$os -initrd $HOME/build/initramfs/$init.cpio"
