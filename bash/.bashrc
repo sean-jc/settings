@@ -24,6 +24,12 @@ export HOSTPOST=${HOSTPOST#velociraptor-}
 export SETTINGS=$HOME/go/src/github.com/sean-jc/settings
 export LSDT_CONFIG=$SETTINGS/.config/lsdt/config.yml
 
+# curl -O https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/14.1.0/x86_64-gcc-14.1.0-nolibc-aarch64-linux.tar.xz
+# curl -O https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/14.1.0/x86_64-gcc-14.1.0-nolibc-loongarch64-linux.tar.xz
+# curl -O https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/14.1.0/x86_64-gcc-14.1.0-nolibc-mips64-linux.tar.xz
+# curl -O https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/14.1.0/x86_64-gcc-14.1.0-nolibc-powerpc64-linux.tar.xz
+# curl -O https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/14.1.0/x86_64-gcc-14.1.0-nolibc-riscv64-linux.tar.xz
+# curl -O https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/14.1.0/x86_64-gcc-14.1.0-nolibc-s390-linux.tar.xz
 export TOOLCHAINS=$HOME/toolchains/gcc-14.1.0-nolibc
 export P4DIFF='git diff --no-index'
 
