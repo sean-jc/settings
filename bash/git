@@ -557,6 +557,11 @@ alias glb='git log --decorate --format=format:%B'
 alias glc='git log --pretty=oneline --decorate --author=christopherson'
 alias glg='git log --pretty=oneline --decorate --graph'
 alias glo='git log --pretty=oneline --decorate'
+alias gls='git log --pretty=oneline --decorate -S'
+function git-log-function() {
+	git log --pretty=oneline --decorate -L:"$1":"$2"
+}
+alias glf='git-log-function'
 alias gm="git status | grep modified | tr -d '\t' | tr -d ' ' | cut -f 2 -d :"
 alias gmc='git merge --continue'
 alias gmk='git-merge-kvm-x86'
