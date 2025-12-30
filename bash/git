@@ -323,8 +323,8 @@ function git-get-pull-tag() {
 		if [[ "$extra" =~ ^\-rc[0-9] ]]; then
 			extra="-rc$(($(echo "$extra" | cut -b 4)+1))"
 		else
-			printf "No upstream -rcN for fixes, extra = $extra\n"
-			return 1
+			minor="$((minor+1))"
+			extra="-rc1"
 		fi
 	else
 		minor=$(($(grep -E "^PATCHLEVEL" <(git show u/master:Makefile) | cut -f 3 -d ' ')+1))
