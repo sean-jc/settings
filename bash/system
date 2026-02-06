@@ -87,6 +87,7 @@ function tar-xz-compress() {
 	fi
 }
 alias lz='tar-xz-compress'
+alias lx='tar -xf archive.tar -C'
 
 # systemd
 alias sys='sudo systemctl'
