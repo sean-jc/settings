@@ -50,7 +50,14 @@ function do-make-kernel-range() {
 		targets=("make-kernel-clang $2 clang")
 	elif [[ $1 == "vm" ]]; then
 		targets=("make-kernel $2 vm")
+	elif [[ $1 == "all" ]]; then
+		targets=("make-kernel $2 all")
 	elif [[ $1 == "fast" ]]; then
+		targets=("make-kernel $2 vm"
+			 "make-kernel $2 all"
+			 "make-kernel-clang $2 clang"
+			 "make-kernel-clang $2 clang_all")
+	elif [[ $1 == "ultrafast" ]]; then
 		targets=("make-kernel $2 vm"
 			 "make-kernel-clang $2 clang")
 	elif [[ $1 == "ti" ]]; then
@@ -73,7 +80,7 @@ function do-make-kernel-range() {
 	elif [[ $1 == "gpu" ]]; then
 		targets=("make-kernel $2 gpu"
 			 "make-kernel-clang $2 clang_gpu")
-	elif [[ $1 == "all" ]]; then
+	elif [[ $1 == "arch" ]]; then
 		targets=("make-kernel-arm $2 cc_arm"
 			 "make-kernel-loong $2 cc_loong"
 			 "make-kernel-mips $2 cc_mips64"
