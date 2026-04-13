@@ -129,6 +129,9 @@ function make-clang() {
 function make-arm() {
 	ARCH=arm64 CC_ARCH=aarch64 cc-make $@
 }
+function make-csky() {
+	ARCH=csky CC_ARCH=csky cc-make $@
+}
 function make-mips() {
 	ARCH=mips CC_ARCH=mips64 cc-make $@
 }
