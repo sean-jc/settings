@@ -70,7 +70,11 @@ function b4-ty-fixup() {
 	echo "$commits" | while IFS= read -r commit ; do
 		hash=$(echo $commit | cut -f 1 -d ' ')
 		shortlog=$(echo $commit | cut -f 2- -d ' ')
-		printf "[$i/$nr] $shortlog\n      https://github.com/kvm-x86/linux/commit/$hash\n"
+		if [[ $nr -lt 10 ]]; then
+			printf "[$i/$nr] $shortlog\n      https://github.com/kvm-x86/linux/commit/$hash\n"
+		else
+			printf "[%02d/$nr] $shortlog\n        https://github.com/kvm-x86/linux/commit/$hash\n" "$i"
+		fi
 
 		i=$((i+1))
 	done
