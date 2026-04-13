@@ -45,7 +45,7 @@ function b4-ty() {
 		printf "Switch to a tracked branch...\n"
 		return 1
 	fi
-	$HOME/go/src/kernel.org/b4/b4.sh ty -o $HOME/thanks/$dir -t $1
+	$HOME/go/src/kernel.org/b4/b4.sh ty -o $HOME/thanks/$dir -t $1 --since 5.week
 }
 
 function b4-ty-fixup() {
