@@ -37,6 +37,7 @@ function get-maintainers() {
 				       grep -v dongsheng.x.zhang@intel.com |	\
 				       grep -v yi.z.zhang@linux.intel.com |	\
 				       grep -v kan.liang@linux.intel.com |	\
+				       grep -v kirill.shutemov@linux.intel.com |\
 				       grep -e Cc: -e Acked-by -e Suggested-by -e Reported-by -e Tested-by -e Reported-and-tested-by -e Reviewed-by -e Signed-off-by | \
 				       cut -d ' ' -f 2- | tr '\n' ',')"
 	fi
@@ -131,9 +132,9 @@ else
 	sh -c "git format-patch --base=HEAD~$nr -M --minimal --patience --from=\"Sean Christopherson <seanjc@google.com>\" $opt $pre -o $dir -$nr"
 
 	if [[ $dir =~ "qemu" ]]; then
-	./scripts/checkpatch.pl --branch HEAD~$nr..HEAD
+		./scripts/checkpatch.pl --branch HEAD~$nr..HEAD
 	elif [ -f ./scripts/checkpatch.pl ]; then
-	./scripts/checkpatch.pl -g HEAD-$nr --codespell --codespellfile=$SETTINGS/codespell/dictionary.txt
+		./scripts/checkpatch.pl -g HEAD-$nr --codespell --codespellfile=$SETTINGS/codespell/dictionary.txt
 	fi
 fi
 
