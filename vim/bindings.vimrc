@@ -20,7 +20,7 @@ imap <C-p>t Please drop the tools/ uapi headers update.  Nothing KVM-related in 
 imap <C-p>u Cc: Paul Durrant <paul@xen.org>
 imap <C-p>v Cc: Vipin Sharma <vipinsh@google.com>
 imap <C-p>w Cc: David Woodhouse <dwmw2@infradead.org>
-imap <C-p>y Cc: Yosry Ahmed <yosry.ahmed@linux.dev>
+imap <C-p>y Cc: Yosry Ahmed <yosry@kernel.org>
 
 " Don't use Ex mode, use Q for formatting.
 " Revert with ":unmap Q".
