@@ -78,6 +78,7 @@ include_late=(
 	"drivers/vfio"
 	"drivers/vhost"
 	"drivers/video"
+	"drivers/virt/coco"
 	"drivers/virtio"
 	"drivers/watchdog"
 	"Documentation/admin-guide/cgroup-v2.rst"
