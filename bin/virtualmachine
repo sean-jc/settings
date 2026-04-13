@@ -73,7 +73,7 @@ elif [[ $iommu = "a" ]]; then
 elif [[ $iommu = "i" ]]; then
 	iommu="-device intel-iommu"
 fi
-if [[ -n $iommu || -n $sev ]]; then
+if [[ -n $iommu || -n $sev || -n $es || -n $snp ]]; then
 	virtio_opt="disable-legacy=on,iommu_platform=on"
 elif [[ -n $i386 ]]; then
 	virtio_opt="disable-modern=on,disable-legacy=off,iommu_platform=off"
@@ -153,9 +153,10 @@ else
 fi
 if [[ -n $sev ]]; then
 	machine="$machine,memory-encryption=sev -object sev-guest,id=sev,policy=0,cbitpos=51,reduced-phys-bits=1"
-fi
-if [[ -n $es ]]; then
+elif [[ -n $es ]]; then
 	machine="$machine,memory-encryption=sev -object sev-guest,id=sev,policy=4,cbitpos=51,reduced-phys-bits=1"
+elif [[ -n $snp ]]; then
+	machine="$machine,memory-encryption=sev -object sev-snp-guest,id=sev,policy=0xb0000,cbitpos=51,reduced-phys-bits=1"
 fi
 
 if [[ $os = "hyper-v" ]]; then
@@ -178,6 +179,8 @@ else
 			bios="$bios -drive if=pflash,format=raw,unit=1,file=$HOME/build/ovmf/OVMF_VARS$ovmf.fd"
 		elif [[ -n $pflash ]]; then
 			bios="-drive if=pflash,format=raw,readonly,unit=0,file=$HOME/build/ovmf/OVMF$ovmf.fd"
+		elif [[ -n $snp ]]; then
+			bios="-bios $HOME/build/ovmf/OVMF_new$ovmf.fd"
 		elif [[ -n $td ]]; then
 			bios="-device loader,file=$HOME/build/ovmf/OVMFTD$ovmf.fd,id=fd0"
 		else
