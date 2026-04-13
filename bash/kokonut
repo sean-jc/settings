@@ -15,6 +15,9 @@ alias kkao='kokonut-kvm-one arcadia'
 
 function kokonut-kvm() {
 	kokonut test --machine_families=$1 --kernel pkgs/LATEST.tar.xz //kvm/...
+	# kokonut test --machine_families=izumi --kernel pkgs/LATEST.tar.xz //kvm/kvm-unit-tests/upstream/...
+	# kokonut test --machine_families=astoria --kernel pkgs/LATEST.tar.xz  //kvm/kvm-unit-tests/upstream/...
+	# kokonut test --machine_families=conan --kernel pkgs/LATEST.tar.xz  //kvm/kvm-unit-tests/upstream/...
 }
 alias kki='kokonut-kvm izumi'
 alias kkd='kokonut-kvm indus'
@@ -41,3 +44,7 @@ function kokonut-boot-test() {
 	kokonut test --test_machines=$host //kvm:LinuxBootTests:cloud_vmm_testing_boot_test_seabios
 }
 alias kdb='kokonut-boot-test'
+
+# kokonut test --machine_families=izumi --kernel pkgs/LATEST.tar.xz //kvm/kvm-unit-tests/fork:KVM_Unit_Tests:emulator
+# kokonut test --machine_families=interlaken --kernel pkgs/LATEST.tar.xz //kvm/kvm-unit-tests/fork:VMX_KVM_Unit_Tests:vmx_mtf
+# kokonut test --machine_families=izumi --kernel pkgs/LATEST.tar.xz //kvm/kvm-unit-tests/upstream:x86_64
