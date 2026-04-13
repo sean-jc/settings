@@ -231,7 +231,7 @@ function run-selftests-parallelized-current() {
 }
 alias rp='run-selftests-parallelized-current'
 
-function really-run-all-tests() {
+function run-core-tests() {
 	local GREEN='\e[0;32m' # Bold Green
 	local NOF='\033[0m' # No Format
 
@@ -242,18 +242,29 @@ function really-run-all-tests() {
 	unittest_log_dir=$HOME/logs/kut-split.$1.logs run-kut-raw x86 split ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-split.$1.log"
 	grep FAIL "$HOME/logs/kut-split.$1.log"
 
+	printf "\n\nRunning KUT-i386 with $1${NOF}\n"
+	unittest_log_dir=$HOME/logs/kut-i386.$1.logs run-kut-raw i386 on ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-i386.$1.log"
+	grep FAIL "$HOME/logs/kut-i386.$1.log"
+}
+
+function run-secondary-tests() {
+	local GREEN='\e[0;32m' # Bold Green
+	local NOF='\033[0m' # No Format
+
+	printf "\n\n${GREEN}Running KUT with in-kernel IRQCHIP and $1${NOF}\n"
+	unittest_log_dir=$HOME/logs/kut.$1.logs run-kut-raw x86 on ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut.$1.log"
+	grep FAIL "$HOME/logs/kut.$1.log"
+
+	printf "\n\nRunning KUT EFI with $1${NOF}\n"
+	unittest_log_dir=$HOME/logs/kut-efi.$1.logs run-kut-raw efi on ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-efi.$1.log"
+	grep FAIL "$HOME/logs/kut-efi.$1.log"
+}
+
+
+function really-run-all-tests() {
+	run-core-tests "$@"
 	if [[ $RUN_KVM_TESTS != "supershort" ]]; then
-		printf "\n\n${GREEN}Running KUT with in-kernel IRQCHIP and $1${NOF}\n"
-		unittest_log_dir=$HOME/logs/kut.$1.logs run-kut-raw x86 on ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut.$1.log"
-		grep FAIL "$HOME/logs/kut.$1.log"
-
-		printf "\n\nRunning KUT EFI with $1${NOF}\n"
-		unittest_log_dir=$HOME/logs/kut-efi.$1.logs run-kut-raw efi on ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-efi.$1.log"
-		grep FAIL "$HOME/logs/kut-efi.$1.log"
-
-		printf "\n\nRunning KUT-i386 with $1${NOF}\n"
-		unittest_log_dir=$HOME/logs/kut-i386.$1.logs run-kut-raw i386 on ./run_tests.sh -j$(get-nr-cpus) > "$HOME/logs/kut-i386.$1.log"
-		grep FAIL "$HOME/logs/kut-i386.$1.log"
+		run-secondary-tests "$@"
 	fi
 }
 function run-all-tests() {
@@ -280,43 +291,52 @@ function run-all-tests() {
 	fi
 
 	if is-amd; then
-		reload-kvm "avic=1 nested=1"
+		reload-kvm "avic=1 nested=1 enable_mediated_pmu=1"
 	else
-		reload-kvm
+		reload-kvm "enable_mediated_pmu=1"
 	fi
 	really-run-all-tests tdp_enabled
 
 	if is-amd; then
-		reload-kvm "npt=0 avic=1 nested=1"
+		reload-kvm "npt=0 avic=1 nested=1 enable_mediated_pmu=1"
 		really-run-all-tests npt_disabled
 	else
-		reload-kvm "ept=0"
+		reload-kvm "ept=0 enable_mediated_pmu=1"
 		really-run-all-tests ept_disabled
 	fi
 
 	if [[ $RUN_KVM_TESTS == "all" ]]; then
-		grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
-		if [[ $? -eq 0 ]]; then
-			if [[ $(grep -q Y /sys/module/kvm_enable/parameters/avic) -eq 0 ]]; then
+		if is-amd; then
+			if [[ $(grep -q Y /sys/module/kvm_amd/parameters/enable_mediated_pmu) -eq 0 ]]; then
+				reload-kvm "avic=1 nested=1"
+				really-run-all-tests legacy_pmu
+			fi
+
+			if [[ $(grep -q Y /sys/module/kvm_amd/parameters/avic) -eq 0 ]]; then
 				reload-kvm "avic=0 nested=1"
 				really-run-all-tests avic_disabled
 			fi
 		else
-			reload-kvm "eptad=0"
-			really-run-all-tests eptad_disabled
-
-			reload-kvm "unrestricted_guest=0"
-			really-run-all-tests urg_disabled
+			if [[ $(grep -q Y /sys/module/kvm_intel/parameters/enable_mediated_pmu) -eq 0 ]]; then
+				reload-kvm
+				really-run-all-tests legacy_pmu
+			fi
 
 			if [[ $(grep -q Y /sys/module/kvm_intel/parameters/enable_ipiv) -eq 0 ]]; then
 				reload-kvm "enable_ipiv=0"
-				really-run-all-tests ipiv_disabled
+				run-core-tests ipiv_disabled
 			fi
 
 			if [[ $(grep -q Y /sys/module/kvm_intel/parameters/enable_apicv) -eq 0 ]]; then
 				reload-kvm "enable_apicv=0"
 				really-run-all-tests apicv_disabled
 			fi
+
+			reload-kvm "eptad=0"
+			run-core-tests eptad_disabled
+
+			reload-kvm "unrestricted_guest=0"
+			run-core-tests urg_disabled
 		fi
 	fi
 

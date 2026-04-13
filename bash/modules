@@ -19,9 +19,9 @@ function get-kvm() {
 function modprobe-kvm-vendor() {
 	local params
 	if is-amd; then
-		params="avic=1 nested=1"
+		params="avic=1 nested=1 enable_mediated_pmu=1"
 	else
-		params="warn_on_missed_cc=1"
+		params="warn_on_missed_cc=1 enable_mediated_pmu=1"
 	fi
 	psudo modprobe $(get-kvm) $params $@
 }
