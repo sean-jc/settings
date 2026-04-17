@@ -20,7 +20,7 @@ function git-tree() {
 }
 
 function git-xfer() {
-	git diff | git -C $1 apply
+	git diff | git -C $1 apply -p0
 }
 
 function git-blob() {
@@ -618,3 +618,4 @@ alias gx='git-xfer'
 alias gxh='git-xfer $HOME/go/src/kernel.org/host'
 alias gxl='git-xfer $HOME/go/src/kernel.org/linux'
 alias gxn='git-xfer $HOME/go/src/kernel.org/nox'
+alias gy='git apply -p0'
