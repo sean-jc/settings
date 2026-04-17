@@ -108,13 +108,13 @@ else
 
 	opt=""
 	if [[ $nr -gt 1 ]]; then
-	opt="--cover-letter"
+		opt="--cover-letter"
 	fi
 	if [[ $ver != "1" ]]; then
-	opt="$opt -v $ver"
+		opt="$opt -v $ver"
 	fi
 	if [[ -n $rfc ]]; then
-	opt="$opt --rfc"
+		opt="$opt --rfc"
 	fi
 
 	pre=""
