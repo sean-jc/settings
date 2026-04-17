@@ -33,6 +33,12 @@ alias mp='sudo modprobe'
 alias sbn='sudo reboot now'
 alias sbf='sudo reboot -f'
 
+alias h='ssh'
+alias hg='ssh g'
+alias hp='ssh p'
+alias hv='ssh v'
+alias hz='ssh z'
+
 function reboot-sysrq() {
 	echo 1 | sudo tee /proc/sys/kernel/sysrq > /dev/null
 	echo b | sudo tee /proc/sysrq-trigger > /dev/null
