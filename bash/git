@@ -529,6 +529,7 @@ alias gdls='git diff --stat $(git rev-parse --abbrev-ref --symbolic-full-name @{
 alias ge='git reflog'
 alias geg='git reflog | grep'
 alias gek='git-email kvm'
+alias geo='git-email off'
 alias ges='git-email stable'
 alias geu='git-email ku'
 alias gem='git-email mm'

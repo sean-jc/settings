@@ -21,8 +21,11 @@ function get-maintainers() {
 		maint=$(./scripts/get_maintainer.pl $opts $head | tr '\n' ',')
 	fi
 	if [[ $cmd == "cc" ]]; then
-		if [[ $ml != "ku" && $ml != "qemu" ]]; then
+		if [[ $ml != "ku" && $ml != "qemu" && ml != "off" ]]; then
 			maint="$maint""linux-kernel@vger.kernel.org,"
+		fi
+		if [[ $ml == "off" ]]; then
+			maint=""
 		fi
 		if [[ $(basename $head) =~ ^${pre}0000- ]] ; then
 			pfiles=$(ls -1 $(dirname $head)/!(${pre}0000-cover-letter.patch))
@@ -77,7 +80,7 @@ fi
 depth=3
 if [[ -n $d ]]; then
 	depth=$d
-elif [[ $ml == "kvm" ]]; then
+elif [[ $ml == "kvm" || $ml == "off" ]]; then
 	depth=1
 fi
 
@@ -120,6 +123,8 @@ else
 	pre=""
 	if [[ $ml == "ku" ]]; then
 		pre="kvm-unit-tests "
+	elif [[ $ml == "off" ]]; then
+		pre="*** OFF-LIST *** "
 	fi
 	if [[ -n $resend ]]; then
 		pre="$pre""RESEND "
