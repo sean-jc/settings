@@ -16,19 +16,32 @@ function get-kvm() {
 	fi
 }
 
+function modprobe-kvm-vendor-raw() {
+	local mod=$(get-kvm)
+
+	while ! lsmod | grep -q $mod ; do
+		if psudo modprobe $mod $@; then
+			break;
+		fi
+		echo "Failed to load $mod.ko, sleeping and retrying"
+		sleep 1
+	done
+}
+
 function modprobe-kvm-vendor() {
 	local params
+
 	if is-amd; then
 		params="avic=1 nested=1 enable_mediated_pmu=1"
 	else
 		params="warn_on_missed_cc=1 enable_mediated_pmu=1"
 	fi
-	psudo modprobe $(get-kvm) $params $@
+	modprobe-kvm-vendor-raw $params $@
 }
 
 alias mpkk='psudo modprobe kvm force_emulation_prefix=2'
 alias mpk='mpkk && modprobe-kvm-vendor'
-alias mpkr='psudo modprobe $(get-kvm)'
+alias mpkr='modprobe-kvm-vendor-raw'
 alias mpi='psudo modprobe vfio_pci'
 
 function set-fep() {
