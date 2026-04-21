@@ -26,6 +26,8 @@ function make-selftests() {
 
 	if [[ $1 == "arm" ]]; then
 		arch_dir="arm64"
+	elif [[ $1 == "loong" ]]; then
+		arch_dir="loongarch"
 	else
 		arch_dir=$1
 	fi
@@ -87,6 +89,11 @@ alias mta='make-selftests  arm nox arm'
 alias mtac='make-selftests arm nox arm clean'
 alias jta='make-clang make-selftests arm nox arm_c'
 alias jtac='make-clang make-selftests arm nox arm_c clean'
+
+alias mtl='make-selftests  loong nox loong'
+alias mtlc='make-selftests loong nox loong clean'
+alias jtl='make-clang make-selftests loong nox loong_c'
+alias jtlc='make-clang make-selftests loong nox loong_c clean'
 
 alias mts='make-selftests  s390 nox s390'
 alias mtsc='make-selftests s390 nox s390 clean'

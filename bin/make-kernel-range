@@ -105,6 +105,8 @@ function do-make-kernel-range() {
 			 "make-clang make-selftests x86 nox c_n clean"
 			 "make-selftests arm nox arm clean"
 			 "make-clang make-selftests arm nox arm_c clean"
+			 "make-selftests loong nox loong clean"
+			 "make-clang make-selftests loong nox loong_c clean"
 			 "make-selftests riscv nox riscv clean"
 			 "make-clang make-selftests riscv nox riscv_c clean"
 			 "make-selftests s390 nox s390 clean"
