@@ -148,9 +148,9 @@ alias mr='make-riscv make'
 alias jr='make-clang make-riscv make'
 alias mrh='make-riscv make headers_install'
 
-alias ms='make-s390 make'
-alias js='make-clang make-s390 make'
-alias msh='make-s390 make headers_install'
+alias m3='make-s390 make'
+alias j3='make-clang make-s390 make'
+alias m3h='make-s390 make headers_install'
 
 # Make Custom kernel
 alias mc='make-kernel make'
