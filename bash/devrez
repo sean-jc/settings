@@ -16,6 +16,13 @@ function do-host-thing() {
 		echo $host
 		megapede console $host
 	elif [[ $HOST_ACTION == "konjurer" || $HOST_ACTION == "kexec" || $HOST_ACTION == "kirqs" ]]; then
+		ssh $1 "rm -f /boot/*-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]-seanjc-[a-z]*;
+			rm -f /boot/*-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]-seanjc-[a-z]* \
+			rm -rf /lib/modules/*-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]-seanjc-[a-z]*; \
+			rm -rf /lib/modules/*-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]-seanjc-[a-z]*; \
+			rm -rf /lib/firmware/*-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]-seanjc-[a-z]*; \
+			rm -rf /lib/firmware/*-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]-seanjc-[a-z]*"
+
 		host=$(echo $host | cut -f 1 -d .)
 		if [[ $HOST_ACTION == "kexec" ]]; then
 			/google/data/ro/projects/platforms/prodkernel/konjurer/konjurer -wait=false -client=ssh --ssh_direct=true -append_cmdline="ignore_loglevel" -fastkexec -hosts="$host" -kernel=pkgs/LATEST.tar.xz
