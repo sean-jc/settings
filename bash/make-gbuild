@@ -7,7 +7,7 @@ function make-gbuild {
 		printf "Usage: make-gbuild <arch> <name> [version override]\n"
 	fi
 
-	local name="-$(git show -s --pretty='tformat:%h')-$2"
+	local name="-$(git show -s --pretty='tformat:%h')-seanjc-$2"
 
 	if [[ $# -eq 2 ]]; then
 		gbuild ASSERTS=0 RELEASE=$name ARCH=$1 $EXTRAS
