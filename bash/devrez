@@ -22,7 +22,7 @@ function do-host-thing() {
 		elif [[ $HOST_ACTION == "kirqs" ]]; then
 			/google/data/ro/projects/platforms/prodkernel/konjurer/konjurer -wait=false -client=ssh --ssh_direct=true -append_cmdline="ignore_loglevel intremap=no_posted_msi" -hosts="$host" -kernel=pkgs/LATEST.tar.xz
 		else
-			/google/data/ro/projects/platforms/prodkernel/konjurer/konjurer -wait=false -client=ssh --ssh_direct=true -append_cmdline="ignore_loglevel" -hosts="$host" -kernel=pkgs/LATEST.tar.xz
+			/google/data/ro/projects/platforms/prodkernel/konjurer/konjurer -wait=false -client=ssh --ssh_direct=true -append_cmdline="ignore_loglevel" -kexec=false -hosts="$host" -kernel=pkgs/LATEST.tar.xz
 		fi
 	else
 		printf "unknown action '$HOST_ACTION'\n"
