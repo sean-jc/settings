@@ -163,7 +163,10 @@ if [[ $os = "hyper-v" ]]; then
 	cpu="-cpu host,host-phys-bits,hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time,+vmx"
 	bios="-bios $HOME/build/ovmf/OVMF$ovmf.fd"
 else
-	cpu="-cpu host,host-phys-bits,+invtsc"
+	cpu="-cpu host,host-phys-bits,+vmware-cpuid-freq,+invtsc"
+	if [[ $freq == "n" ]]; then
+		cpu="$cpu,-vmware-cpuid-freq"
+	fi
 	if [[ -z $migrate ]]; then
 		cpu="$cpu,migratable=no"
 	fi
