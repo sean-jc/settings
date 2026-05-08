@@ -69,6 +69,7 @@ function dev-sync() {
 			rsync -z --checksum arch/x86/kvm/kvm-amd.ko             $2:/lib/modules/$kname/kernel/arch/x86/kvm/kvm-amd.ko
 			rsync -z --checksum arch/x86/kvm/kvm-intel.ko           $2:/lib/modules/$kname/kernel/arch/x86/kvm/kvm-intel.ko
 			rsync -z --checksum arch/x86/kvm/kvm.ko                 $2:/lib/modules/$kname/kernel/arch/x86/kvm/kvm.ko
+			rsync -z --checksum drivers/crypto/ccp/ccp.ko           $2:/lib/modules/$kname/kernel/drivers/crypto/ccp/ccp.ko
 			rsync -z --checksum drivers/vfio/pci/vfio-pci-core.ko   $2:/lib/modules/$kname/kernel/drivers/vfio/pci/vfio-pci-core.ko
 			rsync -z --checksum drivers/vfio/pci/vfio-pci.ko        $2:/lib/modules/$kname/kernel/drivers/vfio/pci/vfio-pci.ko
 			rsync -z --checksum drivers/vfio/vfio_iommu_type1.ko    $2:/lib/modules/$kname/kernel/drivers/vfio/vfio_iommu_type1.ko
