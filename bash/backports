@@ -132,10 +132,16 @@ function git-backport-range() {
 	return 1
 }
 
-function git-backport-ff() {
+function git-backport-upstream() {
 	local RED='\033[1;31m' # Bold Red
 	local NOF='\033[0m' # No Format
-	local commit=$1
+	local bug_id=$1
+	local commit=$2
+
+	if [[ $# -ne 2 ]]; then
+		printf "Usage for backporting: 'gbu <bug #> <commit>n"
+		return 1
+	fi
 
 	git cherry-pick $commit
 	if [[ $? -ne 0 ]]; then
@@ -148,12 +154,13 @@ function git-backport-ff() {
 			while [[ $(git status --porcelain=v1 2>/dev/null | wc -l) -ne 0 ]]; do
 				sleep .1
 			done
-			git-fixup-backport-metadata $commit 273353688 "BACKPORT: UPSTREAM"
+			git-fixup-backport-metadata $commit $bug_id "BACKPORT: UPSTREAM"
 		fi
 	else
-		git-fixup-backport-metadata $commit 273353688 UPSTREAM
+		git-fixup-backport-metadata $commit $bug_id UPSTREAM
 	fi
 }
+alias gbu='git-backport-upstream'
 
 function git-cherrypick-prod() {
 	local commit=$1
@@ -174,10 +181,24 @@ function git-cherrypick-prod() {
 		changelog=$(echo "$changelog" | head -n -1)
 	fi
 
+	if [[ -n $PRODKERNEL_ORIGIN ]]; then
 	git commit --amend -m \
 "$changelog
 Origin-14xx-SHA1: $commit
+Rebase-Tested: 
 
 "
+	else
+	git commit --amend -m \
+"$changelog
+Release-Commit: $commit
+Release-Tested: 
+
+"
+	fi
 	return 0
 }
+alias gcp='git-cherrypick-prod'
+alias gp13='PRODKERNEL_ORIGIN=13xx git-cherrypick-prod'
+alias gp14='PRODKERNEL_ORIGIN=14xx git-cherrypick-prod'
+alias gp15='PRODKERNEL_ORIGIN=15xx git-cherrypick-prod'
