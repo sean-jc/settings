@@ -32,17 +32,20 @@ function get-maintainers() {
 		else
 			pfiles=$head
 		fi
-			maint="$maint$(echo $pfiles | xargs cat |		\
-				       grep -v stable@vger.kernel.org |		\
-				       grep -v lkp@intel.com |			\
-				       grep -v weijiang.yang@intel.com |	\
-				       grep -v yongwei.ma@intel.com |		\
-				       grep -v dongsheng.x.zhang@intel.com |	\
-				       grep -v yi.z.zhang@linux.intel.com |	\
-				       grep -v kan.liang@linux.intel.com |	\
-				       grep -v kirill.shutemov@linux.intel.com |\
-				       grep -e Cc: -e Acked-by -e Suggested-by -e Reported-by -e Tested-by -e Reported-and-tested-by -e Reviewed-by -e Signed-off-by | \
-				       cut -d ' ' -f 2- | tr '\n' ',')"
+		maint="$maint$(echo $pfiles | xargs cat |		\
+			       grep -v stable@vger.kernel.org |		\
+			       grep -v lkp@intel.com |			\
+			       grep -v weijiang.yang@intel.com |	\
+			       grep -v yongwei.ma@intel.com |		\
+			       grep -v dongsheng.x.zhang@intel.com |	\
+			       grep -v yi.z.zhang@linux.intel.com |	\
+			       grep -v kan.liang@linux.intel.com |	\
+			       grep -v kirill.shutemov@linux.intel.com |\
+			       grep -v kirill.shutemov@linux.intel.com |\
+			       grep -v alexey.amakhalov@broadcom.com |	\
+			       grep -v jailhouse-dev@googlegroups.com |	\
+			       grep -e Cc: -e Acked-by -e Suggested-by -e Reported-by -e Tested-by -e Reported-and-tested-by -e Reviewed-by -e Signed-off-by | \
+			       cut -d ' ' -f 2- | tr '\n' ',')"
 	fi
 
 	maint=${maint%,};
@@ -165,7 +168,14 @@ while true; do
 		continue
 		fi
 	fi
-	git send-email --suppress-cc=all --confirm=always --to=seanjc@google.com --reply-to="Sean Christopherson <seanjc@google.com>" $opt $dir
+	if [[ -n $reply ]]; then
+		local file
+		for file in $dir/*.patch; do
+			git send-email --suppress-cc=all --confirm=always --to=seanjc@google.com --reply-to="Sean Christopherson <seanjc@google.com>" $opt $file
+		done
+	else
+		git send-email --suppress-cc=all --confirm=always --to=seanjc@google.com --reply-to="Sean Christopherson <seanjc@google.com>" $opt $dir
+	fi
 	break
 	else
 	exit 0
@@ -184,7 +194,7 @@ else
 	head=$(ls -1 $dir/*0001*)
 fi
 
-gm_opts="--nogit --nogit-fallback --norolestats --nofixes --nokeywords --pattern-depth=$depth"
+gm_opts="--nogit --nogit-fallback --norolestats --nofixes --nokeywords --nokeywords-in-file --pattern-depth=$depth"
 if [[ -z $to ]]; then
 	if [[ $ml == "stable" ]]; then
 		to="--to=\"stable@vger.kernel.org\" --to=\"Greg Kroah-Hartman <gregkh@linuxfoundation.org>\" --to=\"Sasha Levin <sashal@kernel.org>\""
@@ -223,5 +233,12 @@ read -r -p "Send email: [Y/n]" response
 
 response=${response,,}	# tolower
 if [[ -z $response || $response =~ ^(yes|y)$ ]]; then
-	eval $(printf "%s\n" "git send-email --confirm=always --suppress-cc=all --reply-to=\"Sean Christopherson <seanjc@google.com>\" $to $bcc $cc $opt $dir")
+	if [[ -n $reply ]]; then
+		local file
+		for file in $dir/*.patch; do
+			eval $(printf "%s\n" "git send-email --confirm=always --suppress-cc=all --reply-to=\"Sean Christopherson <seanjc@google.com>\" $to $bcc $cc $opt $file")
+		done
+	else
+		eval $(printf "%s\n" "git send-email --confirm=always --suppress-cc=all --reply-to=\"Sean Christopherson <seanjc@google.com>\" $to $bcc $cc $opt $dir")
+	fi
 fi
