@@ -12,14 +12,15 @@ imap <C-p>j Cc: Jim Mattson <jmattson@google.com>
 imap <C-p>k Cc: kvm@vger.kernel.org
 imap <C-p>m Cc: Maxim Levitsky <mlevitsk@redhat.com>
 imap <C-p>n No functional change intended.
-imap <C-p>o Cc: Oliver Upton <oliver.upton@linux.dev>
+imap <C-p>o Opportunistically
 imap <C-p>p Cc: Paolo Bonzini <pbonzini@redhat.com>
 imap <C-p>r Cc: Aaron Lewis <aaronlewis@google.com>
 imap <C-p>s Cc: stable@vger.kernel.org
 imap <C-p>t Please drop the tools/ uapi headers update.  Nothing KVM-related in tools/<CR>actually relies on the headers being copied into tools/, e.g. KVM selftests<CR>pulls KVM's headers from the .../usr/include/ directory that's populated by<CR>`make headers_install`.<CR><CR>Perf's tooling is what actually "needs" the headers to be copied into tools/;<CR>let the tools/perf maintainers deal with the headache of keeping everything up-to-date.
-imap <C-p>u Cc: Paul Durrant <paul@xen.org>
+imap <C-p>u Cc: Oliver Upton <oupton@kernel.org>
 imap <C-p>v Cc: Vipin Sharma <vipinsh@google.com>
 imap <C-p>w Cc: David Woodhouse <dwmw2@infradead.org>
+imap <C-p>x Cc: Paul Durrant <paul@xen.org>
 imap <C-p>y Cc: Yosry Ahmed <yosry@kernel.org>
 
 " Don't use Ex mode, use Q for formatting.
