@@ -9,7 +9,7 @@ function gcontain-enter() {
 
 function run-kut-raw() {
 	cd $HOME/build/kut/$1
-	ACCEL="kvm,kernel_irqchip=$2" QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd "${@:3}"
+	ACCEL="kvm,kernel-irqchip=$2" QEMU=~/build/qemu/qemu EFI_UEFI=~/build/ovmf/OVMF.fd "${@:3}"
 }
 
 function run-kut() {
