@@ -293,7 +293,7 @@ function run-all-tests() {
 	if is-amd; then
 		reload-kvm "avic=1 nested=1 enable_mediated_pmu=1"
 	else
-		reload-kvm "enable_mediated_pmu=1"
+		reload-kvm "warn_on_missed_cc=1 enable_mediated_pmu=1"
 	fi
 	really-run-all-tests tdp_enabled
 
@@ -301,7 +301,7 @@ function run-all-tests() {
 		reload-kvm "npt=0 avic=1 nested=1 enable_mediated_pmu=1"
 		really-run-all-tests npt_disabled
 	else
-		reload-kvm "ept=0 enable_mediated_pmu=1"
+		reload-kvm "ept=0 warn_on_missed_cc=1 enable_mediated_pmu=1"
 		really-run-all-tests ept_disabled
 	fi
 
@@ -318,24 +318,24 @@ function run-all-tests() {
 			fi
 		else
 			if [[ $(grep -q Y /sys/module/kvm_intel/parameters/enable_mediated_pmu) -eq 0 ]]; then
-				reload-kvm
+				reload-kvm "warn_on_missed_cc=1"
 				really-run-all-tests legacy_pmu
 			fi
 
 			if [[ $(grep -q Y /sys/module/kvm_intel/parameters/enable_ipiv) -eq 0 ]]; then
-				reload-kvm "enable_ipiv=0"
+				reload-kvm "warn_on_missed_cc=1 enable_ipiv=0"
 				run-core-tests ipiv_disabled
 			fi
 
 			if [[ $(grep -q Y /sys/module/kvm_intel/parameters/enable_apicv) -eq 0 ]]; then
-				reload-kvm "enable_apicv=0"
+				reload-kvm "warn_on_missed_cc=1 enable_apicv=0"
 				really-run-all-tests apicv_disabled
 			fi
 
-			reload-kvm "eptad=0"
+			reload-kvm "warn_on_missed_cc=1 eptad=0"
 			run-core-tests eptad_disabled
 
-			reload-kvm "unrestricted_guest=0"
+			reload-kvm "warn_on_missed_cc=1 unrestricted_guest=0"
 			run-core-tests urg_disabled
 		fi
 	fi
