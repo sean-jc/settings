@@ -71,8 +71,10 @@ shopt -s histappend
 shopt -s direxpand
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=1000
-HISTFILESIZE=2000
+HISTFILE=$HOME/.bash_history
+HISTSIZE=5000
+HISTFILESIZE=10000
+history -r
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
