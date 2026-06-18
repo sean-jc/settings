@@ -21,7 +21,9 @@ function do-host-thing() {
 			rm -rf /lib/modules/*-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]-seanjc-[0-9a-z]*; \
 			rm -rf /lib/modules/*-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]-seanjc-[0-9a-z]*; \
 			rm -rf /lib/firmware/*-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]-seanjc-[0-9a-z]*; \
-			rm -rf /lib/firmware/*-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]-seanjc-[0-9a-z]*;"
+			rm -rf /lib/firmware/*-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]-seanjc-[0-9a-z]*; \
+			rm -rf /etc/kernel/*-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]-seanjc-[0-9a-z]*; \
+			rm -rf /etc/kernel/*-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]-seanjc-[0-9a-z]*;"
 
 		host=$(echo $host | cut -f 1 -d .)
 		if [[ $HOST_ACTION == "kexec" ]]; then
