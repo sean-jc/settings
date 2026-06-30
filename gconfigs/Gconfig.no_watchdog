@@ -1,0 +1,3 @@
+# CONFIG_WATCHDOG is not set
+# CONFIG_IPMI_WATCHDOG is not set
+# CONFIG_CLOCKSOURCE_WATCHDOG is not set
