@@ -47,6 +47,7 @@ alias hii='ssh ii'
 alias hip='ssh ip'
 alias his='ssh is'
 alias hp='ssh p'
+alias hs='ssh snp'
 alias hv='ssh v'
 alias hz='ssh z'
 
