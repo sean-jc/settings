@@ -1,3 +1,16 @@
+function get-selftests-dir() {
+	local arch=$(uname -m)
+	if [[ $arch == "x86_64" ]]; then
+		arch="x86"
+	elif [[ $arch == "aarch64" ]]; then
+		arch="arm"
+	else
+		printf "Unhandled tests architecture %s\n" $arch
+		exit 1
+	fi
+	echo "$HOME/build/tests/$arch"
+}
+
 # Shortcuts for moving up directories
 alias ..="cd .."
 alias ...="cd ../.."
@@ -29,7 +42,7 @@ alias uu='cd ~/go/src/kernel.org/gpu'
 alias bi='cd ~/build'
 alias kn='cd ~/build/kernel'
 alias qe='cd ~/build/qemu'
-alias tt='cd ~/build/selftests/x86'
+alias tt='cd $(get-selftests-dir)'
 alias iq='cd ~/images/qemu'
 
 # Direct navigation to outbox directories (posted patches)

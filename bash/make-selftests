@@ -6,6 +6,7 @@ function make-selftests() {
 	local static=""
 	local ls
 	local source=$HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm
+	local target=$HOME/build/tests/$3
 	local output=$HOME/build/selftests/$3
 
 	if [[ $# -lt 2 ]] || [[ ! -d $source ]]; then
@@ -65,11 +66,13 @@ function make-selftests() {
 		static="$static -Wno-duplicate-decl-specifier"
 	fi
 
-	ls=$(which ls)
-	tests=( $($ls -1 $source/*.c $source/$arch_dir/*.c) )
-
-	KHDR_INCLUDES="-isystem $output/usr/include" EXTRA_CFLAGS="$static -Werror -gdwarf-4" make-$1 make INSTALL_HDR_PATH="$output/usr" OUTPUT=$output -j$(get-nr-cpus)
+	KHDR_INCLUDES="-isystem $output/usr/include" EXTRA_CFLAGS="$static -Werror -gdwarf-4" make-$1 make INSTALL_HDR_PATH="$output/usr" OUTPUT=$output  INSTALL_PATH=$target -j$(get-nr-cpus) install
 	local ret=$?
+
+	if [[ $? -eq 0 ]]; then
+		rm -f $target/config
+		rm -f $target/settings
+	fi
 	popd
 	return $ret
 }
