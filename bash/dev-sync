@@ -52,12 +52,15 @@ function dev-sync() {
 		done
 	fi
 	if [[ $1 == "full" || $1 == "settings" ]]; then
-		rsync -z --checksum ~/.bashrc $2:/data/local/seanjc
-		rsync -z --checksum ~/.inputrc $2:/data/local/seanjc
-		rsync -z --checksum ~/.vimrc $2:/data/local/seanjc
-		rsync -z --checksum ~/go/src/github.com/sean-jc/settings/.ssh/dev_config $2:/root/.ssh/config
-		rsync -z --checksum --recursive --exclude='.git*' ~/go/src/github.com/sean-jc/settings $2:/data/local/seanjc/go/src/github.com/sean-jc
-		rsync -z --checksum ~/go/src/github.com/sean-jc/settings/git/.git-completion.bash $2:/data/local/seanjc/go/src/github.com/sean-jc/settings/git
+		local commands=("rsync -z --checksum ~/.bashrc $2:/data/local/seanjc"
+				"rsync -z --checksum ~/.inputrc $2:/data/local/seanjc"
+				"rsync -z --checksum ~/.vimrc $2:/data/local/seanjc"
+				"rsync -z --checksum ~/go/src/github.com/sean-jc/settings/.ssh/dev_config $2:/root/.ssh/config"
+				"rsync -z --checksum --recursive --exclude='.git*' ~/go/src/github.com/sean-jc/settings $2:/data/local/seanjc/go/src/github.com/sean-jc"
+				"rsync -z --checksum ~/go/src/github.com/sean-jc/settings/git/.git-completion.bash $2:/data/local/seanjc/go/src/github.com/sean-jc/settings/git")
+
+		printf "%s\n" "${commands[@]}" | xargs -I% -P 6 sh -c %
+
 		ssh $2 "chmod +x /data/local/seanjc/go/src/github.com/sean-jc/settings/bin/timeout; \
 			chmod -R g=u,g-w,o=u,o-w /data/local/seanjc/go"
 	fi
@@ -65,15 +68,17 @@ function dev-sync() {
 		if [[ $arch == x86 ]]; then
 			local kname=$(ssh $2 "uname -r")
 
-			rsync -z --checksum arch/x86/kvm/kvm-amd.ko             $2:/lib/modules/$kname/kernel/arch/x86/kvm/kvm-amd.ko
-			rsync -z --checksum arch/x86/kvm/kvm-intel.ko           $2:/lib/modules/$kname/kernel/arch/x86/kvm/kvm-intel.ko
-			rsync -z --checksum arch/x86/kvm/kvm.ko                 $2:/lib/modules/$kname/kernel/arch/x86/kvm/kvm.ko
-			rsync -z --checksum drivers/crypto/ccp/ccp.ko           $2:/lib/modules/$kname/kernel/drivers/crypto/ccp/ccp.ko
-			rsync -z --checksum drivers/vfio/pci/vfio-pci-core.ko   $2:/lib/modules/$kname/kernel/drivers/vfio/pci/vfio-pci-core.ko
-			rsync -z --checksum drivers/vfio/pci/vfio-pci.ko        $2:/lib/modules/$kname/kernel/drivers/vfio/pci/vfio-pci.ko
-			rsync -z --checksum drivers/vfio/vfio_iommu_type1.ko    $2:/lib/modules/$kname/kernel/drivers/vfio/vfio_iommu_type1.ko
-			rsync -z --checksum drivers/vfio/vfio.ko                $2:/lib/modules/$kname/kernel/drivers/vfio/vfio.ko
-			rsync -z --checksum virt/lib/irqbypass.ko               $2:/lib/modules/$kname/kernel/virt/lib/irqbypass.ko
+			local commands=("rsync -z --checksum arch/x86/kvm/kvm-amd.ko             $2:/lib/modules/$kname/kernel/arch/x86/kvm/kvm-amd.ko"
+					"rsync -z --checksum arch/x86/kvm/kvm-intel.ko           $2:/lib/modules/$kname/kernel/arch/x86/kvm/kvm-intel.ko"
+					"rsync -z --checksum arch/x86/kvm/kvm.ko                 $2:/lib/modules/$kname/kernel/arch/x86/kvm/kvm.ko"
+					"rsync -z --checksum drivers/crypto/ccp/ccp.ko           $2:/lib/modules/$kname/kernel/drivers/crypto/ccp/ccp.ko"
+					"rsync -z --checksum drivers/vfio/pci/vfio-pci-core.ko   $2:/lib/modules/$kname/kernel/drivers/vfio/pci/vfio-pci-core.ko"
+					"rsync -z --checksum drivers/vfio/pci/vfio-pci.ko        $2:/lib/modules/$kname/kernel/drivers/vfio/pci/vfio-pci.ko"
+					"rsync -z --checksum drivers/vfio/vfio_iommu_type1.ko    $2:/lib/modules/$kname/kernel/drivers/vfio/vfio_iommu_type1.ko"
+					"rsync -z --checksum drivers/vfio/vfio.ko                $2:/lib/modules/$kname/kernel/drivers/vfio/vfio.ko"
+					"rsync -z --checksum virt/lib/irqbypass.ko               $2:/lib/modules/$kname/kernel/virt/lib/irqbypass.ko")
+
+			printf "%s\n" "${commands[@]}" | xargs -I% -P 6 sh -c %
 			return 0;
 		fi
 		return 1;
