@@ -61,6 +61,9 @@ function make-selftests() {
 	if [[ $(whoami) == "seanjc" && $1 != "s390" ]]; then
 		static="-static"
 	fi
+	if [[ $1 == "risc" ]]; then
+		static="$static -Wno-duplicate-decl-specifier"
+	fi
 
 	ls=$(which ls)
 	tests=( $($ls -1 $source/*.c $source/$arch_dir/*.c) )
