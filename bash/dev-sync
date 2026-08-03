@@ -42,7 +42,7 @@ function dev-sync() {
 			mkdir -p /data/local/seanjc/images/qemu; \
 			mkdir -p /data/local/seanjc/build/kut; \
 			mkdir -p /data/local/seanjc/bin && \
-			ln -s /bin/kpython3 /data/local/seanjc/bin/python3; \
+			[ -e /data/local/seanjc/bin/python3 ] || ln -s /bin/kpython3 /data/local/seanjc/bin/python3; \
 			mkdir -p /root/.ssh/sockets"; \
 			 \
 
