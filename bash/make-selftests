@@ -8,6 +8,7 @@ function make-selftests() {
 	local source=$HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm
 	local target=$HOME/build/tests/$3
 	local output=$HOME/build/selftests/$3
+	local command
 
 	if [[ $# -lt 2 ]] || [[ ! -d $source ]]; then
 		printf "Must specify kernel directory as second argument\n"
@@ -66,7 +67,13 @@ function make-selftests() {
 		static="$static -Wno-duplicate-decl-specifier"
 	fi
 
-	KHDR_INCLUDES="-isystem $output/usr/include" EXTRA_CFLAGS="$static -Werror -gdwarf-4" make-$1 make INSTALL_HDR_PATH="$output/usr" OUTPUT=$output  INSTALL_PATH=$target -j$(get-nr-cpus) install
+	if [[ -d "runner" ]]; then
+		command="testcases"
+	else
+		command="install"
+	fi
+
+	KHDR_INCLUDES="-isystem $output/usr/include" EXTRA_CFLAGS="$static -Werror -gdwarf-4" make-$1 make INSTALL_HDR_PATH="$output/usr" OUTPUT=$output DEFAULT_TESTCASES=testcases INSTALL_PATH=$target -j$(get-nr-cpus) $command
 	local ret=$?
 
 	if [[ $? -eq 0 ]]; then
