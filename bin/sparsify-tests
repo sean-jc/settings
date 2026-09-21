@@ -61,6 +61,9 @@ echo "arch/x86/" >> .git/info/sparse-checkout
 echo "drivers/dma/idxd/registers.h" >> .git/info/sparse-checkout
 echo "drivers/dma/ioat/hw.h" >> .git/info/sparse-checkout
 echo "drivers/dma/ioat/registers.h" >> .git/info/sparse-checkout
+echo "drivers/net/ethernet/intel/igb/e1000_regs.h" >> .git/info/sparse-checkout
+echo "drivers/net/ethernet/intel/igb/e1000_defines.h" >> .git/info/sparse-checkout
+echo "drivers/net/ethernet/intel/igb/e1000_82575.h" >> .git/info/sparse-checkout
 echo "mm/gup_test.h" >> .git/info/sparse-checkout
 echo "tools/arch/x86/" >> .git/info/sparse-checkout
 echo "tools/include/uapi/linux/kvm.h" >> .git/info/sparse-checkout
