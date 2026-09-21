@@ -43,3 +43,7 @@ alias ki='HOST_ACTION=kirqs do-host-thing'
 alias kj='HOST_ACTION=konjurer do-host-thing'
 alias mega='HOST_ACTION=megapede do-host-thing'
 alias msv='/google/bin/releases/msv-sre/clis/msv'
+
+alias cr='/google/bin/releases/corevirt-reservation-releaser/reservation/reservation.par'
+alias crr='cr reserve'
+alias cru='cr release'
