@@ -35,7 +35,7 @@ function dev-sync() {
 	fi
 
 	if [[ $1 == "full" ]]; then
-		ssh $2 "mkdir -p /data/local/seanjc/build/qemu/static-10.0.0; \
+		ssh $2 "mkdir -p /data/local/seanjc/build/qemu/static-11.1.0; \
 			mkdir -p /data/local/seanjc/build/tests/$arch; \
 			mkdir -p /data/local/seanjc/go/src/github.com/sean-jc; \
 			mkdir -p /data/local/seanjc/go/src/kernel.org; \
@@ -85,12 +85,12 @@ function dev-sync() {
 	fi
 	if [[ $1 == "full" || $1 == "binaries" ]]; then
 		if [[ $arch == x86 ]]; then
-			rsync -z --checksum ~/build/qemu/static-10.0.0/qemu-system-x86_64 $2:/data/local/seanjc/build/qemu/static-10.0.0
+			rsync -z --checksum ~/build/qemu/static-11.1.0/qemu-system-x86_64 $2:/data/local/seanjc/build/qemu/static-11.1.0
 			rsync -z --checksum --recursive --links ~/build/qemu/pc-bios $2:/data/local/seanjc/build/qemu
 			rsync -z --checksum --recursive --links ~/build/ovmf $2:/data/local/seanjc/build
 			ssh $2 "rm -f /data/local/seanjc/build/qemu/qemu; \
 				cd /data/local/seanjc/build/qemu; \
-				ln -s ./static-10.0.0/qemu-system-x86_64 qemu; \
+				ln -s ./static-11.1.0/qemu-system-x86_64 qemu; \
 				chmod -R g=u,g-w,o=u,o-w /data/local/seanjc/build"
 		fi
 	fi
