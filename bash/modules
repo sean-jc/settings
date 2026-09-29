@@ -43,7 +43,7 @@ alias mpkk='psudo modprobe kvm force_emulation_prefix=2'
 alias mpk='mpkk && modprobe-kvm-vendor'
 alias mpkm='mpkk && modprobe-kvm-vendor enable_mediated_pmu=1'
 alias mpkr='modprobe-kvm-vendor-raw'
-alias mpi='psudo modprobe vfio_pci'
+alias mpi='psudo modprobe vfio_pci disable_denylist=1'
 
 function set-fep() {
 	if [[ $(cat /sys/module/kvm/parameters/force_emulation_prefix) != "$1" ]]; then
