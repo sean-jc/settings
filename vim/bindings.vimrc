@@ -10,7 +10,7 @@ imap <C-p>f Do not wrap before the function name.  Linus has a nice explanation/
 imap <C-p>h Cc: James Houghton <jthoughton@google.com>
 imap <C-p>i Do not use "inline" for functions that are visible only to the local compilation<CR>unit.  "inline" is just a hint, and modern compilers are smart enough to inline<CR>functions when appropriate without a hint.<CR><CR>A longer explanation/rant here: https://lore.kernel.org/all/ZAdfX+S323JVWNZC@google.com
 imap <C-p>j Cc: Jim Mattson <jmattson@google.com>
-imap <C-p>k Cc: kvm@vger.kernel.org
+imap <C-p>k Reported-by: Sashiko Bot <sashiko-bot@kernel.org>
 imap <C-p>l Cc: Tom Lendacky <thomas.lendacky@amd.com>
 imap <C-p>m Cc: Maxim Levitsky <mlevitsk@redhat.com>
 imap <C-p>n No functional change intended.
