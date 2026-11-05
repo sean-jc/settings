@@ -6,7 +6,11 @@ function git-find-upstream-version() {
 		    "git-search-upstream-range 6.14 6.15 $1" \
 		    "git-search-upstream-range 6.15 6.16 $1" \
 		    "git-search-upstream-range 6.16 6.17 $1" \
-		    "git-search-upstream-range 6.17 6.18 $1"
+		    "git-search-upstream-range 6.17 6.18 $1" \
+		    "git-search-upstream-range 6.18 6.19 $1" \
+		    "git-search-upstream-range 6.19 7.1  $1" \
+		    "git-search-upstream-range 7.1  7.2  $1" \
+		    "git-search-upstream-range 7.2  7.3  $1"
 }
 
 function git-fixup-backport-metadata() {
