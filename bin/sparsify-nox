@@ -12,6 +12,7 @@ include_early+=(
 	"drivers/perf/"
 	"tools/arch/x86/"
 	"tools/arch/arm64/"
+	"tools/arch/powerpc/"
 	"tools/arch/riscv/"
 	"tools/arch/s390/"
 )

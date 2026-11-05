@@ -30,12 +30,14 @@ function make-selftests() {
 		arch_dir="arm64"
 	elif [[ $1 == "loong" ]]; then
 		arch_dir="loongarch"
+	elif [[ $1 == "ppc" ]]; then
+		arch_dir="powerpc"
 	else
 		arch_dir=$1
 	fi
 
 	# Check for the old directories.
-	if [[ ! -d $source/$arch_dir ]]; then
+	if [[ ! -d $source/lib/$arch_dir ]]; then
 		if [[ $1 == "x86" ]]; then
 			arch_dir="x86_64"
 		elif [[ $1 == "arm" ]]; then
@@ -43,7 +45,7 @@ function make-selftests() {
 		elif [[ $1 == "s390" ]]; then
 			arch_dir="s390x"
 		fi
-		if [[ ! -d $source/$arch_dir ]]; then
+		if [[ ! -d $source/lib/$arch_dir ]]; then
 			printf "Invalid arch '$arch_dir'?\n"
 			return 1
 		fi
