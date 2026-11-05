@@ -44,7 +44,7 @@ function get-maintainers() {
 			       grep -v kirill.shutemov@linux.intel.com |\
 			       grep -v alexey.amakhalov@broadcom.com |	\
 			       grep -v jailhouse-dev@googlegroups.com |	\
-			       grep -e Cc: -e Acked-by -e Suggested-by -e Reported-by -e Tested-by -e Reported-and-tested-by -e Reviewed-by -e Signed-off-by | \
+			       grep -e Cc: -e Acked-by -e Suggested-by -e Reported-by -e Tested-by -e Reported-and-tested-by -e Reviewed-by -e Signed-off-by -e Not-signed-off-by | \
 			       cut -d ' ' -f 2- | tr '\n' ',')"
 	fi
 
