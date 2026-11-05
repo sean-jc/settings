@@ -15,7 +15,7 @@ function do-host-thing() {
 	if [[ $HOST_ACTION == "megapede" ]]; then
 		echo $host
 		megapede console $host
-	elif [[ $HOST_ACTION == "konjurer" || $HOST_ACTION == "kexec" || $HOST_ACTION == "kirqs" ]]; then
+	elif [[ $HOST_ACTION == "konjurer" || $HOST_ACTION == "kexec" || $HOST_ACTION == "kirqs" || $HOST_ACTION == "kpost" ]]; then
 		ssh $1 "rm -f /boot/*-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]-seanjc-[0-9a-z]*;
 			rm -f /boot/*-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]-seanjc-[0-9a-z]*; \
 			rm -rf /lib/modules/*-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]-seanjc-[0-9a-z]*; \
@@ -30,6 +30,8 @@ function do-host-thing() {
 			/google/data/ro/projects/platforms/prodkernel/konjurer/konjurer -wait=false -client=ssh --ssh_direct=true -append_cmdline="ignore_loglevel" -fastkexec -hosts="$host" -kernel=pkgs/LATEST.tar.xz
 		elif [[ $HOST_ACTION == "kirqs" ]]; then
 			/google/data/ro/projects/platforms/prodkernel/konjurer/konjurer -wait=false -client=ssh --ssh_direct=true -append_cmdline="ignore_loglevel intremap=no_posted_msi" -hosts="$host" -kernel=pkgs/LATEST.tar.xz
+		elif [[ $HOST_ACTION == "kpost" ]]; then
+			/google/data/ro/projects/platforms/prodkernel/konjurer/konjurer -wait=false -client=ssh --ssh_direct=true -append_cmdline="ignore_loglevel intremap=posted_msi" -hosts="$host" -kernel=pkgs/LATEST.tar.xz
 		else
 			/google/data/ro/projects/platforms/prodkernel/konjurer/konjurer -wait=false -client=ssh --ssh_direct=true -append_cmdline="ignore_loglevel" -kexec=false -hosts="$host" -kernel=pkgs/LATEST.tar.xz
 		fi
@@ -41,6 +43,7 @@ function do-host-thing() {
 alias ke='HOST_ACTION=kexec do-host-thing'
 alias ki='HOST_ACTION=kirqs do-host-thing'
 alias kj='HOST_ACTION=konjurer do-host-thing'
+alias kp='HOST_ACTION=kpost do-host-thing'
 alias mega='HOST_ACTION=megapede do-host-thing'
 alias msv='/google/bin/releases/msv-sre/clis/msv'
 
