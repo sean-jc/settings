@@ -35,7 +35,7 @@ alias bash_usage='cut -f1 -d" " ~/.bash_history | sort | uniq -c | sort -nr | he
 
 alias sk='sudo -sE'
 
-alias gcm='gcert -s -m kernel-development,corevirt-team-testing --nossh_on_security_key && ssh-add $HOME/.ssh/id_local'
+alias gcm='gcert -s -m kernel-development,corevirt-team-testing,platforms-regression --nossh_on_security_key && ssh-add $HOME/.ssh/id_local'
 
 alias r=reup
 alias k=kapwing
