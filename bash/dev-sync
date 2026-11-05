@@ -4,6 +4,7 @@ function dev-sync() {
 		    "efi")
 	local kernels=("all"
 		       "lock"
+		       "kasan"
 		       "miti"
 		       "vm"
 		       "pae"
