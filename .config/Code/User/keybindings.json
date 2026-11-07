@@ -34,4 +34,12 @@
         "command": "-editor.action.quickFix",
         "when": "editorHasCodeActionsProvider && editorTextFocus && !editorReadonly"
     },
+    {
+        "key": "ctrl+alt+u",
+        "command": "editor.action.transformToLowercase"
+    },
+    {
+        "key": "ctrl+meta+u",
+        "command": "editor.action.transformToUppercase"
+    },
 ]

@@ -2,14 +2,27 @@
 {
     "diffEditor.ignoreTrimWhitespace": false,
 
+    "editor.copyWithSyntaxHighlighting": false,
     "editor.fontFamily": "'Noto Mono', 'Fira Mono'",
     "editor.fontLigatures": false,
+    "editor.fontSize": 12,
+    "editor.formatOnPaste": false,
+    "editor.guides.indentation": false,
+    "editor.inlayHints.enabled": "off",
+    "editor.insertSpaces": false,
     "editor.tabSize": 8,
     "editor.dragAndDrop": false,
     "editor.minimap.enabled": true,
+    "editor.overtypeOnPaste": false,
+    "editor.pasteAs.enabled": false,
+    "editor.pasteAs.showPasteSelector": "never",
+
+    "extensions.ignoreRecommendations": true,
 
     "files.eol": "\n",  // The default end of line character.
     "git.enabled": false,
+
+    "markdown.editor.filePaste.enabled": "never",
 
     "telemetry.telemetryLevel": "off",
 
@@ -17,7 +30,9 @@
     "window.newWindowDimensions": "maximized",
     "window.openFilesInNewWindow": "default",
     "window.restoreWindows": "all",
+    "window.zoomLevel": 2,
 
+    "workbench.activityBar.location": "hidden",
     "workbench.colorTheme": "Monokai Dark Soda",
     "workbench.colorCustomizations": {
         "statusBar.background" : "#242424",
@@ -26,10 +41,13 @@
     "workbench.editor.enablePreview": false,
     "workbench.editor.showIcons": false,
     "workbench.startupEditor": "none",
+    "workbench.statusBar.visible": true,
     "workbench.tree.renderIndentGuides": "none",
 
     "files.associations": {
         "*.arc": "c",
+        "*.S": "c",
+        "Makefile.kvm": "makefile"
     },
 
     "files.exclude": {
@@ -69,7 +87,6 @@
     },
     "search.searchOnType": false,
     "typescript.check.npmIsInstalled": false,
-    "workbench.statusBar.visible": true,
 
     "C_Cpp.vcFormat.indent.gotoLabels": "leftmostColumn",
     "C_Cpp.default.intelliSenseMode": "gcc-x64",
@@ -90,13 +107,9 @@
         "--header-insertion=never",
         "--pch-storage=memory",
         "--pretty",
-        "-j=12",
+        "-j=6",
         "--log=verbose"
     ],
     "clangd.checkUpdates": false,
-    "extensions.ignoreRecommendations": true,
-    "editor.fontSize": 12,
-    "window.zoomLevel": 2,
-    "workbench.activityBar.location": "hidden",
-    "editor.guides.indentation": false,
+    "clangd.useScriptAsExecutable": true,
 }
