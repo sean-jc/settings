@@ -9,7 +9,6 @@
 . $SETTINGS/shell/dirs
 . $SETTINGS/shell/docker
 . $SETTINGS/shell/git
-. $SETTINGS/shell/git-completion
 . $SETTINGS/shell/gnome
 . $SETTINGS/shell/go
 . $SETTINGS/shell/kernel
