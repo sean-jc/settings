@@ -1,0 +1,69 @@
+HOSTPOST=${HOSTNAME#seanjc-}
+if [[ -z $SSH_CONNECTION && ! $HOSTPOST =~ purg- && ! $HOSTPOST =~ dev- && ! $HOSTPOST =~ velo- ]]; then
+	export HOSTDISPLAY=""
+else
+	if [[ $HOSTPOST == velociraptor ]]; then
+		export HOSTDISPLAY="@velo"
+	elif [[ $HOSTPOST == purgatory ]]; then
+		export HOSTDISPLAY="@purg"
+	elif [[ $HOSTPOST == glaptop ]]; then
+		export HOSTDISPLAY="@lap"
+	elif [[ $HOSTPOST == seanjc9162524 ]]; then
+		export HOSTDISPLAY="@x1"
+	elif [[ $HOSTPOST =~ zagreus.*.com ]]; then
+		export HOSTDISPLAY="@zag"
+	else
+		HOSTPOST=${HOSTPOST%.prod.google.com}
+		export HOSTDISPLAY="@$HOSTPOST"
+	fi
+fi
+export HOSTPOST=${HOSTPOST#velociraptor-}
+export LSDT_CONFIG=$SETTINGS/.config/lsdt/config.yml
+
+# curl -O https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/14.1.0/x86_64-gcc-14.1.0-nolibc-aarch64-linux.tar.xz
+# curl -O https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/14.1.0/x86_64-gcc-14.1.0-nolibc-loongarch64-linux.tar.xz
+# curl -O https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/14.1.0/x86_64-gcc-14.1.0-nolibc-mips64-linux.tar.xz
+# curl -O https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/14.1.0/x86_64-gcc-14.1.0-nolibc-powerpc64-linux.tar.xz
+# curl -O https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/14.1.0/x86_64-gcc-14.1.0-nolibc-riscv64-linux.tar.xz
+# curl -O https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/14.1.0/x86_64-gcc-14.1.0-nolibc-s390-linux.tar.xz
+export TOOLCHAINS=$HOME/toolchains/gcc-14.1.0-nolibc
+export P4DIFF='git diff --no-index'
+
+# Define GOPATH
+export GOPATH=$HOME/go
+if [[ $(whoami) == "sean" ]]; then
+	export GO111MODULE=off
+fi
+
+# For development of GO itself
+export GOROOT_BOOTSTRAP=/usr/local/go
+
+if [[ -d "/usr/local/iotools" ]]; then
+	PATH=$PATH:/usr/local/iotools
+fi
+
+# Add ~/bin, (repo)/bin, and GO bins to PATH
+if [[ $PATH != *"sean-jc/settings"* ]]; then
+	export PATH=$HOME/bin:$HOME/bin/bpftrace:$SETTINGS/bin:$HOME/go/bin:/usr/local/go/bin:$PATH
+fi
+
+# Require a revision when using make-kpkg to build .deb kernels
+export DEBIAN_REVISION_MANDATORY=1
+
+# If not running interactively, don't do anything
+case $- in
+	*i*) ;;
+	  *) return;;
+esac
+
+export EDITOR=vim
+
+# set a fancy prompt (non-color, unless we know we "want" color)
+case "$TERM" in
+	xterm-color|*-256color) color_prompt=yes;;
+esac
+
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+	test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+fi

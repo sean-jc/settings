@@ -1,3 +1,5 @@
+. $SETTINGS/shell/env
+
 . $SETTINGS/shell/apt
 . $SETTINGS/shell/backports
 . $SETTINGS/shell/b4
@@ -38,6 +40,8 @@ alias r=reup
 alias k=kapwing
 alias mf='make -j$(get-nr-cpus)'
 alias mfc='make clean && make -j$(get-nr-cpus)'
+
+alias vi='vim'
 
 function curl-time()
 {

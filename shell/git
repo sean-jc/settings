@@ -487,26 +487,6 @@ function git-email-lpc() {
 	git-send-email "$HOME/lpc/$1.mail" cc_paolo
 }
 
-# Add git completion to aliases
-__git_complete g	__git_main
-__git_complete ga	_git_add
-__git_complete gab	_git_branch
-__git_complete gb	_git_branch
-__git_complete ggb	_git_branch
-__git_complete gc	_git_commit
-__git_complete gd	_git_diff
-__git_complete gf	_git_fetch
-__git_complete gg	_git_checkout
-__git_complete gfp	_git_format_patch
-__git_complete gl	_git_log
-__git_complete glo	_git_log
-__git_complete gp	_git_cherry_pick
-__git_complete gpb	_git_log
-__git_complete gr	_git_reset
-__git_complete gi	_git_branch
-__git_complete gs	_git_log
-__git_complete gw	_git_show
-
 alias g='git'
 alias ga='git add'
 alias gab='git-archive-branch'
