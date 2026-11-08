@@ -1,5 +1,5 @@
 #!/bin/bash
-. $SETTINGS/bash/utils
+. $SETTINGS/shell/utils
 
 if [[ $# -lt 2 ]]; then
 	printf "Must specify the qemu build and target image\n"

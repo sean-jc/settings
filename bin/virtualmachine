@@ -1,5 +1,5 @@
 #!/bin/bash
-. $SETTINGS/bash/modules
+. $SETTINGS/shell/modules
 
 trap "exit 1" TERM
 export VM_PID=$$

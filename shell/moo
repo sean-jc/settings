@@ -1,7 +1,7 @@
 # VS code linting gets confused :-()
 #!/bin/bash
 
-. $SETTINGS/bash/utils
+. $SETTINGS/shell/utils
 
 function moo-server-gulp() {
 	pushd ~/go/src/github.com/zombull/moo/server

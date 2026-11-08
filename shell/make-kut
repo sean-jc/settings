@@ -1,4 +1,4 @@
-. $SETTINGS/bash/utils
+. $SETTINGS/shell/utils
 
 function make-kut() {
 	local dir=$HOME/build/kut/$1

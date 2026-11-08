@@ -1,4 +1,4 @@
-. $SETTINGS/bash/git-completion
+. $SETTINGS/shell/git-completion
 
 function git-diff() {
 	if [[ $# -eq 0 ]]; then

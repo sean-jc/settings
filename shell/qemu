@@ -1,6 +1,6 @@
 #!/bin/bash
-. $SETTINGS/bash/apt
-. $SETTINGS/bash/utils
+. $SETTINGS/shell/apt
+. $SETTINGS/shell/utils
 
 #
 function install-qemu-deps() {

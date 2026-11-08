@@ -1,8 +1,8 @@
 #!/bin/bash
-. $SETTINGS/bash/utils
-. $SETTINGS/bash/make-kernel
-. $SETTINGS/bash/make-kut
-. $SETTINGS/bash/make-selftests
+. $SETTINGS/shell/utils
+. $SETTINGS/shell/make-kernel
+. $SETTINGS/shell/make-kut
+. $SETTINGS/shell/make-selftests
 
 declare -a pids=()
 

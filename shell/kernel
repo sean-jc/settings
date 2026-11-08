@@ -1,4 +1,4 @@
-. $SETTINGS/bash/apt
+. $SETTINGS/shell/apt
 
 function install-kernel-deps() {
 	ad

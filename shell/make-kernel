@@ -1,4 +1,4 @@
-. $SETTINGS/bash/utils
+. $SETTINGS/shell/utils
 
 function make-kernel() {
 	if [[ $# -lt 1 ]]; then

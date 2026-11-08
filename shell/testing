@@ -1,5 +1,5 @@
-. $SETTINGS/bash/dirs
-. $SETTINGS/bash/modules
+. $SETTINGS/shell/dirs
+. $SETTINGS/shell/modules
 
 function gcontain-enter() {
 	which gcontain

@@ -1,0 +1,67 @@
+. $SETTINGS/shell/apt
+. $SETTINGS/shell/backports
+. $SETTINGS/shell/b4
+. $SETTINGS/shell/catch
+. $SETTINGS/shell/clangd
+. $SETTINGS/shell/debug
+. $SETTINGS/shell/dev-sync
+. $SETTINGS/shell/devrez
+. $SETTINGS/shell/dirs
+. $SETTINGS/shell/docker
+. $SETTINGS/shell/git
+. $SETTINGS/shell/git-completion
+. $SETTINGS/shell/gnome
+. $SETTINGS/shell/go
+. $SETTINGS/shell/kernel
+. $SETTINGS/shell/kokonut
+. $SETTINGS/shell/make-boot
+. $SETTINGS/shell/make-gbuild
+. $SETTINGS/shell/make-kernel
+. $SETTINGS/shell/make-kut
+. $SETTINGS/shell/make-selftests
+. $SETTINGS/shell/modules
+. $SETTINGS/shell/moo
+. $SETTINGS/shell/qemu
+. $SETTINGS/shell/system
+. $SETTINGS/shell/testing
+. $SETTINGS/shell/tracing
+. $SETTINGS/shell/utils
+. $SETTINGS/shell/vms
+
+# Refresh bash terminal
+alias rf='source ~/.bashrc'
+
+alias sk='sudo -sE'
+
+alias gcm='gcert -s -m kernel-development,corevirt-team-testing,platforms-regression --nossh_on_security_key && ssh-add $HOME/.ssh/id_local'
+
+alias r=reup
+alias k=kapwing
+alias mf='make -j$(get-nr-cpus)'
+alias mfc='make clean && make -j$(get-nr-cpus)'
+
+function curl-time()
+{
+	curl -4 -w "@$SETTINGS/bin/curl-format.txt" -o /dev/null -s $@
+}
+alias curlt='curl-time'
+
+# temporary workaround
+alias vscode='code --enable-features=UseOzonePlatform --ozone-platform=wayland &'
+
+function meld-si-ti() {
+	meld sinux/$1 tinux/$1
+}
+function meld-ti-si() {
+	meld tinux/$1 sinux/$1
+}
+alias mi='meld-ti-si'
+
+# offlineimap
+alias oi='offlineimap -f "INBOX"'
+# alias ol='offlineimap -f "Lists/linus"'
+# alias ok='offlineimap -f "Lists/kvm"'
+# alias op='offlineimap -f "Lists/posted"'
+# alias of='offlineimap -f "Lists/for_paolo"'
+# alias oo='offlineimap -f "Lists/todo"'
+# alias ou='offlineimap -f "Lists/x86"'

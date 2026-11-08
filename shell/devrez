@@ -1,4 +1,4 @@
-. $SETTINGS/bash/utils
+. $SETTINGS/shell/utils
 
 function do-host-thing() {
 	if [[ $# -ne 1 ]]; then
