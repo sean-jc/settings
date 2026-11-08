@@ -68,7 +68,7 @@ HISTCONTROL=ignoreboth
 shopt -s histappend
 
 # tab complete/expand env variables, e.g. $SETTINGS
-shopt -s direxpand
+# shopt -s direxpand
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 HISTFILE=$HOME/.bash_history
