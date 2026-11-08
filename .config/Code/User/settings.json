@@ -30,7 +30,6 @@
     "window.newWindowDimensions": "maximized",
     "window.openFilesInNewWindow": "default",
     "window.restoreWindows": "all",
-    "window.zoomLevel": 2,
 
     "workbench.activityBar.location": "hidden",
     "workbench.colorTheme": "Monokai Dark Soda",
