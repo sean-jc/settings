@@ -36,6 +36,13 @@ function is-integer() {
 	return 1
 }
 
+function is-mac() {
+	if [[ "$OSTYPE" == "darwin"* ]]; then
+		return 0
+	fi
+	return 1
+}
+
 function is-amd() {
 	grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
 }

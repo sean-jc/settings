@@ -1,11 +1,24 @@
+. $SETTINGS/shell/utils
 
 # apt and dpkg
 alias apt='sudo apt'
 alias ard='apt-cache rdepends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances --installed --recurse'
-alias ai='sudo apt install'
-alias ad='sudo apt update'
-alias ap='sudo apt purge'
-alias au='sudo apt upgrade'
+
+if is-mac; then
+	alias ai='sudo mule install'
+	alias ad='sudo mule update'
+	alias al='mule list'
+	alias alg='mule list | grep'
+	alias ap='sudo mule remove'
+	alias au='sudo mule upgrade'
+else
+	alias ai='sudo apt install'
+	alias ad='sudo apt update'
+	alias al='apt list'
+	alias al='apt list | grep'
+	alias ap='sudo apt purge'
+	alias au='sudo apt upgrade'
+fi
 
 #
 function dpkg-query-size {
