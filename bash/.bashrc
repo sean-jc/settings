@@ -31,37 +31,26 @@ history -r
 
 . $SETTINGS/shell/main
 
-build_ps1() {
-	# black ='\e[0;30m'
-	# brown ='\e[0;33m'
-	# green='\e[0;32m'
-	# GREEN='\e[0;32m'
-	# red='\e[0;31m'
-	# RED='\e[1;31m'
-	# blue='\e[0;34m'
-	# BLUE='\e[1;34m'
-	# cyan='\e[0;36m'
-	# CYAN='\e[1;36m'
-	# white='\e[1;37m'
-	# none='\e[0m'
+# black ='\e[0;30m'
+# brown ='\e[0;33m'
+# green='\e[0;32m'
+# GREEN='\e[0;32m'
+# red='\e[0;31m'
+# RED='\e[1;31m'
+# blue='\e[0;34m'
+# BLUE='\e[1;34m'
+# cyan='\e[0;36m'
+# CYAN='\e[1;36m'
+# white='\e[1;37m'
+# none='\e[0m'
 
-	# Unicode cheracters ✔ 'HEAVY CHECK MARK' (U+2714) and ✘ 'HEAVY BALLOT X' (U+2718)
-	# [[ $SSH_TTY ]] && host="@$HOSTNAME"
-	if [[ $HOSTPOST != tbd ]]; then
-                if [ "$UID" = 0 ]; then
-                        echo '\[\e[0;33m\]\t$HOSTDISPLAY`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;31m\]\w \[\e[0;31m\]# \[\e[0m\]'
-                else
-                        echo '\[\e[0;33m\]\t$HOSTDISPLAY`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;36m\]\w \[\e[0;36m\]\$ \[\e[0m\]'
-                fi
-        else
-                if [ "$UID" = 0 ]; then
-                        echo '\[\e[1;30m\]\t$HOSTDISPLAY`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;31m\]\w \[\e[0;31m\]# \[\e[0m\]'
-                else
-                        echo '\[\e[1;30m\]\t$HOSTDISPLAY`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;36m\]\w \[\e[0;36m\]\$ \[\e[0m\]'
-                fi
-	fi
-}
-PS1=$(build_ps1)
+# Unicode cheracters ✔ 'HEAVY CHECK MARK' (U+2714) and ✘ 'HEAVY BALLOT X' (U+2718)
+# [[ $SSH_TTY ]] && host="@$HOSTNAME"
+if [ "$UID" = 0 ]; then
+	PS1='\[\e[0;33m\]\t$HOSTDISPLAY`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;31m\]\w \[\e[0;31m\]# \[\e[0m\]'
+else
+	PS1='\[\e[0;33m\]\t$HOSTDISPLAY`if [ $? = 0 ]; then echo "\[\e[32m\] ✔ "; else echo "\[\e[31m\] ✘ "; fi`\[\e[1;36m\]\w \[\e[0;36m\]\$ \[\e[0m\]'
+fi
 
 . $SETTINGS/bash/.bash_aliases
 
