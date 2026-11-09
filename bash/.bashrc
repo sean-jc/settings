@@ -26,6 +26,10 @@ HISTCONTROL=ignoreboth
 
 history -r
 
+# Bind Cmd+Home escape sequence to jump to the beginning of the file/command buffer
+bind '"\e[1;8H": beginning-of-history'
+bind '"\e[1;8F": end-of-history'
+
 # tab complete/expand env variables, e.g. $SETTINGS
 # shopt -s direxpand
 
