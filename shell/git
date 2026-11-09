@@ -154,10 +154,15 @@ function git-url-patch() {
 }
 
 function git-stash() {
-	if [[ $# -eq 2 ]]; then
-		git stash $1 stash@{$2}
+	# If the last argument is a pure number, treat it as the stash index
+	if [[ $# -gt 1 && "${!#}" =~ ^[0-9]+$ ]]; then
+		local idx="${!#}"      # Get the last argument (the number)
+		local args=("${@:1:$#-1}") # Get all arguments except the last one
+
+		git stash "${args[@]}" "stash@{$idx}"
 	else
-		git stash $1
+		# Otherwise, pass everything straight through to git stash
+		git stash "$@"
 	fi
 }
 
@@ -591,7 +596,7 @@ alias gse='git-send-email'
 alias gsdd='git-stash drop'
 alias gsk='git-send-pull-requests kut'
 alias gsl='git-stash list'
-alias gso='git-stash "show -p"'
+alias gso='git-stash show -p'
 alias gsp='git-stash pop'
 alias gsr='git-send-pull-requests'
 alias gsrf='git-send-pull-requests fixes'
