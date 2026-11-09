@@ -15,6 +15,13 @@ SAVEHIST=10000
 # history -r (because of course it's different)
 fc -R
 
+# Bind Home/End to beginning/end of line
+bindkey '^[[H' beginning-of-line
+bindkey '^[[F' end-of-line
+# Bind Cmd+Home escape sequence to jump to the beginning of the file/command buffer
+bindkey "\e[1;8H" beginning-of-buffer-or-history
+bindkey "\e[1;8F" end-of-buffer-or-history
+
 . $SETTINGS/shell/main
 
 PROMPT="%F{yellow}%*${HOSTDISPLAY}%(?.%F{green} ✔ .%F{red} ✘ )%B%(!.%F{red}.%F{cyan})%~ %b%(!.%F{red}#.%F{cyan}\$) %f"
