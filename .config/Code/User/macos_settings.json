@@ -1,0 +1,100 @@
+// Place your settings in this file to overwrite the default settings
+{
+    "diffEditor.ignoreTrimWhitespace": false,
+
+    "editor.fontLigatures": false,
+    "editor.tabSize": 8,
+    "editor.dragAndDrop": false,
+    "editor.minimap.enabled": true,
+    "editor.fontSize": 12,
+    "workbench.activityBar.location": "hidden",
+    "editor.guides.indentation": false,
+
+    "files.eol": "\n",  // The default end of line character.
+    "git.enabled": false,
+
+    "telemetry.telemetryLevel": "off",
+
+    "window.menuBarVisibility": "toggle",
+    "window.newWindowDimensions": "maximized",
+    "window.openFilesInNewWindow": "default",
+    "window.restoreWindows": "all",
+
+    "workbench.colorTheme": "Monokai Dark Soda",
+    "workbench.colorCustomizations": {
+        "statusBar.background" : "#242424",
+        "statusBar.noFolderBackground" : "#242424",
+    },
+    "workbench.editor.enablePreview": false,
+    "workbench.editor.showIcons": false,
+    "workbench.startupEditor": "none",
+    "workbench.tree.renderIndentGuides": "none",
+
+    "files.associations": {
+        "*.arc": "c",
+    },
+
+    "files.exclude": {
+        "**/.vscode":true,
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/.DS_Store": true,
+        "**/*.a": true,
+        "**/*.d": true,
+        "**/*.o": true,
+        "**/*.so": true,
+        "**/debian": true,
+        "**/build": true
+    },
+    "files.watcherExclude": {
+        "**/.vscode":true,
+        "**/.git/objects/**": true,
+        "**/node_modules/**": true,
+        "**/*.a": true,
+        "**/*.o": true,
+        "**/*.so": true,
+        "**/vendor": true,
+        "**/debian": true,
+        "**/build": true
+    },
+    "search.exclude": {
+        "**/.vscode":true,
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/*.a": true,
+        "**/*.o": true,
+        "**/*.so": true,
+        "**/vendor": true,
+        "**/debian": true,
+        "**/build": true
+    },
+    "search.searchOnType": false,
+    "typescript.check.npmIsInstalled": false,
+    "workbench.statusBar.visible": true,
+
+    "C_Cpp.vcFormat.indent.gotoLabels": "leftmostColumn",
+    "C_Cpp.default.intelliSenseMode": "gcc-x64",
+    "C_Cpp.exclusionPolicy": "checkFilesAndFolders",
+    "C_Cpp.debugShortcut": false,
+    "C_Cpp.loggingLevel": "None",
+    "C_Cpp.errorSquiggles": "Disabled",
+    "C_Cpp.dimInactiveRegions": false,
+
+    "clangd.onConfigChanged": "restart",
+    "clangd.arguments": [
+        "--enable-config",
+        "--clang-tidy",
+        "--compile-commands-dir=${workspaceFolder}/.vscode/",
+        "--background-index",
+        "--completion-style=detailed",
+        "--function-arg-placeholders=0",
+        "--header-insertion=never",
+        "--pch-storage=memory",
+        "--pretty",
+        "-j=12",
+        "--log=verbose"
+    ],
+    "clangd.checkUpdates": false,
+    "extensions.ignoreRecommendations": true,
+}

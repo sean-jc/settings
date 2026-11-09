@@ -1,0 +1,97 @@
+// Place your key bindings in this file to overwrite the defaults
+[
+    { "key": "cmd+q",                "command": "workbench.action.quit" },
+    { "key": "cmd+e",                "command": "workbench.view.explorer" },
+    { "key": "cmd+j",                "command": "workbench.action.showAllSymbols" },
+    { "key": "cmd+l",                "command": "workbench.action.gotoSymbol" },
+    { "key": "cmd+o",                "command": "workbench.action.quickOpen" },
+    { "key": "cmd+alt+o",            "command": "workbench.action.files.openFile" },
+    { "key": "cmd+shift+o",          "command": "workbench.action.files.openFolder" },
+    { "key": "cmd+d",                "command": "editor.action.goToDeclaration", "when": "editorTextFocus" },
+    // { "key": "cmd+p",                "command": "workbench.action.showAllEditors" },
+    { "key": "cmd+p",                "command": "copyRelativeFilePath" },
+    { "key": "cmd+i",                "command": "workbench.action.switchWindow" },
+
+    { "key": "shift+delete",          "command": "editor.action.deleteLines", "when": "editorTextFocus" },
+
+    { "key": "f3",                    "command": "editor.action.previousMatchFindAction", "when": "editorFocus" },
+
+    { "key": "shift+enter",           "command": "editor.action.insertLineAfter", "when": "editorTextFocus" },
+    { "key": "cmd+enter",            "command": "editor.action.insertLineBefore", "when": "editorTextFocus" },
+    { "key": "cmd+shift+s",          "command": "workbench.action.files.saveAll" },       
+    { "key": "cmd+;",                "command": "workbench.action.closeAllEditors" },
+
+    { "key": "cmd+u",                "command": "clangd.restart" },
+
+    {
+        "key": "cmd+.",
+        "command": "cursorColumnSelectPageUp",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "cmd+.",
+        "command": "-editor.action.quickFix",
+        "when": "editorHasCodeActionsProvider && editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "cmd+e",
+        "command": "-actions.findWithSelection"
+    },
+    {
+        "key": "cmd+e",
+        "command": "-markdown.editor.toggleLocked",
+        "when": "markdownEditorFocus && activeCustomEditorId == 'vscode.markdown.editor'"
+    },
+    {
+        "key": "cmd+e",
+        "command": "-editor.action.toggleScreenReaderAccessibilityMode",
+        "when": "accessibilityHelpIsShown"
+    },
+    {
+        "key": "cmd+h",
+        "command": "editor.action.startFindReplaceAction",
+        "when": "editorFocus || editorIsOpen"
+    },
+    {
+        "key": "alt+cmd+f",
+        "command": "-editor.action.startFindReplaceAction",
+        "when": "editorFocus || editorIsOpen"
+    },
+    {
+        "key": "ctrl+tab",
+        "command": "workbench.action.nextEditor"
+    },
+    {
+        "key": "shift+cmd+]",
+        "command": "-workbench.action.nextEditor"
+    },
+    {
+        "key": "ctrl+shift+tab",
+        "command": "workbench.action.previousEditor"
+    },
+    {
+        "key": "shift+cmd+[",
+        "command": "-workbench.action.previousEditor"
+    },
+    {
+        "key": "cmd+y",
+        "command": "redo"
+    },
+    {
+        "key": "shift+cmd+z",
+        "command": "-redo"
+    },
+    {
+        "key": "cmd+g",
+        "command": "-editor.action.nextMatchFindAction",
+        "when": "editorFocus"
+    },
+    {
+        "key": "cmd+g",
+        "command": "workbench.action.gotoLine"
+    },
+    {
+        "key": "ctrl+g",
+        "command": "-workbench.action.gotoLine"
+    },
+]
