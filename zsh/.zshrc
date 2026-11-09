@@ -5,7 +5,7 @@ setopt PROMPT_SUBST
 # Append to the history file rather than overwriting it
 setopt APPEND_HISTORY
 # Share history across all open terminal windows immediately
-setopt SHARE_HISTORY
+# setopt SHARE_HISTORY
 
 HISTFILE=~/.zsh_history
 # How many commands to keep in active memory
