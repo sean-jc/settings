@@ -18,4 +18,7 @@ set pipe_split    = yes
 # and mangle response
 set send_charset="us-ascii:utf-8"
 
+# Tell mutt never to call the external dotlock binary
+set dotlock_program = ""
+
 my_hdr Bcc: seanjc@google.com
