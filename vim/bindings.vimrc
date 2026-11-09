@@ -33,3 +33,6 @@ map Q gq
 " so that you can undo CTRL-U after inserting a line break.
 " Revert with ":iunmap <C-U>".
 inoremap <C-U> <C-G>u<C-U>
+
+inoremap <Esc>[1;8H <C-O>gg
+inoremap <Esc>[1;8F <C-O>G
