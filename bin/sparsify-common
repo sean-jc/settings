@@ -15,10 +15,15 @@ include_early=(
 exclude_late=(
 	"Documentation"
 	"drivers"
+	"include/uapi/linux/netfilter"
+	"include/uapi/linux/netfilter_ipv4"
+	"include/uapi/linux/netfilter_ipv6"
+	"net/netfilter"
 	"net/ipv4/netfilter"
 	"net/ipv6/netfilter"
 	"samples"
 	"sound"
+	"tools/memory-model"
 )
 
 include_late=(
