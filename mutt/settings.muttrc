@@ -3,6 +3,9 @@ set copy=no
 set move=no
 unset record
 
+set strict_threads = yes
+set sort = threads
+
 # Scroll by line, not page
 set menu_scroll
 
