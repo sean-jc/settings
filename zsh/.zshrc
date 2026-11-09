@@ -22,6 +22,13 @@ bindkey '^[[F' end-of-line
 bindkey "\e[1;8H" beginning-of-buffer-or-history
 bindkey "\e[1;8F" end-of-buffer-or-history
 
+autoload -Uz compinit && compinit
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z} r:|=*' 'm:{a-zA-Z}={A-Za-z} l:|=* r:|=*'
+
+setopt AUTO_MENU
+setopt ALWAYS_TO_END
+
 . $SETTINGS/shell/main
 
 PROMPT="%F{yellow}%*${HOSTDISPLAY}%(?.%F{green} ✔ .%F{red} ✘ )%B%(!.%F{red}.%F{cyan})%~ %b%(!.%F{red}#.%F{cyan}\$) %f"
