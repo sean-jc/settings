@@ -21,4 +21,6 @@ set send_charset="us-ascii:utf-8"
 # Tell mutt never to call the external dotlock binary
 set dotlock_program = ""
 
+set from = seanjc@google.com
+
 my_hdr Bcc: seanjc@google.com
