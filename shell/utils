@@ -43,6 +43,23 @@ function is-mac() {
 	return 1
 }
 
+if is-mac; then
+	function wc() {
+		# Check if the first argument is exactly -l
+		if [ "$1" = "-l" ]; then
+			# Run the real wc command using 'command', then trim spaces with xargs
+			command wc "$@" | xargs
+		else
+			# Otherwise, pass everything to the real wc command as normal
+			command wc "$@"
+		fi
+	}
+
+	function tac {
+		tail -r
+	}
+fi
+
 function is-amd() {
 	grep vendor_id "/proc/cpuinfo" | grep -q AuthenticAMD
 }
