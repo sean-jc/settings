@@ -10,7 +10,7 @@ function gen-clangd-commands() {
 		return 1
 	fi
 
-	mkdir .vscode
+	mkdir -p .vscode
 	rm -f ./.vscode/compile_commands.json
 	if [[ $repo != "slf" ]]; then
 		./scripts/clang-tools/gen_compile_commands.py -d $HOME/build/kernel/clangd_$repo -o ./.vscode/compile_commands.json
@@ -45,3 +45,30 @@ function gen-clangd-commands() {
 	echo "]" >>./.vscode/compile_commands.json
 }
 alias ccm='gen-clangd-commands'
+
+function sync-compile-commands() {
+	local repo=$(pwd | rev | cut -d'/' -f1 | rev)
+
+	if [[ ! -f ./scripts/clang-tools/gen_compile_commands.py ]]; then
+		printf "Needs to be run from top-level directory of kernel repo\n"
+		return 1
+	fi
+	if [[ $repo != "slf" && ! -d $HOME/build/kernel/clangd_$repo ]]; then
+		printf "Target build directory '$HOME/build/kernel/clangd_$repo doesn't exist\n"
+		return 1
+	fi
+	mkdir -p .vscode
+	rm -f ./.vscode/compile_commands.json
+	scp z:/usr/local/google/home/seanjc/go/src/kernel.org/linux/.vscode/compile_commands.json ./.vscode/compile_commands.json
+	if is-mac; then
+		sed -n 's|.*"file": *"/usr/local/google/home/seanjc/build/kernel/clangd_linux/\([^"]*\)".*|\1|p' ./.vscode/compile_commands.json | sort -u | \
+			rsync -av --files-from=- z:/usr/local/google/home/seanjc/build/kernel/clangd_linux/ /Users/seanjc/build/kernel/clangd_linux/
+		rsync -rptv --include='*/' --include='*.h' --exclude='*' z:/usr/local/google/home/seanjc/build/kernel/clangd_linux/ /Users/seanjc/build/kernel/clangd_linux
+		sed -i '' 's|/usr/local/google/home|/Users|g' ./.vscode/compile_commands.json
+	else
+		sed -n 's|.*"file": *"/usr/local/google/home/seanjc/build/kernel/clangd_linux/\([^"]*\)".*|\1|p' ./.vscode/compile_commands.json | sort -u | \
+			rsync -av --files-from=- z:/usr/local/google/home/seanjc/build/kernel/clangd_linux/ /home/seanjc/build/kernel/clangd_linux/
+		rsync -rptv --include='*/' --include='*.h' --exclude='*' z:/usr/local/google/home/seanjc/build/kernel/clangd_linux/ /home/seanjc/build/kernel/clangd_linux
+		sed -i '' 's|/usr/local/google/home|/home|g' ./.vscode/compile_commands.json
+	fi
+}
