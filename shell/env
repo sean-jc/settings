@@ -1,4 +1,9 @@
 HOSTPOST=${HOSTNAME#seanjc-}
+if [[ $HOSTPOST == seanjc9162524 ]]; then
+	HOSTPOST="x1"
+elif [[ $HOSTPOST == mac.roam.internal ]]; then
+	HOSTPOST="mbp"
+fi
 if [[ -z $SSH_CONNECTION && ! $HOSTPOST =~ purg- && ! $HOSTPOST =~ dev- && ! $HOSTPOST =~ velo- ]]; then
 	export HOSTDISPLAY=""
 else
@@ -6,10 +11,6 @@ else
 		export HOSTDISPLAY="@velo"
 	elif [[ $HOSTPOST == purgatory ]]; then
 		export HOSTDISPLAY="@purg"
-	elif [[ $HOSTPOST == glaptop ]]; then
-		export HOSTDISPLAY="@lap"
-	elif [[ $HOSTPOST == seanjc9162524 ]]; then
-		export HOSTDISPLAY="@x1"
 	elif [[ $HOSTPOST =~ zagreus.*.com ]]; then
 		export HOSTDISPLAY="@zag"
 	else
