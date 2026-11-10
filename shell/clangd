@@ -5,9 +5,15 @@ function gen-clangd-commands() {
 		printf "Needs to be run from top-level directory of kernel repo\n"
 		return 1
 	fi
-	if [[ $repo != "slf" && ! -d $HOME/build/kernel/clangd_$repo ]]; then
-		printf "Target build directory '$HOME/build/kernel/clangd_$repo doesn't exist\n"
-		return 1
+	if [[ $repo != "slf" ]]; then
+		if is-mac; then
+			printf "Don't try to generate compile_commands.json on macOS, you will be sad.\n"
+			return 1
+		fi
+		if [[ ! -d $HOME/build/kernel/clangd_$repo ]]; then
+			printf "Target build directory '$HOME/build/kernel/clangd_$repo doesn't exist\n"
+			return 1
+		fi
 	fi
 
 	mkdir -p .vscode
@@ -18,31 +24,39 @@ function gen-clangd-commands() {
 	fi
 
 	local cmd
+	local sysroot=""
 
-	echo "[" >> ./.vscode/compile_commands.json
+	if is-mac; then
+		sysroot="--sysroot=/Users/seanjc/build/musl"
+	fi
+
+	echo "[" > ./.vscode/compile_commands.json
 	while read -r cmd; do
 		local file
 
-		echo "$cmd" | grep -q -E "^make:"
-		if [[ $? -eq 0 ]]; then
+		file=$(echo "$cmd" | sed -nE 's/.* -c (-ffreestanding )?([^[:space:]]+) -o .*/\2/p')
+		if [[ -z "$file" ]]; then
 			continue
 		fi
 
-		file=$(echo $cmd | grep -oP '(?<=\-c\s)\S+')
-		if [[ $? -ne 0 ]]; then
-			continue
+		if [[ "$file" != /* ]]; then
+			file="$HOME/go/src/kernel.org/slf/tools/testing/selftests/kvm/$file"
 		fi
 
 		echo " {" >> ./.vscode/compile_commands.json
 		echo "  \"command\": \"$cmd\"," >> ./.vscode/compile_commands.json
 		echo "  \"directory\": \"$HOME/go/src/kernel.org/slf/tools/testing/selftests/kvm\"," >> ./.vscode/compile_commands.json
-		echo "  \"file\": \"$HOME/go/src/kernel.org/slf/tools/testing/selftests/kvm/$file\""  >> ./.vscode/compile_commands.json
+		echo "  \"file\": \"$file\"" >> ./.vscode/compile_commands.json
 		echo " }," >> ./.vscode/compile_commands.json
-	done <<< $(LLVM=1 make -C tools/testing/selftests/kvm -Bnwk)
+	done <<< "$(LLVM=1 ARCH=x86_64 make KHDR_INCLUDES="-isystem $HOME/build/selftests/c/usr/include" EXTRA_CFLAGS="$sysroot" -C tools/testing/selftests/kvm -Bnwk)"
 
 	# Strip the last comma, JSON doesn't allow trailing commas
-	sed -i '$ s/.$//' .vscode/compile_commands.json
-	echo "]" >>./.vscode/compile_commands.json
+	if is-mac; then
+		sed -i '' '$ s/.$//' .vscode/compile_commands.json
+	else
+		sed -i '$ s/.$//' .vscode/compile_commands.json
+	fi
+	echo "]" >> ./.vscode/compile_commands.json
 }
 alias ccm='gen-clangd-commands'
 
