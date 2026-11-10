@@ -1,14 +1,17 @@
 function make-selftests() {
 	local arch_dir
+	local ldflags=""
 	local tests
 	local i
 	local selftest
 	local static=""
+	local sysroot=""
 	local ls
 	local source=$HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm
 	local target=$HOME/build/tests/$3
 	local output=$HOME/build/selftests/$3
 	local command
+	local ret
 
 	if [[ $# -lt 2 ]] || [[ ! -d $source ]]; then
 		printf "Must specify kernel directory as second argument\n"
@@ -51,12 +54,27 @@ function make-selftests() {
 		fi
 	fi
 
+	if is-mac; then
+		sysroot="--sysroot=$HOME/build/musl"
+		ldflags="--ld-path=/opt/homebrew/opt/lld/bin/ld.lld"
+	fi
+
 	pushd $HOME/go/src/kernel.org/$2
-	make-$1 make O=$output headers_install
+	if is-mac; then
+		ln -sf $(which unifdef) $output/scripts
+		ARCH=x86_64 make O=$output headers_install hostprogs= hostprogs-always-y= if_changed_dep='$(if_changed)' -j$(get-nr-cpus)
+	else
+		make-$1 make O=$output headers_install -j$(get-nr-cpus)
+	fi
+
+	ret=$?
+	if [[ $? -ne 0 ]]; then
+		return ret
+	fi
 
 	cd $HOME/go/src/kernel.org/$2/tools/testing/selftests/kvm
 	if [[ $# -gt 3 && $4 == "clean" ]]; then
-		make-$1 make OUTPUT=$output clean -j128
+		make-$1 make OUTPUT=$output clean -j$(get-nr-cpus)
 	fi
 
 	# Statically linking on s390 fails due to duplicate memset/memcmp
@@ -75,9 +93,9 @@ function make-selftests() {
 		command="install"
 	fi
 
-	KHDR_INCLUDES="-isystem $output/usr/include" EXTRA_CFLAGS="$static -Werror -gdwarf-4" make-$1 make INSTALL_HDR_PATH="$output/usr" OUTPUT=$output DEFAULT_TESTCASES=testcases INSTALL_PATH=$target -j$(get-nr-cpus) $command
-	local ret=$?
+	KHDR_INCLUDES="-isystem $output/usr/include" EXTRA_CFLAGS="$static $sysroot -Werror -gdwarf-4" make-$1 make USERLDFLAGS="$ldflags" INSTALL_HDR_PATH="$output/usr" OUTPUT=$output DEFAULT_TESTCASES=testcases INSTALL_PATH=$target -j$(get-nr-cpus) $command
 
+	ret=$?
 	if [[ $? -eq 0 ]]; then
 		rm -f $target/config
 		rm -f $target/settings
@@ -86,15 +104,22 @@ function make-selftests() {
 	return $ret
 }
 
-alias mt='make-selftests   x86 slf x86'
-alias mtc='make-selftests  x86 slf x86 clean'
-alias mti='make-selftests  x86 tinux ti'
-alias mtic='make-selftests x86 tinux ti clean'
-
 alias jt='make-clang   make-selftests x86 slf c'
 alias jtc='make-clang  make-selftests x86 slf c clean'
 alias jti='make-clang  make-selftests x86 tinux ti_c'
 alias jtic='make-clang make-selftests x86 tinux ti_c clean'
+
+if is-mac; then
+	alias mt='jt'
+	alias mtc='jtc'
+	alias mti='jti'
+	alias mtic='jtic'
+else
+	alias mt='make-selftests   x86 slf x86'
+	alias mtc='make-selftests  x86 slf x86 clean'
+	alias mti='make-selftests  x86 tinux ti'
+	alias mtic='make-selftests x86 tinux ti clean'
+fi
 
 # alias mtx='make-clang  make-selftests x86 nox'
 # alias mtxc='make-clang make-selftests x86 nox clean'
@@ -119,3 +144,13 @@ alias mtr='make-selftests  riscv nox riscv'
 alias mtrc='make-selftests riscv nox riscv clean'
 alias jtr='make-clang make-selftests riscv nox riscv_c'
 alias jtrc='make-clang make-selftests riscv nox riscv_c clean'
+
+function configure-musl() {
+	CC=clang AR=/usr/bin/llvm-ar RANLIB=/usr/bin/llvm-ranlib ./configure --prefix=$HOME/build/musl --disable-shared make -j128 && make install
+
+	clang -c -x c /dev/null -o $HOME/build/musl/lib/crtbeginT.o
+	cp $HOME/seanjc/build/musl/lib/crtbeginT.o $HOME/seanjc/build/musl/lib/crtbegin.o
+	cp $HOME/seanjc/build/musl/lib/crtbeginT.o $HOME/seanjc/build/musl/lib/crtend.o
+	llvm-ar rcs $HOME/seanjc/build/musl/lib/libgcc.a
+	llvm-ar rcs $HOME/seanjc/build/musl/lib/libgcc_eh.a
+}
