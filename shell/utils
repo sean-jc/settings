@@ -92,7 +92,14 @@ function do-run() {
 alias run='do-run'
 
 # disk usage
-alias dus='df -hT'
+function disk-usage() {
+	if is-mac; then
+		df -ahY
+	else
+		df -ahT
+	fi
+}
+alias dus='disk-usage'
 
 # find
 alias rfind='sudo find / -name 2> /dev/null'
