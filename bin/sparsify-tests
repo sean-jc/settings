@@ -9,6 +9,9 @@ echo "!crypto/*" >> .git/info/sparse-checkout
 echo "!Documentation/*" >> .git/info/sparse-checkout
 echo "!drivers/*" >> .git/info/sparse-checkout
 echo "!fs/*" >> .git/info/sparse-checkout
+echo "!include/uapi/linux/netfilter/*" >> .git/info/sparse-checkout
+echo "!include/uapi/linux/netfilter_ipv4/*" >> .git/info/sparse-checkout
+echo "!include/uapi/linux/netfilter_ipv6/*" >> .git/info/sparse-checkout
 echo "!init/*" >> .git/info/sparse-checkout
 echo "!io_uring/*" >> .git/info/sparse-checkout
 echo "!ipc/*" >> .git/info/sparse-checkout
