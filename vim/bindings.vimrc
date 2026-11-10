@@ -34,5 +34,13 @@ map Q gq
 " Revert with ":iunmap <C-U>".
 inoremap <C-U> <C-G>u<C-U>
 
+" Option (Command, remapped by Karabiner) + Home/End to beginning/end of file
 inoremap <Esc>[1;8H <C-O>gg
 inoremap <Esc>[1;8F <C-O>G
+
+" Option (Command, remmaped by Karabiner) + Left/Right to beginning/end of word
+nnoremap <M-Right> w
+inoremap <M-Right> <C-O>w
+
+nnoremap <M-Left> b
+inoremap <M-Left> <C-O>b
