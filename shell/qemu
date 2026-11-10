@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . $SETTINGS/shell/apt
 . $SETTINGS/shell/utils
 

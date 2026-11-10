@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . $SETTINGS/shell/utils
 . $SETTINGS/shell/make-kernel
 . $SETTINGS/shell/make-kut

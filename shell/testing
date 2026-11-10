@@ -103,7 +103,7 @@ function run-selftests() {
 alias rt='run-selftests'
 
 function run-gvisor {
-	#!/bin/bash
+	#!/usr/bin/env bash
 	for i in $(seq 1 $1); do
 		~/build/runc/runsc --platform=kvm --network=none do echo ok
 	done

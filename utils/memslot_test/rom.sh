@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 echo 55aa > /sys/bus/pci/devices/0000:00:02.0/rom
 
 for i in {1..2}; do

@@ -1,5 +1,5 @@
 # VS code linting gets confused :-()
-#!/bin/bash
+#!/usr/bin/env bash
 
 . $SETTINGS/shell/utils
 

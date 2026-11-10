@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 function mount-modules() {
 	rm -rf /mnt/lib/modules/*
 

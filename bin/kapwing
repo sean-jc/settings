@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 dir=$(pwd)
 if [[ $# -eq 1 ]]; then
 	target=$1

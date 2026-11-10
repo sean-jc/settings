@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 PATCH_FILE=`mktemp --tmpdir="$HOME/.mutt/tmp"  mutt-patch.XXXXXX`
 cat > $PATCH_FILE

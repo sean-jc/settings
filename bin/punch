@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 pushd ~/Downloads/gtest
 sudo cp vmlinuz-4.14.0-gtest+ /boot
 sudo cp System.map-4.14.0-gtest+ /boot

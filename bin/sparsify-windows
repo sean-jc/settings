@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 git config core.sparseCheckout true
 
 echo "arch/x86/*" > .git/info/sparse-checkout

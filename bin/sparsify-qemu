@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . $SETTINGS/bin/qemustubdirs
 
 git config core.sparseCheckout true

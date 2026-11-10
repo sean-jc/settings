@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if [[ $# -ne 2 ]]; then
    printf "Must provide QEMU pid and number of vCPUs\n"
