@@ -126,11 +126,24 @@ function git-archive-branch() {
 }
 
 function git-get() {
+	local branch
+
 	if [[ $# -eq 0 ]]; then
 		git show -s --pretty="%C(auto)   %(decorate:separator= => )"
-	else
-		git checkout $@
+		return 0
 	fi
+
+	if [[ $# -eq 1 ]]; then
+		branch=$(git branch | tr -d " " | grep $1)
+		if [[ -n $branch ]]; then
+			if [[ $(echo "$branch" | wc -l) -eq 1 ]]; then
+				git checkout $branch
+				return $?
+			fi
+		fi
+	fi
+
+	git checkout $@
 }
 
 function git-grep-branch {
