@@ -102,6 +102,29 @@
                         ]
                     },
                     {
+                        "description": "Finder: Return=>Command+O (Open Files",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": [
+                                            "^com\\.apple\\.finder$"
+                                        ],
+                                        "type": "frontmost_application_if"
+                                    }
+                                ],
+                                "from": { "key_code": "return_or_enter" },
+                                "to": [
+                                    {
+                                        "key_code": "o",
+                                        "modifiers": ["command"]
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
                         "description": "iTerm2: Remap Command+B=>Control+B",
                         "manipulators": [
                             {
@@ -289,7 +312,10 @@
                                 ],
                                 "from": {
                                     "key_code": "home",
-                                    "modifiers": { "mandatory": ["command"] }
+                                    "modifiers": {
+                                        "mandatory": ["command"],
+                                        "optional": ["shift"]
+                                    }
                                 },
                                 "to": [
                                     {
@@ -310,54 +336,15 @@
                                 ],
                                 "from": {
                                     "key_code": "end",
-                                    "modifiers": { "mandatory": ["command"] }
+                                    "modifiers": {
+                                        "mandatory": ["command"],
+                                        "optional": ["shift"]
+                                    }
                                 },
                                 "to": [
                                     {
                                         "key_code": "down_arrow",
                                         "modifiers": ["command"]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "conditions": [
-                                    {
-                                        "bundle_identifiers": [
-                                            "^com\\.googlecode\\.iterm2$"
-                                        ],
-                                        "type": "frontmost_application_unless"
-                                    }
-                                ],
-                                "from": {
-                                    "key_code": "home",
-                                    "modifiers": { "mandatory": ["command", "shift"] }
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "up_arrow",
-                                        "modifiers": ["command", "shift"]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "conditions": [
-                                    {
-                                        "bundle_identifiers": [
-                                            "^com\\.googlecode\\.iterm2$"
-                                        ],
-                                        "type": "frontmost_application_unless"
-                                    }
-                                ],
-                                "from": {
-                                    "key_code": "end",
-                                    "modifiers": { "mandatory": ["command", "shift"] }
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "down_arrow",
-                                        "modifiers": ["command", "shift"]
                                     }
                                 ],
                                 "type": "basic"
@@ -578,7 +565,10 @@
                                         "type": "frontmost_application_unless"
                                     }
                                 ],
-                                "from": { "key_code": "home" },
+                                "from": {
+                                    "key_code": "home",
+                                    "modifiers": { "optional": ["shift"] }
+                                },
                                 "to": [
                                     {
                                         "key_code": "left_arrow",
@@ -596,7 +586,10 @@
                                         "type": "frontmost_application_unless"
                                     }
                                 ],
-                                "from": { "key_code": "end" },
+                                "from": {
+                                    "key_code": "end",
+                                    "modifiers": { "optional": ["shift"] }
+                                },
                                 "to": [
                                     {
                                         "key_code": "right_arrow",
