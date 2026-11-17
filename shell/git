@@ -133,15 +133,62 @@ function git-get() {
 	fi
 }
 
-function git-get-branch() {
-	if [[ $# -eq 1 ]]; then
-		git checkout -b $1 o/$1
-	elif [[ $# -eq 2 ]]; then
-		git checkout -b $2 $1/$2
-	else
-		printf "git-get-branch <branch> [remote]\n"
+function git-grep-branch {
+	local o_branch
+	local p_branch
+
+	o_branch=$(git branch -r --list o/* | tr -d " " | cut -f 2- -d "/" | grep $1)
+	p_branch=$(git branch -r --list p/* | tr -d " " | cut -f 2- -d "/" | grep $1)
+
+	if [[ -n $o_branch ]]; then
+		printf 'o:\n  %s\n' "${o_branch//$'\n'/$'\n'  }"
+	fi
+	if [[ -n $p_branch ]]; then
+		printf '\rp:\n  %s\n' "${p_branch//$'\n'/$'\n'  }"
+	fi
+	if [[ -z $o_branch && -z $p_branch ]]; then
 		return 1
 	fi
+}
+
+function git-get-branch() {
+	local pattern=$1
+	local o_branch
+	local p_branch
+	local remote
+	local branch
+	local nr
+
+	if [[ "${pattern:0:2}" == "p/" || "${pattern:0:2}" == "o/" ]]; then
+		pattern="${pattern:2}"
+	fi
+
+	o_branch=$(git branch -r --list o/* | tr -d " " | cut -f 2- -d "/" | grep $pattern)
+	p_branch=$(git branch -r --list p/* | tr -d " " | cut -f 2- -d "/" | grep $pattern)
+	if [[ -n $o_branch && -n $p_branch ]]; then
+		branch=$o_branch"\n"$p_branch
+	elif [[ -n $o_branch ]]; then
+		branch=$o_branch
+		remote=o
+	elif [[ -n $p_branch ]]; then
+		branch=$p_branch
+		remote=p
+	else
+		printf "Matched 0 branches for '$pattern' ('$1')\n"
+		return 1
+	fi
+
+	nr=$(echo "$branch" | wc -l)
+	if [[ $nr -ne 1 ]]; then
+		if [[ $(echo "$branch" | wc -l) -lt 5 ]]; then
+			printf "Matched $nr branches for '$pattern' ('$1'):\n$branch\n"
+		else
+			printf "Matched $nr branches for '$pattern' ('$1')\n"
+		fi
+		return 1
+	fi
+
+	git checkout -b $branch $remote/$branch
 }
 
 function git-get-prefixed-branch() {
@@ -528,14 +575,12 @@ alias gfp='git-format-patch'
 alias gfk='nosend=1 git-email kvm'
 alias gft='git fetch --tags'
 alias gg='git-get'
-alias gga='git branch -r | tr -d " " | grep -v -E "^o/" | grep'
+alias gga='git branch -r | tr -d " " | grep -v -E "^o/" -E "^p/" | cut -f 2- -d "/" | grep'
 alias ggb='git-get-branch'
 alias ggc='git-get-cc'
 alias ggd='gs | grep deleted: | cut -f 2 | tr -s " " | cut -f 2 -d " " | xargs git checkout'
 alias ggl='git branch | grep'
-alias ggo='git branch -r | tr -d " " | grep -E "^o/" | cut -f 2- -d "/" | grep'
-alias ggp='git-get-branch p'
-alias ggs='git-get-branch s'
+alias ggo='git-grep-branch'
 alias ggx='git branch -r --list x/* | grep -v next | cut -f 2 -d '/''
 alias gi='git rebase --interactive'
 alias gl='git log --decorate'
