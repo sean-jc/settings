@@ -234,7 +234,13 @@ function git-update-subs() {
 function git-set-upstream() {
 	local up=$1
 	if [[ $# -eq 0 ]]; then
-		up="o/$(git rev-parse --abbrev-ref HEAD)"
+		up=$(git rev-parse --abbrev-ref HEAD)
+		$(git branch -r --list o/* | tr -d " " | cut -f 2- -d "/" | grep -qx $up)
+		if [[ $? -eq 0 ]]; then
+			up="o/$up"
+		else
+			up="p/$up"
+		fi
 	fi
 
 	git branch --set-upstream-to=$up
