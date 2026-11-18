@@ -461,27 +461,6 @@
                         ]
                     },
                     {
-                        "description": "Command+Tab => Control+Tab",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "tab",
-                                    "modifiers": {
-                                        "mandatory": ["command"],
-                                        "optional": ["shift"]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "tab",
-                                        "modifiers": ["control"]
-                                    }
-                                ],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
                         "description": "Control+Left/Right=> Command+Control+Option+Left/Right",
                         "manipulators": [
                             {
@@ -508,6 +487,61 @@
                                         "modifiers": ["command", "control", "option"]
                                     }
                                 ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Command+Tab => Control+Tab (keeping Ctrl held)",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "left_command",
+                                    "modifiers": { "optional": ["any"] }
+                                },
+                                "to": [
+                                    {
+                                        "set_variable": {
+                                            "name": "left_cmd_held",
+                                            "value": 1
+                                        }
+                                    },
+                                    { "key_code": "left_command" }
+                                ],
+                                "to_after_key_up": [
+                                    {
+                                        "set_variable": {
+                                            "name": "left_cmd_held",
+                                            "value": 0
+                                        }
+                                    }
+                                ],
+                                "to_if_other_key_pressed": [
+                                    {
+                                        "other_keys": [
+                                            {
+                                                "key_code": "tab",
+                                                "modifiers": { "optional": ["any"] }
+                                            }
+                                        ],
+                                        "to": [{ "key_code": "left_control" }]
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "left_cmd_held",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "tab",
+                                    "modifiers": { "optional": ["any"] }
+                                },
+                                "to": [{ "key_code": "tab" }],
                                 "type": "basic"
                             }
                         ]
